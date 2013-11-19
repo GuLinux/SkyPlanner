@@ -1,5 +1,13 @@
+cmake_minimum_required(VERSION 2.8)
 project(ngciccatalog)
+enable_testing()
+find_package(Wt 3.3.1 REQUIRED)
+find_package(Qt4 REQUIRED)
+include(${QT_USE_FILE})
+add_definitions(${QT_DEFINITIONS} -DWT_NO_SLOT_MACROS)
+find_package(Boost REQUIRED COMPONENTS signals system filesystem chrono thread regex program_options random date_time OPTIONAL_COMPONENTS unit_test_framework )
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11 -fstack-protector-all")
 
-add_executable(ngciccatalog main.cpp)
-
-install(TARGETS ngciccatalog RUNTIME DESTINATION bin)
+#add_subdirectory(lib)
+#include_directories(lib)
+add_subdirectory(src)
