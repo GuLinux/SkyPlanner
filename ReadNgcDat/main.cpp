@@ -8,10 +8,10 @@
 #include <stdint.h>
 #include <QDebug>
 #include <QRegExp>
-#include <QSqlQuery>
+#include <QtSql/QSqlQuery>
 #include <unordered_map>
-#include <QSqlDatabase>
-#include <QSqlError>
+#include <QtSql/QSqlDatabase>
+#include <QtSql/QSqlError>
 
 using namespace std;
 
@@ -54,18 +54,20 @@ struct ObjectName {
 
 NgcObject::Key ObjectName::key() const {
     NgcObject::Catalogue catalogue = NgcObject::NGC;
+    QString number = ngcNumber;
     if(ngcNumber.startsWith("I")) {
         catalogue = NgcObject::IC;
+        number = ngcNumber.mid(1);
     }
-    return { catalogue, catalogueNumber() };
+    return { catalogue, number.toInt() };
 }
 
 int ObjectName::catalogueNumber() const {
     if(catalogue() == NgcObject::IC)
-        return ngcNumber.mid(2).toInt();
+        return ngcNumber.mid(1).toInt();
     if(catalogue() == NgcObject::NGC)
         return ngcNumber.toInt();
-    return name.mid(2).toInt();
+    return name.mid(1).toInt();
 }
 
 NgcObject::Catalogue ObjectName::catalogue() const {
@@ -115,7 +117,6 @@ ostream &operator <<(ostream &s, const NgcObject &ngc) {
 
 int main(int argc, char *argv[])
 {
-    cerr << "sizeof: bool=" << sizeof(bool) << ", int=" << sizeof(int32_t) << ", float=" << sizeof(float) << ", uint: " << sizeof(unsigned int) << endl;
     QCoreApplication a(argc, argv);
     QFile file("/usr/share/stellarium/nebulae/default/ngc2000.dat");
     if(!file.open(QIODevice::ReadOnly)) {
@@ -145,6 +146,9 @@ int main(int argc, char *argv[])
         QString catName = line.left(36).trimmed();
         QString comment = line.mid(42).trimmed();
         ObjectName objectName{catName, ngcName, comment};
+//         qDebug() << "line: " << line;
+//         qDebug() << "ngcName: " << ngcName << ", catName: " << catName << ", comment: " << comment;
+//         qDebug() << "Loaded object " << CatalogueNames[objectName.catalogue()] << objectName.catalogueNumber() << " <<--->> " << objectName.key().toString() << "(orig: " << objectName.ngcNumber << ")";
         if(ngcObjects.count(objectName.key()) > 0) {
             ngcObjects[objectName.key()].otherNames.push_back(objectName);
         }
@@ -164,7 +168,7 @@ int main(int argc, char *argv[])
         cerr << "Error creating table objects: " << createTables.lastError().text().toStdString() << endl;
     createTables.exec("TRUNCATE TABLE objects;");
 
-    if(!createTables.exec("CREATE TABLE denominations (object_id TEXT references objects(object_id), catalogue TEXT, number INTEGER, name TEXT, comment TEXT);"))
+    if(!createTables.exec("CREATE TABLE denominations (objects_object_id TEXT references objects(object_id), catalogue TEXT, number INTEGER, name TEXT, comment TEXT);"))
         cerr << "Error creating table denominations: " << createTables.lastError().text().toStdString() << endl;
     createTables.exec("TRUNCATE TABLE denominations;");
 
@@ -178,13 +182,14 @@ int main(int argc, char *argv[])
         QString key = ngc.key().toString();
         auto addDenomination = [=] (const QString &catalogue, int catalogueNumber, const QString &name, const QString &comment) {
             QSqlQuery addDenomination;
-            addDenomination.prepare("INSERT INTO denominations(object_id, catalogue, number, name, comment) VALUES(?, ?, ?, ?, ?);");
+            addDenomination.prepare("INSERT INTO denominations(objects_object_id, catalogue, number, name, comment) VALUES(?, ?, ?, ?, ?);");
             addDenomination.addBindValue(key);
             addDenomination.addBindValue(catalogue);
             addDenomination.addBindValue(catalogueNumber);
             addDenomination.addBindValue(name);
             addDenomination.addBindValue(comment);
-            addDenomination.exec();
+            if(!addDenomination.exec())
+              cerr << "Error adding denomination for " << catalogue.toStdString() << catalogueNumber << ": " << addDenomination.lastError().text().toStdString() << endl;
         };
 
         qDebug() << QString("%1").arg(current++, 5, 10, QChar('0')) << "/" << ngcObjects.size() << ": " << key ;
