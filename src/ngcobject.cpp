@@ -19,8 +19,9 @@
 
 #include "ngcobject.h"
 #include "nebuladenomination.h"
+#include <map>
 
-
+using namespace std;
 NgcObject::NgcObject()
 {
 }
@@ -55,7 +56,37 @@ float NgcObject::rightAscension() const
 {
   return _rightAscension;
 }
-int NgcObject::type() const
+NgcObject::NebulaType NgcObject::type() const
 {
   return _type;
 }
+/*
+    enum NebulaType
+    {
+            NebGx=0,     //!< Galaxy
+            NebOc=1,     //!< Open star cluster
+            NebGc=2,     //!< Globular star cluster, usually in the Milky Way Galaxy
+            NebN=3,      //!< Bright emission or reflection nebula
+            NebPn=4,     //!< Planetary nebula
+            NebDn=5,     //!< ??? Dark Nebula?      Does not exist in current catalog
+            NebIg=6,     //!< ??? Irregular Galaxy? Does not exist in current catalog
+            NebCn=7,     //!< Cluster associated with nebulosity
+            NebUnknown=8 //!< Unknown type, catalog errors, "Unidentified Southern Objects" etc.
+    };
+*/
+std::string NgcObject::typeDescription() const
+{
+  static map<NebulaType,string> descriptions {
+    {NebGx, "Galaxy"},
+    {NebOc, "Open star cluster"},
+    {NebGc, "Globular star cluster"},
+    {NebN, "Bright emission/reflection nebula"},
+    {NebPn, "Planetary nebula"},
+    {NebDn, "Dark nebula"},
+    {NebIg, "Irregular galaxy"},
+    {NebCn, "Cluster with nebulosity"},
+    {NebUnknown, "Unknown"},
+  };
+  return descriptions[type()];
+}
+

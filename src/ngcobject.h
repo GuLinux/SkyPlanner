@@ -31,6 +31,18 @@ namespace dbo = Wt::Dbo;
 class NgcObject
 {
 public:
+    enum NebulaType
+    {
+            NebGx=0,     //!< Galaxy
+            NebOc=1,     //!< Open star cluster
+            NebGc=2,     //!< Globular star cluster, usually in the Milky Way Galaxy
+            NebN=3,      //!< Bright emission or reflection nebula
+            NebPn=4,     //!< Planetary nebula
+            NebDn=5,     //!< ??? Dark Nebula?      Does not exist in current catalog
+            NebIg=6,     //!< ??? Irregular Galaxy? Does not exist in current catalog
+            NebCn=7,     //!< Cluster associated with nebulosity
+            NebUnknown=8 //!< Unknown type, catalog errors, "Unidentified Southern Objects" etc.
+    };
     NgcObject();
     ~NgcObject();
     // CREATE TABLE objects (object_id TEXT PRIMARY KEY, ra REAL, dec REAL, magnitude REAL, angular_size REAL, type INTEGER);
@@ -40,7 +52,8 @@ public:
     float declination() const;
     float magnitude() const;
     float angularSize() const;
-    int type() const;
+    NebulaType type() const;
+    std::string typeDescription() const;
     template<class Action>
     void persist(Action& a) {
 	dbo::id(a, _objectId, "object_id");
@@ -54,7 +67,7 @@ public:
 private:
     std::string _objectId;
     float _rightAscension, _declination, _magnitude, _angularSize;
-    int _type;
+    NebulaType _type;
     dbo::collection< dbo::ptr<NebulaDenomination> > _nebulae;
 };
 

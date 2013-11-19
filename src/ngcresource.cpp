@@ -22,6 +22,9 @@
 #include "ngcobject.h"
 #include "nebuladenomination.h"
 #include <Wt/Http/Response>
+#include <Wt/Json/Object>
+#include <Wt/Json/Serializer>
+#include <Wt/Json/Array>
 #include <map>
 using namespace std;
 using namespace Wt;
@@ -46,9 +49,13 @@ map<string,string> Catalogs {
 void NgcResource::handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response)
 {
   Session session;
+  Json::Object ngcObjectJson;
+  ngcObjectJson["result"] = Json::Value("ok");
   
   if(request.getParameter("cat") == 0 || request.getParameter("num") == 0) {
-    response.out() << "Error! missing 'cat' or 'num' parameter" << endl;
+    ngcObjectJson["result"] = Json::Value(string("error"));
+    ngcObjectJson["error_description"] = Json::Value(request.getParameter("num") == 0 ? string("catalogue number missing") : string("catalogue missing"));
+    response.out() << Json::serialize(ngcObjectJson) << endl;
     return;
   }
   string catalogue = Catalogs[*request.getParameter("cat")];
@@ -56,13 +63,30 @@ void NgcResource::handleRequest(const Wt::Http::Request& request, Wt::Http::Resp
   Dbo::Transaction t(session);
   Dbo::ptr<NebulaDenomination> objectDenomination = session.find<NebulaDenomination>().where("catalogue = ?").where("number = ?").bind(catalogue).bind(number);
   if(!objectDenomination) {
-    response.out() << "Object " << catalogue << " " << number << " not found!" << endl;
+    ngcObjectJson["result"] = Json::Value(string("error"));
+    stringstream errorDescription ;
+    errorDescription << "Object " << catalogue << " " << number << " not found!";
+    ngcObjectJson["error_description"] = Json::Value(errorDescription.str());
+    response.out() << Json::serialize(ngcObjectJson) << endl;
+    response.out()  << endl;
     return;
   }
   Dbo::ptr<NgcObject> object = objectDenomination->ngcObject();
-  response.out() << "Object found: " << objectDenomination->catalogue() << objectDenomination->number() << endl;
-  response.out() << "AR: " << object->rightAscension() << ", DEC: " << object->declination() << ", magnitude: " << object->magnitude() << endl;
+  ngcObjectJson["ar"] = Json::Value(object->rightAscension());
+  ngcObjectJson["dec"] = Json::Value(object->declination());
+  ngcObjectJson["magnitude"] = Json::Value(object->magnitude());
+  ngcObjectJson["angular_size"] = Json::Value(object->angularSize());
+  ngcObjectJson["type"] = Json::Value(object->type());
+  ngcObjectJson["type_description"] = Json::Value(object->typeDescription());
+  Json::Value denominations(Json::ArrayType);
   for(Dbo::ptr<NebulaDenomination> denomination: object->nebulae()) {
-    response.out() << "Denomination: " << denomination->name() << ", " << denomination->comment() << endl;
+    Json::Value denominationJson(Json::ObjectType);
+    static_cast<Json::Object&>(denominationJson)["catalogue"] = Json::Value(denomination->catalogue());
+    static_cast<Json::Object&>(denominationJson)["number"] = Json::Value(denomination->number());
+    static_cast<Json::Object&>(denominationJson)["name"] = Json::Value(denomination->name());
+    static_cast<Json::Object&>(denominationJson)["comment"] = Json::Value(denomination->comment());
+    static_cast<Json::Array&>(denominations).push_back(denominationJson);
   }
+  ngcObjectJson["denominations"] = denominations;
+  response.out() << Json::serialize(ngcObjectJson) << endl;
 }
