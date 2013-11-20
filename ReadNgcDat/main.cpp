@@ -17,7 +17,7 @@ using namespace std;
 
 struct ObjectName;
 struct NgcObject {
-    enum Catalogue {NGC, IC, Messier, Caldwell};
+    enum Catalogue {NGC, IC, Messier, Caldwell, ProperName};
 
     struct Key {
         Catalogue catalogue;
@@ -40,6 +40,7 @@ map<NgcObject::Catalogue,QString> CatalogueNames {
     {NgcObject::IC, "IC"},
     {NgcObject::Messier, "Messier"},
     {NgcObject::Caldwell, "Caldwell"},
+    {NgcObject::ProperName, ""},
 };
 
 struct ObjectName {
@@ -63,21 +64,17 @@ NgcObject::Key ObjectName::key() const {
 }
 
 int ObjectName::catalogueNumber() const {
-    if(catalogue() == NgcObject::IC)
-        return ngcNumber.mid(1).toInt();
-    if(catalogue() == NgcObject::NGC)
-        return ngcNumber.toInt();
-    return name.mid(1).toInt();
+    if(catalogue() == NgcObject::Messier || catalogue() == NgcObject::Caldwell)
+      return name.mid(1).toInt();
+    return -1;
 }
 
 NgcObject::Catalogue ObjectName::catalogue() const {
-    if(ngcNumber.startsWith("I"))
-        return NgcObject::IC;
     if(name.startsWith("C"))
         return NgcObject::Caldwell;
     if(name.startsWith("M"))
         return NgcObject::Messier;
-    return NgcObject::NGC;
+    return NgcObject::ProperName;
 }
 
 QString ObjectName::parsedName() const {
