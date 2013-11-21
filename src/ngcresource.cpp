@@ -19,8 +19,7 @@
 
 #include "ngcresource.h"
 #include "session.h"
-#include "ngcobject.h"
-#include "nebuladenomination.h"
+#include "Models"
 #include <Wt/Http/Response>
 #include <Wt/Json/Object>
 #include <Wt/Json/Serializer>
