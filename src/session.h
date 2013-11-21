@@ -21,6 +21,7 @@
 #define SESSION_H
 
 #include <Wt/Dbo/Session>
+#include "utils/d_ptr.h"
 
 class Session : public Wt::Dbo::Session
 {
@@ -28,7 +29,7 @@ public:
     Session();
     ~Session();
 private:
-  std::unique_ptr<Wt::Dbo::SqlConnection>connection;
+  D_PTR;
 };
 
 #endif // SESSION_H

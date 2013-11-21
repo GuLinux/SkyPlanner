@@ -18,17 +18,23 @@
  */
 
 #include "session.h"
+#include "private/session_p.h"
 #include <Wt/Dbo/backend/Sqlite3>
 #include "ngcobject.h"
 #include "nebuladenomination.h"
+#include "utils/d_ptr_implementation.h"
+
 using namespace std;
 using namespace Wt;
 
+Session::Private::Private() {
+}
+
 Session::Session()
-  : connection(new Dbo::backend::Sqlite3("ngc.sqlite"))
 {
-  setConnection(*connection);
-  connection->setProperty("show-queries", "true");
+  d->connection = make_shared<Dbo::backend::Sqlite3>("ngc.sqlite");
+  setConnection(*d->connection);
+  d->connection->setProperty("show-queries", "true");
   mapClass<NgcObject>("objects");
   mapClass<NebulaDenomination>("denominations");
 }
