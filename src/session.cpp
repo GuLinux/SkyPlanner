@@ -20,6 +20,12 @@
 #include "session.h"
 #include "private/session_p.h"
 #include <Wt/Dbo/backend/Sqlite3>
+#include <Wt/Auth/AbstractUserDatabase>
+#include <Wt/Auth/PasswordService>
+#include <Wt/Auth/AuthService>
+#include <Wt/Auth/PasswordVerifier>
+#include <Wt/Auth/PasswordStrengthValidator>
+#include <Wt/Auth/HashFunction>
 #include "ngcobject.h"
 #include "nebuladenomination.h"
 #include "utils/d_ptr_implementation.h"
@@ -30,6 +36,7 @@ using namespace Wt;
 Session::Private::Private() {
 }
 
+
 Session::Session()
 {
   d->connection = make_shared<Dbo::backend::Sqlite3>("ngc.sqlite");
@@ -37,9 +44,68 @@ Session::Session()
   d->connection->setProperty("show-queries", "true");
   mapClass<NgcObject>("objects");
   mapClass<NebulaDenomination>("denominations");
+  mapClass<User>("user");
+  mapClass<Telescope>("telescope");
+  mapClass<AuthInfo>("auth_info");
+  mapClass<AuthInfo::AuthIdentityType>("auth_identity");
+  mapClass<AuthInfo::AuthTokenType>("auth_token");
+  d->users = new UserDatabase(*this);
+  cerr << "Tables creation script: " << endl;
+  cerr << "-----------------------------------------------" << endl;
+  cerr << tableCreationSql() << endl;
+  cerr << "-----------------------------------------------" << endl;
 }
 
 Session::~Session()
 {
+}
 
+Auth::AbstractUserDatabase& Session::users()
+{
+  return *d->users;
+}
+
+Auth::Login& Session::login()
+{
+  return d->login;
+}
+
+Dbo::ptr<User> Session::user()
+{
+  if (!d->login.loggedIn())
+    return dbo::ptr<User>();
+  dbo::ptr<AuthInfo> authInfo = d->users->find(d->login.user());
+  dbo::ptr<User> user = authInfo->user();
+  
+  if(!user) {
+    user = add(new User);
+    authInfo.modify()->setUser(user);
+    authInfo.flush();
+  }    
+  return authInfo->user();
+}
+
+void Session::configureAuth()
+{
+  myAuthService.setAuthTokensEnabled(true, "logincookie");
+  myAuthService.setEmailVerificationEnabled(true);
+
+  Wt::Auth::PasswordVerifier *verifier = new Wt::Auth::PasswordVerifier();
+  verifier->addHashFunction(new Wt::Auth::BCryptHashFunction(7));
+  myPasswordService.setVerifier(verifier);
+  myPasswordService.setAttemptThrottlingEnabled(true);
+  Auth::PasswordStrengthValidator *passwordValidator = new Auth::PasswordStrengthValidator();
+  passwordValidator->setMandatory(true);
+  passwordValidator->setMinimumLength(Auth::PasswordStrengthValidator::OneCharClass, 8);
+  myPasswordService.setStrengthValidator(passwordValidator);
+}
+
+const Auth::AuthService& Session::auth()
+{
+  return myAuthService;
+}
+
+const Auth::PasswordService& Session::passwordAuth()
+{
+  return myPasswordService;
 }

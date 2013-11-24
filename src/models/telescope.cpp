@@ -1,6 +1,6 @@
 /*
  * <one line to give the program's name and a brief idea of what it does.>
- * Copyright (C) 2013  <copyright holder> <email>
+ * Copyright (C) 2013  Marco Gulino <email>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,25 +17,38 @@
  *
  */
 
-#ifndef ASTROPLANNER_P_H
-#define ASTROPLANNER_P_H
-#include "astroplanner.h"
-#include "session.h"
+#include "Models"
 
-namespace Wt
+using namespace std;
+
+Telescope::Telescope()
 {
-  class WMenuItem;
+
 }
 
-class AstroPlanner::Private
+Telescope::Telescope( const string &name, int diameter, int focalLength )
+  : _name(name), _diameter(diameter), _focalLength(focalLength)
 {
-public:
-    Private(AstroPlanner* q);
-    Session session;
-    
-    std::vector<Wt::WMenuItem*> loggedInItems;
-    std::vector<Wt::WMenuItem*> loggedOutItems;
-private:
-    class AstroPlanner* const q;
-};
-#endif // ASTROPLANNER_P_H
+  
+}
+
+
+int Telescope::diameter() const
+{
+  return _diameter;
+}
+
+int Telescope::focalLength() const
+{
+  return _focalLength;
+}
+
+double Telescope::limitMagnitudeGain() const
+{
+  return 5.0 * log10( static_cast<double>(diameter()) / 6.5 );
+}
+
+string Telescope::name() const
+{
+  return _name;
+}

@@ -3,5 +3,6 @@
 
 #include "ngcobject.h"
 #include "nebuladenomination.h"
-
+#include "user.h"
+#include "telescope.h"
 #endif

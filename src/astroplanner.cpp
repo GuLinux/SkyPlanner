@@ -20,11 +20,20 @@
 #include "astroplanner.h"
 #include "private/astroplanner_p.h"
 #include "utils/d_ptr_implementation.h"
-
+#include <Wt/WNavigationBar>
+#include <Wt/WBootstrapTheme>
+#include <Wt/WStackedWidget>
+#include <Wt/Auth/AuthWidget>
+#include <Wt/WMenu>
+#include "Wt-Commons/wt_helpers.h"
+#include "telescopespage.h"
+#include <Wt/Auth/PasswordService>
+#include <Wt/Auth/Login>
 using namespace std;
 using namespace Wt;
+using namespace WtCommons;
 
-AstroPlanner::Private::Private(AstroPlanner* q) : q(q)
+AstroPlanner::Private::Private( AstroPlanner *q ) : q( q )
 {
 }
 
@@ -32,7 +41,45 @@ AstroPlanner::~AstroPlanner()
 {
 }
 
-AstroPlanner::AstroPlanner(const WEnvironment& environment)
-    : WApplication(environment), d(this)
+AstroPlanner::AstroPlanner( const WEnvironment &environment )
+  : WApplication( environment ), d( this )
 {
+  setTheme( new WBootstrapTheme( this ) );
+  cerr << __PRETTY_FUNCTION__ << endl;
+  WNavigationBar *navBar = WW<WNavigationBar>( root() ).addCss( "navbar-inverse" );
+  navBar->setResponsive( true );
+  navBar->setTitle( "AstroPlanner" );
+  useStyleSheet( "/style.css" );
+  WStackedWidget *widgets = new WStackedWidget( root() );
+  WMenu *navBarMenu = new WMenu(widgets);
+  navBar->addMenu(navBarMenu);
+  Auth::AuthWidget *authWidget = new Auth::AuthWidget( Session::auth(), d->session.users(), d->session.login() );
+  authWidget->model()->addPasswordAuth( &Session::passwordAuth() );
+  authWidget->setRegistrationEnabled( true );
+  authWidget->processEnvironment();
+  d->loggedOutItems.push_back(navBarMenu->addItem("Login", authWidget));
+  TelescopesPage *telescopesPage = new TelescopesPage(d->session);
+  
+  d->loggedInItems.push_back(navBarMenu->addItem("My Telescopes", telescopesPage));
+  WMenuItem *logout = navBarMenu->addItem("Logout");
+  d->loggedInItems.push_back(logout);
+  
+  
+  
+  auto setMenuItemsVisibility = [=] {
+    bool loggedIn = d->session.login().loggedIn();
+    for(auto i: d->loggedInItems)
+      i->setHidden(!loggedIn);
+    for(auto i: d->loggedOutItems)
+      i->setHidden(loggedIn);
+  };
+  
+  logout->triggered().connect([=](WMenuItem*,_n5){ d->session.login().logout(); });
+  d->session.login().changed().connect([=](_n6){
+    setMenuItemsVisibility();
+    if(!d->session.login().loggedIn()) {
+      widgets->setCurrentWidget(authWidget);
+    }
+  });
+  setMenuItemsVisibility();
 }

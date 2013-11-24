@@ -23,11 +23,29 @@
 #include <Wt/Dbo/Session>
 #include "utils/d_ptr.h"
 
+class User;
+namespace Wt
+{
+  namespace Auth
+  {
+    class Login;
+    class AbstractUserDatabase;
+    class PasswordService;
+    class AuthService;
+  }
+}
+
 class Session : public Wt::Dbo::Session
 {
 public:
     Session();
     ~Session();
+    Wt::Auth::AbstractUserDatabase& users();
+    Wt::Auth::Login& login();
+    Wt::Dbo::ptr<User> user();
+    static const Wt::Auth::AuthService &auth();
+    static const Wt::Auth::PasswordService &passwordAuth();
+    static void configureAuth();
 private:
   D_PTR;
 };

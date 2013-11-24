@@ -1,6 +1,6 @@
 /*
  * <one line to give the program's name and a brief idea of what it does.>
- * Copyright (C) 2013  <copyright holder> <email>
+ * Copyright (C) 2013  Marco Gulino <email>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,25 +17,31 @@
  *
  */
 
-#ifndef ASTROPLANNER_P_H
-#define ASTROPLANNER_P_H
-#include "astroplanner.h"
-#include "session.h"
+#ifndef USER_H
+#define USER_H
+#include <Wt/Auth/Dbo/AuthInfo>
 
-namespace Wt
-{
-  class WMenuItem;
-}
+#include <Wt/Dbo/Dbo>
+#include <Wt/Dbo/Types>
+#include <Wt/Dbo/ptr>
+#include <string>
 
-class AstroPlanner::Private
-{
+namespace dbo = Wt::Dbo;
+
+class User;
+class Telescope;
+typedef Wt::Auth::Dbo::AuthInfo<User> AuthInfo;
+
+class User {
 public:
-    Private(AstroPlanner* q);
-    Session session;
-    
-    std::vector<Wt::WMenuItem*> loggedInItems;
-    std::vector<Wt::WMenuItem*> loggedOutItems;
+  template<class Action>
+  void persist(Action& a)
+  {
+    dbo::hasMany(a, _telescopes, dbo::ManyToOne);
+  }
+  dbo::collection<dbo::ptr<Telescope>> telescopes() const;
 private:
-    class AstroPlanner* const q;
+  dbo::collection<dbo::ptr<Telescope>> _telescopes;
 };
-#endif // ASTROPLANNER_P_H
+
+#endif // USER_H

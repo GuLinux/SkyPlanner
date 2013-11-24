@@ -1,6 +1,6 @@
 /*
  * <one line to give the program's name and a brief idea of what it does.>
- * Copyright (C) 2013  <copyright holder> <email>
+ * Copyright (C) 2013  Marco Gulino <email>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,25 +17,21 @@
  *
  */
 
-#ifndef ASTROPLANNER_P_H
-#define ASTROPLANNER_P_H
-#include "astroplanner.h"
-#include "session.h"
+#ifndef TELESCOPESPAGE_H
+#define TELESCOPESPAGE_H
 
-namespace Wt
-{
-  class WMenuItem;
-}
+#include <Wt/WContainerWidget>
+#include "utils/d_ptr.h"
 
-class AstroPlanner::Private
+class Session;
+class TelescopesPage : public Wt::WContainerWidget
 {
-public:
-    Private(AstroPlanner* q);
-    Session session;
-    
-    std::vector<Wt::WMenuItem*> loggedInItems;
-    std::vector<Wt::WMenuItem*> loggedOutItems;
-private:
-    class AstroPlanner* const q;
+  public:
+    ~TelescopesPage();
+    TelescopesPage( Session &session, Wt::WContainerWidget *parent = 0);
+
+  private:
+    D_PTR;
 };
-#endif // ASTROPLANNER_P_H
+
+#endif // TELESCOPESPAGE_H

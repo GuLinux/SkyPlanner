@@ -1,6 +1,6 @@
 /*
  * <one line to give the program's name and a brief idea of what it does.>
- * Copyright (C) 2013  <copyright holder> <email>
+ * Copyright (C) 2013  Marco Gulino <email>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,25 +17,33 @@
  *
  */
 
-#ifndef ASTROPLANNER_P_H
-#define ASTROPLANNER_P_H
-#include "astroplanner.h"
-#include "session.h"
+#ifndef TELESCOPE_H
+#define TELESCOPE_H
+#include <Wt/Dbo/Dbo>
 
-namespace Wt
-{
-  class WMenuItem;
-}
-
-class AstroPlanner::Private
+class User;
+namespace dbo = Wt::Dbo;
+class Telescope
 {
 public:
-    Private(AstroPlanner* q);
-    Session session;
-    
-    std::vector<Wt::WMenuItem*> loggedInItems;
-    std::vector<Wt::WMenuItem*> loggedOutItems;
+  explicit Telescope();
+  explicit Telescope(const std::string &name, int diameter, int focalLength);
+  std::string name() const;
+  int diameter() const;
+  int focalLength() const;
+  template<typename Action>
+  void persist(Action& a) {
+    dbo::field(a, _name, "name");
+    dbo::field(a, _diameter, "diameter");
+    dbo::field(a, _focalLength, "focal_length");
+    dbo::belongsTo(a, _user);
+  }
+  double limitMagnitudeGain() const;
 private:
-    class AstroPlanner* const q;
+  std::string _name;
+  int _diameter;
+  int _focalLength;
+  dbo::ptr<User> _user;
 };
-#endif // ASTROPLANNER_P_H
+
+#endif // TELESCOPE_H
