@@ -16,14 +16,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
+#include "Models"
 #include "astrosessionspage.h"
 #include "private/astrosessionspage_p.h"
 #include "utils/d_ptr_implementation.h"
 #include "Wt-Commons/wt_helpers.h"
 #include "session.h"
 #include "astrosessionslisttab.h"
+#include "astrosessiontab.h"
 #include <Wt/WTabWidget>
+#include <Wt/WMenuItem>
+#include <Wt/WMenu>
 
 using namespace Wt;
 using namespace WtCommons;
@@ -40,5 +43,12 @@ AstroSessionsPage::AstroSessionsPage(Session &session, WContainerWidget* parent)
     : d(session, this)
 {
   WTabWidget *tabs = new WTabWidget(this);
-  tabs->addTab(new AstroSessionsListTab(session), "Sessions List");
+  auto astroSessionsListTab = new AstroSessionsListTab(session);
+  astroSessionsListTab->sessionClicked().connect([=](const Dbo::ptr<AstroSession> &astroSession, _n5){
+    auto astroSessionTab = new AstroSessionTab(astroSession, d->session);
+    WMenuItem *newTab = tabs->addTab(astroSessionTab, astroSession->name());
+    newTab->setCloseable(true);
+    tabs->setCurrentWidget(astroSessionTab);
+  });
+  WMenuItem *sessionsListTab = tabs->addTab(astroSessionsListTab, "Sessions List");
 }

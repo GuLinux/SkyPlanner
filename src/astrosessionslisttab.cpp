@@ -74,7 +74,9 @@ void AstroSessionsListTab::Private::populateSessions()
      if(!session.login().loggedIn() || ! session.user()) return;
      for(auto astroSession: session.user()->astroSessions()) {
        WTableRow *row = sessionsTable->insertRow(sessionsTable->rowCount());
-       row->elementAt(0)->addWidget(new WText{astroSession->name()});
+       row->elementAt(0)->addWidget(WW<WAnchor>("", astroSession->name()).onClick([=](WMouseEvent){
+	 sessionClicked.emit(astroSession);
+      }));
        row->elementAt(1)->addWidget(new WText{astroSession->wDateWhen().date().toString()});
        row->elementAt(2)->addWidget(WW<WPushButton>("Remove").css("btn btn-danger").onClick([=](WMouseEvent){
 	 WMessageBox *confirm = new WMessageBox("Confirm removal", "Are you sure? This cannot be undone", Wt::Question, Ok | Cancel);
@@ -93,3 +95,9 @@ void AstroSessionsListTab::Private::populateSessions()
       }));
      }
 }
+
+Signal< Dbo::ptr< AstroSession > >& AstroSessionsListTab::sessionClicked() const
+{
+  return d->sessionClicked;
+}
+

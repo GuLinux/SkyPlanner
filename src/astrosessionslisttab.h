@@ -23,12 +23,14 @@
 #include <Wt/WContainerWidget>
 #include "utils/d_ptr.h"
 
+class AstroSession;
 class Session;
 class AstroSessionsListTab : public Wt::WContainerWidget
 {
 public:
     ~AstroSessionsListTab();
     AstroSessionsListTab(Session &session, Wt::WContainerWidget* parent = 0);
+    Wt::Signal<Wt::Dbo::ptr<AstroSession>> &sessionClicked() const;
 private:
     D_PTR;
 };

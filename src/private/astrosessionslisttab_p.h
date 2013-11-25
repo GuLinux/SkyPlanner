@@ -33,6 +33,7 @@ public:
     Session &session;
     Wt::WTable *sessionsTable;
     void populateSessions();
+    Wt::Signal<Wt::Dbo::ptr<AstroSession>> sessionClicked;
 private:
     class AstroSessionsListTab* const q;
 };
