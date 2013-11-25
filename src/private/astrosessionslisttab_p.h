@@ -1,6 +1,6 @@
 /*
  * <one line to give the program's name and a brief idea of what it does.>
- * Copyright (C) 2013  Marco Gulino <email>
+ * Copyright (C) 2013  <copyright holder> <email>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,35 +17,23 @@
  *
  */
 
-#ifndef USER_H
-#define USER_H
-#include <Wt/Auth/Dbo/AuthInfo>
+#ifndef ASTROSESSIONSLISTTAB_P_H
+#define ASTROSESSIONSLISTTAB_P_H
+#include "astrosessionslisttab.h"
 
-#include <Wt/Dbo/Dbo>
-#include <Wt/Dbo/Types>
-#include <Wt/Dbo/ptr>
-#include <string>
+namespace Wt {
+class WTable;
+}
 
-namespace dbo = Wt::Dbo;
-
-class User;
-class Telescope;
-class AstroSession;
-typedef Wt::Auth::Dbo::AuthInfo<User> AuthInfo;
-
-class User {
+class Session;
+class AstroSessionsListTab::Private
+{
 public:
-  template<class Action>
-  void persist(Action& a)
-  {
-    dbo::hasMany(a, _telescopes, dbo::ManyToOne);
-    dbo::hasMany(a, _astroSessions, dbo::ManyToOne);
-  }
-  dbo::collection<dbo::ptr<Telescope>> telescopes() const;
-  dbo::collection<dbo::ptr<AstroSession>> astroSessions() const;
+    Private(Session& session, AstroSessionsListTab* q);
+    Session &session;
+    Wt::WTable *sessionsTable;
+    void populateSessions();
 private:
-  dbo::collection<dbo::ptr<Telescope>> _telescopes;
-  dbo::collection<dbo::ptr<AstroSession>> _astroSessions;
+    class AstroSessionsListTab* const q;
 };
-
-#endif // USER_H
+#endif // ASTROSESSIONSLISTTAB_P_H

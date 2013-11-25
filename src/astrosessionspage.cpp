@@ -1,6 +1,6 @@
 /*
  * <one line to give the program's name and a brief idea of what it does.>
- * Copyright (C) 2013  Marco Gulino <email>
+ * Copyright (C) 2013  <copyright holder> <email>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,15 +17,28 @@
  *
  */
 
-#include "user.h"
-#include "Models"
+#include "astrosessionspage.h"
+#include "private/astrosessionspage_p.h"
+#include "utils/d_ptr_implementation.h"
+#include "Wt-Commons/wt_helpers.h"
+#include "session.h"
+#include "astrosessionslisttab.h"
+#include <Wt/WTabWidget>
+
 using namespace Wt;
-Dbo::collection<Dbo::ptr<Telescope>> User::telescopes() const
+using namespace WtCommons;
+using namespace std;
+AstroSessionsPage::Private::Private(Session& session, AstroSessionsPage* q) : session(session), q(q)
 {
-  return _telescopes;
 }
 
-Dbo::collection< Dbo::ptr< AstroSession > > User::astroSessions() const
+AstroSessionsPage::~AstroSessionsPage()
 {
-  return _astroSessions;
+}
+
+AstroSessionsPage::AstroSessionsPage(Session &session, WContainerWidget* parent)
+    : d(session, this)
+{
+  WTabWidget *tabs = new WTabWidget(this);
+  tabs->addTab(new AstroSessionsListTab(session), "Sessions List");
 }

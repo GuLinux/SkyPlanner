@@ -27,8 +27,10 @@
 #include <Wt/WMenu>
 #include "Wt-Commons/wt_helpers.h"
 #include "telescopespage.h"
+#include "astrosessionspage.h"
 #include <Wt/Auth/PasswordService>
 #include <Wt/Auth/Login>
+
 using namespace std;
 using namespace Wt;
 using namespace WtCommons;
@@ -51,15 +53,22 @@ AstroPlanner::AstroPlanner( const WEnvironment &environment )
   navBar->setTitle( "AstroPlanner" );
   useStyleSheet( "/style.css" );
   WStackedWidget *widgets = new WStackedWidget( root() );
+  widgets->setTransitionAnimation({WAnimation::AnimationEffect::Fade});
   WMenu *navBarMenu = new WMenu(widgets);
   navBar->addMenu(navBarMenu);
   Auth::AuthWidget *authWidget = new Auth::AuthWidget( Session::auth(), d->session.users(), d->session.login() );
   authWidget->model()->addPasswordAuth( &Session::passwordAuth() );
   authWidget->setRegistrationEnabled( true );
   authWidget->processEnvironment();
-  d->loggedOutItems.push_back(navBarMenu->addItem("Login", authWidget));
-  TelescopesPage *telescopesPage = new TelescopesPage(d->session);
   
+  WMenuItem *authMenuItem;
+  d->loggedOutItems.push_back(authMenuItem = navBarMenu->addItem("Login", authWidget));
+  TelescopesPage *telescopesPage = new TelescopesPage(d->session);
+  AstroSessionsPage *astrosessionspage = new AstroSessionsPage(d->session);
+  
+  WMenuItem *mySessionsMenuItem;
+  
+  d->loggedInItems.push_back(mySessionsMenuItem = navBarMenu->addItem("My Sessions", astrosessionspage));
   d->loggedInItems.push_back(navBarMenu->addItem("My Telescopes", telescopesPage));
   WMenuItem *logout = navBarMenu->addItem("Logout");
   d->loggedInItems.push_back(logout);
@@ -74,12 +83,15 @@ AstroPlanner::AstroPlanner( const WEnvironment &environment )
       i->setHidden(loggedIn);
   };
   
+  auto setLoggedInWidget = [=] {
+    navBarMenu->select(d->session.login().loggedIn() ? mySessionsMenuItem : authMenuItem);
+  };
+  
   logout->triggered().connect([=](WMenuItem*,_n5){ d->session.login().logout(); });
   d->session.login().changed().connect([=](_n6){
     setMenuItemsVisibility();
-    if(!d->session.login().loggedIn()) {
-      widgets->setCurrentWidget(authWidget);
-    }
+    setLoggedInWidget();
   });
   setMenuItemsVisibility();
+  setLoggedInWidget();
 }

@@ -1,6 +1,6 @@
 /*
  * <one line to give the program's name and a brief idea of what it does.>
- * Copyright (C) 2013  Marco Gulino <email>
+ * Copyright (C) 2013  <copyright holder> <email>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,35 +17,37 @@
  *
  */
 
-#ifndef USER_H
-#define USER_H
-#include <Wt/Auth/Dbo/AuthInfo>
-
+#ifndef ASTROSESSION_H
+#define ASTROSESSION_H
 #include <Wt/Dbo/Dbo>
-#include <Wt/Dbo/Types>
-#include <Wt/Dbo/ptr>
-#include <string>
 
-namespace dbo = Wt::Dbo;
+namespace Wt {
+class WDateTime;
+}
 
 class User;
-class Telescope;
-class AstroSession;
-typedef Wt::Auth::Dbo::AuthInfo<User> AuthInfo;
-
-class User {
+namespace dbo = Wt::Dbo;
+class AstroSession
+{
 public:
-  template<class Action>
-  void persist(Action& a)
-  {
-    dbo::hasMany(a, _telescopes, dbo::ManyToOne);
-    dbo::hasMany(a, _astroSessions, dbo::ManyToOne);
+  AstroSession();
+  AstroSession(const std::string &name, const boost::posix_time::ptime &when);
+  AstroSession(const std::string &name, const Wt::WDateTime &when);
+  
+  std::string name() const;
+  boost::posix_time::ptime when() const;
+  Wt::WDateTime wDateWhen() const;
+  
+  template<typename Action>
+  void persist(Action& a) {
+    dbo::field(a, _name, "name");
+    dbo::field(a, _when, "when");
+    dbo::belongsTo(a, _user);
   }
-  dbo::collection<dbo::ptr<Telescope>> telescopes() const;
-  dbo::collection<dbo::ptr<AstroSession>> astroSessions() const;
 private:
-  dbo::collection<dbo::ptr<Telescope>> _telescopes;
-  dbo::collection<dbo::ptr<AstroSession>> _astroSessions;
+  std::string _name;
+  boost::posix_time::ptime _when;
+  dbo::ptr<User> _user;
 };
 
-#endif // USER_H
+#endif // ASTROSESSION_H

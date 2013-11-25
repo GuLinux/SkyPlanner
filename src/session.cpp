@@ -49,6 +49,7 @@ Session::Session()
   mapClass<AuthInfo>("auth_info");
   mapClass<AuthInfo::AuthIdentityType>("auth_identity");
   mapClass<AuthInfo::AuthTokenType>("auth_token");
+  mapClass<AstroSession>("astro_session");
   d->users = new UserDatabase(*this);
   cerr << "Tables creation script: " << endl;
   cerr << "-----------------------------------------------" << endl;

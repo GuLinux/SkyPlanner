@@ -1,6 +1,6 @@
 /*
  * <one line to give the program's name and a brief idea of what it does.>
- * Copyright (C) 2013  Marco Gulino <email>
+ * Copyright (C) 2013  <copyright holder> <email>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,35 +17,18 @@
  *
  */
 
-#ifndef USER_H
-#define USER_H
-#include <Wt/Auth/Dbo/AuthInfo>
+#ifndef ASTROSESSIONSPAGE_P_H
+#define ASTROSESSIONSPAGE_P_H
+#include "astrosessionspage.h"
 
-#include <Wt/Dbo/Dbo>
-#include <Wt/Dbo/Types>
-#include <Wt/Dbo/ptr>
-#include <string>
-
-namespace dbo = Wt::Dbo;
-
-class User;
-class Telescope;
-class AstroSession;
-typedef Wt::Auth::Dbo::AuthInfo<User> AuthInfo;
-
-class User {
+class Session;
+class AstroSessionsPage::Private
+{
 public:
-  template<class Action>
-  void persist(Action& a)
-  {
-    dbo::hasMany(a, _telescopes, dbo::ManyToOne);
-    dbo::hasMany(a, _astroSessions, dbo::ManyToOne);
-  }
-  dbo::collection<dbo::ptr<Telescope>> telescopes() const;
-  dbo::collection<dbo::ptr<AstroSession>> astroSessions() const;
+    Private(Session &session, AstroSessionsPage* q);
+    Session &session;
 private:
-  dbo::collection<dbo::ptr<Telescope>> _telescopes;
-  dbo::collection<dbo::ptr<AstroSession>> _astroSessions;
+    class AstroSessionsPage* const q;
 };
 
-#endif // USER_H
+#endif // ASTROSESSIONSPAGE_P_H

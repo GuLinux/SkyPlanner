@@ -5,4 +5,5 @@
 #include "nebuladenomination.h"
 #include "user.h"
 #include "telescope.h"
+#include "astrosession.h"
 #endif

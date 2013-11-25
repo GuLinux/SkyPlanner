@@ -1,6 +1,6 @@
 /*
  * <one line to give the program's name and a brief idea of what it does.>
- * Copyright (C) 2013  Marco Gulino <email>
+ * Copyright (C) 2013  <copyright holder> <email>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,15 +17,34 @@
  *
  */
 
-#include "user.h"
 #include "Models"
+#include "astrosession.h"
+#include <Wt/WDateTime>
+
 using namespace Wt;
-Dbo::collection<Dbo::ptr<Telescope>> User::telescopes() const
+
+AstroSession::AstroSession()
 {
-  return _telescopes;
 }
 
-Dbo::collection< Dbo::ptr< AstroSession > > User::astroSessions() const
+AstroSession::AstroSession(const std::string& name, const boost::posix_time::ptime& when)
+  : _name(name), _when(when)
 {
-  return _astroSessions;
+}
+AstroSession::AstroSession(const std::string& name, const WDateTime& when)
+  : _name(name), _when(when.toPosixTime())
+{
+}
+
+std::string AstroSession::name() const
+{
+  return _name;
+}
+Wt::WDateTime AstroSession::wDateWhen() const
+{
+  return WDateTime::fromPosixTime(when());
+}
+boost::posix_time::ptime AstroSession::when() const
+{
+  return _when;
 }
