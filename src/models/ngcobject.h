@@ -25,6 +25,7 @@
 #include <Wt/Dbo/ptr>
 #include <string>
 
+class AstroSessionObject;
 class NebulaDenomination;
 namespace dbo = Wt::Dbo;
 
@@ -63,12 +64,14 @@ public:
         dbo::field(a, _angularSize, "angular_size");
         dbo::field(a, _type, "type");
 	dbo::hasMany(a, _nebulae, dbo::ManyToOne);
+	dbo::hasMany(a, _astroSessionObjects, dbo::ManyToOne);
     }
 private:
     std::string _objectId;
     float _rightAscension, _declination, _magnitude, _angularSize;
     NebulaType _type;
     dbo::collection< dbo::ptr<NebulaDenomination> > _nebulae;
+    dbo::collection< dbo::ptr<AstroSessionObject> > _astroSessionObjects;
 };
 
 

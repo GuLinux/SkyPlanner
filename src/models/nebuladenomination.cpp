@@ -17,8 +17,7 @@
  *
  */
 
-#include "ngcobject.h"
-#include "nebuladenomination.h"
+#include "Models"
 
 std::string NebulaDenomination::catalogue() const
 {
