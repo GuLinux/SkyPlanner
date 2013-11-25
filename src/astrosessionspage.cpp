@@ -50,5 +50,6 @@ AstroSessionsPage::AstroSessionsPage(Session &session, WContainerWidget* parent)
     newTab->setCloseable(true);
     tabs->setCurrentWidget(astroSessionTab);
   });
-  WMenuItem *sessionsListTab = tabs->addTab(astroSessionsListTab, "Sessions List");
+  tabs->addTab(astroSessionsListTab, "Sessions List");
+  tabs->tabClosed().connect([=](int, _n5){ tabs->setCurrentWidget(astroSessionsListTab); });
 }

@@ -28,7 +28,12 @@ public:
     Private(const Wt::Dbo::ptr<AstroSession>& astroSession, Session& session, AstroSessionTab* q);
     Wt::Dbo::ptr<AstroSession> astroSession;
     Session &session;
+    Wt::WTable *objectsTable;
+    void populate();
+    void addPanel(const Wt::WString &title, Wt::WWidget *widget, bool collapsed = false, bool collapsible = true, Wt::WContainerWidget *container = 0);
 private:
     class AstroSessionTab* const q;
 };
+
+
 #endif // ASTROSESSIONTAB_P_H

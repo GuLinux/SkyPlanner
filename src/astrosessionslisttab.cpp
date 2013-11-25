@@ -59,7 +59,8 @@ AstroSessionsListTab::AstroSessionsListTab(Session &session, Wt::WContainerWidge
     d->populateSessions();
   });
   addWidget(WW<WContainerWidget>().css("form-inline").add(newSessionName).add(newSessionDate).add(newSessionAdd));
-  addWidget(d->sessionsTable = new WTable);
+  addWidget(d->sessionsTable = WW<WTable>().addCss("table table-striped table-hover"));
+  d->sessionsTable->setHeaderCount(1);
   d->populateSessions();
   d->session.login().changed().connect([=](_n6){ d->populateSessions(); });
 }

@@ -49,7 +49,7 @@ boost::posix_time::ptime AstroSession::when() const
   return _when;
 }
 
-Dbo::collection< Dbo::ptr< AstroSessionObject > > AstroSession::astroSessionObjects()
+Dbo::collection< Dbo::ptr< AstroSessionObject > > AstroSession::astroSessionObjects() const
 {
   return _astroSessionObjects;
 }

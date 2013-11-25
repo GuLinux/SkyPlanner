@@ -39,7 +39,7 @@ public:
   std::string name() const;
   boost::posix_time::ptime when() const;
   Wt::WDateTime wDateWhen() const;
-  dbo::collection<dbo::ptr<AstroSessionObject>> astroSessionObjects();
+  dbo::collection<dbo::ptr<AstroSessionObject>> astroSessionObjects() const;
   template<typename Action>
   void persist(Action& a) {
     dbo::field(a, _name, "name");
