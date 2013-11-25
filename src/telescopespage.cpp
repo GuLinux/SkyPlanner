@@ -60,6 +60,7 @@ TelescopesPage::TelescopesPage( Session &session, WContainerWidget *parent )
   });
   addWidget(WW<WContainerWidget>().css("form-inline").add(telescopeName).add(telescopeDiameter).add(telescopeFocalLength).add(addTelescopeButton));
   d->telescopesTable = WW<WTable>(this).addCss("table table-striped table-hover");
+  d->telescopesTable->setHeaderCount(1);
   d->loginChanged();
   session.login().changed().connect(bind(&Private::loginChanged, d.get()));
 }
