@@ -29,6 +29,7 @@
 #include <Wt/WPushButton>
 #include <Wt/WLineEdit>
 #include <Wt/WSpinBox>
+#include <Wt/WLabel>
 #include <boost/format.hpp>
 
 using namespace Wt;
@@ -49,6 +50,14 @@ TelescopesPage::TelescopesPage( Session &session, WContainerWidget *parent )
   WLineEdit *telescopeName = WW<WLineEdit>();
   WSpinBox *telescopeDiameter = WW<WSpinBox>();
   WSpinBox *telescopeFocalLength = WW<WSpinBox>();
+  WLabel *telescopeNameLabel = WW<WLabel>("Telescope Name").css("control-label");
+  WLabel *telescopeDiameterLabel = WW<WLabel>("Diameter (mm)").css("control-label");
+  WLabel *telescopeFocalLengthLabel = WW<WLabel>("Focal Length (mm)").css("control-label");
+  
+  telescopeNameLabel->setBuddy(telescopeName);
+  telescopeDiameterLabel->setBuddy(telescopeDiameter);
+  telescopeFocalLengthLabel->setBuddy(telescopeFocalLength);
+  
   telescopeName->setEmptyText("Telescope Name");
   telescopeDiameter->setEmptyText("Diameter");
   telescopeFocalLength->setEmptyText("Focal Length");
@@ -58,7 +67,24 @@ TelescopesPage::TelescopesPage( Session &session, WContainerWidget *parent )
     t.commit();
     d->populate();
   });
-  addWidget(WW<WContainerWidget>().css("form-inline").add(telescopeName).add(telescopeDiameter).add(telescopeFocalLength).add(addTelescopeButton));
+  addWidget(WW<WContainerWidget>().css("form-horizontal")
+  .add(WW<WContainerWidget>().css("control-group")
+    .add(telescopeNameLabel)
+    .add(WW<WContainerWidget>().css("controls").add(telescopeName))
+  )
+  .add(WW<WContainerWidget>().css("control-group")
+    .add(telescopeDiameterLabel)
+    .add(WW<WContainerWidget>().css("controls").add(telescopeDiameter))
+  )
+  .add(WW<WContainerWidget>().css("control-group")
+    .add(telescopeFocalLengthLabel)
+    .add(WW<WContainerWidget>().css("controls").add(telescopeFocalLength))
+  )
+  .add(WW<WContainerWidget>().css("control-group")
+    .add(WW<WContainerWidget>().css("controls").add(addTelescopeButton))
+   )
+    
+  );
   d->telescopesTable = WW<WTable>(this).addCss("table table-striped table-hover");
   d->telescopesTable->setHeaderCount(1);
   d->loginChanged();
