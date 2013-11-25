@@ -6,4 +6,5 @@
 #include "user.h"
 #include "telescope.h"
 #include "astrosession.h"
+#include "astrosessionobject.h"
 #endif

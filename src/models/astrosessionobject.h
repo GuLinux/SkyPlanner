@@ -17,41 +17,27 @@
  *
  */
 
-#ifndef ASTROSESSION_H
-#define ASTROSESSION_H
+#ifndef ASTROSESSIONOBJECT_H
+#define ASTROSESSIONOBJECT_H
 #include <Wt/Dbo/Dbo>
 
 class NgcObject;
-namespace Wt {
-class WDateTime;
-}
-
-class User;
-class AstroSessionObject;
+class AstroSession;
 namespace dbo = Wt::Dbo;
-class AstroSession
+class AstroSessionObject
 {
 public:
-  AstroSession();
-  AstroSession(const std::string &name, const boost::posix_time::ptime &when);
-  AstroSession(const std::string &name, const Wt::WDateTime &when);
-  
-  std::string name() const;
-  boost::posix_time::ptime when() const;
-  Wt::WDateTime wDateWhen() const;
-  dbo::collection<dbo::ptr<AstroSessionObject>> astroSessionObjects();
+  AstroSessionObject();
+  AstroSessionObject(const dbo::ptr<NgcObject> &ngcObject);
+  dbo::ptr<NgcObject> ngcObject() const;
   template<typename Action>
   void persist(Action& a) {
-    dbo::field(a, _name, "name");
-    dbo::field(a, _when, "when");
-    dbo::hasMany(a, _astroSessionObjects, dbo::ManyToOne);
-    dbo::belongsTo(a, _user);
+    dbo::belongsTo(a, _astroSession);
+    dbo::belongsTo(a, _ngcObject);
   }
 private:
-  std::string _name;
-  boost::posix_time::ptime _when;
-  dbo::ptr<User> _user;
-  dbo::collection<dbo::ptr<AstroSessionObject>> _astroSessionObjects;
+  dbo::ptr<AstroSession> _astroSession;
+  dbo::ptr<NgcObject> _ngcObject;
 };
 
-#endif // ASTROSESSION_H
+#endif // ASTROSESSIONOBJECT_H

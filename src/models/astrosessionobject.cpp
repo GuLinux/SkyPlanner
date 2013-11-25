@@ -18,39 +18,19 @@
  */
 
 #include "Models"
-#include "astrosession.h"
-#include <Wt/WDateTime>
 
-using namespace Wt;
-
-AstroSession::AstroSession()
+AstroSessionObject::AstroSessionObject()
 {
+
 }
 
-AstroSession::AstroSession(const std::string& name, const boost::posix_time::ptime& when)
-  : _name(name), _when(when)
+AstroSessionObject::AstroSessionObject(const Wt::Dbo::ptr< NgcObject >& ngcObject)
+  : _ngcObject(ngcObject)
 {
-}
-AstroSession::AstroSession(const std::string& name, const WDateTime& when)
-  : _name(name), _when(when.toPosixTime())
-{
+
 }
 
-std::string AstroSession::name() const
+Wt::Dbo::ptr< NgcObject > AstroSessionObject::ngcObject() const
 {
-  return _name;
+  return _ngcObject;
 }
-Wt::WDateTime AstroSession::wDateWhen() const
-{
-  return WDateTime::fromPosixTime(when());
-}
-boost::posix_time::ptime AstroSession::when() const
-{
-  return _when;
-}
-
-Dbo::collection< Dbo::ptr< AstroSessionObject > > AstroSession::astroSessionObjects()
-{
-  return _astroSessionObjects;
-}
-
