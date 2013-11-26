@@ -29,9 +29,17 @@ class WDateTime;
 class User;
 class AstroSessionObject;
 namespace dbo = Wt::Dbo;
+
 class AstroSession
 {
 public:
+  struct Position {
+    Position() {};
+    Position(double latitude, double longitude) : latitude(latitude), longitude(longitude) {}
+    double latitude = 0.0;
+    double longitude = 0.0;
+    operator bool();
+  };
   AstroSession();
   AstroSession(const std::string &name, const boost::posix_time::ptime &when);
   AstroSession(const std::string &name, const Wt::WDateTime &when);
@@ -40,10 +48,14 @@ public:
   boost::posix_time::ptime when() const;
   Wt::WDateTime wDateWhen() const;
   dbo::collection<dbo::ptr<AstroSessionObject>> astroSessionObjects() const;
+  Position position() const;
+  void setPosition(const Position &position);
   template<typename Action>
   void persist(Action& a) {
     dbo::field(a, _name, "name");
     dbo::field(a, _when, "when");
+    dbo::field(a, _position.latitude, "latitude");
+    dbo::field(a, _position.longitude, "longitude");
     dbo::hasMany(a, _astroSessionObjects, dbo::ManyToOne);
     dbo::belongsTo(a, _user);
   }
@@ -52,6 +64,7 @@ private:
   boost::posix_time::ptime _when;
   dbo::ptr<User> _user;
   dbo::collection<dbo::ptr<AstroSessionObject>> _astroSessionObjects;
+  Position _position;
 };
 
 #endif // ASTROSESSION_H

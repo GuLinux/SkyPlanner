@@ -47,6 +47,8 @@ AstroPlanner::AstroPlanner( const WEnvironment &environment )
   : WApplication( environment ), d( this )
 {
   setTheme( new WBootstrapTheme( this ) );
+  requireJQuery("http://codeorigin.jquery.com/jquery-1.8.3.min.js");
+
   cerr << __PRETTY_FUNCTION__ << endl;
   WNavigationBar *navBar = WW<WNavigationBar>( root() ).addCss( "navbar-inverse" );
   navBar->setResponsive( true );

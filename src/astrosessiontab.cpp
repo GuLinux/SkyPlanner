@@ -23,6 +23,7 @@
 #include "utils/d_ptr_implementation.h"
 #include "Wt-Commons/wt_helpers.h"
 #include "session.h"
+#include "placewidget.h"
 #include <Wt/WText>
 #include <Wt/WComboBox>
 #include <Wt/Dbo/QueryModel>
@@ -31,7 +32,7 @@
 #include <Wt/WPushButton>
 #include <Wt/WTabWidget>
 #include <Wt/WMessageBox>
-
+#include <boost/format.hpp>
 using namespace Wt;
 using namespace WtCommons;
 using namespace std;
@@ -49,6 +50,7 @@ AstroSessionTab::AstroSessionTab(const Dbo::ptr<AstroSession>& astroSession, Ses
 {
   WContainerWidget *sessionInfo = WW<WContainerWidget>();
   sessionInfo->addWidget(new WText(astroSession->wDateWhen().date().toString("dddd dd MMMM yyyy")));
+  sessionInfo->addWidget(new PlaceWidget(astroSession, session));
   d->addPanel("Information", sessionInfo);
   
   WContainerWidget *addObjectByCatalogue = WW<WContainerWidget>();

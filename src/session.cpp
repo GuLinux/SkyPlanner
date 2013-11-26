@@ -52,10 +52,14 @@ Session::Session()
   mapClass<AstroSession>("astro_session");
   mapClass<AstroSessionObject>("astro_session_object");
   d->users = new UserDatabase(*this);
-  cerr << "Tables creation script: " << endl;
-  cerr << "-----------------------------------------------" << endl;
-  cerr << tableCreationSql() << endl;
-  cerr << "-----------------------------------------------" << endl;
+  static bool creationScriptPrinted = false;
+  if(!creationScriptPrinted) {
+    cerr << "Tables creation script: " << endl;
+    cerr << "-----------------------------------------------" << endl;
+    cerr << tableCreationSql() << endl;
+    cerr << "-----------------------------------------------" << endl;
+    creationScriptPrinted = true;
+  }
 }
 
 Session::~Session()

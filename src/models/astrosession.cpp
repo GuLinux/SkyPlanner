@@ -54,3 +54,17 @@ Dbo::collection< Dbo::ptr< AstroSessionObject > > AstroSession::astroSessionObje
   return _astroSessionObjects;
 }
 
+AstroSession::Position AstroSession::position() const
+{
+  return _position;
+}
+
+void AstroSession::setPosition(const AstroSession::Position& position)
+{
+  _position = position;
+}
+
+AstroSession::Position::operator bool()
+{
+  return latitude != 0 && longitude != 0;
+}
