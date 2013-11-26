@@ -63,6 +63,7 @@ public:
      calcFundamentals( t );
   }
 
+//   static const double SYNODIC_MONTH = 29.530588861;
   static constexpr double SYNODIC_MONTH = 29.530588861;
 
   double illuminatedFraction();

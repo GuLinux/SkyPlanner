@@ -112,24 +112,18 @@ void AstroSessionTab::Private::updatePositionDetails()
   positionDetails->clear();
   if(!astroSession->position())
     return;
-  forecast.fetch(astroSession->position().latitude, astroSession->position().longitude);
-  ObsInfo obsInfo(astroSession->position().longitude, astroSession->position().longitude, 0); // TODO: timezone
+//   forecast.fetch(astroSession->position().longitude, astroSession->position().latitude);
+  ObsInfo obsInfo(astroSession->position().longitude, astroSession->position().latitude, 0); // TODO: timezone
+  cerr << "latitude: " << obsInfo.latitude() << ", longitude: " << obsInfo.longitude() << endl;
   TimePair sunRiseSet, moonRiseSet;
   RiseSet riseSet;
   riseSet.getTimes(sunRiseSet, RiseSet::SUN, astroSession->wDateWhen().date().toJulianDay(), obsInfo);
   riseSet.getTimes(moonRiseSet, RiseSet::MOON, astroSession->wDateWhen().date().toJulianDay(), obsInfo);
   
   auto timeToString = [](double t) {
+    long minutes = static_cast<long>(t * 24. * 60. + .5);
     stringstream time;
-    t *= 24;
-    int hours = t;
-    t -= hours;
-    t *= 60;
-    int minutes = t;
-    t -= minutes;
-    t *= 60;
-    int seconds = t;
-    time << hours << ":" << minutes << ":" << seconds;
+    time << (minutes / 60) << ":" << (minutes % 60);
     return time.str();
   };
   
