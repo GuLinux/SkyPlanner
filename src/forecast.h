@@ -17,26 +17,28 @@
  *
  */
 
-#ifndef PLACEWIDGET_P_H
-#define PLACEWIDGET_P_H
-#include "placewidget.h"
+#ifndef FORECAST_H
+#define FORECAST_H
 
-#include <Wt/WGoogleMap>
+#include "utils/d_ptr.h"
+#include <Wt/WDateTime>
 
-class MapsWidget : public Wt::WGoogleMap {
-public:
-    MapsWidget(Wt::WContainerWidget* parent = 0);
-};
-
-class PlaceWidget::Private
+class Forecast
 {
 public:
-    Private(const Wt::Dbo::ptr< AstroSession >& astroSession, Session& session, PlaceWidget* q);
-    Wt::Dbo::ptr< AstroSession > astroSession;
-    Session &session;
-    Wt::WGoogleMap::Coordinate currentPlace;
-    Wt::Signal<double,double> placeChanged;
+  struct Data {
+    Wt::WDateTime when;
+    int cloudcover;
+    int seeing;
+    int transparency;
+    enum PrecipitationType { snow, rain, frzr, icep, none } precipitations;
+  };
+  Forecast();
+  ~Forecast();
+  void fetch(double latitude, double longitude);
+
 private:
-    class PlaceWidget* const q;
+    D_PTR;
 };
-#endif // PLACEWIDGET_P_H
+
+#endif // FORECAST_H

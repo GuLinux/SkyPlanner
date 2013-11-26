@@ -20,6 +20,7 @@
 #ifndef ASTROSESSIONTAB_P_H
 #define ASTROSESSIONTAB_P_H
 #include "astrosessiontab.h"
+#include <forecast.h>
 
 class Session;
 class AstroSessionTab::Private
@@ -29,8 +30,11 @@ public:
     Wt::Dbo::ptr<AstroSession> astroSession;
     Session &session;
     Wt::WTable *objectsTable;
+    Wt::WContainerWidget *positionDetails;
     void populate();
     void addPanel(const Wt::WString &title, Wt::WWidget *widget, bool collapsed = false, bool collapsible = true, Wt::WContainerWidget *container = 0);
+    void updatePositionDetails();
+    Forecast forecast;
 private:
     class AstroSessionTab* const q;
 };

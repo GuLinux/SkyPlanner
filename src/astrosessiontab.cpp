@@ -33,6 +33,8 @@
 #include <Wt/WTabWidget>
 #include <Wt/WMessageBox>
 #include <boost/format.hpp>
+#include "AstroCpp/RiseSet.h"
+
 using namespace Wt;
 using namespace WtCommons;
 using namespace std;
@@ -50,7 +52,12 @@ AstroSessionTab::AstroSessionTab(const Dbo::ptr<AstroSession>& astroSession, Ses
 {
   WContainerWidget *sessionInfo = WW<WContainerWidget>();
   sessionInfo->addWidget(new WText(astroSession->wDateWhen().date().toString("dddd dd MMMM yyyy")));
-  sessionInfo->addWidget(new PlaceWidget(astroSession, session));
+  PlaceWidget *placeWidget = new PlaceWidget(astroSession, session);
+  placeWidget->placeChanged().connect([=](double lat, double lng, _n4) {
+    d->updatePositionDetails();
+  });
+  sessionInfo->addWidget(d->positionDetails = WW<WContainerWidget>());
+  sessionInfo->addWidget(placeWidget);
   d->addPanel("Information", sessionInfo);
   
   WContainerWidget *addObjectByCatalogue = WW<WContainerWidget>();
@@ -94,7 +101,43 @@ AstroSessionTab::AstroSessionTab(const Dbo::ptr<AstroSession>& astroSession, Ses
   addWidget(d->objectsTable = WW<WTable>().addCss("table table-striped table-hover"));
   d->objectsTable->setHeaderCount(1);
   d->populate();
+  d->updatePositionDetails();
 }
+
+void AstroSessionTab::Private::updatePositionDetails()
+{
+  Dbo::Transaction t(session);
+  astroSession.reread();
+  positionDetails->clear();
+  if(!astroSession->position())
+    return;
+  forecast.fetch(astroSession->position().latitude, astroSession->position().longitude);
+  ObsInfo obsInfo(astroSession->position().longitude, astroSession->position().longitude, 0); // TODO: timezone
+  TimePair sunRiseSet, moonRiseSet;
+  RiseSet riseSet;
+  riseSet.getTimes(sunRiseSet, RiseSet::SUN, astroSession->wDateWhen().date().toJulianDay(), obsInfo);
+  riseSet.getTimes(moonRiseSet, RiseSet::MOON, astroSession->wDateWhen().date().toJulianDay(), obsInfo);
+  
+  auto timeToString = [](double t) {
+    stringstream time;
+    t *= 24;
+    int hours = t;
+    t -= hours;
+    t *= 60;
+    int minutes = t;
+    t -= minutes;
+    t *= 60;
+    int seconds = t;
+    time << hours << ":" << minutes << ":" << seconds;
+    return time.str();
+  };
+  
+  positionDetails->addWidget(new WText(WString("Sun: rising at {1}, setting at {2}").arg(timeToString(sunRiseSet.a)).arg(timeToString(sunRiseSet.b))));
+  positionDetails->addWidget(new WBreak);
+  positionDetails->addWidget(new WText(WString("Moon: rising at {1}, setting at {2}").arg(timeToString(moonRiseSet.a)).arg(timeToString(moonRiseSet.b))));
+  positionDetails->addWidget(new WBreak);
+}
+
 
 void AstroSessionTab::Private::populate()
 {

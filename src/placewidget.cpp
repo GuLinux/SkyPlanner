@@ -65,6 +65,7 @@ PlaceWidget::PlaceWidget(const Wt::Dbo::ptr< AstroSession >& astroSession, Sessi
 //     astroSession.modify()->setPosition({});
 //   }).disable();
 //   addWidget(setPlaceButton);
+  addWidget(new WText("For the time being, you have to manually find the observation place, and click a point to set it."));
   MapsWidget *map = new MapsWidget(this);
   map->setHeight(400);
   if(astroSession->position()) {
@@ -77,5 +78,13 @@ PlaceWidget::PlaceWidget(const Wt::Dbo::ptr< AstroSession >& astroSession, Sessi
     map->addMarker(c);
     Dbo::Transaction t(d->session);
     astroSession.modify()->setPosition(AstroSession::Position{c.latitude(), c.longitude()});
+    t.commit();
+    d->placeChanged.emit(c.latitude(), c.longitude());
   });
 }
+
+Signal< double, double >& PlaceWidget::placeChanged() const
+{
+  return d->placeChanged;
+}
+

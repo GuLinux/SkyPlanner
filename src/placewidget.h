@@ -30,7 +30,7 @@ class PlaceWidget : public Wt::WContainerWidget
 public:
     ~PlaceWidget();
     PlaceWidget(const Wt::Dbo::ptr<AstroSession> &astroSession, Session &session, Wt::WContainerWidget* parent = 0);
-
+    Wt::Signal<double,double> &placeChanged() const;
 private:
     D_PTR;
 };

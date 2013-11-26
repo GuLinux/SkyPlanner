@@ -17,26 +17,23 @@
  *
  */
 
-#ifndef PLACEWIDGET_P_H
-#define PLACEWIDGET_P_H
-#include "placewidget.h"
+#ifndef FORECAST_P_H
+#define FORECAST_P_H
+#include "forecast.h"
+#include <Wt/Http/Client>
 
-#include <Wt/WGoogleMap>
+namespace Wt {
+class WApplication;
+}
 
-class MapsWidget : public Wt::WGoogleMap {
-public:
-    MapsWidget(Wt::WContainerWidget* parent = 0);
-};
-
-class PlaceWidget::Private
+class Forecast::Private
 {
 public:
-    Private(const Wt::Dbo::ptr< AstroSession >& astroSession, Session& session, PlaceWidget* q);
-    Wt::Dbo::ptr< AstroSession > astroSession;
-    Session &session;
-    Wt::WGoogleMap::Coordinate currentPlace;
-    Wt::Signal<double,double> placeChanged;
+    Private(Forecast* q);
+    Wt::Http::Client client;
+    Wt::WApplication *app;
+    void parseForecast(const std::string &forecast);
 private:
-    class PlaceWidget* const q;
+    class Forecast* const q;
 };
-#endif // PLACEWIDGET_P_H
+#endif // FORECAST_P_H
