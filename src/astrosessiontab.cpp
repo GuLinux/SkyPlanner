@@ -34,6 +34,7 @@
 #include <Wt/WMessageBox>
 #include <boost/format.hpp>
 #include "AstroCpp/RiseSet.h"
+#include "AstroCpp/Lunar.h"
 
 using namespace Wt;
 using namespace WtCommons;
@@ -135,6 +136,8 @@ void AstroSessionTab::Private::updatePositionDetails()
   positionDetails->addWidget(new WText(WString("Sun: rising at {1}, setting at {2}").arg(timeToString(sunRiseSet.a)).arg(timeToString(sunRiseSet.b))));
   positionDetails->addWidget(new WBreak);
   positionDetails->addWidget(new WText(WString("Moon: rising at {1}, setting at {2}").arg(timeToString(moonRiseSet.a)).arg(timeToString(moonRiseSet.b))));
+  positionDetails->addWidget(new WBreak);
+  positionDetails->addWidget(new WText(WString("Moon Phase: {1}").arg(Lunar(astroSession->wDateWhen().date().toJulianDay()).illuminatedFraction())));
   positionDetails->addWidget(new WBreak);
 }
 
