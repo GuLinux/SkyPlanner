@@ -113,7 +113,7 @@ void AstroSessionTab::Private::updatePositionDetails()
   if(!astroSession->position())
     return;
 //   forecast.fetch(astroSession->position().longitude, astroSession->position().latitude);
-  ObsInfo obsInfo(astroSession->position().longitude, astroSession->position().latitude, 0); // TODO: timezone
+  ObsInfo obsInfo(-astroSession->position().longitude, astroSession->position().latitude, 0); // TODO: timezone
   cerr << "latitude: " << obsInfo.latitude() << ", longitude: " << obsInfo.longitude() << endl;
   TimePair sunRiseSet, moonRiseSet;
   RiseSet riseSet;
@@ -126,12 +126,14 @@ void AstroSessionTab::Private::updatePositionDetails()
     time << (minutes / 60) << ":" << (minutes % 60);
     return time.str();
   };
-  
+  // So, so wrong... :(
   positionDetails->addWidget(new WText(WString("Sun: rising at {1}, setting at {2}").arg(timeToString(sunRiseSet.a)).arg(timeToString(sunRiseSet.b))));
   positionDetails->addWidget(new WBreak);
   positionDetails->addWidget(new WText(WString("Moon: rising at {1}, setting at {2}").arg(timeToString(moonRiseSet.a)).arg(timeToString(moonRiseSet.b))));
   positionDetails->addWidget(new WBreak);
-  positionDetails->addWidget(new WText(WString("Moon Phase: {1}").arg(Lunar(astroSession->wDateWhen().date().toJulianDay()).illuminatedFraction())));
+  cerr << "Moon phase: " << Lunar(astroSession->wDateWhen().date().toJulianDay()).illuminatedFraction() << endl;
+  int moonPhasePercent = Lunar(astroSession->wDateWhen().date().toJulianDay()).illuminatedFraction() * 100;
+  positionDetails->addWidget(new WText(WString("Moon Phase: {1}%").arg(moonPhasePercent)));
   positionDetails->addWidget(new WBreak);
 }
 
