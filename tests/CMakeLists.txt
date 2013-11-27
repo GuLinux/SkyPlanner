@@ -1,5 +1,6 @@
 if(Boost_UNIT_TEST_FRAMEWORK_LIBRARY)
   add_definitions(-DBOOST_TEST_DYN_LINK)
+  include_directories(${CMAKE_CURRENT_SOURCE_DIR})
   add_custom_target(compile_unit_tests)
   add_custom_target(compile_integration_tests)
   add_custom_target(unit_tests COMMAND ctest --output-on-failure -R "unit.*" DEPENDS compile_unit_tests)

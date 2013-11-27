@@ -18,30 +18,34 @@
  */
 
 #include "degrees.h"
+#include <math.h>
+#include <cmath>
 
 Degrees::Degrees( double degrees )
   : value(degrees)
 {
-
 }
 
 Degrees::Sexagesimal::operator double()
 {
 }
 
-
 Degrees::Degrees( const Degrees::Sexagesimal &sexagesimal )
+  : Degrees( static_cast<double>(sexagesimal.degrees) + (sexagesimal.minutes/60.) + (sexagesimal.seconds/60/60) )
 {
-
-}
-Degrees::Degrees( const std::string &degrees )
-{
-
 }
 Degrees::operator Radian()
 {
-
+  return { value / 180. * M_PI};
 }
+Degrees::operator Sexagesimal()
+{
+  Sexagesimal out{static_cast<int>(value)};
+  out.minutes = (value-out.degrees) * 60;
+  out.seconds = (((value-out.degrees) * 60) - out.minutes ) * 60;
+  return out;
+}
+
 Degrees::operator double()
 {
   return value;

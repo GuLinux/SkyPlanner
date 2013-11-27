@@ -32,11 +32,11 @@ public:
   };
   Degrees(double degrees);
   Degrees(const Sexagesimal &sexagesimal);
-  Degrees(const std::string &degrees);
   operator Radian();
   operator double();
+  operator Sexagesimal();
 private:
-  double value;
+  const double value;
 };
 
 #endif // DEGREES_H
