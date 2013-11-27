@@ -29,6 +29,5 @@ if(Boost_UNIT_TEST_FRAMEWORK_LIBRARY)
     register_test(${name} integration  ${ARGN})
   endfunction()
   
-  add_subdirectory(astro)
 endif(Boost_UNIT_TEST_FRAMEWORK_LIBRARY)
 

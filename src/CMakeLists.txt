@@ -11,14 +11,65 @@ set(NgcIcCatalog_SRCS
   main.cpp
 )
 
-set(AstroCpp_SRCS
-  AstroCpp/RiseSet.cpp
-  AstroCpp/AstroOps.cpp
-  AstroCpp/PlanetData.cpp
-  AstroCpp/Pluto.cpp
-  AstroCpp/MathOps.cpp
-  AstroCpp/Lunar.cpp
-  AstroCpp/Vsop.cpp
+set(AAPLUS_SRCS
+aaplus/AAAberration.cpp
+aaplus/AAAngularSeparation.cpp
+aaplus/AABinaryStar.cpp
+aaplus/AACoordinateTransformation.cpp
+aaplus/AADate.cpp
+aaplus/AADiameters.cpp
+aaplus/AADynamicalTime.cpp
+aaplus/AAEarth.cpp
+aaplus/AAEaster.cpp
+aaplus/AAEclipses.cpp
+aaplus/AAEclipticalElements.cpp
+aaplus/AAElementsPlanetaryOrbit.cpp
+aaplus/AAElliptical.cpp
+aaplus/AAEquationOfTime.cpp
+aaplus/AAEquinoxesAndSolstices.cpp
+aaplus/AAFK5.cpp
+aaplus/AAGalileanMoons.cpp
+aaplus/AAGlobe.cpp
+aaplus/AAIlluminatedFraction.cpp
+aaplus/AAInterpolate.cpp                                                                                                                                                                                                                                                   
+aaplus/AAJewishCalendar.cpp                                                                                                                                                                                                                                                
+aaplus/AAJupiter.cpp                                                                                                                                                                                                                                                       
+aaplus/AAKepler.cpp                                                                                                                                                                                                                                                        
+aaplus/AAMars.cpp                                                                                                                                                                                                                                                          
+aaplus/AAMercury.cpp                                                                                                                                                                                                                                                       
+aaplus/AAMoonIlluminatedFraction.cpp                                                                                                                                                                                                                                       
+aaplus/AAMoonMaxDeclinations.cpp                                                                                                                                                                                                                                           
+aaplus/AAMoonNodes.cpp                                                                                                                                                                                                                                                     
+aaplus/AAMoonPerigeeApogee.cpp                                                                                                                                                                                                                                             
+aaplus/AAMoonPhases.cpp                                                                                                                                                                                                                                                    
+aaplus/AAMoslemCalendar.cpp                                                                                                                                                                                                                                                
+aaplus/AANeptune.cpp                                                                                                                                                                                                                                                       
+aaplus/AANodes.cpp                                                                                                                                                                                                                                                         
+aaplus/AANutation.cpp                                                                                                                                                                                                                                                      
+aaplus/AAParabolic.cpp                                                                                                                                                                                                                                                     
+aaplus/AAParallactic.cpp                                                                                                                                                                                                                                                   
+aaplus/AAParallax.cpp                                                                                                                                                                                                                                                      
+aaplus/AAPhysicalJupiter.cpp                                                                                                                                                                                                                                               
+aaplus/AAPhysicalMars.cpp                                                                                                                                                                                                                                                  
+aaplus/AAPhysicalMoon.cpp                                                                                                                                                                                                                                                  
+aaplus/AAPhysicalSun.cpp                                                                                                                                                                                                                                                   
+aaplus/AAPlanetaryPhenomena.cpp                                                                                                                                                                                                                                            
+aaplus/AAPlanetPerihelionAphelion.cpp                                                                                                                                                                                                                                      
+aaplus/AAPluto.cpp                                                                                                                                                                                                                                                         
+aaplus/AAPrecession.cpp                                                                                                                                                                                                                                                    
+aaplus/AARefraction.cpp                                                                                                                                                                                                                                                    
+aaplus/AARiseTransitSet.cpp                                                                                                                                                                                                                                                
+aaplus/AASaturn.cpp                                                                                                                                                                                                                                                        
+aaplus/AASaturnMoons.cpp                                                                                                                                                                                                                                                   
+aaplus/AASaturnRings.cpp                                                                                                                                                                                                                                                   
+aaplus/AASidereal.cpp                                                                                                                                                                                                                                                      
+aaplus/AAStellarMagnitudes.cpp                                                                                                                                                                                                                                             
+aaplus/AASun.cpp                                                                                                                                                                                                                                                           
+aaplus/AAUranus.cpp                                                                                                                                                                                                                                                        
+aaplus/AAVenus.cpp                                                                                                                                                                                                                                                         
+aaplus/stdafx.cpp                                                                                                                                                                                                                                                          
+aaplus/AANearParabolic.cpp                                                                                                                                                                                                                                                 
+aaplus/AAMoon.cpp
 )
 
 set(NgcIcCatalog_MODELS_SRCS
@@ -31,13 +82,7 @@ set(NgcIcCatalog_MODELS_SRCS
   models/ngcobject.cpp
 )
 
-set(Gum_Astro_SRCS 
-  astro/degrees.cpp
-  astro/radian.cpp
-  astro/celestialtoaltaz.cpp
-  astro/rightascension.cpp
-)
-add_executable(NgcIcCatalog ${NgcIcCatalog_SRCS} ${NgcIcCatalog_MODELS_SRCS} ${AstroCpp_SRCS} ${Gum_Astro_SRCS})
+add_executable(NgcIcCatalog ${NgcIcCatalog_SRCS} ${NgcIcCatalog_MODELS_SRCS} ${AAPLUS_SRCS} )
 target_link_libraries(NgcIcCatalog ${Wt_LIBRARIES} ${Boost_LIBRARIES} )
 install(TARGETS NgcIcCatalog RUNTIME DESTINATION bin)
 

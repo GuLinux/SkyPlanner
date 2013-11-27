@@ -33,8 +33,10 @@
 #include <Wt/WTabWidget>
 #include <Wt/WMessageBox>
 #include <boost/format.hpp>
-#include "AstroCpp/RiseSet.h"
-#include "AstroCpp/Lunar.h"
+#include "aaplus/AADate.h"
+#include "aaplus/AAMoon.h"
+#include "aaplus/AAMoonIlluminatedFraction.h"
+#include "aaplus/AAElliptical.h"
 
 using namespace Wt;
 using namespace WtCommons;
@@ -113,28 +115,21 @@ void AstroSessionTab::Private::updatePositionDetails()
   if(!astroSession->position())
     return;
 //   forecast.fetch(astroSession->position().longitude, astroSession->position().latitude);
-  ObsInfo obsInfo(-astroSession->position().longitude, astroSession->position().latitude, 0); // TODO: timezone
-  cerr << "latitude: " << obsInfo.latitude() << ", longitude: " << obsInfo.longitude() << endl;
-  TimePair sunRiseSet, moonRiseSet;
-  RiseSet riseSet;
-  riseSet.getTimes(sunRiseSet, RiseSet::SUN, astroSession->wDateWhen().date().toJulianDay(), obsInfo);
-  riseSet.getTimes(moonRiseSet, RiseSet::MOON, astroSession->wDateWhen().date().toJulianDay(), obsInfo);
-  
-  auto timeToString = [](double t) {
-    long minutes = static_cast<long>(t * 24. * 60. + .5);
-    stringstream time;
-    time << (minutes / 60) << ":" << (minutes % 60);
-    return time.str();
+  WDateTime when = astroSession->wDateWhen();
+  auto julianDate = [=](const WDate &date) {
+    return CAADate(date.year(), date.month(), date.day(), true);
   };
+//  CAAEllipticalPlanetaryDetails sunDetails = CAAElliptical::Calculate();
+  
   // So, so wrong... :(
-  positionDetails->addWidget(new WText(WString("Sun: rising at {1}, setting at {2}").arg(timeToString(sunRiseSet.a)).arg(timeToString(sunRiseSet.b))));
-  positionDetails->addWidget(new WBreak);
-  positionDetails->addWidget(new WText(WString("Moon: rising at {1}, setting at {2}").arg(timeToString(moonRiseSet.a)).arg(timeToString(moonRiseSet.b))));
-  positionDetails->addWidget(new WBreak);
-  cerr << "Moon phase: " << Lunar(astroSession->wDateWhen().date().toJulianDay()).illuminatedFraction() << endl;
-  int moonPhasePercent = Lunar(astroSession->wDateWhen().date().toJulianDay()).illuminatedFraction() * 100;
-  positionDetails->addWidget(new WText(WString("Moon Phase: {1}%").arg(moonPhasePercent)));
-  positionDetails->addWidget(new WBreak);
+//   positionDetails->addWidget(new WText(WString("Sun: rising at {1}, setting at {2}").arg(timeToString(sunRiseSet.a)).arg(timeToString(sunRiseSet.b))));
+//   positionDetails->addWidget(new WBreak);
+//   positionDetails->addWidget(new WText(WString("Moon: rising at {1}, setting at {2}").arg(timeToString(moonRiseSet.a)).arg(timeToString(moonRiseSet.b))));
+//   positionDetails->addWidget(new WBreak);
+//   cerr << "Moon phase: " << Lunar(astroSession->wDateWhen().date().toJulianDay()).illuminatedFraction() << endl;
+//   int moonPhasePercent = Lunar(astroSession->wDateWhen().date().toJulianDay()).illuminatedFraction() * 100;
+//  positionDetails->addWidget(new WText(WString("Moon Phase: {1}%").arg(moonPhasePercent)));
+//  positionDetails->addWidget(new WBreak);
 }
 
 
