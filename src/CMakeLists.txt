@@ -8,6 +8,7 @@ set(NgcIcCatalog_SRCS
   astroplanner.cpp
   ngcresource.cpp
   session.cpp
+  ephemeris.cpp
   main.cpp
 )
 

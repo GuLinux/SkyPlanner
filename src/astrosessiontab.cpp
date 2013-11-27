@@ -38,6 +38,7 @@
 #include "aaplus/AAMoonIlluminatedFraction.h"
 #include "aaplus/AAElliptical.h"
 #include "aaplus/AARiseTransitSet.h"
+#include "ephemeris.h"
 
 using namespace Wt;
 using namespace WtCommons;
@@ -117,46 +118,22 @@ void AstroSessionTab::Private::updatePositionDetails()
     return;
 //   forecast.fetch(astroSession->position().longitude, astroSession->position().latitude);
   WDateTime when = astroSession->wDateWhen();
-  auto julianDate = [](const WDate &date) {
-    return CAADate(date.year(), date.month(), date.day(), true);
-  };
+  Ephemeris ephemeris({astroSession->position().latitude, astroSession->position().longitude});
+  Ephemeris::RiseTransitSet sun = ephemeris.sun(astroSession->when());
+  Ephemeris::RiseTransitSet moon = ephemeris.moon(astroSession->when());
+  Ephemeris::LunarPhase lunarPhase = ephemeris.moonPhase(astroSession->when());
 
-  // TODO: Refactoring... and timezone check
-  auto julianDatetoWDateTime = [](double jd) {
-    CAADate SetDate(jd,true);
-    long setDay;
-    long setMonth;
-    long setYear;
-    long setHours;
-    long setMinuts;
-    double setSec;
-    SetDate.Get(setYear,setMonth, setDay, setHours, setMinuts, setSec);
-    return WDateTime{WDate{setYear, setMonth, setDay}, WTime{setHours, setMinuts, setSec}};
-  };
-  double JD = julianDate(when.date());
-  CAAEllipticalPlanetaryDetails SunDetails = CAAElliptical::Calculate(JD - 1, CAAElliptical::SUN);
-  double Alpha1 = SunDetails.ApparentGeocentricRA;
-  double Delta1 = SunDetails.ApparentGeocentricDeclination;
-  SunDetails = CAAElliptical::Calculate(JD, CAAElliptical::SUN);
-  double Alpha2 = SunDetails.ApparentGeocentricRA;
-  double Delta2 = SunDetails.ApparentGeocentricDeclination;
-  SunDetails = CAAElliptical::Calculate(JD + 1, CAAElliptical::SUN);
-  double Alpha3 = SunDetails.ApparentGeocentricRA;
-  double Delta3 = SunDetails.ApparentGeocentricDeclination;
-  CAARiseTransitSetDetails RiseTransitSetTime = CAARiseTransitSet::Calculate(JD, Alpha1, Delta1, Alpha2, Delta2, Alpha3, Delta3, astroSession->position().longitude, astroSession->position().latitude, -0.8333);
-  wApp->log("notice") << "Sunrise time: " << julianDatetoWDateTime(JD + (RiseTransitSetTime.Rise / 24.00)).toString();
-  wApp->log("notice") << "Transit time: " << julianDatetoWDateTime(JD + (RiseTransitSetTime.Transit / 24.00)).toString(); 
-  wApp->log("notice") << "Sunset time: " << julianDatetoWDateTime(JD + (RiseTransitSetTime.Set / 24.00)).toString();
-  
-  // So, so wrong... :(
-   positionDetails->addWidget(new WText(WString("Sun: rising at {1}, setting at {2}").arg( julianDatetoWDateTime(JD + (RiseTransitSetTime.Rise / 24.00)).toString() ).arg(julianDatetoWDateTime(JD + (RiseTransitSetTime.Set / 24.00)).toString())));
+   positionDetails->addWidget(new WText(WString("Sun: rising at {1}, setting at {2}")
+    .arg(WDateTime::fromPosixTime(sun.rise).toString())
+    .arg(WDateTime::fromPosixTime(sun.set).toString())
+  ));
    positionDetails->addWidget(new WBreak);
-//   positionDetails->addWidget(new WText(WString("Moon: rising at {1}, setting at {2}").arg(timeToString(moonRiseSet.a)).arg(timeToString(moonRiseSet.b))));
-//   positionDetails->addWidget(new WBreak);
-//   cerr << "Moon phase: " << Lunar(astroSession->wDateWhen().date().toJulianDay()).illuminatedFraction() << endl;
-//   int moonPhasePercent = Lunar(astroSession->wDateWhen().date().toJulianDay()).illuminatedFraction() * 100;
-//  positionDetails->addWidget(new WText(WString("Moon Phase: {1}%").arg(moonPhasePercent)));
-//  positionDetails->addWidget(new WBreak);
+   positionDetails->addWidget(new WText(WString("Moon: rising at {1}, setting at {2}, phase: {3}%")
+    .arg(WDateTime::fromPosixTime(sun.rise).toString())
+    .arg(WDateTime::fromPosixTime(sun.set).toString())
+    .arg(static_cast<int>(lunarPhase.illuminated_fraction * 100))
+  ));
+   positionDetails->addWidget(new WBreak);
 }
 
 

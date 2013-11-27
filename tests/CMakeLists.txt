@@ -29,5 +29,8 @@ if(Boost_UNIT_TEST_FRAMEWORK_LIBRARY)
     register_test(${name} integration  ${ARGN})
   endfunction()
   
+  
+  register_unit_test(simple_test simple_test.cpp)
+  link_unit_test(simple_test)
 endif(Boost_UNIT_TEST_FRAMEWORK_LIBRARY)
 
