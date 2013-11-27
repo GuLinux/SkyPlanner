@@ -26,7 +26,7 @@ Degrees::Degrees( double degrees )
 {
 }
 
-Degrees::Sexagesimal::operator double()
+Degrees::Sexagesimal::operator double() const
 {
 }
 
@@ -34,11 +34,11 @@ Degrees::Degrees( const Degrees::Sexagesimal &sexagesimal )
   : Degrees( static_cast<double>(sexagesimal.degrees) + (sexagesimal.minutes/60.) + (sexagesimal.seconds/60/60) )
 {
 }
-Degrees::operator Radian()
+Degrees::operator Radian() const
 {
   return { value / 180. * M_PI};
 }
-Degrees::operator Sexagesimal()
+Degrees::operator Sexagesimal() const
 {
   Sexagesimal out{static_cast<int>(value)};
   out.minutes = (value-out.degrees) * 60;
@@ -46,7 +46,7 @@ Degrees::operator Sexagesimal()
   return out;
 }
 
-Degrees::operator double()
+Degrees::operator double() const
 {
   return value;
 }

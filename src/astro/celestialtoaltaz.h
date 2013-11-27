@@ -19,9 +19,32 @@
 
 #ifndef CELESTIALTOALTAZ_H
 #define CELESTIALTOALTAZ_H
+#include "radian.h"
+#include "rightascension.h"
+#include <boost/date_time.hpp>
 
 class CelestialToAltAz
 {
+public:
+  struct LatLng {
+    Degrees latitude;
+    Degrees longitude;
+  };
+  struct AltAzCoordinates {
+    Radian alt;
+    Radian azimuth;
+  };
+  struct RADecCoordinates {
+    Radian rightAscension;
+    Radian declination;
+  };
+  CelestialToAltAz(const LatLng &latlng);
+  double greenwichSideralTime(const boost::posix_time::ptime &utc);
+  double localSideralTime(const boost::posix_time::ptime &utc);
+  AltAzCoordinates coordinatesAt(const RADecCoordinates &raDecCoordinates, const boost::posix_time::ptime &when);
+  
+private:
+  const LatLng latlng;
 };
 
 #endif // CELESTIALTOALTAZ_H

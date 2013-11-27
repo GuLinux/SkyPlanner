@@ -28,13 +28,13 @@ public:
     int degrees;
     int minutes;
     double seconds;
-    operator double();
+    operator double() const;
   };
   Degrees(double degrees);
   Degrees(const Sexagesimal &sexagesimal);
-  operator Radian();
-  operator double();
-  operator Sexagesimal();
+  operator Radian() const;
+  operator double() const;
+  operator Sexagesimal() const;
 private:
   const double value;
 };

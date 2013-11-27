@@ -30,11 +30,11 @@ RightAscension::RightAscension(const RightAscension::RA& sexagesimal)
 {
 }
 
-RightAscension::operator double()
+RightAscension::operator double() const
 {
   return value;
 }
-RightAscension::operator RA()
+RightAscension::operator RA() const
 {
   RA ra{static_cast<int>(value)};
   Degrees::Sexagesimal degrees = Degrees(value - ra.hours);
@@ -43,12 +43,12 @@ RightAscension::operator RA()
   return ra;
 }
 
-RightAscension::operator Degrees()
+RightAscension::operator Degrees() const
 {
   return Degrees{value*15.};
 }
 
-RightAscension::operator Radian()
+RightAscension::operator Radian() const
 {
   Degrees asDegrees = *this;
   return asDegrees;

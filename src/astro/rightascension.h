@@ -31,10 +31,10 @@ public:
   };
   RightAscension(double decimal);
   RightAscension(const RA &sexagesimal);
-  operator double();
-  operator RA();
-  operator Degrees();
-  operator Radian();
+  operator double() const;
+  operator RA() const;
+  operator Degrees() const;
+  operator Radian() const;
 private:
   const double value;
 };

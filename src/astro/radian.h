@@ -24,8 +24,8 @@ class Radian
 {
 public:
   Radian(double value);
-  operator double();
-  operator Degrees();
+  operator double() const;
+  operator Degrees() const;
 private:
   const double value;
 };

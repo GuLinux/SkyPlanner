@@ -26,12 +26,12 @@ Radian::Radian( double value )
 
 }
 
-Radian::operator double ()
+Radian::operator double () const
 {
   return value;
 }
 
-Radian::operator Degrees()
+Radian::operator Degrees() const
 {
   return Degrees{value * 180. / M_PI};
 }
