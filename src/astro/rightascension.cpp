@@ -1,6 +1,6 @@
 /*
  * <one line to give the program's name and a brief idea of what it does.>
- * Copyright (C) 2013  Marco Gulino <email>
+ * Copyright (C) 2013  <copyright holder> <email>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,21 +17,39 @@
  *
  */
 
-#include "radian.h"
-#include "degrees.h"
-#include <math.h>
-Radian::Radian( double value )
-  : value(value)
+#include "rightascension.h"
+using namespace std;
+RightAscension::RightAscension(double decimal)
+  : value(decimal)
 {
 
 }
 
-Radian::operator double ()
+RightAscension::RightAscension(const RightAscension::RA& sexagesimal)
+  : value(static_cast<double>(sexagesimal.hours) + (sexagesimal.minutes/60.) + (sexagesimal.seconds/60./60.) )
+{
+}
+
+RightAscension::operator double()
 {
   return value;
 }
-
-Radian::operator Degrees()
+RightAscension::operator RA()
 {
-  return Degrees{value * 180. / M_PI};
+  RA ra{static_cast<int>(value)};
+  Degrees::Sexagesimal degrees = Degrees(value - ra.hours);
+  ra.minutes = degrees.minutes;
+  ra.seconds = degrees.seconds;
+  return ra;
+}
+
+RightAscension::operator Degrees()
+{
+  return Degrees{value*15.};
+}
+
+RightAscension::operator Radian()
+{
+  Degrees asDegrees = *this;
+  return asDegrees;
 }

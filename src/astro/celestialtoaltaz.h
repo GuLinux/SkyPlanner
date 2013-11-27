@@ -1,6 +1,6 @@
 /*
  * <one line to give the program's name and a brief idea of what it does.>
- * Copyright (C) 2013  Marco Gulino <email>
+ * Copyright (C) 2013  <copyright holder> <email>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,21 +17,11 @@
  *
  */
 
-#include "radian.h"
-#include "degrees.h"
-#include <math.h>
-Radian::Radian( double value )
-  : value(value)
-{
+#ifndef CELESTIALTOALTAZ_H
+#define CELESTIALTOALTAZ_H
 
-}
-
-Radian::operator double ()
+class CelestialToAltAz
 {
-  return value;
-}
+};
 
-Radian::operator Degrees()
-{
-  return Degrees{value * 180. / M_PI};
-}
+#endif // CELESTIALTOALTAZ_H

@@ -19,14 +19,15 @@
 
 #ifndef RADIAN_H
 #define RADIAN_H
-
+class Degrees;
 class Radian
 {
 public:
   Radian(double value);
   operator double();
+  operator Degrees();
 private:
-  double value;
+  const double value;
 };
 
 #endif // RADIAN_H

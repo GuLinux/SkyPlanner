@@ -34,6 +34,8 @@ set(NgcIcCatalog_MODELS_SRCS
 set(Gum_Astro_SRCS 
   astro/degrees.cpp
   astro/radian.cpp
+  astro/celestialtoaltaz.cpp
+  astro/rightascension.cpp
 )
 add_executable(NgcIcCatalog ${NgcIcCatalog_SRCS} ${NgcIcCatalog_MODELS_SRCS} ${AstroCpp_SRCS} ${Gum_Astro_SRCS})
 target_link_libraries(NgcIcCatalog ${Wt_LIBRARIES} ${Boost_LIBRARIES} )
