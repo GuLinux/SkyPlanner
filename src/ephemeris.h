@@ -41,11 +41,22 @@ class Ephemeris
       double position_angle;
       double phase_angle;
     };
+    struct AltAzCoordinates {
+      double altitude;
+      double azimuth;
+    };
+    struct BestAltitude {
+      double altitude;
+      boost::posix_time::ptime when;
+    };
     Ephemeris(const GeoPosition &geoPosition);
     ~Ephemeris();
     RiseTransitSet sun(const boost::posix_time::ptime &when) const;
     RiseTransitSet moon(const boost::posix_time::ptime &when) const;
     LunarPhase moonPhase(const boost::posix_time::ptime &when) const;
+
+    AltAzCoordinates arDec2altAz(const std::pair<double,double> &arDec, const boost::posix_time::ptime &when) const;
+    BestAltitude findBestAltitude(const std::pair<double,double> &arDec, const boost::posix_time::ptime &rangeStart, const boost::posix_time::ptime &rangeEnd);
   private:
     D_PTR;
 };

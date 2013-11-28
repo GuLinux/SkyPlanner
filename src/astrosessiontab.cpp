@@ -146,6 +146,8 @@ void AstroSessionTab::Private::populate()
   objectsTable->elementAt(0,3)->addWidget(new WText{"Angular Size"});
   objectsTable->elementAt(0,4)->addWidget(new WText{"Magnitude"});
   objectsTable->elementAt(0,5)->addWidget(new WText{"Type"});
+  objectsTable->elementAt(0,6)->addWidget(new WText{"Highest Time"});
+  Ephemeris ephemeris({astroSession->position().latitude, astroSession->position().longitude});
   Dbo::Transaction t(session);
   for(auto sessionObject: astroSession->astroSessionObjects()) {
     WTableRow *row = objectsTable->insertRow(objectsTable->rowCount());
@@ -156,13 +158,21 @@ void AstroSessionTab::Private::populate()
       namesStream << separator << name->name();
       separator = ", ";
     }
+    for(int i=0; i<5; i++) {
+      boost::posix_time::ptime t = astroSession->when();
+      t += boost::posix_time::time_duration(i, 0, 0);
+      Ephemeris::AltAzCoordinates altAz = ephemeris.arDec2altAz({sessionObject->ngcObject()->rightAscension(), sessionObject->ngcObject()->declination()}, t);
+      cerr << "********** Calculated altAz: " << altAz.altitude << ", " << altAz.azimuth << ", time: " << WDateTime::fromPosixTime(t).toString() << endl;
+    }
     row->elementAt(0)->addWidget(new WText(namesStream.str()));
     row->elementAt(1)->addWidget(new WText(WString("{1}").arg(sessionObject->ngcObject()->rightAscension()) ));
     row->elementAt(2)->addWidget(new WText(WString("{1}").arg(sessionObject->ngcObject()->declination()) ));
     row->elementAt(3)->addWidget(new WText(WString("{1}").arg(sessionObject->ngcObject()->angularSize()) ));
     row->elementAt(4)->addWidget(new WText(WString("{1}").arg(sessionObject->ngcObject()->magnitude()) ));
     row->elementAt(5)->addWidget(new WText(sessionObject->ngcObject()->typeDescription() ));
-    row->elementAt(6)->addWidget(WW<WPushButton>("Remove").css("btn btn-danger").onClick([=](WMouseEvent){
+    auto bestAltitude = ephemeris.findBestAltitude({sessionObject->ngcObject()->rightAscension(), sessionObject->ngcObject()->declination()}, astroSession->when(), astroSession->when() + boost::posix_time::time_duration(24, 0, 0) );
+    row->elementAt(6)->addWidget(new WText( WDateTime::fromPosixTime(bestAltitude.when).time().toString() ));
+    row->elementAt(7)->addWidget(WW<WPushButton>("Remove").css("btn btn-danger").onClick([=](WMouseEvent){
       WMessageBox *confirmation = new WMessageBox("Confirm removal", "Are you sure?", Wt::Question, Wt::Ok | Wt::Cancel);
       confirmation->buttonClicked().connect([=](StandardButton b, _n5){
         if(b != Wt::Ok) {

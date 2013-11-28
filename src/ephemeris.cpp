@@ -36,6 +36,16 @@ Ephemeris::~Ephemeris()
 {
 }
 
+Ephemeris::AltAzCoordinates Ephemeris::arDec2altAz( const pair<double,double> &arDec, const boost::posix_time::ptime &when ) const
+{
+  double AST = CAASidereal::ApparentGreenwichSiderealTime(d->date(when).Julian());
+  double LongtitudeAsHourAngle = CAACoordinateTransformation::DegreesToHours(d->geoPosition.longitude);
+  double LocalHourAngle = AST - LongtitudeAsHourAngle - CAACoordinateTransformation::RadiansToHours(arDec.first);
+  auto coords = CAACoordinateTransformation::Equatorial2Horizontal(LocalHourAngle, CAACoordinateTransformation::RadiansToDegrees(arDec.second), d->geoPosition.latitude);
+  return {coords.Y, CAACoordinateTransformation::MapTo0To360Range(180. + coords.X)};
+}
+
+
 Ephemeris::RiseTransitSet Ephemeris::moon( const boost::posix_time::ptime &when ) const
 {
   CAARiseTransitSetDetails s = d->GetMoonRiseTransitSet(d->date(when).Julian(), d->geoPosition.longitude, d->geoPosition.latitude);
@@ -54,6 +64,18 @@ Ephemeris::LunarPhase Ephemeris::moonPhase( const boost::posix_time::ptime &when
   d->GetMoonIllumination(d->date(when).Julian(), lunarPhase.illuminated_fraction, lunarPhase.position_angle, lunarPhase.phase_angle);
   return lunarPhase;
 }
+
+Ephemeris::BestAltitude Ephemeris::findBestAltitude( const pair< double, double > &arDec, const boost::posix_time::ptime &rangeStart, const boost::posix_time::ptime &rangeEnd )
+{
+  BestAltitude bestAltitude{-90000000};
+  for(boost::posix_time::ptime i = rangeStart; i<=rangeEnd; i+= boost::posix_time::time_duration(0, 10, 0)) {
+    AltAzCoordinates c = arDec2altAz(arDec, i);
+    if(c.altitude > bestAltitude.altitude)
+    bestAltitude = BestAltitude{c.altitude, i};
+  }
+  return bestAltitude;
+}
+
 
 CAADate Ephemeris::Private::date( const boost::posix_time::ptime &when ) const
 {
