@@ -42,6 +42,8 @@
 #include "types.h"
 #include <Wt/Utils>
 #include <Wt/WTimer>
+#include <boost/format.hpp>
+#include <Wt/WImage>
 
 using namespace Wt;
 using namespace WtCommons;
@@ -145,6 +147,10 @@ void AstroSessionTab::Private::updatePositionDetails()
   ));
   positionDetails->addWidget(new WBreak);
   addMoonPhaseDetails(ephemeris);
+  
+  positionDetails->addWidget(new WImage((boost::format("http://www.7timer.com/v4/bin/astro.php?lon=%f&lat=%f&lang=en&ac=0&unit=metric&tzshift=0")
+    % astroSession->position().longitude % astroSession->position().latitude
+  ).str()));
 }
 
 
