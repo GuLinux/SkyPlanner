@@ -148,8 +148,18 @@ void AstroSessionTab::Private::populate()
   objectsTable->elementAt(0,5)->addWidget(new WText{"Type"});
   objectsTable->elementAt(0,6)->addWidget(new WText{"Highest Time"});
   Ephemeris ephemeris({astroSession->position().latitude, astroSession->position().longitude});
+  boost::posix_time::ptime sessionTimeStart = ephemeris.sun(astroSession->when()).set;
+  boost::posix_time::ptime sessionTimeEnd = ephemeris.sun(astroSession->when() + boost::posix_time::hours(24)).rise;
   Dbo::Transaction t(session);
-  for(auto sessionObject: astroSession->astroSessionObjects()) {
+  
+  // TODO: optimize
+  auto sessionObjectsDbCollection = astroSession->astroSessionObjects();
+  vector<dbo::ptr<AstroSessionObject>> sessionObjects(sessionObjectsDbCollection.begin(), sessionObjectsDbCollection.end());
+  sort(begin(sessionObjects), end(sessionObjects), [&](const dbo::ptr<AstroSessionObject> &a, const dbo::ptr<AstroSessionObject> &b){
+    return ephemeris.findBestAltitude({a->ngcObject()->rightAscension(), a->ngcObject()->declination()}, sessionTimeStart, sessionTimeEnd).when <
+           ephemeris.findBestAltitude({b->ngcObject()->rightAscension(), b->ngcObject()->declination()}, sessionTimeStart, sessionTimeEnd).when;
+  });
+  for(auto sessionObject: sessionObjects) {
     WTableRow *row = objectsTable->insertRow(objectsTable->rowCount());
     auto names = sessionObject->ngcObject()->nebulae();
     stringstream namesStream;
@@ -157,12 +167,6 @@ void AstroSessionTab::Private::populate()
     for(auto name: names) {
       namesStream << separator << name->name();
       separator = ", ";
-    }
-    for(int i=0; i<5; i++) {
-      boost::posix_time::ptime t = astroSession->when();
-      t += boost::posix_time::time_duration(i, 0, 0);
-      Ephemeris::AltAzCoordinates altAz = ephemeris.arDec2altAz({sessionObject->ngcObject()->rightAscension(), sessionObject->ngcObject()->declination()}, t);
-      cerr << "********** Calculated altAz: " << altAz.altitude << ", " << altAz.azimuth << ", time: " << WDateTime::fromPosixTime(t).toString() << endl;
     }
     row->elementAt(0)->addWidget(new WText(namesStream.str()));
     row->elementAt(1)->addWidget(new WText(WString("{1}").arg(sessionObject->ngcObject()->rightAscension()) ));
