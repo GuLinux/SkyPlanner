@@ -80,11 +80,28 @@ Ephemeris::BestAltitude Ephemeris::findBestAltitude( const pair< double, double 
 CAADate Ephemeris::Private::date( const boost::posix_time::ptime &when ) const
 {
   // TODO: use fractional seconds?
-  return {when.date().year(), when.date().month(), when.date().day(), when.time_of_day().hours(), when.time_of_day().minutes(), when.time_of_day().seconds(), true};
+  return {
+    when.date().year(), when.date().month(),
+    static_cast<double>(when.date().day()), 
+    static_cast<double>(when.time_of_day().hours()),
+    static_cast<double>(when.time_of_day().minutes()),
+    static_cast<double>(when.time_of_day().seconds()),
+    true};
 }
 boost::posix_time::ptime Ephemeris::Private::date( const CAADate &when ) const
 {
-  return {{when.Year(), when.Month(), when.Day()}, {when.Hour(), when.Minute(), when.Second()}};
+  return {
+    { 
+      static_cast<uint16_t>(when.Year()),
+      static_cast<uint16_t>(when.Month()),
+      static_cast<uint16_t>(when.Day())
+    },
+    {
+      static_cast<boost::posix_time::time_duration::hour_type>(when.Hour()),
+      static_cast<boost::posix_time::time_duration::min_type>(when.Minute()),
+      static_cast<boost::posix_time::time_duration::sec_type>(when.Second())
+    }
+  };
 }
 
 Ephemeris::RiseTransitSet Ephemeris::Private::convert( const CAARiseTransitSetDetails &details, const boost::posix_time::ptime &when )
