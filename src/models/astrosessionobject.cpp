@@ -44,7 +44,6 @@ Coordinates::Equatorial AstroSessionObject::coordinates() const
 
 Ephemeris::BestAltitude AstroSessionObject::bestAltitude(const Ephemeris &ephemeris, int rangeDeltaInHours) const
 {
-  boost::posix_time::ptime sunset = ephemeris.sun(_astroSession->when() + boost::posix_time::time_duration{rangeDeltaInHours, 0, 0}).set;
-  boost::posix_time::ptime sunrise = ephemeris.sun(_astroSession->when() + boost::posix_time::time_duration{24 - rangeDeltaInHours,0,0}).rise;
-  return ephemeris.findBestAltitude( coordinates(), sunset, sunrise );
+  AstroSession::ObservabilityRange range = _astroSession->observabilityRange(ephemeris).delta({rangeDeltaInHours, 0, 0});
+  return ephemeris.findBestAltitude( coordinates(), range.begin, range.end );
 }

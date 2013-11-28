@@ -39,7 +39,7 @@ Angle Angle::hours(double hours)
   return Angle::degrees(CAACoordinateTransformation::HoursToDegrees(hours));
 }
 
-Angle::Angle(double degrees) : _degrees(CAACoordinateTransformation::MapTo0To360Range(degrees)), valid(true)
+Angle::Angle(double degrees) : _degrees(degrees), valid(true)
 {
 }
 
@@ -77,7 +77,7 @@ string Angle::printable(Format format) const
     int minutes_i = static_cast<int>(time);
     time -= minutes_i;
     time *= 60.;
-    return (boost::format("%dh %d2m %.3fs") % hours_i % minutes_i % time ).str();
+    return (boost::format("%dh %2dm %.3fs") % hours_i % minutes_i % time ).str();
   }
 
   double angle = degrees();
@@ -87,7 +87,7 @@ string Angle::printable(Format format) const
   int minutes_i = static_cast<int>(angle);
   angle -= minutes_i;
   angle *= 60.;
-  return (boost::format("%d\302\260 %d2' %.3f\"") % degrees_i % minutes_i % angle ).str();
+  return (boost::format("%d\302\260 %2d' %.3f\"") % degrees_i % minutes_i % angle ).str();
 }
 
  

@@ -22,6 +22,7 @@
 #include <Wt/Dbo/Dbo>
 #include "types.h"
 
+class Ephemeris;
 class NgcObject;
 namespace Wt {
 class WDateTime;
@@ -34,6 +35,11 @@ namespace dbo = Wt::Dbo;
 class AstroSession
 {
 public:
+  struct ObservabilityRange {
+    boost::posix_time::ptime begin;
+    boost::posix_time::ptime end;
+    ObservabilityRange &delta(const boost::posix_time::time_duration &duration);
+  };
   AstroSession();
   AstroSession(const std::string &name, const boost::posix_time::ptime &when);
   AstroSession(const std::string &name, const Wt::WDateTime &when);
@@ -44,6 +50,7 @@ public:
   dbo::collection<dbo::ptr<AstroSessionObject>> astroSessionObjects() const;
   Coordinates::LatLng position() const;
   void setPosition(const Coordinates::LatLng &position);
+  ObservabilityRange observabilityRange(const Ephemeris &ephemeris) const;
   template<typename Action>
   void persist(Action& a) {
     dbo::field(a, _name, "name");

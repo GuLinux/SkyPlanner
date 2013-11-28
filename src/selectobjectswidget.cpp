@@ -28,6 +28,12 @@
 #include <Wt/WTable>
 #include <Wt/WText>
 #include <Wt/WPushButton>
+#include <Wt/WStandardItem>
+#include <Wt/WStandardItemModel>
+#include <Wt/WLabel>
+#include <Wt/Utils>
+#include <boost/format.hpp>
+
 using namespace Wt;
 using namespace WtCommons;
 using namespace std;
@@ -54,13 +60,90 @@ SelectObjectsWidget::SelectObjectsWidget(const Dbo::ptr< AstroSession >& astroSe
     d->suggestedObjects(t);
 }
 
+#define TelescopeMagnitudeLimit (Wt::UserRole + 1)
 void SelectObjectsWidget::Private::suggestedObjects(Dbo::Transaction& transaction)
 {
   WContainerWidget *suggestedObjectsContainer = WW<WContainerWidget>();
+  suggestedObjectsContainer->setMaximumSize(WLength::Auto, 450);
+  suggestedObjectsContainer->setOverflow(WContainerWidget::Overflow::OverflowAuto);
+  WTable *resultsTable = WW<WTable>().addCss("table table-striped table-hover");
+  resultsTable->setHeaderCount(1);
+  auto populateTable = [=](double magnitudeLimit) {
+    resultsTable->clear();
+    resultsTable->elementAt(0, 0)->addWidget(new WText{"Object Names"});
+    resultsTable->elementAt(0, 1)->addWidget(new WText{"Magnitude"});
+    resultsTable->elementAt(0, 2)->addWidget(new WText{"Transit Time"});
+    resultsTable->elementAt(0, 3)->addWidget(new WText{"Transit Altitude"});
+    Dbo::Transaction t(session);
+    dbo::collection<NgcObjectPtr> objects = session.find<NgcObject>().where("magnitude < ?").bind(magnitudeLimit);
+    vector<NgcObjectPtr> filteredByTransit;
+    Ephemeris ephemeris(astroSession->position());
+    AstroSession::ObservabilityRange range = astroSession->observabilityRange(ephemeris).delta({1,20,0});
+    copy_if(begin(objects), end(objects), back_inserter(filteredByTransit), [&ephemeris,&range](const NgcObjectPtr &o){
+      auto bestAltitude = ephemeris.findBestAltitude(o->coordinates(), range.begin, range.end);
+      return bestAltitude.coordinates.altitude.degrees() > 20;
+    });
+    boost::posix_time::ptime middleRange = range.begin + ((range.end - range.begin) / 2);
+    auto observabilityIndex = [&ephemeris,&range,magnitudeLimit,&middleRange] (const NgcObjectPtr &o) {
+      double magnitudeDelta = magnitudeLimit - o->magnitude(); // we already know that magnitudeLimit > o->magnitude(), so this is positive
+      magnitudeDelta *= 20; // how much?
+      double altitude = ephemeris.arDec2altAz(o->coordinates(), middleRange);
+      return magnitudeDelta + altitude;
+    };
+    sort(filteredByTransit.rbegin(), filteredByTransit.rend(), [&observabilityIndex](const NgcObjectPtr &a, const NgcObjectPtr &b){
+      return observabilityIndex(a) < observabilityIndex(b);
+    });
+    
+    for(NgcObjectPtr ngcObject: filteredByTransit) {
+      WTableRow *row = resultsTable->insertRow(resultsTable->rowCount());
+      stringstream names;
+      string separator = "";
+      for(auto denomination: ngcObject->nebulae()) {
+        names << separator << denomination->name();
+        separator = ", ";
+      }
+      row->elementAt(0)->addWidget(new WText{Utils::htmlEncode(WString::fromUTF8(names.str()))});
+      row->elementAt(1)->addWidget(new WText{(boost::format("%.3f") % ngcObject->magnitude()).str()});
+      auto bestAltitude = ephemeris.findBestAltitude(ngcObject->coordinates(), range.begin, range.end);
+      WDateTime transit = WDateTime::fromPosixTime(bestAltitude.when);
+      row->elementAt(2)->addWidget(new WText{transit.time().toString()});
+      row->elementAt(3)->addWidget(new WText{Utils::htmlEncode(WString::fromUTF8(bestAltitude.coordinates.altitude.printable()))});
+      row->elementAt(4)->addWidget(WW<WPushButton>("Add").css("btn btn-primary").onClick([=](WMouseEvent){
+        Dbo::Transaction t(session);
+        astroSession.modify()->astroSessionObjects().insert(new AstroSessionObject(ngcObject));
+        t.commit();
+        objectsListChanged.emit();
+      }));
+    }
+  };
+
+  
   q->addTab(suggestedObjectsContainer, "Best Visible Objects");
   auto telescopes = session.user()->telescopes();
-  for(auto telescope: telescopes) {
-    cerr << "Magnitude limit for telescope " << telescope->name() << ": " << 6+telescope->limitMagnitudeGain() << endl;
+  if(telescopes.size() > 0) {
+    WComboBox *telescopesCombo = WW<WComboBox>();
+    WLabel *telescopesComboLabel = new WLabel("Telescope: ");
+    telescopesComboLabel->setBuddy(telescopesCombo);
+    WStandardItemModel *telescopesModel = new WStandardItemModel(telescopesCombo);
+    telescopesCombo->setModel(telescopesModel);
+    telescopesCombo->activated().connect([=](int which, _n5){
+      double magnitude = boost::any_cast<double>(telescopesModel->item(which)->data(TelescopeMagnitudeLimit));
+      populateTable(magnitude);
+    });
+    for(auto telescope: telescopes) {
+      WStandardItem *item = new WStandardItem(telescope->name());
+      item->setData(telescope->limitMagnitudeGain() + 6.5, TelescopeMagnitudeLimit);
+      telescopesModel->appendRow(item);
+    }
+    suggestedObjectsContainer->addWidget(WW<WContainerWidget>().css("form-inline").add(telescopesComboLabel).add(telescopesCombo));
+    suggestedObjectsContainer->addWidget(resultsTable);
+    double magnitude = boost::any_cast<double>(telescopesModel->item(telescopesCombo->currentIndex())->data(TelescopeMagnitudeLimit));
+    populateTable(magnitude);
+  } else {
+    suggestedObjectsContainer->addWidget(new WText{"Please add one or more telescope in the \"My Telescopes\" section to have customized suggestions.<br />\
+      In the meantime objects up to magnitude 12 will be shown here."});
+    suggestedObjectsContainer->addWidget(resultsTable);
+    populateTable(12);
   }
 }
 

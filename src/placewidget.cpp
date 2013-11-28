@@ -83,7 +83,7 @@ PlaceWidget::PlaceWidget(const Wt::Dbo::ptr< AstroSession >& astroSession, Sessi
 //   addWidget(setPlaceButton);
   addWidget(new WText("For the time being, you have to manually find the observation place, and click a point to set it."));
   MapsWidget *map = new MapsWidget(this);
-  map->setHeight(400);
+  map->setHeight(450);
   if(astroSession->position()) {
     d->currentPlace = {astroSession->position().latitude.degrees(), astroSession->position().longitude.degrees()};
     map->setCenter(d->currentPlace);

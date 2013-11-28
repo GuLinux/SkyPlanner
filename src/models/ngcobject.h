@@ -76,6 +76,7 @@ private:
     dbo::collection< dbo::ptr<AstroSessionObject> > _astroSessionObjects;
 };
 
+typedef dbo::ptr<NgcObject> NgcObjectPtr;
 
 namespace Wt {
     namespace Dbo {

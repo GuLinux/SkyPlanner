@@ -41,7 +41,7 @@ Session::Session()
 {
   d->connection = make_shared<Dbo::backend::Sqlite3>("ngc.sqlite");
   setConnection(*d->connection);
-  d->connection->setProperty("show-queries", "true");
+  d->connection->setProperty("show-queries", "false");
   mapClass<NgcObject>("objects");
   mapClass<NebulaDenomination>("denominations");
   mapClass<User>("user");
