@@ -41,7 +41,7 @@ Coordinates::AltAzimuth Ephemeris::arDec2altAz( const Coordinates::Equatorial &a
   double AST = CAASidereal::ApparentGreenwichSiderealTime(d->date(when).Julian());
   double LongtitudeAsHourAngle = CAACoordinateTransformation::DegreesToHours(d->geoPosition.longitude);
   double LocalHourAngle = AST - LongtitudeAsHourAngle - arDec.rightAscension.hours();
-  auto coords = CAACoordinateTransformation::Equatorial2Horizontal(LocalHourAngle, arDec.declination.degrees(), d->geoPosition.latitude);
+  auto coords = CAACoordinateTransformation::Equatorial2Horizontal(LocalHourAngle, arDec.declination.degrees(), d->geoPosition.latitude.degrees());
   return {Angle::degrees(coords.Y), Angle::degrees(180. + coords.X)};
 }
 
