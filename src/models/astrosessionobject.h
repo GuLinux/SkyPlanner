@@ -20,6 +20,7 @@
 #ifndef ASTROSESSIONOBJECT_H
 #define ASTROSESSIONOBJECT_H
 #include <Wt/Dbo/Dbo>
+#include "types.h"
 
 class NgcObject;
 class AstroSession;
@@ -35,6 +36,7 @@ public:
     dbo::belongsTo(a, _astroSession);
     dbo::belongsTo(a, _ngcObject);
   }
+  Coordinates::Equatorial coordinates() const;
 private:
   dbo::ptr<AstroSession> _astroSession;
   dbo::ptr<NgcObject> _ngcObject;

@@ -34,3 +34,8 @@ Wt::Dbo::ptr< NgcObject > AstroSessionObject::ngcObject() const
 {
   return _ngcObject;
 }
+
+Coordinates::Equatorial AstroSessionObject::coordinates() const
+{
+  return _ngcObject->coordinates();
+}

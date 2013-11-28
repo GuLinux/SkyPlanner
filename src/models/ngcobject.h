@@ -24,6 +24,7 @@
 #include <Wt/Dbo/Types>
 #include <Wt/Dbo/ptr>
 #include <string>
+#include "types.h"
 
 class AstroSessionObject;
 class NebulaDenomination;
@@ -51,6 +52,7 @@ public:
     dbo::collection< dbo::ptr<NebulaDenomination> > nebulae() const;
     float rightAscension() const;
     float declination() const;
+    Coordinates::Equatorial coordinates() const;
     float magnitude() const;
     float angularSize() const;
     NebulaType type() const;

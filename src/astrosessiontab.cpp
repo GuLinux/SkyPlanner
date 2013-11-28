@@ -39,6 +39,8 @@
 #include "aaplus/AAElliptical.h"
 #include "aaplus/AARiseTransitSet.h"
 #include "ephemeris.h"
+#include "types.h"
+#include <Wt/Utils>
 
 using namespace Wt;
 using namespace WtCommons;
@@ -169,9 +171,9 @@ void AstroSessionTab::Private::populate()
       separator = ", ";
     }
     row->elementAt(0)->addWidget(new WText(namesStream.str()));
-    row->elementAt(1)->addWidget(new WText(WString("{1}").arg(sessionObject->ngcObject()->rightAscension()) ));
-    row->elementAt(2)->addWidget(new WText(WString("{1}").arg(sessionObject->ngcObject()->declination()) ));
-    row->elementAt(3)->addWidget(new WText(WString("{1}").arg(sessionObject->ngcObject()->angularSize()) ));
+    row->elementAt(1)->addWidget(new WText( Utils::htmlEncode( sessionObject->coordinates().rightAscension.printable(Angle::Hourly) ) ));
+    row->elementAt(2)->addWidget(new WText( Utils::htmlEncode( WString::fromUTF8( sessionObject->coordinates().declination.printable() )) ));
+    row->elementAt(3)->addWidget(new WText( Utils::htmlEncode( WString::fromUTF8( Angle::degrees(sessionObject->ngcObject()->angularSize()).printable() )) ));
     row->elementAt(4)->addWidget(new WText(WString("{1}").arg(sessionObject->ngcObject()->magnitude()) ));
     row->elementAt(5)->addWidget(new WText(sessionObject->ngcObject()->typeDescription() ));
     auto bestAltitude = ephemeris.findBestAltitude({sessionObject->ngcObject()->rightAscension(), sessionObject->ngcObject()->declination()}, astroSession->when(), astroSession->when() + boost::posix_time::time_duration(24, 0, 0) );

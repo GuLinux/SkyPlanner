@@ -55,6 +55,12 @@ float NgcObject::rightAscension() const
 {
   return _rightAscension;
 }
+
+Coordinates::Equatorial NgcObject::coordinates() const
+{
+  return { Angle::radians(rightAscension()), Angle::radians(declination()) };
+}
+
 NgcObject::NebulaType NgcObject::type() const
 {
   return _type;

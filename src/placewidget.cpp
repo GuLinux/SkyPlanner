@@ -69,7 +69,7 @@ PlaceWidget::PlaceWidget(const Wt::Dbo::ptr< AstroSession >& astroSession, Sessi
   MapsWidget *map = new MapsWidget(this);
   map->setHeight(400);
   if(astroSession->position()) {
-    d->currentPlace = {astroSession->position().latitude, astroSession->position().longitude};
+    d->currentPlace = {astroSession->position().latitude.degrees(), astroSession->position().longitude.degrees()};
     map->setCenter(d->currentPlace);
     map->addMarker(d->currentPlace);
   }
@@ -77,7 +77,7 @@ PlaceWidget::PlaceWidget(const Wt::Dbo::ptr< AstroSession >& astroSession, Sessi
     map->clearOverlays();
     map->addMarker(c);
     Dbo::Transaction t(d->session);
-    astroSession.modify()->setPosition(AstroSession::Position{c.latitude(), c.longitude()});
+    astroSession.modify()->setPosition(Coordinates::LatLng{Angle::degrees(c.latitude()), Angle::degrees(c.longitude())});
     t.commit();
     d->placeChanged.emit(c.latitude(), c.longitude());
   });

@@ -22,6 +22,7 @@
 #include <Wt/WDateTime>
 
 using namespace Wt;
+using namespace std;
 
 AstroSession::AstroSession()
 {
@@ -54,17 +55,18 @@ Dbo::collection< Dbo::ptr< AstroSessionObject > > AstroSession::astroSessionObje
   return _astroSessionObjects;
 }
 
-AstroSession::Position AstroSession::position() const
+Coordinates::LatLng AstroSession::position() const
 {
-  return _position;
+  Coordinates::LatLng c = Coordinates::LatLng{Angle::degrees(_latitude), Angle::degrees(_longitude)};
+  cerr << "latitude: " << _latitude << ", longitude: " << _longitude << endl;
+  cerr << "printable: " << c.latitude.printable() << ", " << c.longitude.printable() << endl;
+  cerr << "valid: " << static_cast<bool>(c) << endl;
+  return c;
 }
 
-void AstroSession::setPosition(const AstroSession::Position& position)
+void AstroSession::setPosition(const Coordinates::LatLng& position)
 {
-  _position = position;
+  _latitude = position.latitude.degrees();
+  _longitude = position.longitude.degrees();
 }
 
-AstroSession::Position::operator bool()
-{
-  return latitude != 0 && longitude != 0;
-}
