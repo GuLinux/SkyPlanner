@@ -57,16 +57,15 @@ Dbo::collection< Dbo::ptr< AstroSessionObject > > AstroSession::astroSessionObje
 
 Coordinates::LatLng AstroSession::position() const
 {
-  Coordinates::LatLng c = Coordinates::LatLng{Angle::degrees(_latitude), Angle::degrees(_longitude)};
-  cerr << "latitude: " << _latitude << ", longitude: " << _longitude << endl;
-  cerr << "printable: " << c.latitude.printable() << ", " << c.longitude.printable() << endl;
-  cerr << "valid: " << static_cast<bool>(c) << endl;
-  return c;
+  if(!_latitude || !_longitude) {
+    return Coordinates::LatLng{Angle(), Angle()};
+  }
+  return Coordinates::LatLng{Angle::degrees(*_latitude), Angle::degrees(*_longitude)};
 }
 
 void AstroSession::setPosition(const Coordinates::LatLng& position)
 {
-  _latitude = position.latitude.degrees();
-  _longitude = position.longitude.degrees();
+  _latitude.reset(position.latitude.degrees());
+  _longitude.reset(position.longitude.degrees());
 }
 

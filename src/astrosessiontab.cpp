@@ -41,6 +41,7 @@
 #include "ephemeris.h"
 #include "types.h"
 #include <Wt/Utils>
+#include <Wt/WTimer>
 
 using namespace Wt;
 using namespace WtCommons;
@@ -64,8 +65,10 @@ AstroSessionTab::AstroSessionTab(const Dbo::ptr<AstroSession>& astroSession, Ses
     d->updatePositionDetails();
   });
   sessionInfo->addWidget(d->positionDetails = WW<WContainerWidget>());
-  sessionInfo->addWidget(placeWidget);
   d->addPanel("Information", sessionInfo);
+  auto locationPanel = d->addPanel("Location", placeWidget ); 
+  if(astroSession->position())
+    WTimer::singleShot(1000, [=](WMouseEvent){ locationPanel->collapse(); });
   
   WContainerWidget *addObjectByCatalogue = WW<WContainerWidget>();
   WTabWidget *addObjectsTabWidget = new WTabWidget();
@@ -116,26 +119,32 @@ void AstroSessionTab::Private::updatePositionDetails()
   Dbo::Transaction t(session);
   astroSession.reread();
   positionDetails->clear();
-  if(!astroSession->position())
+  auto addMoonPhaseDetails = [=](const Ephemeris &ephemeris) {
+    Ephemeris::LunarPhase lunarPhase = ephemeris.moonPhase(astroSession->when());
+    positionDetails->addWidget(new WText(WString("Moon Phase: {1}%").arg(static_cast<int>(lunarPhase.illuminated_fraction * 100 ))));
+    positionDetails->addWidget(new WBreak);
+  };
+  if(!astroSession->position()) {
+    addMoonPhaseDetails(Ephemeris{{}});
     return;
+  }
 //   forecast.fetch(astroSession->position().longitude, astroSession->position().latitude);
   WDateTime when = astroSession->wDateWhen();
   Ephemeris ephemeris({astroSession->position().latitude, astroSession->position().longitude});
   Ephemeris::RiseTransitSet sun = ephemeris.sun(astroSession->when());
   Ephemeris::RiseTransitSet moon = ephemeris.moon(astroSession->when());
-  Ephemeris::LunarPhase lunarPhase = ephemeris.moonPhase(astroSession->when());
 
-   positionDetails->addWidget(new WText(WString("Sun: rising at {1}, setting at {2}")
+  positionDetails->addWidget(new WText(WString("Sun: rising at {1}, setting at {2}")
     .arg(WDateTime::fromPosixTime(sun.rise).toString())
     .arg(WDateTime::fromPosixTime(sun.set).toString())
   ));
-   positionDetails->addWidget(new WBreak);
-   positionDetails->addWidget(new WText(WString("Moon: rising at {1}, setting at {2}, phase: {3}%")
+  positionDetails->addWidget(new WBreak);
+  positionDetails->addWidget(new WText(WString("Moon: rising at {1}, setting at {2}")
     .arg(WDateTime::fromPosixTime(sun.rise).toString())
     .arg(WDateTime::fromPosixTime(sun.set).toString())
-    .arg(static_cast<int>(lunarPhase.illuminated_fraction * 100))
   ));
-   positionDetails->addWidget(new WBreak);
+  positionDetails->addWidget(new WBreak);
+  addMoonPhaseDetails(ephemeris);
 }
 
 
@@ -158,8 +167,7 @@ void AstroSessionTab::Private::populate()
   auto sessionObjectsDbCollection = astroSession->astroSessionObjects();
   vector<dbo::ptr<AstroSessionObject>> sessionObjects(sessionObjectsDbCollection.begin(), sessionObjectsDbCollection.end());
   sort(begin(sessionObjects), end(sessionObjects), [&](const dbo::ptr<AstroSessionObject> &a, const dbo::ptr<AstroSessionObject> &b){
-    return ephemeris.findBestAltitude({a->ngcObject()->rightAscension(), a->ngcObject()->declination()}, sessionTimeStart, sessionTimeEnd).when <
-           ephemeris.findBestAltitude({b->ngcObject()->rightAscension(), b->ngcObject()->declination()}, sessionTimeStart, sessionTimeEnd).when;
+    return a->bestAltitude(ephemeris, -3 ).when < b->bestAltitude(ephemeris, -3).when;
   });
   for(auto sessionObject: sessionObjects) {
     WTableRow *row = objectsTable->insertRow(objectsTable->rowCount());
@@ -170,14 +178,14 @@ void AstroSessionTab::Private::populate()
       namesStream << separator << name->name();
       separator = ", ";
     }
+    sessionObject->bestAltitude(ephemeris);
     row->elementAt(0)->addWidget(new WText(namesStream.str()));
     row->elementAt(1)->addWidget(new WText( Utils::htmlEncode( sessionObject->coordinates().rightAscension.printable(Angle::Hourly) ) ));
     row->elementAt(2)->addWidget(new WText( Utils::htmlEncode( WString::fromUTF8( sessionObject->coordinates().declination.printable() )) ));
     row->elementAt(3)->addWidget(new WText( Utils::htmlEncode( WString::fromUTF8( Angle::degrees(sessionObject->ngcObject()->angularSize()).printable() )) ));
     row->elementAt(4)->addWidget(new WText(WString("{1}").arg(sessionObject->ngcObject()->magnitude()) ));
     row->elementAt(5)->addWidget(new WText(sessionObject->ngcObject()->typeDescription() ));
-    auto bestAltitude = ephemeris.findBestAltitude({sessionObject->ngcObject()->rightAscension(), sessionObject->ngcObject()->declination()}, astroSession->when(), astroSession->when() + boost::posix_time::time_duration(24, 0, 0) );
-    row->elementAt(6)->addWidget(new WText( WDateTime::fromPosixTime(bestAltitude.when).time().toString() ));
+    row->elementAt(6)->addWidget(new WText( WDateTime::fromPosixTime( sessionObject->bestAltitude(ephemeris, 1).when).time().toString() ));
     row->elementAt(7)->addWidget(WW<WPushButton>("Remove").css("btn btn-danger").onClick([=](WMouseEvent){
       WMessageBox *confirmation = new WMessageBox("Confirm removal", "Are you sure?", Wt::Question, Wt::Ok | Wt::Cancel);
       confirmation->buttonClicked().connect([=](StandardButton b, _n5){
@@ -197,7 +205,7 @@ void AstroSessionTab::Private::populate()
 }
 
 
-void AstroSessionTab::Private::addPanel( const WString &title, WWidget *widget, bool collapsed, bool collapsible, WContainerWidget *container )
+WPanel *AstroSessionTab::Private::addPanel( const WString &title, WWidget *widget, bool collapsed, bool collapsible, WContainerWidget *container )
 {
   WPanel *panel = WW<WPanel>(container ? container : q);
   panel->setTitle(title);
@@ -205,5 +213,6 @@ void AstroSessionTab::Private::addPanel( const WString &title, WWidget *widget, 
   panel->setCollapsed(collapsed);
   panel->setAnimation({WAnimation::AnimationEffect::SlideInFromTop});
   panel->setCentralWidget(widget);
+  return panel;
 }
 

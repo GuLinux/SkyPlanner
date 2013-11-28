@@ -23,11 +23,11 @@
 #include "aaplus/AA+.h"
 
 using namespace std;
-Ephemeris::Private::Private( const Ephemeris::GeoPosition &geoPosition, Ephemeris *q ) : geoPosition(geoPosition), q( q )
+Ephemeris::Private::Private( const Coordinates::LatLng &geoPosition, Ephemeris *q ) : geoPosition(geoPosition), q( q )
 {
 }
 
-Ephemeris::Ephemeris( const Ephemeris::GeoPosition &geoPosition )
+Ephemeris::Ephemeris( const Coordinates::LatLng &geoPosition )
   : d( geoPosition, this )
 {
 }
@@ -36,13 +36,13 @@ Ephemeris::~Ephemeris()
 {
 }
 
-Ephemeris::AltAzCoordinates Ephemeris::arDec2altAz( const pair<double,double> &arDec, const boost::posix_time::ptime &when ) const
+Coordinates::AltAzimuth Ephemeris::arDec2altAz( const Coordinates::Equatorial &arDec, const boost::posix_time::ptime &when ) const
 {
   double AST = CAASidereal::ApparentGreenwichSiderealTime(d->date(when).Julian());
   double LongtitudeAsHourAngle = CAACoordinateTransformation::DegreesToHours(d->geoPosition.longitude);
-  double LocalHourAngle = AST - LongtitudeAsHourAngle - CAACoordinateTransformation::RadiansToHours(arDec.first);
-  auto coords = CAACoordinateTransformation::Equatorial2Horizontal(LocalHourAngle, CAACoordinateTransformation::RadiansToDegrees(arDec.second), d->geoPosition.latitude);
-  return {coords.Y, CAACoordinateTransformation::MapTo0To360Range(180. + coords.X)};
+  double LocalHourAngle = AST - LongtitudeAsHourAngle - arDec.rightAscension.hours();
+  auto coords = CAACoordinateTransformation::Equatorial2Horizontal(LocalHourAngle, arDec.declination.degrees(), d->geoPosition.latitude);
+  return {Angle::degrees(coords.Y), Angle::degrees(180. + coords.X)};
 }
 
 
@@ -65,13 +65,13 @@ Ephemeris::LunarPhase Ephemeris::moonPhase( const boost::posix_time::ptime &when
   return lunarPhase;
 }
 
-Ephemeris::BestAltitude Ephemeris::findBestAltitude( const pair< double, double > &arDec, const boost::posix_time::ptime &rangeStart, const boost::posix_time::ptime &rangeEnd )
+Ephemeris::BestAltitude Ephemeris::findBestAltitude( const Coordinates::Equatorial &arDec, const boost::posix_time::ptime &rangeStart, const boost::posix_time::ptime &rangeEnd ) const
 {
-  BestAltitude bestAltitude{-90000000};
+  Ephemeris::BestAltitude bestAltitude;
   for(boost::posix_time::ptime i = rangeStart; i<=rangeEnd; i+= boost::posix_time::time_duration(0, 10, 0)) {
-    AltAzCoordinates c = arDec2altAz(arDec, i);
-    if(c.altitude > bestAltitude.altitude)
-    bestAltitude = BestAltitude{c.altitude, i};
+    Coordinates::AltAzimuth c = arDec2altAz(arDec, i);
+    if( ! bestAltitude.coordinates || c.altitude.degrees() > bestAltitude.coordinates.altitude.degrees() )
+      bestAltitude = {c,i};
   }
   return bestAltitude;
 }

@@ -26,6 +26,7 @@
 class MapsWidget : public Wt::WGoogleMap {
 public:
     MapsWidget(Wt::WContainerWidget* parent = 0);
+    void centerToGeoLocation();
 };
 
 class PlaceWidget::Private

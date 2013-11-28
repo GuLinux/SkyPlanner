@@ -58,8 +58,8 @@ private:
   boost::posix_time::ptime _when;
   dbo::ptr<User> _user;
   dbo::collection<dbo::ptr<AstroSessionObject>> _astroSessionObjects;
-  double _latitude;
-  double _longitude;
+  boost::optional<double> _latitude;
+  boost::optional<double> _longitude;
 };
 
 #endif // ASTROSESSION_H

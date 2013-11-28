@@ -19,6 +19,8 @@
 
 #include "Models"
 
+using namespace std;
+
 AstroSessionObject::AstroSessionObject()
 {
 
@@ -38,4 +40,11 @@ Wt::Dbo::ptr< NgcObject > AstroSessionObject::ngcObject() const
 Coordinates::Equatorial AstroSessionObject::coordinates() const
 {
   return _ngcObject->coordinates();
+}
+
+Ephemeris::BestAltitude AstroSessionObject::bestAltitude(const Ephemeris &ephemeris, int rangeDeltaInHours) const
+{
+  boost::posix_time::ptime sunset = ephemeris.sun(_astroSession->when() + boost::posix_time::time_duration{rangeDeltaInHours, 0, 0}).set;
+  boost::posix_time::ptime sunrise = ephemeris.sun(_astroSession->when() + boost::posix_time::time_duration{24 - rangeDeltaInHours,0,0}).rise;
+  return ephemeris.findBestAltitude( coordinates(), sunset, sunrise );
 }

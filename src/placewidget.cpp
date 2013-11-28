@@ -25,6 +25,7 @@
 #include "Wt-Commons/wt_helpers.h"
 #include <Wt/WApplication>
 #include <Wt/WPushButton>
+#include <boost/format.hpp>
 using namespace std;
 using namespace Wt;
 using namespace WtCommons;
@@ -46,6 +47,21 @@ MapsWidget::MapsWidget(WContainerWidget *parent)
   : WGoogleMap(Version3, parent)
 {
 //  wApp->require("https://maps.googleapis.com/maps/api/js?v=3&sensor=false&libraries=places");
+  setCenter({45.466667, 9.183333});
+}
+
+void MapsWidget::centerToGeoLocation()
+{
+  string centerMapToCurrentPlaceJs = (
+    boost::format("\n\
+    if(navigator.geolocation) { \n\
+      navigator.geolocation.getCurrentPosition(function(position) { \n\
+      initialLocation = new google.maps.LatLng(position.coords.latitude,position.coords.longitude); \n\
+      $('#%s')[0].map.setCenter(initialLocation); \n\
+    }); \n\
+    }") % id()
+  ).str();
+  doGmJavaScript(centerMapToCurrentPlaceJs);
 }
 
 PlaceWidget::Private::Private(const Wt::Dbo::ptr< AstroSession >& astroSession, Session& session, PlaceWidget* q) 
@@ -72,6 +88,9 @@ PlaceWidget::PlaceWidget(const Wt::Dbo::ptr< AstroSession >& astroSession, Sessi
     d->currentPlace = {astroSession->position().latitude.degrees(), astroSession->position().longitude.degrees()};
     map->setCenter(d->currentPlace);
     map->addMarker(d->currentPlace);
+  }
+  else {
+    map->centerToGeoLocation();
   }
   map->clicked().connect([=](WGoogleMap::Coordinate c, _n5){
     map->clearOverlays();

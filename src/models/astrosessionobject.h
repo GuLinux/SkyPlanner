@@ -21,6 +21,7 @@
 #define ASTROSESSIONOBJECT_H
 #include <Wt/Dbo/Dbo>
 #include "types.h"
+#include "ephemeris.h"
 
 class NgcObject;
 class AstroSession;
@@ -37,6 +38,7 @@ public:
     dbo::belongsTo(a, _ngcObject);
   }
   Coordinates::Equatorial coordinates() const;
+  Ephemeris::BestAltitude bestAltitude(const Ephemeris &ephemeris, int rangeDeltaInHours = 0) const;
 private:
   dbo::ptr<AstroSession> _astroSession;
   dbo::ptr<NgcObject> _ngcObject;

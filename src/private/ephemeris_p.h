@@ -25,8 +25,8 @@
 class Ephemeris::Private
 {
   public:
-    Private( const Ephemeris::GeoPosition &geoPosition, Ephemeris *q );
-    GeoPosition geoPosition;
+    Private( const Coordinates::LatLng &geoPosition, Ephemeris *q );
+    Coordinates::LatLng geoPosition;
     void GetSolarRaDecByJulian(double JD, double& RA, double& Dec);
     void GetLunarRaDecByJulian(double JD, double& RA, double& Dec);
     CAARiseTransitSetDetails GetSunRiseTransitSet(double JD, double longitude, double latitude);

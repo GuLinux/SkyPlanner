@@ -36,7 +36,7 @@ class Angle {
     operator bool() const;
   private:
     Angle(double degrees);
-    const double _degrees;
+    double _degrees;
     bool valid = false;
 };
 

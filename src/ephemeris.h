@@ -22,15 +22,11 @@
 
 #include "utils/d_ptr.h"
 #include <boost/date_time.hpp>
+#include "types.h"
 
 class Ephemeris
 {
   public:
-    struct GeoPosition {
-      double latitude;
-      double longitude;
-    };
-    
     struct RiseTransitSet {
       boost::posix_time::ptime rise;
       boost::posix_time::ptime transit;
@@ -41,22 +37,19 @@ class Ephemeris
       double position_angle;
       double phase_angle;
     };
-    struct AltAzCoordinates {
-      double altitude;
-      double azimuth;
-    };
     struct BestAltitude {
-      double altitude;
+      Coordinates::AltAzimuth coordinates;
       boost::posix_time::ptime when;
     };
-    Ephemeris(const GeoPosition &geoPosition);
+
+    Ephemeris(const Coordinates::LatLng &geoPosition);
     ~Ephemeris();
     RiseTransitSet sun(const boost::posix_time::ptime &when) const;
     RiseTransitSet moon(const boost::posix_time::ptime &when) const;
     LunarPhase moonPhase(const boost::posix_time::ptime &when) const;
 
-    AltAzCoordinates arDec2altAz(const std::pair<double,double> &arDec, const boost::posix_time::ptime &when) const;
-    BestAltitude findBestAltitude(const std::pair<double,double> &arDec, const boost::posix_time::ptime &rangeStart, const boost::posix_time::ptime &rangeEnd);
+    Coordinates::AltAzimuth arDec2altAz(const Coordinates::Equatorial &equatorial, const boost::posix_time::ptime &when) const;
+    BestAltitude findBestAltitude(const Coordinates::Equatorial &equatorial, const boost::posix_time::ptime &rangeStart, const boost::posix_time::ptime &rangeEnd) const;
   private:
     D_PTR;
 };
