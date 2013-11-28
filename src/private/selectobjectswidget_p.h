@@ -28,7 +28,8 @@ public:
     Wt::Dbo::ptr<AstroSession> astroSession;
     Session &session;
     Wt::Signal<> objectsListChanged;
-    void searchByCatalogueTab();
+    void searchByCatalogueTab(Wt::Dbo::Transaction &transaction);
+    void suggestedObjects(Wt::Dbo::Transaction &transaction);
 private:
     class SelectObjectsWidget* const q;
 };

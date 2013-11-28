@@ -49,12 +49,23 @@ SelectObjectsWidget::SelectObjectsWidget(const Dbo::ptr< AstroSession >& astroSe
     : d(astroSession, session, this)
 {
     WTabWidget *addObjectsTabWidget = this;
-    d->searchByCatalogueTab();
+    Dbo::Transaction t(session);
+    d->searchByCatalogueTab(t);
+    d->suggestedObjects(t);
 }
 
-void SelectObjectsWidget::Private::searchByCatalogueTab()
+void SelectObjectsWidget::Private::suggestedObjects(Dbo::Transaction& transaction)
 {
-  Dbo::Transaction t(session);
+  WContainerWidget *suggestedObjectsContainer = WW<WContainerWidget>();
+  q->addTab(suggestedObjectsContainer, "Best Visible Objects");
+  auto telescopes = session.user()->telescopes();
+  for(auto telescope: telescopes) {
+    cerr << "Magnitude limit for telescope " << telescope->name() << ": " << 6+telescope->limitMagnitudeGain() << endl;
+  }
+}
+
+void SelectObjectsWidget::Private::searchByCatalogueTab(Dbo::Transaction& transaction)
+{
   WContainerWidget *addObjectByCatalogue = WW<WContainerWidget>();
   WComboBox *cataloguesCombo = new WComboBox();
   WLineEdit *catalogueNumber = WW<WLineEdit>();
