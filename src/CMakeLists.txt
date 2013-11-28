@@ -13,6 +13,7 @@ set(NgcIcCatalog_SRCS
   session.cpp
   ephemeris.cpp
   types.cpp
+  selectobjectswidget.cpp
   main.cpp
 )
 

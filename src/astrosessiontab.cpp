@@ -40,6 +40,7 @@
 #include "aaplus/AARiseTransitSet.h"
 #include "ephemeris.h"
 #include "types.h"
+#include "selectobjectswidget.h"
 #include <Wt/Utils>
 #include <Wt/WTimer>
 #include <boost/format.hpp>
@@ -72,44 +73,11 @@ AstroSessionTab::AstroSessionTab(const Dbo::ptr<AstroSession>& astroSession, Ses
   if(astroSession->position())
     WTimer::singleShot(1000, [=](WMouseEvent){ locationPanel->collapse(); });
   
-  WContainerWidget *addObjectByCatalogue = WW<WContainerWidget>();
-  WTabWidget *addObjectsTabWidget = new WTabWidget();
-  addObjectsTabWidget->addTab(addObjectByCatalogue, "Add By Catalogue Number");
+  SelectObjectsWidget *addObjectsTabWidget = new SelectObjectsWidget(astroSession, session);
   d->addPanel("Add Observable Object", addObjectsTabWidget, true);
-  
-  Dbo::Transaction t(d->session);
-  
-  WComboBox *cataloguesCombo = new WComboBox();
-  WLineEdit *catalogueNumber = WW<WLineEdit>();
-  WTable *resultsTable = WW<WTable>().addCss("table table-striped table-hover");
 
-  
-  // TODO: .......
-  for(auto cat: vector<string>{"Messier", "NGC", "IC", "Caldwell"})
-    cataloguesCombo->addItem(cat);
-  catalogueNumber->setEmptyText("Catalogue Number");
-  auto searchByCatalogueNumber = [=] {
-    Dbo::Transaction t(d->session);
-    resultsTable->clear();
-    dbo::collection<dbo::ptr<NebulaDenomination>> denominations = d->session.find<NebulaDenomination>().where("catalogue = ?").where("number = ?")
-      .bind(cataloguesCombo->currentText()).bind(catalogueNumber->text());
-    for(auto nebula: denominations) {
-      WTableRow *row = resultsTable->insertRow(resultsTable->rowCount());
-      row->elementAt(0)->addWidget(new WText{nebula->catalogue()});
-      row->elementAt(1)->addWidget(new WText{WString("{1}").arg(nebula->number())});
-      row->elementAt(2)->addWidget(new WText{nebula->comment()});
-      row->elementAt(3)->addWidget(WW<WPushButton>("Add").css("btn btn-primary").onClick([=](WMouseEvent){
-        Dbo::Transaction t(d->session);
-        astroSession.modify()->astroSessionObjects().insert(new AstroSessionObject(nebula->ngcObject()));
-        t.commit();
-        d->populate();
-      }));
-    }
-  };
-  catalogueNumber->changed().connect([=](_n1){ searchByCatalogueNumber(); });
-  addObjectByCatalogue->addWidget(WW<WContainerWidget>().css("form-inline").add(cataloguesCombo).add(catalogueNumber)
-    .add(WW<WPushButton>("Search").css("btn btn-primary").onClick([=](WMouseEvent){ searchByCatalogueNumber(); })));
-  addObjectByCatalogue->addWidget(resultsTable);
+  addObjectsTabWidget->objectsListChanged().connect([=](_n6){d->populate(); });
+
   addWidget(d->objectsTable = WW<WTable>().addCss("table table-striped table-hover"));
   d->objectsTable->setHeaderCount(1);
   d->populate();
