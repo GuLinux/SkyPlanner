@@ -24,9 +24,11 @@
 class SelectObjectsWidget::Private
 {
 public:
-    Private(Session& session, SelectObjectsWidget* q);
+    Private(const Wt::Dbo::ptr<AstroSession>& astroSession, Session& session, SelectObjectsWidget* q);
+    Wt::Dbo::ptr<AstroSession> astroSession;
     Session &session;
     Wt::Signal<> objectsListChanged;
+    void searchByCatalogueTab();
 private:
     class SelectObjectsWidget* const q;
 };

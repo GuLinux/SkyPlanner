@@ -31,7 +31,7 @@
 using namespace Wt;
 using namespace WtCommons;
 using namespace std;
-SelectObjectsWidget::Private::Private(Session& session, SelectObjectsWidget* q) : session(session), q(q)
+SelectObjectsWidget::Private::Private(const Dbo::ptr< AstroSession >& astroSession, Session& session, SelectObjectsWidget* q) : astroSession(astroSession), session(session), q(q)
 {
 }
 
@@ -46,16 +46,16 @@ Signal< NoClass >& SelectObjectsWidget::objectsListChanged() const
 
 
 SelectObjectsWidget::SelectObjectsWidget(const Dbo::ptr< AstroSession >& astroSession, Session& session, WContainerWidget* parent)
-    : d(session, this)
+    : d(astroSession, session, this)
 {
     WTabWidget *addObjectsTabWidget = this;
-  
-    WContainerWidget *addObjectByCatalogue = WW<WContainerWidget>();
+    d->searchByCatalogueTab();
+}
 
-  addObjectsTabWidget->addTab(addObjectByCatalogue, "Add By Catalogue Number");
-  
-  Dbo::Transaction t(d->session);
-  
+void SelectObjectsWidget::Private::searchByCatalogueTab()
+{
+  Dbo::Transaction t(session);
+  WContainerWidget *addObjectByCatalogue = WW<WContainerWidget>();
   WComboBox *cataloguesCombo = new WComboBox();
   WLineEdit *catalogueNumber = WW<WLineEdit>();
   WTable *resultsTable = WW<WTable>().addCss("table table-striped table-hover");
@@ -65,9 +65,9 @@ SelectObjectsWidget::SelectObjectsWidget(const Dbo::ptr< AstroSession >& astroSe
     cataloguesCombo->addItem(cat);
   catalogueNumber->setEmptyText("Catalogue Number");
   auto searchByCatalogueNumber = [=] {
-    Dbo::Transaction t(d->session);
+    Dbo::Transaction t(session);
     resultsTable->clear();
-    dbo::collection<dbo::ptr<NebulaDenomination>> denominations = d->session.find<NebulaDenomination>().where("catalogue = ?").where("number = ?")
+    dbo::collection<dbo::ptr<NebulaDenomination>> denominations = session.find<NebulaDenomination>().where("catalogue = ?").where("number = ?")
       .bind(cataloguesCombo->currentText()).bind(catalogueNumber->text());
     for(auto nebula: denominations) {
       WTableRow *row = resultsTable->insertRow(resultsTable->rowCount());
@@ -75,10 +75,10 @@ SelectObjectsWidget::SelectObjectsWidget(const Dbo::ptr< AstroSession >& astroSe
       row->elementAt(1)->addWidget(new WText{WString("{1}").arg(nebula->number())});
       row->elementAt(2)->addWidget(new WText{nebula->comment()});
       row->elementAt(3)->addWidget(WW<WPushButton>("Add").css("btn btn-primary").onClick([=](WMouseEvent){
-        Dbo::Transaction t(d->session);
+        Dbo::Transaction t(session);
         astroSession.modify()->astroSessionObjects().insert(new AstroSessionObject(nebula->ngcObject()));
         t.commit();
-        d->objectsListChanged.emit();
+        objectsListChanged.emit();
       }));
     }
   };
@@ -86,4 +86,5 @@ SelectObjectsWidget::SelectObjectsWidget(const Dbo::ptr< AstroSession >& astroSe
   addObjectByCatalogue->addWidget(WW<WContainerWidget>().css("form-inline").add(cataloguesCombo).add(catalogueNumber)
     .add(WW<WPushButton>("Search").css("btn btn-primary").onClick([=](WMouseEvent){ searchByCatalogueNumber(); })));
   addObjectByCatalogue->addWidget(resultsTable);
+  q->addTab(addObjectByCatalogue, "Add By Catalogue Number");
 }
