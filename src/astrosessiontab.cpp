@@ -149,7 +149,7 @@ void AstroSessionTab::Private::updatePositionDetails()
   addMoonPhaseDetails(ephemeris);
   
   positionDetails->addWidget(new WImage((boost::format("http://www.7timer.com/v4/bin/astro.php?lon=%f&lat=%f&lang=en&ac=0&unit=metric&tzshift=0")
-    % astroSession->position().longitude % astroSession->position().latitude
+    % astroSession->position().longitude.degrees() % astroSession->position().latitude.degrees()
   ).str()));
 }
 
