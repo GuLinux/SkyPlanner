@@ -66,34 +66,70 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsList()
     unique_lock<mutex>(suggestedObjectsListMutex);
     if(!suggestedObjectsList)
       return;
-    Dbo::Transaction transaction(session);
-    suggestedObjectsTable->elementAt(0, 0)->addWidget(new WText{"Object Names"});
-    suggestedObjectsTable->elementAt(0, 1)->addWidget(new WText{"Magnitude"});
-    suggestedObjectsTable->elementAt(0, 2)->addWidget(new WText{"Transit Time"});
-    suggestedObjectsTable->elementAt(0, 3)->addWidget(new WText{"Transit Altitude"});
-    for(auto observableObject: *suggestedObjectsList) {
-      NgcObjectPtr &ngcObject = observableObject.first;
-      Ephemeris::BestAltitude &bestAltitude = observableObject.second;
-      
-      WTableRow *row = suggestedObjectsTable->insertRow(suggestedObjectsTable->rowCount());
-      stringstream names;
-      string separator = "";
-      for(auto denomination: ngcObject->nebulae()) {
-        names << separator << denomination->name();
-        separator = ", ";
+    auto populateRange = [=] (int startOffset, uint64_t size) {
+      Dbo::Transaction transaction(session);
+      suggestedObjectsTable->clear();
+      suggestedObjectsTable->elementAt(0, 0)->addWidget(new WText{"Object Names"});
+      suggestedObjectsTable->elementAt(0, 1)->addWidget(new WText{"Magnitude"});
+      suggestedObjectsTable->elementAt(0, 2)->addWidget(new WText{"Transit Time"});
+      suggestedObjectsTable->elementAt(0, 3)->addWidget(new WText{"Transit Altitude"});
+      for(int i=startOffset; i<min(startOffset+size, suggestedObjectsList->size()); i++) {
+	NgcObjectPtr &ngcObject = suggestedObjectsList->at(i).first;
+	Ephemeris::BestAltitude &bestAltitude = suggestedObjectsList->at(i).second;
+	
+	WTableRow *row = suggestedObjectsTable->insertRow(suggestedObjectsTable->rowCount());
+	stringstream names;
+	string separator = "";
+	for(auto denomination: ngcObject->nebulae()) {
+	  names << separator << denomination->name();
+	  separator = ", ";
+	}
+	row->elementAt(0)->addWidget(new WText{Utils::htmlEncode(WString::fromUTF8(names.str()))});
+	row->elementAt(1)->addWidget(new WText{(boost::format("%.3f") % ngcObject->magnitude()).str()});
+	WDateTime transit = WDateTime::fromPosixTime(bestAltitude.when);
+	row->elementAt(2)->addWidget(new WText{transit.time().toString()});
+	row->elementAt(3)->addWidget(new WText{Utils::htmlEncode(WString::fromUTF8(bestAltitude.coordinates.altitude.printable()))});
+	row->elementAt(4)->addWidget(WW<WPushButton>("Add").css("btn btn-primary").onClick([=](WMouseEvent){
+	  Dbo::Transaction t(session);
+	  astroSession.modify()->astroSessionObjects().insert(new AstroSessionObject(ngcObject));
+	  t.commit();
+	  objectsListChanged.emit();
+	}));
       }
-      row->elementAt(0)->addWidget(new WText{Utils::htmlEncode(WString::fromUTF8(names.str()))});
-      row->elementAt(1)->addWidget(new WText{(boost::format("%.3f") % ngcObject->magnitude()).str()});
-      WDateTime transit = WDateTime::fromPosixTime(bestAltitude.when);
-      row->elementAt(2)->addWidget(new WText{transit.time().toString()});
-      row->elementAt(3)->addWidget(new WText{Utils::htmlEncode(WString::fromUTF8(bestAltitude.coordinates.altitude.printable()))});
-      row->elementAt(4)->addWidget(WW<WPushButton>("Add").css("btn btn-primary").onClick([=](WMouseEvent){
-        Dbo::Transaction t(session);
-        astroSession.modify()->astroSessionObjects().insert(new AstroSessionObject(ngcObject));
-        t.commit();
-        objectsListChanged.emit();
-      }));
+    };
+    static const int pagesSize = 30;
+    suggestedObjectsTablePagination->clear();
+    suggestedObjectsTablePagination->setStyleClass("pagination pagination-mini");
+    WContainerWidget *paginationWidget = WW<WContainerWidget>();
+    paginationWidget->setList(true);
+    shared_ptr<vector<WContainerWidget*>> pages(new vector<WContainerWidget*>());
+    suggestedObjectsTablePagination->addWidget(paginationWidget);
+    
+    WContainerWidget *previousButton = WW<WContainerWidget>().css("disabled");
+    WContainerWidget *nextButton = WW<WContainerWidget>();
+    
+    auto activatePage = [=](int pageNumber) {
+      if(pageNumber<0 || pageNumber>=pages->size()) return;
+      populateRange(pageNumber*pagesSize, pagesSize);
+      pages->at(pagesCurrentIndex)->removeStyleClass("active");
+      pages->at(pageNumber)->addStyleClass("active");
+      pagesCurrentIndex = pageNumber;
+      previousButton->setStyleClass(pageNumber == 0 ? "disabled" : "");
+      nextButton->setStyleClass(pageNumber == pages->size()-1 ? "disabled" : "");
+    };
+    
+    previousButton->addWidget(WW<WAnchor>("", "&laquo;" ).onClick([=](WMouseEvent){ activatePage(pagesCurrentIndex-1); }));
+    nextButton->addWidget(WW<WAnchor>("", "&raquo;" ).onClick([=](WMouseEvent){ activatePage(pagesCurrentIndex+1); }));
+    paginationWidget->addWidget(previousButton);
+    for(int i=0; i*pagesSize <=suggestedObjectsList->size(); i++) {
+      WContainerWidget *page = WW<WContainerWidget>().add(WW<WAnchor>("", boost::lexical_cast<string>(i) ).onClick([=](WMouseEvent){ activatePage(i); }) );
+      pages->push_back(page);
+      paginationWidget->addWidget(page);
     }
+    paginationWidget->addWidget(nextButton);
+    pages->at(0)->addStyleClass("active");
+    populateRange(0, pagesSize);
+    pagesCurrentIndex = 0;
 }
 
 #define TelescopeMagnitudeLimit (Wt::UserRole + 1)
@@ -103,6 +139,7 @@ void SelectObjectsWidget::Private::suggestedObjects(const shared_ptr<Dbo::Transa
   suggestedObjectsContainer->setMaximumSize(WLength::Auto, 450);
   suggestedObjectsContainer->setOverflow(WContainerWidget::Overflow::OverflowAuto);
   suggestedObjectsTable = WW<WTable>().addCss("table table-striped table-hover");
+  suggestedObjectsTablePagination = WW<WContainerWidget>();
   suggestedObjectsLoaded.connect(this, &SelectObjectsWidget::Private::populateSuggestedObjectsList);
 
   suggestedObjectsTable->setHeaderCount(1);
@@ -161,12 +198,14 @@ void SelectObjectsWidget::Private::suggestedObjects(const shared_ptr<Dbo::Transa
     }
     suggestedObjectsContainer->addWidget(WW<WContainerWidget>().css("form-inline").add(telescopesComboLabel).add(telescopesCombo));
     suggestedObjectsContainer->addWidget(suggestedObjectsTable);
+    suggestedObjectsContainer->addWidget(suggestedObjectsTablePagination);
     double magnitude = boost::any_cast<double>(telescopesModel->item(telescopesCombo->currentIndex())->data(TelescopeMagnitudeLimit));
     populateTable(magnitude);
   } else {
     suggestedObjectsContainer->addWidget(new WText{"Please add one or more telescope in the \"My Telescopes\" section to have customized suggestions.<br />\
       In the meantime objects up to magnitude 12 will be shown here."});
     suggestedObjectsContainer->addWidget(suggestedObjectsTable);
+    suggestedObjectsContainer->addWidget(suggestedObjectsTablePagination);
     populateTable(12);
   }
 }
