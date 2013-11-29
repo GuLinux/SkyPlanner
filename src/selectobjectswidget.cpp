@@ -32,6 +32,7 @@
 #include <Wt/WStandardItemModel>
 #include <Wt/WLabel>
 #include <Wt/Utils>
+#include <Wt/WTimer>
 #include <boost/format.hpp>
 #include <boost/thread.hpp>
 
@@ -56,7 +57,8 @@ SelectObjectsWidget::SelectObjectsWidget(const Dbo::ptr< AstroSession >& astroSe
     : d(astroSession, session, this)
 {
     WTabWidget *addObjectsTabWidget = this;
-    auto t = make_shared<Dbo::Transaction>(session);
+    unique_lock<mutex> lockSession(d->sessionLockMutex);
+    Dbo::Transaction t(session);
     d->searchByCatalogueTab(t);
     d->suggestedObjects(t);
 }
@@ -133,7 +135,7 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsList()
 }
 
 #define TelescopeMagnitudeLimit (Wt::UserRole + 1)
-void SelectObjectsWidget::Private::suggestedObjects(const shared_ptr<Dbo::Transaction>& transaction)
+void SelectObjectsWidget::Private::suggestedObjects(Dbo::Transaction& transaction)
 {
   WContainerWidget *suggestedObjectsContainer = WW<WContainerWidget>();
   suggestedObjectsContainer->setMaximumSize(WLength::Auto, 450);
@@ -144,7 +146,9 @@ void SelectObjectsWidget::Private::suggestedObjects(const shared_ptr<Dbo::Transa
 
   suggestedObjectsTable->setHeaderCount(1);
   auto populateTable = [=](double magnitudeLimit) {
-    (void) transaction;
+    unique_lock<mutex> lockSession(sessionLockMutex);
+    Dbo::Transaction t(session);
+//     (void) transaction;
     unique_lock<mutex>(suggestedObjectsListMutex);
     suggestedObjectsTable->clear();
     suggestedObjectsList.reset(new NgcObjectsList);
@@ -200,17 +204,17 @@ void SelectObjectsWidget::Private::suggestedObjects(const shared_ptr<Dbo::Transa
     suggestedObjectsContainer->addWidget(suggestedObjectsTable);
     suggestedObjectsContainer->addWidget(suggestedObjectsTablePagination);
     double magnitude = boost::any_cast<double>(telescopesModel->item(telescopesCombo->currentIndex())->data(TelescopeMagnitudeLimit));
-    populateTable(magnitude);
+    WTimer::singleShot(100, [=](WMouseEvent){ populateTable(magnitude); });
   } else {
     suggestedObjectsContainer->addWidget(new WText{"Please add one or more telescope in the \"My Telescopes\" section to have customized suggestions.<br />\
       In the meantime objects up to magnitude 12 will be shown here."});
     suggestedObjectsContainer->addWidget(suggestedObjectsTable);
     suggestedObjectsContainer->addWidget(suggestedObjectsTablePagination);
-    populateTable(12);
+    WTimer::singleShot(100, [=](WMouseEvent){ populateTable(12); });
   }
 }
 
-void SelectObjectsWidget::Private::searchByCatalogueTab(const shared_ptr<Dbo::Transaction>& transaction)
+void SelectObjectsWidget::Private::searchByCatalogueTab(Dbo::Transaction& transaction)
 {
   WContainerWidget *addObjectByCatalogue = WW<WContainerWidget>();
   WComboBox *cataloguesCombo = new WComboBox();

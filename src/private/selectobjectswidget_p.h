@@ -31,12 +31,13 @@ public:
     Wt::Signal<> objectsListChanged;
     Wt::WTable *suggestedObjectsTable;
     Wt::WContainerWidget *suggestedObjectsTablePagination;
-    void searchByCatalogueTab(const std::shared_ptr<Wt::Dbo::Transaction> &transaction);
-    void suggestedObjects(const std::shared_ptr<Wt::Dbo::Transaction> &transaction);
+    void searchByCatalogueTab(Wt::Dbo::Transaction &transaction);
+    void suggestedObjects(Wt::Dbo::Transaction &transaction);
     void populateSuggestedObjectsList();
     Wt::Signal<> suggestedObjectsLoaded;
     typedef std::vector<std::pair<NgcObjectPtr,Ephemeris::BestAltitude>> NgcObjectsList; 
     std::shared_ptr<NgcObjectsList> suggestedObjectsList; 
+    std::mutex sessionLockMutex;
     std::mutex suggestedObjectsListMutex;
     int pagesCurrentIndex = 0;
 private:
