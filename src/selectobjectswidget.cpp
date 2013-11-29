@@ -148,14 +148,13 @@ void SelectObjectsWidget::Private::suggestedObjects(Dbo::Transaction& transactio
 
   suggestedObjectsTable->setHeaderCount(1);
   auto populateTable = [=](double magnitudeLimit) {
-    unique_lock<mutex> lockSession(sessionLockMutex);
-    Dbo::Transaction t(session);
-//     (void) transaction;
-    unique_lock<mutex>(suggestedObjectsListMutex);
+    unique_lock<mutex> l1(suggestedObjectsListMutex);
     suggestedObjectsTable->clear();
     suggestedObjectsList.reset(new NgcObjectsList);
     WApplication *app = wApp;
     boost::thread([=]{
+      unique_lock<mutex> l2(suggestedObjectsListMutex);
+      unique_lock<mutex> lockSession(sessionLockMutex);
       NgcObjectsList &suggObjList = *suggestedObjectsList;
       Dbo::Transaction t(session);
       dbo::collection<NgcObjectPtr> objects = session.find<NgcObject>().where("magnitude < ?").bind(magnitudeLimit);
