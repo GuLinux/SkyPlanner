@@ -20,12 +20,14 @@
 #include "session.h"
 #include "private/session_p.h"
 #include <Wt/Dbo/backend/Sqlite3>
+#include <Wt/Dbo/backend/Postgres>
 #include <Wt/Auth/AbstractUserDatabase>
 #include <Wt/Auth/PasswordService>
 #include <Wt/Auth/AuthService>
 #include <Wt/Auth/PasswordVerifier>
 #include <Wt/Auth/PasswordStrengthValidator>
 #include <Wt/Auth/HashFunction>
+#include <Wt/WServer>
 #include "ngcobject.h"
 #include "nebuladenomination.h"
 #include "utils/d_ptr_implementation.h"
@@ -39,7 +41,12 @@ Session::Private::Private() {
 
 Session::Session()
 {
-  d->connection = make_shared<Dbo::backend::Sqlite3>("ngc.sqlite");
+  string connectionString;
+  if(WServer::instance()->readConfigurationProperty("psql-connection", connectionString)) {
+    d->connection = make_shared<Dbo::backend::Postgres>(connectionString);
+  } else {
+    d->connection = make_shared<Dbo::backend::Sqlite3>("ngc.sqlite");
+  }
   setConnection(*d->connection);
   d->connection->setProperty("show-queries", "false");
   mapClass<NgcObject>("objects");
