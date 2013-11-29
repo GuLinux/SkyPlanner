@@ -30,24 +30,10 @@
 using namespace std;
 using namespace Wt;
 using namespace WtCommons;
-/*
-  map->doJavaScript((boost::format(
-     "var searchBox = new google.maps.places.SearchBox(document.getElementById('%d')); \
-     google.maps.event.addListener(searchBox, 'places_changed', function() { \
-     var places = searchBox.getPlaces();\
-     for (var i = 0, place; place = places[i]; i++) {\
-       console.log(\"Place: \" + place.name + \", location: \" + place.geometry.location);\
-      }\
-     });\
-     ")
-    % searchPlace->id()
-  ).str());
-  */
 
 MapsWidget::MapsWidget(WLineEdit *searchBox, const JSignal<> &mapReady, WContainerWidget *parent)
-  : WGoogleMapMod(Version3, parent)
+  : WGoogleMapMod(parent)
 {
-//  wApp->require("https://maps.googleapis.com/maps/api/js?v=3&sensor=false&libraries=places");
   setCenter({45.466667, 9.183333});
   if(searchBox) {
     doGmJavaScript((boost::format(JS(
@@ -128,11 +114,6 @@ PlaceWidget::~PlaceWidget()
 PlaceWidget::PlaceWidget(const Wt::Dbo::ptr< AstroSession >& astroSession, Session& session, Wt::WContainerWidget* parent)
     : d(astroSession, session, this)
 {
-//   WPushButton *setPlaceButton = WW<WPushButton>("Set Current Position").css("btn btn-primary").onClick([=](WMouseEvent){
-//     Dbo::Transaction t(d->session);
-//     astroSession.modify()->setPosition({});
-//   }).disable();
-//   addWidget(setPlaceButton);
   addWidget(new WText("Just click a point on the map to set the observation place. Use the search box to find places by name."));
   WLineEdit *searchBox = WW<WLineEdit>(this).css("controls");
   searchBox->setWidth(500);

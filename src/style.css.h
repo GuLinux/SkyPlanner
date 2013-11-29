@@ -11,6 +11,9 @@ std::vector<uint8_t> styleCss() {
     };
     legend {
     }
+    .gm-style img {
+      max-width: none;
+    }
   );
   return std::vector<uint8_t>(css.begin(), css.end());
 }

@@ -33,92 +33,14 @@ namespace {
 
 namespace Wt {
 
-WGoogleMapMod::Coordinate::Coordinate()
-  : lat_(0), lon_(0)
-{ }
-
-WGoogleMapMod::Coordinate::Coordinate(double lat, double lon)
-{
-  setLatitude(lat);
-  setLongitude(lon);
-}
-
-#ifndef WT_TARGET_JAVA
-WGoogleMapMod::Coordinate::Coordinate(const std::pair<double, double>& lat_long)
-{
-  setLatitude(lat_long.first);
-  setLongitude(lat_long.second);
-}
-#endif 
-
-void WGoogleMapMod::Coordinate::setLatitude(double latitude)
-{
-  if (latitude < -90.0 || latitude > 90.0)
-    throw std::out_of_range("invalid latitude: "
-			    + boost::lexical_cast<std::string>(latitude));
-
-  lat_ = latitude;
-}
-
-void WGoogleMapMod::Coordinate::setLongitude(double longitude)
-{
-  if (longitude < -180.0 || longitude > 180.0)
-    throw std::out_of_range("invalid longitude: "
-			    + boost::lexical_cast<std::string>(longitude));
-
-  lon_ = longitude;
-}
-
-double WGoogleMapMod::Coordinate::distanceTo(const Coordinate &rhs) const
-{
-  const double lat1 = lat_ * M_PI / 180.0;
-  const double lat2 = rhs.latitude() * M_PI / 180.0;
-  const double deltaLong = (rhs.longitude() - lon_) * M_PI / 180.0;
-  const double angle = std::sin(lat1) * std::sin(lat2)
-    + std::cos(lat1) * std::cos(lat2) * std::cos(deltaLong);
-  const double earthRadius = 6371.0; // km
-  const double dist = earthRadius * std::acos(angle);
-
-  return dist;
-}
-
-#ifndef WT_TARGET_JAVA
-std::pair<double, double> WGoogleMapMod::Coordinate::operator ()() const
-{
-  return std::make_pair(lat_, lon_);
-}
-
-std::istream& operator>> (std::istream& i, WGoogleMapMod::Coordinate& c)
-{
-  double lat, lon;
-  i >> lat >> std::ws >> lon;
-  c.setLatitude(lat);
-  c.setLongitude(lon);
-
-  return i;
-}
-#endif
 
 // example javascript code from :
 // http://code.google.com/apis/maps/documentation/
 
-WGoogleMapMod::WGoogleMapMod(ApiVersion version, WContainerWidget *parent)
- : clicked_(this, "click"),
-   doubleClicked_(this, "dblclick"),
-   mouseMoved_(0),
-   apiVersion_(version)
-{
-  setImplementation(new WContainerWidget());
-
-  if (parent)
-    parent->addWidget(this);
-}
-
 WGoogleMapMod::WGoogleMapMod(WContainerWidget *parent)
  : clicked_(this, "click"),
    doubleClicked_(this, "dblclick"),
-   mouseMoved_(0),
-   apiVersion_(Version2)
+   mouseMoved_(0)
 {
   setImplementation(new WContainerWidget());
 
@@ -135,24 +57,14 @@ void WGoogleMapMod::streamJSListener(const JSignal<Coordinate> &signal,
 				  std::string signalName,
 				  Wt::WStringStream &strm) 
 {
-  if (apiVersion_ == Version2) {
-    strm <<
-      """google.maps.Event.addListener(map, \"" << signalName << "\", "
-      ""                              "function(overlay, latlng) {"
-      ""  "if (latlng) {"
-	<< signal.createCall("latlng.lat() +' '+ latlng.lng()") << ";"
-      ""  "}"
-      """});";
-  } else {
-    strm << 
-      """google.maps.event.addListener(map, \"" << signalName << "\", "
-      ""                              "function(event) {"
-      ""  "if (event && event.latLng) {"
-	 << signal.createCall("event.latLng.lat() +' '+ event.latLng.lng()") 
-	 << ";"
-      ""  "}"
-      """});";
-  }
+  strm << 
+    """google.maps.event.addListener(map, \"" << signalName << "\", "
+    ""                              "function(event) {"
+    ""  "if (event && event.latLng) {"
+        << signal.createCall("event.latLng.lat() +' '+ event.latLng.lng()") 
+        << ";"
+    ""  "}"
+    """});";
 }
 
 JSignal<WGoogleMapMod::Coordinate>& WGoogleMapMod::mouseMoved()
@@ -176,7 +88,7 @@ void WGoogleMapMod::render(WFlags<RenderFlag> flags)
     app->require(gmuri, "google");
 
     std::string initFunction = 
-      app->javaScriptClass() + ".init_google_maps_" + id();
+      app->javaScriptClass() + ".init_google_gum_maps_" + id();
 
     // initialize the map
     WStringStream strm;
@@ -188,40 +100,25 @@ void WGoogleMapMod::render(WFlags<RenderFlag> flags)
       ""   "return;"
       "}";
 
-    if (apiVersion_ == Version2) {
-      strm << 
-	"var map = new google.maps.Map(self);"
-	"map.setCenter(new google.maps.LatLng(47.01887777, 8.651888), 13);";
-      setJavaScriptMember(WT_RESIZE_JS,
-                          "function(self, w, h) {"
-			  """if (w >= 0) "
-			  ""  "self.style.width=w + 'px';"
-			  """if (h >= 0) "
-			  ""  "self.style.height=h + 'px';"
-                          """if (self.map) "
-			  ""  "self.map.checkResize();"
-                          "}");
-    } else {
-      strm << 
-	"var latlng = new google.maps.LatLng(47.01887777, 8.651888);"
-	"var myOptions = {"
-	"" "zoom: 13,"
-	"" "center: latlng,"
-	"" "mapTypeId: google.maps.MapTypeId.ROADMAP"
-	"};"
-	"var map = new google.maps.Map(self, myOptions);"
-	"map.overlays = [];"
-	"map.infowindows = [];";
-      setJavaScriptMember(WT_RESIZE_JS,
-                          "function(self, w, h) {"
-			  """if (w >= 0) "
-			  ""  "self.style.width=w + 'px';"
-			  """if (h >= 0) "
-			  ""  "self.style.height=h + 'px';"
-                          """if (self.map)"
-			  """ google.maps.event.trigger(self.map, 'resize');"
-                          "}");
-    }
+    strm << 
+      "var latlng = new google.maps.LatLng(47.01887777, 8.651888);"
+      "var myOptions = {"
+      "" "zoom: 13,"
+      "" "center: latlng,"
+      "" "mapTypeId: google.maps.MapTypeId.ROADMAP"
+      "};"
+      "var map = new google.maps.Map(self, myOptions);"
+      "map.overlays = [];"
+      "map.infowindows = [];";
+    setJavaScriptMember(WT_RESIZE_JS,
+                        "function(self, w, h) {"
+                        """if (w >= 0) "
+                        ""  "self.style.width=w + 'px';"
+                        """if (h >= 0) "
+                        ""  "self.style.height=h + 'px';"
+                        """if (self.map)"
+                        """ google.maps.event.trigger(self.map, 'resize');"
+                        "}");
     strm << "self.map = map;";
 
     // eventhandling
@@ -249,27 +146,23 @@ void WGoogleMapMod::render(WFlags<RenderFlag> flags)
 
 void WGoogleMapMod::clearOverlays()
 {
-  if (apiVersion_ == Version2) {
-    doGmJavaScript(jsRef() + ".map.clearOverlays();");
-  } else {
-    std::stringstream strm;
-    strm 
-      << "var mapLocal = " << jsRef() + ".map, i;\n"
-      << "if (mapLocal.overlays) {\n"
-      << """for (i in mapLocal.overlays) {\n"
-      << """mapLocal.overlays[i].setMap(null);\n"
-      << "}\n"
-      << "mapLocal.overlays.length = 0;\n"
-      << "}\n"
-      << "if (mapLocal.infowindows) {\n"
-      << """for (i in mapLocal.infowindows) {\n"
-      << ""  "mapLocal.infowindows[i].close();\n"
-      << ""  "}\n"
-      << """mapLocal.infowindows.length = 0;\n"
-      << "}\n";
+  std::stringstream strm;
+  strm 
+    << "var mapLocal = " << jsRef() + ".map, i;\n"
+    << "if (mapLocal.overlays) {\n"
+    << """for (i in mapLocal.overlays) {\n"
+    << """mapLocal.overlays[i].setMap(null);\n"
+    << "}\n"
+    << "mapLocal.overlays.length = 0;\n"
+    << "}\n"
+    << "if (mapLocal.infowindows) {\n"
+    << """for (i in mapLocal.infowindows) {\n"
+    << ""  "mapLocal.infowindows[i].close();\n"
+    << ""  "}\n"
+    << """mapLocal.infowindows.length = 0;\n"
+    << "}\n";
 
-    doGmJavaScript(strm.str());
-  }
+  doGmJavaScript(strm.str());
 }
 
 void WGoogleMapMod::doGmJavaScript(const std::string& jscode)
@@ -283,20 +176,13 @@ void WGoogleMapMod::doGmJavaScript(const std::string& jscode)
 void WGoogleMapMod::addMarker(const Coordinate& pos)
 {
   std::stringstream strm;
-
-  if (apiVersion_ == Version2) {
-    strm << "var marker = new google.maps.Marker(new google.maps.LatLng("
-	 << pos.latitude() << ", " << pos.longitude() << "));"
-	 << jsRef() << ".map.addOverlay(marker);";
-  } else {
-    strm << "var position = new google.maps.LatLng("
-	 << pos.latitude() << ", " << pos.longitude() << ");"
-	 << "var marker = new google.maps.Marker({"
-	 << "position: position,"
-	 << "map: " << jsRef() << ".map"
-	 << "});"
-	 << jsRef() << ".map.overlays.push(marker);";
-  }
+  strm << "var position = new google.maps.LatLng("
+        << pos.latitude() << ", " << pos.longitude() << ");"
+        << "var marker = new google.maps.Marker({"
+        << "position: position,"
+        << "map: " << jsRef() << ".map"
+        << "});"
+        << jsRef() << ".map.overlays.push(marker);";
 
   doGmJavaScript(strm.str());
 }
@@ -305,22 +191,16 @@ void WGoogleMapMod::addIconMarker(const Coordinate &pos,
                                const std::string& iconURL)
 {
   std::stringstream strm;
-  
-  if (apiVersion_ == Version2) {
-    throw std::logic_error("WGoogleMapMod::addIconMarker is not supported "
-                           "in the Google Maps API v2.");
-  } else {
-    strm << "var position = new google.maps.LatLng("
-         << pos.latitude() << ", " << pos.longitude() << ");"
-      
-         << "var marker = new google.maps.Marker({"
-	 << "position: position,"
-	 << "icon: \"" <<  iconURL << "\","
-         << "map: " << jsRef() << ".map"
-	 << "});"
-      
-         << jsRef() << ".map.overlays.push(marker);";
-  }
+  strm << "var position = new google.maps.LatLng("
+        << pos.latitude() << ", " << pos.longitude() << ");"
+    
+        << "var marker = new google.maps.Marker({"
+        << "position: position,"
+        << "icon: \"" <<  iconURL << "\","
+        << "map: " << jsRef() << ".map"
+        << "});"
+    
+        << jsRef() << ".map.overlays.push(marker);";
  
   doGmJavaScript(strm.str());
 }
@@ -329,36 +209,28 @@ void WGoogleMapMod::addCircle(const Coordinate& center, double radius,
 			   const WColor& strokeColor, int strokeWidth,
 			   const WColor& fillColor)
 {
-  if ( apiVersion_ == Version2 ) {
-    throw std::logic_error("WGoogleMapMod::addCircle is not supported " 
-			   "in the Google Maps API v2.");
-    //we could support this by rendering the circle by rendering 
-    //a set of lines (see maps.forum.nu)
-    //when doing this we can implement a drawPolygon function at the same time
-  } else {
-    std::stringstream strm;
+  std::stringstream strm;
 
-    double strokeOpacity = strokeColor.alpha() / 255.0;
-    double fillOpacity = fillColor.alpha() / 255.0;
-    
-    strm << "var mapLocal = " << jsRef() + ".map;"
-	 << "var latLng  = new google.maps.LatLng(" 
-	 << center.latitude() << "," << center.longitude() << ");"
-	 << "var circle = new google.maps.Circle( "
-            "{ "
-            "  map: mapLocal, "
-            "  radius: " << radius << ", "
-            "  center:  latLng  ,"
-            "  fillOpacity: \"" << fillOpacity << "\","
-            "  fillColor: \"" << fillColor.cssText() << "\","
-            "  strokeWeight: " << strokeWidth << ","
-            "  strokeColor:\"" << strokeColor.cssText() << "\","
-            "  strokeOpacity: " << strokeOpacity <<
-            "} "
-            ");";
+  double strokeOpacity = strokeColor.alpha() / 255.0;
+  double fillOpacity = fillColor.alpha() / 255.0;
+  
+  strm << "var mapLocal = " << jsRef() + ".map;"
+        << "var latLng  = new google.maps.LatLng(" 
+        << center.latitude() << "," << center.longitude() << ");"
+        << "var circle = new google.maps.Circle( "
+          "{ "
+          "  map: mapLocal, "
+          "  radius: " << radius << ", "
+          "  center:  latLng  ,"
+          "  fillOpacity: \"" << fillOpacity << "\","
+          "  fillColor: \"" << fillColor.cssText() << "\","
+          "  strokeWeight: " << strokeWidth << ","
+          "  strokeColor:\"" << strokeColor.cssText() << "\","
+          "  strokeOpacity: " << strokeOpacity <<
+          "} "
+          ");";
 
-    doGmJavaScript(strm.str());
-  }
+  doGmJavaScript(strm.str());
 }
 
 void WGoogleMapMod::addPolyline(const std::vector<Coordinate>& points,
@@ -376,21 +248,15 @@ void WGoogleMapMod::addPolyline(const std::vector<Coordinate>& points,
     strm << "waypoints[" << i << "] = new google.maps.LatLng("
 	 << points[i].latitude() << ", " << points[i].longitude() << ");";
 
-  if (apiVersion_ == Version2) {
-    strm << "var poly = new google.maps.Polyline(waypoints, \""
-	 << color.cssText() << "\", " << width << ", " << opacity << ");"
-	 << jsRef() << ".map.addOverlay(poly);";
-  } else {
-    strm << 
-      "var poly = new google.maps.Polyline({"
-      "path: waypoints,"
-      "strokeColor: \"" << color.cssText() << "\"," <<
-      "strokeOpacity: " << opacity << "," << 
-      "strokeWeight: " << width <<
-      "});" <<
-      "poly.setMap(" << jsRef() << ".map);" <<
-      jsRef() << ".map.overlays.push(poly);";
-  }
+  strm << 
+    "var poly = new google.maps.Polyline({"
+    "path: waypoints,"
+    "strokeColor: \"" << color.cssText() << "\"," <<
+    "strokeOpacity: " << opacity << "," << 
+    "strokeWeight: " << width <<
+    "});" <<
+    "poly.setMap(" << jsRef() << ".map);" <<
+    jsRef() << ".map.overlays.push(poly);";
 
   doGmJavaScript(strm.str());
 }
@@ -402,17 +268,12 @@ void WGoogleMapMod::openInfoWindow(const Coordinate& pos,
   strm << "var pos = new google.maps.LatLng(" 
        << pos.latitude() << ", " << pos.longitude() << ");";
   
-  if (apiVersion_ == Version2) {
-    strm << jsRef() << ".map.openInfoWindow(pos, "
-	 << WWebWidget::jsStringLiteral(myHtml) << ");";
-  } else {
-    strm << "var infowindow = new google.maps.InfoWindow({"
-      "content: " << WWebWidget::jsStringLiteral(myHtml) << "," <<
-      "position: pos"
-      "});"
-      "infowindow.open(" << jsRef() << ".map);" <<
-      jsRef() << ".map.infowindows.push(infowindow);";
-  }
+  strm << "var infowindow = new google.maps.InfoWindow({"
+    "content: " << WWebWidget::jsStringLiteral(myHtml) << "," <<
+    "position: pos"
+    "});"
+    "infowindow.open(" << jsRef() << ".map);" <<
+    jsRef() << ".map.infowindows.push(infowindow);";
 
   doGmJavaScript(strm.str());
 }
@@ -471,28 +332,20 @@ void WGoogleMapMod::zoomOut()
 
 void WGoogleMapMod::savePosition()
 {
-  if (apiVersion_ == Version2) {
-    doGmJavaScript(jsRef() + ".map.savePosition();");
-  } else {
-    std::stringstream strm;
-    strm
-      << jsRef() << ".map.savedZoom = " << jsRef() << ".map.getZoom();"
-      << jsRef() << ".map.savedPosition = " << jsRef() << ".map.getCenter();";
-    doGmJavaScript(strm.str());
-  } 
+  std::stringstream strm;
+  strm
+    << jsRef() << ".map.savedZoom = " << jsRef() << ".map.getZoom();"
+    << jsRef() << ".map.savedPosition = " << jsRef() << ".map.getCenter();";
+  doGmJavaScript(strm.str());
 }
 
 void WGoogleMapMod::returnToSavedPosition()
 {
-  if (apiVersion_ == Version2) {
-    doGmJavaScript(jsRef() + ".map.returnToSavedPosition();");
-  } else {
-    std::stringstream strm;
-    strm
-      << jsRef() << ".map.setZoom(" << jsRef() << ".map.savedZoom);"
-      << jsRef() << ".map.setCenter(" << jsRef() << ".map.savedPosition);";
-    doGmJavaScript(strm.str());
-  }
+  std::stringstream strm;
+  strm
+    << jsRef() << ".map.setZoom(" << jsRef() << ".map.savedZoom);"
+    << jsRef() << ".map.setCenter(" << jsRef() << ".map.savedPosition);";
+  doGmJavaScript(strm.str());
 }
 
 void WGoogleMapMod::checkResize()
@@ -515,68 +368,32 @@ void WGoogleMapMod::setMapOption(const std::string &option,
 
 void WGoogleMapMod::enableDragging()
 {
-  if (apiVersion_ == Version2)
-    doGmJavaScript(jsRef() + ".map.enableDragging();");
-  else
-    setMapOption("draggable", "true");
+  setMapOption("draggable", "true");
 }
 
 void WGoogleMapMod::disableDragging()
 {
-  if (apiVersion_ == Version2)
-    doGmJavaScript(jsRef() + ".map.disableDragging();");
-  else
-    setMapOption("draggable", "false");
+  setMapOption("draggable", "false");
 }
 
 void WGoogleMapMod::enableDoubleClickZoom()
 {
-  if (apiVersion_ == Version2)
-    doGmJavaScript(jsRef() + ".map.enableDoubleClickZoom();");
-  else
-    setMapOption("disableDoubleClickZoom", "false");
+  setMapOption("disableDoubleClickZoom", "false");
 }
 
 void WGoogleMapMod::disableDoubleClickZoom()
 {
-  if (apiVersion_ == Version2)
-    doGmJavaScript(jsRef() + ".map.disableDoubleClickZoom();");
-  else
-    setMapOption("disableDoubleClickZoom", "true");
-}
-
-void WGoogleMapMod::enableGoogleBar()
-{
-  if (apiVersion_ == Version2)
-    doGmJavaScript(jsRef() + ".map.enableGoogleBar();");
-  else
-    throw std::logic_error("WGoogleMapMod::enableGoogleBar is not supported " 
-			   "in the Google Maps API v3.");
-}
-
-void WGoogleMapMod::disableGoogleBar()
-{
-  if (apiVersion_ == Version2)
-    doGmJavaScript(jsRef() + ".map.disableGoogleBar();");
-  else
-    throw std::logic_error("WGoogleMapMod::disableGoogleBar is not supported " 
-			   "in the Google Maps API v3.");
+  setMapOption("disableDoubleClickZoom", "true");
 }
 
 void WGoogleMapMod::enableScrollWheelZoom()
 {
-  if (apiVersion_ == Version2)
-    doGmJavaScript(jsRef() + ".map.enableScrollWheelZoom();");
-  else 
-    setMapOption("scrollwheel", "true");
+  setMapOption("scrollwheel", "true");
 }
 
 void WGoogleMapMod::disableScrollWheelZoom()
 {
-  if (apiVersion_ == Version2)
-    doGmJavaScript(jsRef() + ".map.disableScrollWheelZoom();");
-  else 
-    setMapOption("scrollwheel", "false");
+  setMapOption("scrollwheel", "false");
 }
 
 #ifndef WT_TARGET_JAVA
@@ -605,15 +422,8 @@ void WGoogleMapMod::zoomWindow(const Coordinate& topLeft,
        << "new google.maps.LatLng("
        << rightBottomC.latitude() << ", " << rightBottomC.longitude() << "));";
 
-  if (apiVersion_ == Version2) {
-    strm 
-      << "var zooml = " << jsRef() << ".map.getBoundsZoomLevel(bbox);"
-      << jsRef() << ".map.setCenter(new google.maps.LatLng("
-      << center.latitude() << ", " << center.longitude() << "), zooml);";
-  } else {
-    strm 
-      << jsRef() << ".map.fitBounds(bbox);";
-  }
+  strm 
+    << jsRef() << ".map.fitBounds(bbox);";
 
   doGmJavaScript(strm.str());
 }
@@ -621,66 +431,33 @@ void WGoogleMapMod::zoomWindow(const Coordinate& topLeft,
 void WGoogleMapMod::setMapTypeControl(MapTypeControl type)
 {
   std::stringstream strm;
-
-  if (apiVersion_ == Version2) {
-    std::string control;
-    switch (type) {
-    case DefaultControl:
-      control = "google.maps.MapTypeControl";
-      break;
-    case MenuControl:
-      control = "google.maps.MenuMapTypeControl";
-      break;
-    case HierarchicalControl:
-      control = "google.maps.HierarchicalMapTypeControl";
-      break;
-    case HorizontalBarControl:
-      throw std::logic_error("WGoogleMapMod::setMapTypeControl: "
-			     "HorizontalBarControl is not supported when using "
-			     "Google Maps API v2.");
-    default:
-      control = "";
-    }
-
-    strm << jsRef() << ".map.removeControl(" << jsRef() << ".mtc);";
-       
-    if(control != "")
-      strm << "var mtc = new " << control << "();"
-	   << jsRef() << ".mtc = mtc;"
-	   << jsRef() << ".map.addControl(mtc);";
-  } else {
-    std::string control;
-    switch (type) {
-    case DefaultControl:
-      control = "DEFAULT";
-      break;
-    case MenuControl:
-      control = "DROPDOWN_MENU";
-      break;
-    case HorizontalBarControl:
-      control = "HORIZONTAL_BAR";
-      break;
-    case HierarchicalControl:
-      throw std::logic_error("WGoogleMapMod::setMapTypeControl: "
-			     "HierarchicalControl is not supported when using "
-			     "Google Maps API v3.");
-    default:
-      control = "";
-    }
-
-    strm 
-      << "var options = {"
-      << """disableDefaultUI: " << (control == "" ? "true" : "false") << ","
-      << ""  "mapTypeControlOptions: {";
-
-    if (control != "")
-      strm << "style: google.maps.MapTypeControlStyle." << control;
-
-    strm 
-      << """}"
-      << "};"
-      << jsRef() << ".map.setOptions(options);";
+  std::string control;
+  switch (type) {
+  case DefaultControl:
+    control = "DEFAULT";
+    break;
+  case MenuControl:
+    control = "DROPDOWN_MENU";
+    break;
+  case HorizontalBarControl:
+    control = "HORIZONTAL_BAR";
+    break;
+  default:
+    control = "";
   }
+
+  strm 
+    << "var options = {"
+    << """disableDefaultUI: " << (control == "" ? "true" : "false") << ","
+    << ""  "mapTypeControlOptions: {";
+
+  if (control != "")
+    strm << "style: google.maps.MapTypeControlStyle." << control;
+
+  strm 
+    << """}"
+    << "};"
+    << jsRef() << ".map.setOptions(options);";
   
   doGmJavaScript(strm.str());
 }

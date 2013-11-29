@@ -13,6 +13,7 @@
 #include <Wt/WCompositeWidget>
 #include <Wt/WJavaScript>
 #include <Wt/WSignal>
+#include <Wt/WGoogleMap>
 
 #include <vector>
 #include <string>
@@ -45,13 +46,7 @@ namespace Wt
 class  WGoogleMapMod : public WCompositeWidget
 {
 public:
-  /*! \brief ApiVersion
-   */
-  enum ApiVersion {
-    Version2, //!< API Version 2.x
-    Version3  //!< API Version 3.x
-  };
-  
+  typedef Wt::WGoogleMap::Coordinate Coordinate;
   /*! \brief MapTypeControl
    */
   enum MapTypeControl {
@@ -60,66 +55,11 @@ public:
                          // (the behaviour depends on the Google Maps 
                          // API version)
     MenuControl,         //!< Show the dropdown menu maptype control
-    HierarchicalControl, //!< Show the hierarchical maptype control 
-                         // (only availble in Google Maps API v2)
     HorizontalBarControl //!< Show the horizontal bar maptype control
                          // (only availble in Google Maps API v3)
   };
 
-  /*! \class Coordinate
-   *  \brief A geographical coordinate (latitude/longitude)
-   */
-  class WT_API Coordinate
-  {
-  public:
-    /*! \brief Default constructor
-     */
-    Coordinate();
 
-    /*! \brief Creates with given latitude and longitude.
-     */
-    Coordinate(double latitude, double longitude);
-
-    #ifndef WT_TARGET_JAVA
-    explicit Coordinate(const std::pair<double, double>& lat_long);
-    #endif
-
-    /*! \brief Sets the latitude.
-     */
-    void setLatitude(double latitude);
-
-    /*! \brief Sets the longitude.
-     */
-    void setLongitude(double longitude);
-
-    /*! \brief Returns the latitude.
-     */
-    double latitude() const { return lat_; }
-
-    /*! \brief Returns the longitude.
-     */
-    double longitude() const { return lon_; }
-
-    /*! \brief Calculates the distance between two points in km (approximate).
-     *
-     * The calculation uses a sphere. Results can be out by 0.3%.
-     */
-    double distanceTo(const Coordinate &rhs) const;
-
-    #ifndef WT_TARGET_JAVA
-    /*! \brief Conversion operator to pair of double.
-     */
-    std::pair<double, double> operator ()() const;
-    #endif
-
-  private:
-    double lat_, lon_;
-  };
-
-  /*! \brief Creates a map widget with a version and optionally a parent argument.
-   */
-  WGoogleMapMod(ApiVersion version, WContainerWidget *parent = 0);
-  
   /*! \brief Creates a map widget with optionally a parent argument.
    */
   WGoogleMapMod(WContainerWidget *parent = 0);
@@ -236,27 +176,6 @@ public:
    */
   void disableDoubleClickZoom();
 
-  /*! \brief Enables the GoogleBar, an integrated search control, on the map.
-   *
-   * When enabled, this control takes the place of the default Powered
-   * By Google logo.
-   *
-   * This control is initially disabled.
-   *
-   * \note This functionality is no longer available in the Google Maps API v3.
-   */
-  void enableGoogleBar();
-
-  /*! \brief Disables the GoogleBar integrated search control.
-   *
-   * When disabled, the default Powered by Google logo occupies the
-   * position formerly containing this control. Note that this control
-   * is already disabled by default.
-   *
-   * \note This functionality is no longer available in the Google Maps API v3.
-   */
-  void disableGoogleBar();
-
   /*! \brief Enables zooming using a mouse's scroll wheel.
    *
    * Scroll wheel zoom is disabled by default.
@@ -294,7 +213,6 @@ public:
 
   /*! \brief Return the used Google Maps API version.
    */
-  ApiVersion apiVersion() { return apiVersion_; }
 
 private:
   JSignal<Coordinate> clicked_;
@@ -321,14 +239,7 @@ private:
   void setMapOption(const std::string &option, 
 		    const std::string &state);
 
-private:
-  ApiVersion apiVersion_;
 };
-
-#ifndef WT_TARGET_JAVA
-extern WT_API std::istream& operator>> (std::istream& i,
-				        WGoogleMapMod::Coordinate& coordinate);
-#endif
 
 } //  namespace Wt
 
