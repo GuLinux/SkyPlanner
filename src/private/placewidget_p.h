@@ -21,11 +21,11 @@
 #define PLACEWIDGET_P_H
 #include "placewidget.h"
 
-#include <Wt/WGoogleMap>
+#include "WGoogleMap"
 
-class MapsWidget : public Wt::WGoogleMap {
+class MapsWidget : public Wt::WGoogleMapMod {
 public:
-    MapsWidget(Wt::WContainerWidget* parent = 0);
+    MapsWidget(Wt::WLineEdit *searchBox, const Wt::JSignal<> &mapReady, Wt::WContainerWidget* parent = 0);
     void centerToGeoLocation();
 };
 
@@ -35,7 +35,8 @@ public:
     Private(const Wt::Dbo::ptr< AstroSession >& astroSession, Session& session, PlaceWidget* q);
     Wt::Dbo::ptr< AstroSession > astroSession;
     Session &session;
-    Wt::WGoogleMap::Coordinate currentPlace;
+    Wt::JSignal<> mapReady;
+    Wt::WGoogleMapMod::Coordinate currentPlace;
     Wt::Signal<double,double> placeChanged;
 private:
     class PlaceWidget* const q;

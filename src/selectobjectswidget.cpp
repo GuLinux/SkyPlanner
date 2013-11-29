@@ -40,15 +40,6 @@ using namespace Wt;
 using namespace WtCommons;
 using namespace std;
 
-class DboTransaction : public Dbo::Transaction {
-public:
-  DboTransaction(Session &session) : Dbo::Transaction(session) {
-    cerr << "Transaction created " << endl;
-  };
-  ~DboTransaction() {
-    cerr << "Transaction destroyed" << endl;
-  }
-};
 
 SelectObjectsWidget::Private::Private(const Dbo::ptr< AstroSession >& astroSession, Session& session, SelectObjectsWidget* q) : astroSession(astroSession), session(session), q(q)
 {
@@ -69,7 +60,7 @@ SelectObjectsWidget::SelectObjectsWidget(const Dbo::ptr< AstroSession >& astroSe
 {
     WTabWidget *addObjectsTabWidget = this;
     unique_lock<mutex> lockSession(d->sessionLockMutex);
-    DboTransaction t(session);
+    Dbo::Transaction t(session);
     d->searchByCatalogueTab(t);
     d->suggestedObjects(t);
 }
@@ -80,7 +71,7 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsList()
     if(!suggestedObjectsList)
       return;
     auto populateRange = [=] (int startOffset, uint64_t size) {
-      DboTransaction transaction(session);
+      Dbo::Transaction transaction(session);
       suggestedObjectsTable->clear();
       suggestedObjectsTable->elementAt(0, 0)->addWidget(new WText{"Object Names"});
       suggestedObjectsTable->elementAt(0, 1)->addWidget(new WText{"Magnitude"});
@@ -103,7 +94,7 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsList()
 	row->elementAt(2)->addWidget(new WText{transit.time().toString()});
 	row->elementAt(3)->addWidget(new WText{Utils::htmlEncode(WString::fromUTF8(bestAltitude.coordinates.altitude.printable()))});
 	row->elementAt(4)->addWidget(WW<WPushButton>("Add").css("btn btn-primary").onClick([=](WMouseEvent){
-	  DboTransaction t(session);
+	  Dbo::Transaction t(session);
 	  astroSession.modify()->astroSessionObjects().insert(new AstroSessionObject(ngcObject));
 	  t.commit();
 	  objectsListChanged.emit();
@@ -158,7 +149,7 @@ void SelectObjectsWidget::Private::suggestedObjects(Dbo::Transaction& transactio
   suggestedObjectsTable->setHeaderCount(1);
   auto populateTable = [=](double magnitudeLimit) {
     unique_lock<mutex> lockSession(sessionLockMutex);
-    DboTransaction t(session);
+    Dbo::Transaction t(session);
 //     (void) transaction;
     unique_lock<mutex>(suggestedObjectsListMutex);
     suggestedObjectsTable->clear();
@@ -166,7 +157,7 @@ void SelectObjectsWidget::Private::suggestedObjects(Dbo::Transaction& transactio
     WApplication *app = wApp;
     boost::thread([=]{
       NgcObjectsList &suggObjList = *suggestedObjectsList;
-      DboTransaction t(session);
+      Dbo::Transaction t(session);
       dbo::collection<NgcObjectPtr> objects = session.find<NgcObject>().where("magnitude < ?").bind(magnitudeLimit);
       Ephemeris ephemeris(astroSession->position());
       AstroSession::ObservabilityRange range = astroSession->observabilityRange(ephemeris).delta({1,20,0});
@@ -237,7 +228,7 @@ void SelectObjectsWidget::Private::searchByCatalogueTab(Dbo::Transaction& transa
     cataloguesCombo->addItem(cat);
   catalogueNumber->setEmptyText("Catalogue Number");
   auto searchByCatalogueNumber = [=] {
-    DboTransaction t(session);
+    Dbo::Transaction t(session);
     resultsTable->clear();
     dbo::collection<dbo::ptr<NebulaDenomination>> denominations = session.find<NebulaDenomination>().where("catalogue = ?").where("number = ?")
       .bind(cataloguesCombo->currentText()).bind(catalogueNumber->text());
@@ -247,7 +238,7 @@ void SelectObjectsWidget::Private::searchByCatalogueTab(Dbo::Transaction& transa
       row->elementAt(1)->addWidget(new WText{WString("{1}").arg(nebula->number())});
       row->elementAt(2)->addWidget(new WText{nebula->comment()});
       row->elementAt(3)->addWidget(WW<WPushButton>("Add").css("btn btn-primary").onClick([=](WMouseEvent){
-        DboTransaction t(session);
+        Dbo::Transaction t(session);
         astroSession.modify()->astroSessionObjects().insert(new AstroSessionObject(nebula->ngcObject()));
         t.commit();
         objectsListChanged.emit();

@@ -70,9 +70,10 @@ AstroSessionTab::AstroSessionTab(const Dbo::ptr<AstroSession>& astroSession, Ses
   sessionInfo->addWidget(d->positionDetails = WW<WContainerWidget>());
   d->addPanel("Information", sessionInfo);
   auto locationPanel = d->addPanel("Location", placeWidget ); 
-  if(astroSession->position())
-    WTimer::singleShot(1000, [=](WMouseEvent){ locationPanel->collapse(); });
-  
+  if(astroSession->position()) {
+//     WTimer::singleShot(1500, [=](WMouseEvent){ locationPanel->collapse(); });
+    placeWidget->mapReady().connect([=](_n6){ locationPanel->collapse(); });
+  }
   SelectObjectsWidget *addObjectsTabWidget = new SelectObjectsWidget(astroSession, session);
   d->addPanel("Add Observable Object", addObjectsTabWidget, true);
 

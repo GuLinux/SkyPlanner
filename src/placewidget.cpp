@@ -25,6 +25,7 @@
 #include "Wt-Commons/wt_helpers.h"
 #include <Wt/WApplication>
 #include <Wt/WPushButton>
+#include <Wt/WLineEdit>
 #include <boost/format.hpp>
 using namespace std;
 using namespace Wt;
@@ -43,11 +44,61 @@ using namespace WtCommons;
   ).str());
   */
 
-MapsWidget::MapsWidget(WContainerWidget *parent)
-  : WGoogleMap(Version3, parent)
+MapsWidget::MapsWidget(WLineEdit *searchBox, const JSignal<> &mapReady, WContainerWidget *parent)
+  : WGoogleMapMod(Version3, parent)
 {
 //  wApp->require("https://maps.googleapis.com/maps/api/js?v=3&sensor=false&libraries=places");
   setCenter({45.466667, 9.183333});
+  doGmJavaScript((boost::format(JS(
+    var markers = [];
+    var map = document.getElementById('%s').map;
+    var input = document.getElementById('%s');
+    map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+    var searchBox = new google.maps.places.SearchBox(input);
+    
+   // copied from google maps api doc: https://developers.google.com/maps/documentation/javascript/examples/places-searchbox
+  // [START region_getplaces]
+  // Listen for the event fired when the user selects an item from the
+  // pick list. Retrieve the matching places for that item.
+  google.maps.event.addListener(searchBox, 'places_changed', function() {
+    var places = searchBox.getPlaces();
+
+    for (var i = 0, marker; marker = markers[i]; i++) {
+      marker.setMap(null);
+    }
+
+    // For each place, get the icon, place name, and location.
+    markers = [];
+    var bounds = new google.maps.LatLngBounds();
+    for (var i = 0, place; place = places[i]; i++) {
+      var image = {
+        url: place.icon,
+        size: new google.maps.Size(71, 71),
+        origin: new google.maps.Point(0, 0),
+        anchor: new google.maps.Point(17, 34),
+        scaledSize: new google.maps.Size(25, 25)
+      };
+
+      // Create a marker for each place.
+      var marker = new google.maps.Marker({
+        map: map,
+        icon: image,
+        title: place.name,
+        position: place.geometry.location
+      });
+
+      markers.push(marker);
+
+      bounds.extend(place.geometry.location);
+    }
+
+    map.fitBounds(bounds);
+  });
+  // [END region_getplaces]
+  
+  %s;
+    )) % id() % searchBox->id() % mapReady.createCall() ).str()
+  );
 }
 
 void MapsWidget::centerToGeoLocation()
@@ -65,7 +116,7 @@ void MapsWidget::centerToGeoLocation()
 }
 
 PlaceWidget::Private::Private(const Wt::Dbo::ptr< AstroSession >& astroSession, Session& session, PlaceWidget* q) 
-  : astroSession(astroSession), session(session), q(q)
+  : astroSession(astroSession), session(session), mapReady(q, "runOnMapReady"), q(q)
 {
 }
 
@@ -81,8 +132,11 @@ PlaceWidget::PlaceWidget(const Wt::Dbo::ptr< AstroSession >& astroSession, Sessi
 //     astroSession.modify()->setPosition({});
 //   }).disable();
 //   addWidget(setPlaceButton);
-  addWidget(new WText("For the time being, you have to manually find the observation place, and click a point to set it."));
-  MapsWidget *map = new MapsWidget(this);
+  addWidget(new WText("Just click a point on the map to set the observation place. Use the search box to find places by name."));
+  WLineEdit *searchBox = WW<WLineEdit>(this).css("controls");
+  searchBox->setWidth(500);
+  searchBox->setMargin(10);
+  MapsWidget *map = new MapsWidget(searchBox, d->mapReady, this);
   map->setHeight(450);
   if(astroSession->position()) {
     d->currentPlace = {astroSession->position().latitude.degrees(), astroSession->position().longitude.degrees()};
@@ -92,7 +146,7 @@ PlaceWidget::PlaceWidget(const Wt::Dbo::ptr< AstroSession >& astroSession, Sessi
   else {
     map->centerToGeoLocation();
   }
-  map->clicked().connect([=](WGoogleMap::Coordinate c, _n5){
+  map->clicked().connect([=](WGoogleMapMod::Coordinate c, _n5){
     map->clearOverlays();
     map->addMarker(c);
     Dbo::Transaction t(d->session);
@@ -100,6 +154,11 @@ PlaceWidget::PlaceWidget(const Wt::Dbo::ptr< AstroSession >& astroSession, Sessi
     t.commit();
     d->placeChanged.emit(c.latitude(), c.longitude());
   });
+}
+
+JSignal<> &PlaceWidget::mapReady() const
+{
+  return d->mapReady;
 }
 
 Signal< double, double >& PlaceWidget::placeChanged() const

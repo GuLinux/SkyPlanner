@@ -31,6 +31,7 @@ public:
     ~PlaceWidget();
     PlaceWidget(const Wt::Dbo::ptr<AstroSession> &astroSession, Session &session, Wt::WContainerWidget* parent = 0);
     Wt::Signal<double,double> &placeChanged() const;
+    Wt::JSignal<> &mapReady() const;
 private:
     D_PTR;
 };
