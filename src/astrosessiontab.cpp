@@ -132,6 +132,7 @@ void AstroSessionTab::Private::populate()
   objectsTable->elementAt(0,4)->addWidget(new WText{"Magnitude"});
   objectsTable->elementAt(0,5)->addWidget(new WText{"Type"});
   objectsTable->elementAt(0,6)->addWidget(new WText{"Highest Time"});
+  objectsTable->elementAt(0,7)->addWidget(new WText{"Max Altitude"});
   Ephemeris ephemeris({astroSession->position().latitude, astroSession->position().longitude});
   boost::posix_time::ptime sessionTimeStart = ephemeris.sun(astroSession->when()).set;
   boost::posix_time::ptime sessionTimeEnd = ephemeris.sun(astroSession->when() + boost::posix_time::hours(24)).rise;
@@ -157,10 +158,12 @@ void AstroSessionTab::Private::populate()
     row->elementAt(1)->addWidget(new WText( Utils::htmlEncode( sessionObject->coordinates().rightAscension.printable(Angle::Hourly) ) ));
     row->elementAt(2)->addWidget(new WText( Utils::htmlEncode( WString::fromUTF8( sessionObject->coordinates().declination.printable() )) ));
     row->elementAt(3)->addWidget(new WText( Utils::htmlEncode( WString::fromUTF8( Angle::degrees(sessionObject->ngcObject()->angularSize()).printable() )) ));
-    row->elementAt(4)->addWidget(new WText(WString("{1}").arg(sessionObject->ngcObject()->magnitude()) ));
+    row->elementAt(4)->addWidget(new WText( (boost::format("%.3f") % sessionObject->ngcObject()->magnitude()).str()  ));
     row->elementAt(5)->addWidget(new WText(sessionObject->ngcObject()->typeDescription() ));
-    row->elementAt(6)->addWidget(new WText( WDateTime::fromPosixTime( sessionObject->bestAltitude(ephemeris, 1).when).time().toString() ));
-    row->elementAt(7)->addWidget(WW<WPushButton>("Remove").css("btn btn-danger").onClick([=](WMouseEvent){
+    auto bestAltitude = sessionObject->bestAltitude(ephemeris, 1);
+    row->elementAt(6)->addWidget(new WText( WDateTime::fromPosixTime( bestAltitude.when).time().toString() ));
+    row->elementAt(7)->addWidget(new WText( Utils::htmlEncode(WString::fromUTF8(bestAltitude.coordinates.altitude.printable() )) ));
+    row->elementAt(8)->addWidget(WW<WPushButton>("Remove").css("btn btn-danger").onClick([=](WMouseEvent){
       WMessageBox *confirmation = new WMessageBox("Confirm removal", "Are you sure?", Wt::Question, Wt::Ok | Wt::Cancel);
       confirmation->buttonClicked().connect([=](StandardButton b, _n5){
         if(b != Wt::Ok) {
