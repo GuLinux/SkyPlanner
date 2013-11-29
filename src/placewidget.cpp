@@ -49,56 +49,57 @@ MapsWidget::MapsWidget(WLineEdit *searchBox, const JSignal<> &mapReady, WContain
 {
 //  wApp->require("https://maps.googleapis.com/maps/api/js?v=3&sensor=false&libraries=places");
   setCenter({45.466667, 9.183333});
-  doGmJavaScript((boost::format(JS(
-    var markers = [];
-    var map = document.getElementById('%s').map;
-    var input = document.getElementById('%s');
-    map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
-    var searchBox = new google.maps.places.SearchBox(input);
-    
-   // copied from google maps api doc: https://developers.google.com/maps/documentation/javascript/examples/places-searchbox
-  // [START region_getplaces]
-  // Listen for the event fired when the user selects an item from the
-  // pick list. Retrieve the matching places for that item.
-  google.maps.event.addListener(searchBox, 'places_changed', function() {
-    var places = searchBox.getPlaces();
+  if(searchBox) {
+    doGmJavaScript((boost::format(JS(
+      var markers = [];
+      var map = document.getElementById('%s').map;
+      var input = document.getElementById('%s');
+      map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+      var searchBox = new google.maps.places.SearchBox(input);
+      
+    // copied from google maps api doc: https://developers.google.com/maps/documentation/javascript/examples/places-searchbox
+    // [START region_getplaces]
+    // Listen for the event fired when the user selects an item from the
+    // pick list. Retrieve the matching places for that item.
+    google.maps.event.addListener(searchBox, 'places_changed', function() {
+      var places = searchBox.getPlaces();
 
-    for (var i = 0, marker; marker = markers[i]; i++) {
-      marker.setMap(null);
-    }
+      for (var i = 0, marker; marker = markers[i]; i++) {
+	marker.setMap(null);
+      }
 
-    // For each place, get the icon, place name, and location.
-    markers = [];
-    var bounds = new google.maps.LatLngBounds();
-    for (var i = 0, place; place = places[i]; i++) {
-      var image = {
-        url: place.icon,
-        size: new google.maps.Size(71, 71),
-        origin: new google.maps.Point(0, 0),
-        anchor: new google.maps.Point(17, 34),
-        scaledSize: new google.maps.Size(25, 25)
-      };
+      // For each place, get the icon, place name, and location.
+      markers = [];
+      var bounds = new google.maps.LatLngBounds();
+      for (var i = 0, place; place = places[i]; i++) {
+	var image = {
+	  url: place.icon,
+	  size: new google.maps.Size(71, 71),
+	  origin: new google.maps.Point(0, 0),
+	  anchor: new google.maps.Point(17, 34),
+	  scaledSize: new google.maps.Size(25, 25)
+	};
 
-      // Create a marker for each place.
-      var marker = new google.maps.Marker({
-        map: map,
-        icon: image,
-        title: place.name,
-        position: place.geometry.location
-      });
+	// Create a marker for each place.
+	var marker = new google.maps.Marker({
+	  map: map,
+	  icon: image,
+	  title: place.name,
+	  position: place.geometry.location
+	});
 
-      markers.push(marker);
+	markers.push(marker);
 
-      bounds.extend(place.geometry.location);
-    }
+	bounds.extend(place.geometry.location);
+      }
 
-    map.fitBounds(bounds);
-  });
-  // [END region_getplaces]
-  
-  %s;
-    )) % id() % searchBox->id() % mapReady.createCall() ).str()
-  );
+      map.fitBounds(bounds);
+    });
+    // [END region_getplaces]  
+    )) % id() % searchBox->id() ).str()
+    );
+  }
+  doGmJavaScript( mapReady.createCall() );
 }
 
 void MapsWidget::centerToGeoLocation()
@@ -136,7 +137,7 @@ PlaceWidget::PlaceWidget(const Wt::Dbo::ptr< AstroSession >& astroSession, Sessi
   WLineEdit *searchBox = WW<WLineEdit>(this).css("controls");
   searchBox->setWidth(500);
   searchBox->setMargin(10);
-  MapsWidget *map = new MapsWidget(searchBox, d->mapReady, this);
+  MapsWidget *map = new MapsWidget(0, d->mapReady, this);
   map->setHeight(450);
   if(astroSession->position()) {
     d->currentPlace = {astroSession->position().latitude.degrees(), astroSession->position().longitude.degrees()};
