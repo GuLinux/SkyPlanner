@@ -20,6 +20,7 @@
 #ifndef SELECTOBJECTSWIDGET_P_H
 #define SELECTOBJECTSWIDGET_P_H
 #include "selectobjectswidget.h"
+#include <mutex>
 
 class SelectObjectsWidget::Private
 {
@@ -28,8 +29,14 @@ public:
     Wt::Dbo::ptr<AstroSession> astroSession;
     Session &session;
     Wt::Signal<> objectsListChanged;
-    void searchByCatalogueTab(Wt::Dbo::Transaction &transaction);
-    void suggestedObjects(Wt::Dbo::Transaction &transaction);
+    Wt::WTable *suggestedObjectsTable;
+    void searchByCatalogueTab(const std::shared_ptr<Wt::Dbo::Transaction> &transaction);
+    void suggestedObjects(const std::shared_ptr<Wt::Dbo::Transaction> &transaction);
+    void populateSuggestedObjectsList();
+    Wt::Signal<> suggestedObjectsLoaded;
+    typedef std::vector<std::pair<NgcObjectPtr,Ephemeris::BestAltitude>> NgcObjectsList; 
+    std::shared_ptr<NgcObjectsList> suggestedObjectsList; 
+    std::mutex suggestedObjectsListMutex;
 private:
     class SelectObjectsWidget* const q;
 };

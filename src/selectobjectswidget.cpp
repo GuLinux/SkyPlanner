@@ -33,6 +33,7 @@
 #include <Wt/WLabel>
 #include <Wt/Utils>
 #include <boost/format.hpp>
+#include <boost/thread.hpp>
 
 using namespace Wt;
 using namespace WtCommons;
@@ -55,47 +56,26 @@ SelectObjectsWidget::SelectObjectsWidget(const Dbo::ptr< AstroSession >& astroSe
     : d(astroSession, session, this)
 {
     WTabWidget *addObjectsTabWidget = this;
-    Dbo::Transaction t(session);
+    auto t = make_shared<Dbo::Transaction>(session);
     d->searchByCatalogueTab(t);
     d->suggestedObjects(t);
 }
 
-#define TelescopeMagnitudeLimit (Wt::UserRole + 1)
-void SelectObjectsWidget::Private::suggestedObjects(Dbo::Transaction& transaction)
+void SelectObjectsWidget::Private::populateSuggestedObjectsList()
 {
-  WContainerWidget *suggestedObjectsContainer = WW<WContainerWidget>();
-  suggestedObjectsContainer->setMaximumSize(WLength::Auto, 450);
-  suggestedObjectsContainer->setOverflow(WContainerWidget::Overflow::OverflowAuto);
-  WTable *resultsTable = WW<WTable>().addCss("table table-striped table-hover");
-  resultsTable->setHeaderCount(1);
-  auto populateTable = [=](double magnitudeLimit) {
-    resultsTable->clear();
-    resultsTable->elementAt(0, 0)->addWidget(new WText{"Object Names"});
-    resultsTable->elementAt(0, 1)->addWidget(new WText{"Magnitude"});
-    resultsTable->elementAt(0, 2)->addWidget(new WText{"Transit Time"});
-    resultsTable->elementAt(0, 3)->addWidget(new WText{"Transit Altitude"});
-    Dbo::Transaction t(session);
-    dbo::collection<NgcObjectPtr> objects = session.find<NgcObject>().where("magnitude < ?").bind(magnitudeLimit);
-    vector<NgcObjectPtr> filteredByTransit;
-    Ephemeris ephemeris(astroSession->position());
-    AstroSession::ObservabilityRange range = astroSession->observabilityRange(ephemeris).delta({1,20,0});
-    copy_if(begin(objects), end(objects), back_inserter(filteredByTransit), [&ephemeris,&range](const NgcObjectPtr &o){
-      auto bestAltitude = ephemeris.findBestAltitude(o->coordinates(), range.begin, range.end);
-      return bestAltitude.coordinates.altitude.degrees() > 20;
-    });
-    boost::posix_time::ptime middleRange = range.begin + ((range.end - range.begin) / 2);
-    auto observabilityIndex = [&ephemeris,&range,magnitudeLimit,&middleRange] (const NgcObjectPtr &o) {
-      double magnitudeDelta = magnitudeLimit - o->magnitude(); // we already know that magnitudeLimit > o->magnitude(), so this is positive
-      magnitudeDelta *= 20; // how much?
-      double altitude = ephemeris.arDec2altAz(o->coordinates(), middleRange);
-      return magnitudeDelta + altitude;
-    };
-    sort(filteredByTransit.rbegin(), filteredByTransit.rend(), [&observabilityIndex](const NgcObjectPtr &a, const NgcObjectPtr &b){
-      return observabilityIndex(a) < observabilityIndex(b);
-    });
-    
-    for(NgcObjectPtr ngcObject: filteredByTransit) {
-      WTableRow *row = resultsTable->insertRow(resultsTable->rowCount());
+    unique_lock<mutex>(suggestedObjectsListMutex);
+    if(!suggestedObjectsList)
+      return;
+    Dbo::Transaction transaction(session);
+    suggestedObjectsTable->elementAt(0, 0)->addWidget(new WText{"Object Names"});
+    suggestedObjectsTable->elementAt(0, 1)->addWidget(new WText{"Magnitude"});
+    suggestedObjectsTable->elementAt(0, 2)->addWidget(new WText{"Transit Time"});
+    suggestedObjectsTable->elementAt(0, 3)->addWidget(new WText{"Transit Altitude"});
+    for(auto observableObject: *suggestedObjectsList) {
+      NgcObjectPtr &ngcObject = observableObject.first;
+      Ephemeris::BestAltitude &bestAltitude = observableObject.second;
+      
+      WTableRow *row = suggestedObjectsTable->insertRow(suggestedObjectsTable->rowCount());
       stringstream names;
       string separator = "";
       for(auto denomination: ngcObject->nebulae()) {
@@ -104,7 +84,6 @@ void SelectObjectsWidget::Private::suggestedObjects(Dbo::Transaction& transactio
       }
       row->elementAt(0)->addWidget(new WText{Utils::htmlEncode(WString::fromUTF8(names.str()))});
       row->elementAt(1)->addWidget(new WText{(boost::format("%.3f") % ngcObject->magnitude()).str()});
-      auto bestAltitude = ephemeris.findBestAltitude(ngcObject->coordinates(), range.begin, range.end);
       WDateTime transit = WDateTime::fromPosixTime(bestAltitude.when);
       row->elementAt(2)->addWidget(new WText{transit.time().toString()});
       row->elementAt(3)->addWidget(new WText{Utils::htmlEncode(WString::fromUTF8(bestAltitude.coordinates.altitude.printable()))});
@@ -115,6 +94,51 @@ void SelectObjectsWidget::Private::suggestedObjects(Dbo::Transaction& transactio
         objectsListChanged.emit();
       }));
     }
+}
+
+#define TelescopeMagnitudeLimit (Wt::UserRole + 1)
+void SelectObjectsWidget::Private::suggestedObjects(const shared_ptr<Dbo::Transaction>& transaction)
+{
+  WContainerWidget *suggestedObjectsContainer = WW<WContainerWidget>();
+  suggestedObjectsContainer->setMaximumSize(WLength::Auto, 450);
+  suggestedObjectsContainer->setOverflow(WContainerWidget::Overflow::OverflowAuto);
+  suggestedObjectsTable = WW<WTable>().addCss("table table-striped table-hover");
+  suggestedObjectsLoaded.connect(this, &SelectObjectsWidget::Private::populateSuggestedObjectsList);
+
+  suggestedObjectsTable->setHeaderCount(1);
+  auto populateTable = [=](double magnitudeLimit) {
+    (void) transaction;
+    unique_lock<mutex>(suggestedObjectsListMutex);
+    suggestedObjectsTable->clear();
+    suggestedObjectsList.reset(new NgcObjectsList);
+    WApplication *app = wApp;
+    boost::thread([=]{
+      NgcObjectsList &suggObjList = *suggestedObjectsList;
+      Dbo::Transaction t(session);
+      dbo::collection<NgcObjectPtr> objects = session.find<NgcObject>().where("magnitude < ?").bind(magnitudeLimit);
+      Ephemeris ephemeris(astroSession->position());
+      AstroSession::ObservabilityRange range = astroSession->observabilityRange(ephemeris).delta({1,20,0});
+      for(auto object: objects) {
+	auto bestAltitude = ephemeris.findBestAltitude(object->coordinates(), range.begin, range.end);
+	if(bestAltitude.coordinates.altitude.degrees() > 17.)
+	  suggestedObjectsList->push_back({object, bestAltitude});
+      }
+
+      boost::posix_time::ptime middleRange = range.begin + ((range.end - range.begin) / 2);
+      auto observabilityIndex = [&ephemeris,&range,magnitudeLimit,&middleRange] (const NgcObjectPtr &o) {
+	double magnitudeDelta = magnitudeLimit - o->magnitude(); // we already know that magnitudeLimit > o->magnitude(), so this is positive
+	magnitudeDelta *= 5; // how much?
+	double altitude = ephemeris.arDec2altAz(o->coordinates(), middleRange);
+	return magnitudeDelta + altitude;
+      };
+      sort(suggObjList.rbegin(), suggObjList.rend(), [&observabilityIndex](const pair<NgcObjectPtr,Ephemeris::BestAltitude> &a, const pair<NgcObjectPtr,Ephemeris::BestAltitude> &b){
+	return observabilityIndex(a.first) < observabilityIndex(b.first);
+      });
+      WServer::instance()->post(app->sessionId(), [=]{
+	suggestedObjectsLoaded.emit();
+	app->triggerUpdate();
+      });
+    });
   };
 
   
@@ -136,18 +160,18 @@ void SelectObjectsWidget::Private::suggestedObjects(Dbo::Transaction& transactio
       telescopesModel->appendRow(item);
     }
     suggestedObjectsContainer->addWidget(WW<WContainerWidget>().css("form-inline").add(telescopesComboLabel).add(telescopesCombo));
-    suggestedObjectsContainer->addWidget(resultsTable);
+    suggestedObjectsContainer->addWidget(suggestedObjectsTable);
     double magnitude = boost::any_cast<double>(telescopesModel->item(telescopesCombo->currentIndex())->data(TelescopeMagnitudeLimit));
     populateTable(magnitude);
   } else {
     suggestedObjectsContainer->addWidget(new WText{"Please add one or more telescope in the \"My Telescopes\" section to have customized suggestions.<br />\
       In the meantime objects up to magnitude 12 will be shown here."});
-    suggestedObjectsContainer->addWidget(resultsTable);
+    suggestedObjectsContainer->addWidget(suggestedObjectsTable);
     populateTable(12);
   }
 }
 
-void SelectObjectsWidget::Private::searchByCatalogueTab(Dbo::Transaction& transaction)
+void SelectObjectsWidget::Private::searchByCatalogueTab(const shared_ptr<Dbo::Transaction>& transaction)
 {
   WContainerWidget *addObjectByCatalogue = WW<WContainerWidget>();
   WComboBox *cataloguesCombo = new WComboBox();

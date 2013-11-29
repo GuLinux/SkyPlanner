@@ -1,0 +1,6 @@
+{
+  "name": "AstroPlanner",
+  "files": [ { "git": 1 } ],
+  "build": "makelight all",
+  "clean": "make clean"
+}
