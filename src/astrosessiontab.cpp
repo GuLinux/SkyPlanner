@@ -66,21 +66,9 @@ AstroSessionTab::~AstroSessionTab()
 AstroSessionTab::AstroSessionTab(const Dbo::ptr<AstroSession>& astroSession, Session& session, WContainerWidget* parent)
     : WContainerWidget(parent), d(astroSession, session, this)
 {
-  WComboBox *telescopeCombo = new WComboBox;
-  WLabel *telescopeComboLabel = new WLabel("Telescope: ");;
-  telescopeComboLabel->setBuddy(telescopeCombo);
-  addWidget(WW<WContainerWidget>().css("form-inline").add(telescopeComboLabel).add(telescopeCombo));
-  Dbo::Transaction t(d->session);
-  auto telescopes = d->session.user()->telescopes();
-  WStandardItemModel *model = new WStandardItemModel(this);
-  for(auto telescope: telescopes) {
-    if(!d->selectedTelescope)
-      d->selectedTelescope = telescope;
-    WStandardItem *item = new WStandardItem(telescope->name());
-    item->setData(telescope);
-    model->appendRow(item);
-  }
-  telescopeCombo->setModel(model);
+  WContainerWidget *telescopeComboContainer = WW<WContainerWidget>().setMargin(10);
+  addWidget(telescopeComboContainer);
+  
   
   WContainerWidget *sessionInfo = WW<WContainerWidget>();
   sessionInfo->addWidget(new WText(astroSession->wDateWhen().date().toString("dddd dd MMMM yyyy")));
@@ -105,12 +93,36 @@ AstroSessionTab::AstroSessionTab(const Dbo::ptr<AstroSession>& astroSession, Ses
   d->populate();
   d->updatePositionDetails();
   
-  telescopeCombo->activated().connect([=](int index, _n5){
-    d->selectedTelescope = boost::any_cast<Dbo::ptr<Telescope>>(model->item(index)->data());
-    d->populate();
+  Dbo::Transaction t(d->session);
+  auto telescopes = d->session.user()->telescopes();
+  if(telescopes.size() > 0) {
+    WComboBox *telescopeCombo = new WComboBox;
+    WLabel *telescopeComboLabel = new WLabel("Telescope: ");;
+    telescopeComboLabel->setBuddy(telescopeCombo);
+    telescopeComboContainer->addStyleClass("form-inline");
+    telescopeComboContainer->addWidget(telescopeComboLabel);
+    telescopeComboContainer->addWidget(telescopeCombo);
+    WStandardItemModel *model = new WStandardItemModel(this);
+    for(auto telescope: telescopes) {
+      if(!d->selectedTelescope)
+        d->selectedTelescope = telescope;
+      WStandardItem *item = new WStandardItem(telescope->name());
+      item->setData(telescope);
+      model->appendRow(item);
+    }
+    telescopeCombo->setModel(model);
+    
+    telescopeCombo->activated().connect([=](int index, _n5){
+      d->selectedTelescope = boost::any_cast<Dbo::ptr<Telescope>>(model->item(index)->data());
+      d->populate();
+      addObjectsTabWidget->populateFor(d->selectedTelescope);
+    });
+  } else {
+    telescopeComboContainer->addWidget(new WText{"Add one or more telescopes in the \"My Telescopes\" section to see personalized suggestions and data here."});
+  }
+  WTimer::singleShot(200, [=](WMouseEvent) {
     addObjectsTabWidget->populateFor(d->selectedTelescope);
   });
-  addObjectsTabWidget->populateFor(d->selectedTelescope);
 }
 
 void AstroSessionTab::Private::updatePositionDetails()

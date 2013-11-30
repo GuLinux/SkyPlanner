@@ -45,11 +45,21 @@ AstroSessionsPage::AstroSessionsPage(Session &session, WContainerWidget* parent)
   WTabWidget *tabs = new WTabWidget(this);
   auto astroSessionsListTab = new AstroSessionsListTab(session);
   astroSessionsListTab->sessionClicked().connect([=](const Dbo::ptr<AstroSession> &astroSession, _n5){
-    auto astroSessionTab = new AstroSessionTab(astroSession, d->session);
-    WMenuItem *newTab = tabs->addTab(astroSessionTab, astroSession->name());
-    newTab->setCloseable(true);
-    tabs->setCurrentWidget(astroSessionTab);
+    if(d->tabs.count(astroSession) == 0) {
+      auto astroSessionTab = new AstroSessionTab(astroSession, d->session);
+      WMenuItem *newTab = tabs->addTab(astroSessionTab, astroSession->name());
+      newTab->setCloseable(true);
+      d->tabs[astroSession] = astroSessionTab;
+    }
+    tabs->setCurrentWidget(d->tabs[astroSession]);
   });
   tabs->addTab(astroSessionsListTab, "Sessions List");
-  tabs->tabClosed().connect([=](int, _n5){ tabs->setCurrentWidget(astroSessionsListTab); });
+  tabs->tabClosed().connect([=](int tabNumber, _n5){
+    for(auto tab: d->tabs) {
+      if(tab.second == tabs->widget(tabNumber)) {
+        d->tabs.erase(tab.first);
+      }
+    }
+    tabs->setCurrentWidget(astroSessionsListTab);
+  });
 }

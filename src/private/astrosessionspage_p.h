@@ -21,12 +21,15 @@
 #define ASTROSESSIONSPAGE_P_H
 #include "astrosessionspage.h"
 
+class AstroSessionTab;
+class AstroSession;
 class Session;
 class AstroSessionsPage::Private
 {
 public:
     Private(Session &session, AstroSessionsPage* q);
     Session &session;
+    std::map<Wt::Dbo::ptr<AstroSession>, AstroSessionTab*> tabs;
 private:
     class AstroSessionsPage* const q;
 };
