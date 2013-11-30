@@ -40,5 +40,8 @@ if(Boost_UNIT_TEST_FRAMEWORK_LIBRARY)
     ${AAPLUS_SRCS}
   )
   link_unit_test(ephemeris)
+  
+  register_unit_test(utils utils_test.cpp ${CMAKE_SOURCE_DIR}/src/utils/utils.cpp)
+  link_unit_test(utils)
 endif(Boost_UNIT_TEST_FRAMEWORK_LIBRARY)
 

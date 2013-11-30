@@ -18,6 +18,7 @@
  */
 
 #include "Models"
+#include <utils/utils.h>
 
 using namespace std;
 
@@ -46,4 +47,13 @@ Ephemeris::BestAltitude AstroSessionObject::bestAltitude(const Ephemeris &epheme
 {
   AstroSession::ObservabilityRange range = _astroSession->observabilityRange(ephemeris).delta({rangeDeltaInHours, 0, 0});
   return ephemeris.findBestAltitude( coordinates(), range.begin, range.end );
+}
+
+
+int32_t AstroSessionObject::difficulty( const Wt::Dbo::ptr< Telescope > &telescope )
+{
+  if(! telescope)
+    return -1;
+  double magnitudeLimit = telescope->limitMagnitudeGain() + 7.5 ; // we use 7.5 as visual magnitude limit to cut us some slack...
+  return Utils::exponentialPercentage(_ngcObject->magnitude(), magnitudeLimit, 1.2);
 }

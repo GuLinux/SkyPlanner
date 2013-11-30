@@ -20,6 +20,7 @@
 #include "telescopespage.h"
 #include "private/telescopespage_p.h"
 #include "utils/d_ptr_implementation.h"
+#include "utils/format.h"
 #include "session.h"
 #include "Wt-Commons/wt_helpers.h"
 #include "Models"
@@ -105,8 +106,8 @@ void TelescopesPage::Private::populate()
     row->elementAt(0)->addWidget(new WText{telescope->name() });
     row->elementAt(1)->addWidget(new WText{WString("{1}").arg(telescope->diameter()) });
     row->elementAt(2)->addWidget(new WText{WString("{1}").arg(telescope->focalLength()) });
-    row->elementAt(3)->addWidget(new WText{ (boost::format("%f.3") % telescope->limitMagnitudeGain()).str() });
-    row->elementAt(4)->addWidget(new WText{ (boost::format("%f.3") % (telescope->limitMagnitudeGain() + 6)).str() });
+    row->elementAt(3)->addWidget(new WText{ format("%.3f") % telescope->limitMagnitudeGain() });
+    row->elementAt(4)->addWidget(new WText{ format("%.3f") % (telescope->limitMagnitudeGain() + 6) });
     row->elementAt(5)->addWidget(WW<WPushButton>("Delete").css("btn btn-danger").onClick([=](WMouseEvent){
       Dbo::Transaction t(session);
       session.user().modify()->telescopes().erase(telescope);

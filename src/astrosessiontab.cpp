@@ -21,6 +21,7 @@
 #include "astrosessiontab.h"
 #include "private/astrosessiontab_p.h"
 #include "utils/d_ptr_implementation.h"
+#include "utils/format.h"
 #include "Wt-Commons/wt_helpers.h"
 #include "session.h"
 #include "placewidget.h"
@@ -117,9 +118,9 @@ void AstroSessionTab::Private::updatePositionDetails()
   positionDetails->addWidget(new WBreak);
   addMoonPhaseDetails(ephemeris);
   
-  positionDetails->addWidget(new WImage((boost::format("http://www.7timer.com/v4/bin/astro.php?lon=%f&lat=%f&lang=en&ac=0&unit=metric&tzshift=0")
+  positionDetails->addWidget(new WImage(WLink{format("http://www.7timer.com/v4/bin/astro.php?lon=%f&lat=%f&lang=en&ac=0&unit=metric&tzshift=0")
     % astroSession->position().longitude.degrees() % astroSession->position().latitude.degrees()
-  ).str()));
+  } ));
 }
 
 
@@ -159,7 +160,7 @@ void AstroSessionTab::Private::populate()
     row->elementAt(1)->addWidget(new WText( Utils::htmlEncode( sessionObject->coordinates().rightAscension.printable(Angle::Hourly) ) ));
     row->elementAt(2)->addWidget(new WText( Utils::htmlEncode( WString::fromUTF8( sessionObject->coordinates().declination.printable() )) ));
     row->elementAt(3)->addWidget(new WText( Utils::htmlEncode( WString::fromUTF8( Angle::degrees(sessionObject->ngcObject()->angularSize()).printable() )) ));
-    row->elementAt(4)->addWidget(new WText( (boost::format("%.3f") % sessionObject->ngcObject()->magnitude()).str()  ));
+    row->elementAt(4)->addWidget(new WText( format("%.3f") % sessionObject->ngcObject()->magnitude()));
     row->elementAt(5)->addWidget(new WText(sessionObject->ngcObject()->typeDescription() ));
     auto bestAltitude = sessionObject->bestAltitude(ephemeris, 1);
     row->elementAt(6)->addWidget(new WText( WDateTime::fromPosixTime( bestAltitude.when).time().toString() ));

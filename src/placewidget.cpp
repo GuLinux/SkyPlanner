@@ -21,6 +21,7 @@
 #include "placewidget.h"
 #include "private/placewidget_p.h"
 #include "utils/d_ptr_implementation.h"
+#include "utils/format.h"
 #include "session.h"
 #include "Wt-Commons/wt_helpers.h"
 #include <Wt/WApplication>
@@ -36,7 +37,7 @@ MapsWidget::MapsWidget(WLineEdit *searchBox, const JSignal<> &mapReady, WContain
 {
   setCenter({45.466667, 9.183333});
   if(searchBox) {
-    doGmJavaScript((boost::format(JS(
+    doGmJavaScript(format(JS(
       var markers = [];
       var map = document.getElementById('%s').map;
       var input = document.getElementById('%s');
@@ -82,23 +83,20 @@ MapsWidget::MapsWidget(WLineEdit *searchBox, const JSignal<> &mapReady, WContain
       map.fitBounds(bounds);
     });
     // [END region_getplaces]  
-    )) % id() % searchBox->id() ).str()
-    );
+    )) % id() % searchBox->id() );
   }
   doGmJavaScript( mapReady.createCall() );
 }
 
 void MapsWidget::centerToGeoLocation()
 {
-  string centerMapToCurrentPlaceJs = (
-    boost::format("\n\
+  string centerMapToCurrentPlaceJs = format("\n\
     if(navigator.geolocation) { \n\
       navigator.geolocation.getCurrentPosition(function(position) { \n\
       initialLocation = new google.maps.LatLng(position.coords.latitude,position.coords.longitude); \n\
       $('#%s')[0].map.setCenter(initialLocation); \n\
     }); \n\
-    }") % id()
-  ).str();
+    }") % id();
   doGmJavaScript(centerMapToCurrentPlaceJs);
 }
 

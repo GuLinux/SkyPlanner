@@ -23,6 +23,7 @@
 #include "types.h"
 #include "ephemeris.h"
 
+class Telescope;
 class NgcObject;
 class AstroSession;
 namespace dbo = Wt::Dbo;
@@ -39,6 +40,13 @@ public:
   }
   Coordinates::Equatorial coordinates() const;
   Ephemeris::BestAltitude bestAltitude(const Ephemeris &ephemeris, int rangeDeltaInHours = 0) const;
+  /** It's a simil-percentage evaluation:
+    if we have a valid telescope here, and this object magnitude doesn't exceed its magnitude
+    limit, we return the difficulty percentage (0-100).
+    If it does exceed the magnitude limit (with a tolerance delta), then the percentage can exceed 100.
+    If we don't have a telescope, we simply return -1.
+  **/
+  int32_t difficulty(const dbo::ptr<Telescope> &telescope);
 private:
   dbo::ptr<AstroSession> _astroSession;
   dbo::ptr<NgcObject> _ngcObject;

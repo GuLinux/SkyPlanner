@@ -20,6 +20,7 @@
 #include "selectobjectswidget.h"
 #include "private/selectobjectswidget_p.h"
 #include "utils/d_ptr_implementation.h"
+#include "utils/format.h"
 #include "session.h"
 #include "Wt-Commons/wt_helpers.h"
 #include <Wt/WTableRow>
@@ -89,7 +90,7 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsList()
 	  separator = ", ";
 	}
 	row->elementAt(0)->addWidget(new WText{Utils::htmlEncode(WString::fromUTF8(names.str()))});
-	row->elementAt(1)->addWidget(new WText{(boost::format("%.3f") % ngcObject->magnitude()).str()});
+	row->elementAt(1)->addWidget(new WText{format("%.3f") % ngcObject->magnitude()});
 	WDateTime transit = WDateTime::fromPosixTime(bestAltitude.when);
 	row->elementAt(2)->addWidget(new WText{transit.time().toString()});
 	row->elementAt(3)->addWidget(new WText{Utils::htmlEncode(WString::fromUTF8(bestAltitude.coordinates.altitude.printable()))});

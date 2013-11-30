@@ -20,6 +20,7 @@
 #include "forecast.h"
 #include "private/forecast_p.h"
 #include "utils/d_ptr_implementation.h"
+#include "utils/format.h"
 #include <Wt/Http/Client>
 #include <boost/format.hpp>
 #include <Wt/WApplication>
@@ -69,7 +70,7 @@ Forecast::~Forecast()
 }
 void Forecast::fetch(double latitude, double longitude)
 {
-  d->client.get((boost::format("http://www.7timer.com/v4/bin/api.pl?lon=%f&lat=%f&product=astro&output=json") % longitude % latitude).str() );
+  d->client.get(format("http://www.7timer.com/v4/bin/api.pl?lon=%f&lat=%f&product=astro&output=json") % longitude % latitude );
 }
 
 template<typename T>

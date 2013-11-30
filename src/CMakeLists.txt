@@ -15,6 +15,7 @@ set(NgcIcCatalog_SRCS
   types.cpp
   selectobjectswidget.cpp
   main.cpp
+  utils/utils.cpp
   WGoogleMap.C
 )
 
