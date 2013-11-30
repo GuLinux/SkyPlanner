@@ -90,8 +90,6 @@ AstroSessionTab::AstroSessionTab(const Dbo::ptr<AstroSession>& astroSession, Ses
 
   addWidget(d->objectsTable = WW<WTable>().addCss("table table-striped table-hover"));
   d->objectsTable->setHeaderCount(1);
-  d->populate();
-  d->updatePositionDetails();
   
   Dbo::Transaction t(d->session);
   auto telescopes = d->session.user()->telescopes();
@@ -120,6 +118,9 @@ AstroSessionTab::AstroSessionTab(const Dbo::ptr<AstroSession>& astroSession, Ses
   } else {
     telescopeComboContainer->addWidget(new WText{"Add one or more telescopes in the \"My Telescopes\" section to see personalized suggestions and data here."});
   }
+  
+  d->populate();
+  d->updatePositionDetails();
   WTimer::singleShot(200, [=](WMouseEvent) {
     addObjectsTabWidget->populateFor(d->selectedTelescope);
   });
