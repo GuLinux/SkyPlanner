@@ -22,6 +22,7 @@
 #include "astrosessiontab.h"
 #include <forecast.h>
 
+class Telescope;
 class Session;
 class AstroSessionTab::Private
 {
@@ -35,6 +36,7 @@ public:
     Wt::WPanel *addPanel(const Wt::WString &title, Wt::WWidget *widget, bool collapsed = false, bool collapsible = true, Wt::WContainerWidget *container = 0);
     void updatePositionDetails();
     Forecast forecast;
+    Wt::Dbo::ptr<Telescope> selectedTelescope;
 private:
     class AstroSessionTab* const q;
 };

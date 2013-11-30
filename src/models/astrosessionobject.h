@@ -46,7 +46,7 @@ public:
     If it does exceed the magnitude limit (with a tolerance delta), then the percentage can exceed 100.
     If we don't have a telescope, we simply return -1.
   **/
-  int32_t difficulty(const dbo::ptr<Telescope> &telescope);
+  int32_t difficulty(const dbo::ptr<Telescope> &telescope) const;
 private:
   dbo::ptr<AstroSession> _astroSession;
   dbo::ptr<NgcObject> _ngcObject;

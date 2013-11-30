@@ -17,6 +17,7 @@ set(NgcIcCatalog_SRCS
   main.cpp
   utils/utils.cpp
   WGoogleMap.C
+  objectdifficultywidget.cpp
 )
 
 set(NgcIcCatalog_MODELS_SRCS

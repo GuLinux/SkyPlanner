@@ -42,10 +42,14 @@
 #include "ephemeris.h"
 #include "types.h"
 #include "selectobjectswidget.h"
+#include "objectdifficultywidget.h"
 #include <Wt/Utils>
 #include <Wt/WTimer>
 #include <boost/format.hpp>
 #include <Wt/WImage>
+#include <Wt/WLabel>
+#include <Wt/WStandardItemModel>
+#include <Wt/WStandardItem>
 
 using namespace Wt;
 using namespace WtCommons;
@@ -62,6 +66,22 @@ AstroSessionTab::~AstroSessionTab()
 AstroSessionTab::AstroSessionTab(const Dbo::ptr<AstroSession>& astroSession, Session& session, WContainerWidget* parent)
     : WContainerWidget(parent), d(astroSession, session, this)
 {
+  WComboBox *telescopeCombo = new WComboBox;
+  WLabel *telescopeComboLabel = new WLabel("Telescope: ");;
+  telescopeComboLabel->setBuddy(telescopeCombo);
+  addWidget(WW<WContainerWidget>().css("form-inline").add(telescopeComboLabel).add(telescopeCombo));
+  Dbo::Transaction t(d->session);
+  auto telescopes = d->session.user()->telescopes();
+  WStandardItemModel *model = new WStandardItemModel(this);
+  for(auto telescope: telescopes) {
+    if(!d->selectedTelescope)
+      d->selectedTelescope = telescope;
+    WStandardItem *item = new WStandardItem(telescope->name());
+    item->setData(telescope);
+    model->appendRow(item);
+  }
+  telescopeCombo->setModel(model);
+  
   WContainerWidget *sessionInfo = WW<WContainerWidget>();
   sessionInfo->addWidget(new WText(astroSession->wDateWhen().date().toString("dddd dd MMMM yyyy")));
   PlaceWidget *placeWidget = new PlaceWidget(astroSession, session);
@@ -72,18 +92,25 @@ AstroSessionTab::AstroSessionTab(const Dbo::ptr<AstroSession>& astroSession, Ses
   auto locationPanel = d->addPanel("Location", placeWidget ); 
   d->addPanel("Information", sessionInfo);
   if(astroSession->position()) {
-//     WTimer::singleShot(1500, [=](WMouseEvent){ locationPanel->collapse(); });
     placeWidget->mapReady().connect([=](_n6){ WTimer::singleShot(1500, [=](WMouseEvent){ locationPanel->collapse(); }); });
   }
   SelectObjectsWidget *addObjectsTabWidget = new SelectObjectsWidget(astroSession, session);
   d->addPanel("Add Observable Object", addObjectsTabWidget, true);
 
   addObjectsTabWidget->objectsListChanged().connect([=](_n6){d->populate(); });
+  addWidget(new WText{"<h3>Objects</h3>"});
 
   addWidget(d->objectsTable = WW<WTable>().addCss("table table-striped table-hover"));
   d->objectsTable->setHeaderCount(1);
   d->populate();
   d->updatePositionDetails();
+  
+  telescopeCombo->activated().connect([=](int index, _n5){
+    d->selectedTelescope = boost::any_cast<Dbo::ptr<Telescope>>(model->item(index)->data());
+    d->populate();
+    addObjectsTabWidget->populateFor(d->selectedTelescope);
+  });
+  addObjectsTabWidget->populateFor(d->selectedTelescope);
 }
 
 void AstroSessionTab::Private::updatePositionDetails()
@@ -135,6 +162,7 @@ void AstroSessionTab::Private::populate()
   objectsTable->elementAt(0,5)->addWidget(new WText{"Type"});
   objectsTable->elementAt(0,6)->addWidget(new WText{"Highest Time"});
   objectsTable->elementAt(0,7)->addWidget(new WText{"Max Altitude"});
+  objectsTable->elementAt(0,8)->addWidget(new WText{"Difficulty"});
   Ephemeris ephemeris({astroSession->position().latitude, astroSession->position().longitude});
   boost::posix_time::ptime sessionTimeStart = ephemeris.sun(astroSession->when()).set;
   boost::posix_time::ptime sessionTimeEnd = ephemeris.sun(astroSession->when() + boost::posix_time::hours(24)).rise;
@@ -165,7 +193,8 @@ void AstroSessionTab::Private::populate()
     auto bestAltitude = sessionObject->bestAltitude(ephemeris, 1);
     row->elementAt(6)->addWidget(new WText( WDateTime::fromPosixTime( bestAltitude.when).time().toString() ));
     row->elementAt(7)->addWidget(new WText( Utils::htmlEncode(WString::fromUTF8(bestAltitude.coordinates.altitude.printable() )) ));
-    row->elementAt(8)->addWidget(WW<WPushButton>("Remove").css("btn btn-danger").onClick([=](WMouseEvent){
+    row->elementAt(8)->addWidget(new ObjectDifficultyWidget(sessionObject, selectedTelescope)); 
+    row->elementAt(9)->addWidget(WW<WPushButton>("Remove").css("btn btn-danger").onClick([=](WMouseEvent){
       WMessageBox *confirmation = new WMessageBox("Confirm removal", "Are you sure?", Wt::Question, Wt::Ok | Wt::Cancel);
       confirmation->buttonClicked().connect([=](StandardButton b, _n5){
         if(b != Wt::Ok) {

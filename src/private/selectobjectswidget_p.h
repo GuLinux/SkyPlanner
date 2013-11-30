@@ -33,7 +33,8 @@ public:
     Wt::WContainerWidget *suggestedObjectsTablePagination;
     void searchByCatalogueTab(Wt::Dbo::Transaction &transaction);
     void suggestedObjects(Wt::Dbo::Transaction &transaction);
-    void populateSuggestedObjectsList();
+    void populateSuggestedObjectsTable();
+    void populateSuggestedObjectsList( double magnitudeLimit );
     Wt::Signal<> suggestedObjectsLoaded;
     typedef std::vector<std::pair<NgcObjectPtr,Ephemeris::BestAltitude>> NgcObjectsList; 
     std::shared_ptr<NgcObjectsList> suggestedObjectsList; 
@@ -43,4 +44,5 @@ public:
 private:
     class SelectObjectsWidget* const q;
 };
+
 #endif // SELECTOBJECTSWIDGET_P_H

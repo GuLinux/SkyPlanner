@@ -1,6 +1,6 @@
 /*
  * <one line to give the program's name and a brief idea of what it does.>
- * Copyright (C) 2013  <copyright holder> <email>
+ * Copyright (C) 2013  Marco Gulino <email>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,25 +17,22 @@
  *
  */
 
-#ifndef SELECTOBJECTSWIDGET_H
-#define SELECTOBJECTSWIDGET_H
+#include "Models"
+#include "objectdifficultywidget.h"
+#include "Wt-Commons/wt_helpers.h"
+#include "utils/format.h"
+#include <Wt/WText>
 
-#include <Wt/WTabWidget>
-#include "utils/d_ptr.h"
-#include <Wt/Dbo/ptr>
-
-class Telescope;
-class AstroSession;
-class Session;
-class SelectObjectsWidget : public Wt::WTabWidget
+using namespace WtCommons;
+using namespace Wt;
+using namespace std;
+ObjectDifficultyWidget::~ObjectDifficultyWidget()
 {
-public:
-    ~SelectObjectsWidget();
-    SelectObjectsWidget(const Wt::Dbo::ptr<AstroSession>& astroSession, Session &session, Wt::WContainerWidget* parent = 0);
-    void populateFor(const Wt::Dbo::ptr<Telescope> &telescope);
-    Wt::Signal<> &objectsListChanged() const;
-private:
-    D_PTR;
-};
 
-#endif // SELECTOBJECTSWIDGET_H
+}
+
+ObjectDifficultyWidget::ObjectDifficultyWidget( const Wt::Dbo::ptr< AstroSessionObject > &object, const Wt::Dbo::ptr< Telescope > &telescope, Wt::WContainerWidget *parent )
+  : WContainerWidget(parent)
+{
+  addWidget(new WText( format("%d%%") % object->difficulty(telescope)));
+}
