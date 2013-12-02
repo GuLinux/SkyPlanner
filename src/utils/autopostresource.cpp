@@ -19,12 +19,14 @@
 
 #include "autopostresource.h"
 #include <Wt/Http/Response>
+#include "utils/format.h"
 using namespace std;
 using namespace Wt;
 
 AutoPostResource::AutoPostResource(const string &postUrl, const map<string,string> &params, WObject *parent)
   : WResource(parent), postUrl(postUrl), params(params)
 {
+  setInternalPath(format("astroplanner-autopost-%s") % id());
 }
 
 void AutoPostResource::handleRequest (const Wt::Http::Request &request, Wt::Http::Response &response)

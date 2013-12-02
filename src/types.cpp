@@ -67,6 +67,18 @@ double Angle::hours() const
   return CAACoordinateTransformation::DegreesToHours(degrees());
 }
 
+Angle::Sexagesimal Angle::sexagesimal() const
+{
+  double angle = degrees();
+  int degrees_i = static_cast<int>(angle);
+  angle -= degrees_i;
+  angle *= 60.;
+  int minutes_i = static_cast<int>(angle);
+  angle -= minutes_i;
+  angle *= 60.;
+  return {degrees_i, minutes_i, angle};
+}
+
 string Angle::printable(Format format) const
 {
   if(format == Hourly) {
@@ -80,14 +92,8 @@ string Angle::printable(Format format) const
     return (boost::format("%dh %2dm %.3fs") % hours_i % minutes_i % time ).str();
   }
 
-  double angle = degrees();
-  int degrees_i = static_cast<int>(angle);
-  angle -= degrees_i;
-  angle *= 60.;
-  int minutes_i = static_cast<int>(angle);
-  angle -= minutes_i;
-  angle *= 60.;
-  return (boost::format("%d\302\260 %2d' %.3f\"") % degrees_i % minutes_i % angle ).str();
+  Sexagesimal asSexagesimal = sexagesimal();
+  return (boost::format("%d\302\260 %2d' %.3f\"") % asSexagesimal.degrees % asSexagesimal.minutes % asSexagesimal.seconds ).str();
 }
 
  

@@ -25,10 +25,16 @@
 class Angle {
   public:
     Angle();
+    struct Sexagesimal {
+      int degrees;
+      int minutes;
+      double seconds;
+    };
     static Angle degrees(double degrees);
     static Angle radians(double radians);
     static Angle hours(double hours);
     double degrees() const;
+    Sexagesimal sexagesimal() const;
     double radians() const;
     double hours() const;
     enum Format { Hourly, Degrees };

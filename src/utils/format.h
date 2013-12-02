@@ -6,10 +6,12 @@
 class format {
 public:
   format(const std::string &formatString) : _format(formatString) {}
-  operator std::string() { return _format.str(); }
-  operator Wt::WString() { return Wt::WString::fromUTF8(_format.str()); }
+  operator std::string() { return str(); }
+  operator Wt::WString() { return wtstr(); }
   template<typename FormatValue>
   format &operator%(FormatValue formatValue) { _format % formatValue;  return *this; }
+  std::string str() const { return _format.str(); }
+  Wt::WString wtstr() const { return Wt::WString::fromUTF8(_format.str()); }
 private:
   boost::format _format;
 };

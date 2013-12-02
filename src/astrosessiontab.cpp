@@ -192,7 +192,7 @@ void AstroSessionTab::Private::populate()
   for(auto sessionObject: sessionObjects) {
     WTableRow *row = objectsTable->insertRow(objectsTable->rowCount());
     sessionObject->bestAltitude(ephemeris);
-    row->elementAt(0)->addWidget(new ObjectNamesWidget{sessionObject->ngcObject()});
+    row->elementAt(0)->addWidget(new ObjectNamesWidget{sessionObject->ngcObject(), session, astroSession});
     row->elementAt(1)->addWidget(new WText{ Utils::htmlEncode( sessionObject->coordinates().rightAscension.printable(Angle::Hourly) ) });
     row->elementAt(2)->addWidget(new WText{ Utils::htmlEncode( WString::fromUTF8( sessionObject->coordinates().declination.printable() )) });
     row->elementAt(3)->addWidget(new WText{ Utils::htmlEncode( WString::fromUTF8( Angle::degrees(sessionObject->ngcObject()->angularSize()).printable() )) });

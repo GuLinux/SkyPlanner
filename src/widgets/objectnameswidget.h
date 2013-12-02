@@ -23,9 +23,11 @@
 #include <Wt/WContainerWidget>
 #include "utils/d_ptr.h"
 class NgcObject;
+class AstroSession;
+class Session;
 class ObjectNamesWidget : public Wt::WContainerWidget {
 public:
-  ObjectNamesWidget(const Wt::Dbo::ptr<NgcObject> &object, Wt::WContainerWidget *parent = 0);
+  ObjectNamesWidget(const Wt::Dbo::ptr<NgcObject> &object, Session &session, const Wt::Dbo::ptr<AstroSession> &astroSession, Wt::WContainerWidget *parent = 0);
   ~ObjectNamesWidget();
 private:
   D_PTR;

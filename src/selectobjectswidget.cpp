@@ -90,7 +90,7 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsTable()
 	  names << separator << denomination->name();
 	  separator = ", ";
 	}
-	row->elementAt(0)->addWidget(new ObjectNamesWidget{ngcObject});
+	row->elementAt(0)->addWidget(new ObjectNamesWidget{ngcObject, session, astroSession});
 	row->elementAt(1)->addWidget(new WText{format("%.1f") % ngcObject->magnitude()});
 	WDateTime transit = WDateTime::fromPosixTime(bestAltitude.when);
 	row->elementAt(2)->addWidget(new WText{transit.time().toString()});
