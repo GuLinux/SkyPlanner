@@ -96,6 +96,7 @@ AstroSessionTab::AstroSessionTab(const Dbo::ptr<AstroSession>& astroSession, Ses
   auto telescopes = d->session.user()->telescopes();
   if(telescopes.size() > 0) {
     WComboBox *telescopeCombo = new WComboBox;
+    telescopeCombo->setWidth(350);
     WLabel *telescopeComboLabel = new WLabel("Telescope: ");;
     telescopeComboLabel->setBuddy(telescopeCombo);
     telescopeComboContainer->addStyleClass("form-inline");
