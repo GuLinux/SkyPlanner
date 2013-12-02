@@ -51,6 +51,7 @@
 #include <Wt/WLabel>
 #include <Wt/WStandardItemModel>
 #include <Wt/WStandardItem>
+#include "constellationfinder.h"
 
 using namespace Wt;
 using namespace WtCommons;
@@ -172,12 +173,13 @@ void AstroSessionTab::Private::populate()
   objectsTable->elementAt(0,0)->addWidget(new WText{"Names"});
   objectsTable->elementAt(0,1)->addWidget(new WText{"AR"});
   objectsTable->elementAt(0,2)->addWidget(new WText{"DEC"});
-  objectsTable->elementAt(0,3)->addWidget(new WText{"Angular Size"});
-  objectsTable->elementAt(0,4)->addWidget(new WText{"Magnitude"});
-  objectsTable->elementAt(0,5)->addWidget(new WText{"Type"});
-  objectsTable->elementAt(0,6)->addWidget(new WText{"Highest Time"});
-  objectsTable->elementAt(0,7)->addWidget(new WText{"Max Altitude"});
-  objectsTable->elementAt(0,8)->addWidget(new WText{"Difficulty"});
+  objectsTable->elementAt(0,3)->addWidget(new WText{"Constellation"});
+  objectsTable->elementAt(0,4)->addWidget(new WText{"Angular Size"});
+  objectsTable->elementAt(0,5)->addWidget(new WText{"Magnitude"});
+  objectsTable->elementAt(0,6)->addWidget(new WText{"Type"});
+  objectsTable->elementAt(0,7)->addWidget(new WText{"Highest Time"});
+  objectsTable->elementAt(0,8)->addWidget(new WText{"Max Altitude"});
+  objectsTable->elementAt(0,9)->addWidget(new WText{"Difficulty"});
   Ephemeris ephemeris({astroSession->position().latitude, astroSession->position().longitude});
   boost::posix_time::ptime sessionTimeStart = ephemeris.sun(astroSession->when()).set;
   boost::posix_time::ptime sessionTimeEnd = ephemeris.sun(astroSession->when() + boost::posix_time::hours(24)).rise;
@@ -195,14 +197,15 @@ void AstroSessionTab::Private::populate()
     row->elementAt(0)->addWidget(new ObjectNamesWidget{sessionObject->ngcObject(), session, astroSession});
     row->elementAt(1)->addWidget(new WText{ Utils::htmlEncode( sessionObject->coordinates().rightAscension.printable(Angle::Hourly) ) });
     row->elementAt(2)->addWidget(new WText{ Utils::htmlEncode( WString::fromUTF8( sessionObject->coordinates().declination.printable() )) });
-    row->elementAt(3)->addWidget(new WText{ Utils::htmlEncode( WString::fromUTF8( Angle::degrees(sessionObject->ngcObject()->angularSize()).printable() )) });
-    row->elementAt(4)->addWidget(new WText{ format("%.1f") % sessionObject->ngcObject()->magnitude()});
-    row->elementAt(5)->addWidget(new WText{sessionObject->ngcObject()->typeDescription() });
+    row->elementAt(3)->addWidget(new WText{ ConstellationFinder::getName(sessionObject->coordinates()).name });
+    row->elementAt(4)->addWidget(new WText{ Utils::htmlEncode( WString::fromUTF8( Angle::degrees(sessionObject->ngcObject()->angularSize()).printable() )) });
+    row->elementAt(5)->addWidget(new WText{ format("%.1f") % sessionObject->ngcObject()->magnitude()});
+    row->elementAt(6)->addWidget(new WText{sessionObject->ngcObject()->typeDescription() });
     auto bestAltitude = sessionObject->bestAltitude(ephemeris, 1);
-    row->elementAt(6)->addWidget(new WText{ WDateTime::fromPosixTime( bestAltitude.when).time().toString() });
-    row->elementAt(7)->addWidget(new WText{ Utils::htmlEncode(WString::fromUTF8(bestAltitude.coordinates.altitude.printable() )) });
-    row->elementAt(8)->addWidget(new ObjectDifficultyWidget{sessionObject, selectedTelescope, bestAltitude.coordinates.altitude.degrees() }); 
-    row->elementAt(9)->addWidget(WW<WPushButton>("Remove").css("btn btn-danger").onClick([=](WMouseEvent){
+    row->elementAt(7)->addWidget(new WText{ WDateTime::fromPosixTime( bestAltitude.when).time().toString() });
+    row->elementAt(8)->addWidget(new WText{ Utils::htmlEncode(WString::fromUTF8(bestAltitude.coordinates.altitude.printable() )) });
+    row->elementAt(9)->addWidget(new ObjectDifficultyWidget{sessionObject, selectedTelescope, bestAltitude.coordinates.altitude.degrees() }); 
+    row->elementAt(10)->addWidget(WW<WPushButton>("Remove").css("btn btn-danger").onClick([=](WMouseEvent){
       WMessageBox *confirmation = new WMessageBox("Confirm removal", "Are you sure?", Wt::Question, Wt::Ok | Wt::Cancel);
       confirmation->buttonClicked().connect([=](StandardButton b, _n5){
         if(b != Wt::Ok) {

@@ -19,6 +19,7 @@ set(NgcIcCatalog_SRCS
   utils/utils.cpp
   utils/autopostresource.cpp
   telescopespage.cpp
+  constellationfinder.cpp
 )
 
 set(NgcIcCatalog_MODELS_SRCS
