@@ -42,7 +42,8 @@
 #include "ephemeris.h"
 #include "types.h"
 #include "selectobjectswidget.h"
-#include "objectdifficultywidget.h"
+#include "widgets/objectdifficultywidget.h"
+#include "widgets/objectnameswidget.h"
 #include <Wt/Utils>
 #include <Wt/WTimer>
 #include <boost/format.hpp>
@@ -189,15 +190,8 @@ void AstroSessionTab::Private::populate()
   });
   for(auto sessionObject: sessionObjects) {
     WTableRow *row = objectsTable->insertRow(objectsTable->rowCount());
-    auto names = sessionObject->ngcObject()->nebulae();
-    stringstream namesStream;
-    string separator;
-    for(auto name: names) {
-      namesStream << separator << name->name();
-      separator = ", ";
-    }
     sessionObject->bestAltitude(ephemeris);
-    row->elementAt(0)->addWidget(new WText{namesStream.str()});
+    row->elementAt(0)->addWidget(new ObjectNamesWidget{sessionObject->ngcObject()});
     row->elementAt(1)->addWidget(new WText{ Utils::htmlEncode( sessionObject->coordinates().rightAscension.printable(Angle::Hourly) ) });
     row->elementAt(2)->addWidget(new WText{ Utils::htmlEncode( WString::fromUTF8( sessionObject->coordinates().declination.printable() )) });
     row->elementAt(3)->addWidget(new WText{ Utils::htmlEncode( WString::fromUTF8( Angle::degrees(sessionObject->ngcObject()->angularSize()).printable() )) });

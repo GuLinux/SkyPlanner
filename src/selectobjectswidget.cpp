@@ -36,6 +36,7 @@
 #include <Wt/WTimer>
 #include <boost/format.hpp>
 #include <boost/thread.hpp>
+#include "widgets/objectnameswidget.h"
 
 using namespace Wt;
 using namespace WtCommons;
@@ -89,7 +90,7 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsTable()
 	  names << separator << denomination->name();
 	  separator = ", ";
 	}
-	row->elementAt(0)->addWidget(new WText{Utils::htmlEncode(WString::fromUTF8(names.str()))});
+	row->elementAt(0)->addWidget(new ObjectNamesWidget{ngcObject});
 	row->elementAt(1)->addWidget(new WText{format("%.1f") % ngcObject->magnitude()});
 	WDateTime transit = WDateTime::fromPosixTime(bestAltitude.when);
 	row->elementAt(2)->addWidget(new WText{transit.time().toString()});

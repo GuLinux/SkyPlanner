@@ -1,6 +1,6 @@
 /*
  * <one line to give the program's name and a brief idea of what it does.>
- * Copyright (C) 2013  <copyright holder> <email>
+ * Copyright (C) 2013  Marco Gulino <email>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,28 +17,18 @@
  *
  */
 
-#ifndef PLACEWIDGET_P_H
-#define PLACEWIDGET_P_H
-#include "placewidget.h"
+#ifndef AUTOPOST_RESOURCE_H
+#define AUTOPOST_RESOURCE_H
 
-#include "widgets/WGoogleMap"
+#include <Wt/WResource>
 
-class MapsWidget : public Wt::WGoogleMapMod {
+class AutoPostResource : public Wt::WResource {
 public:
-    MapsWidget(Wt::WLineEdit *searchBox, const Wt::JSignal<> &mapReady, Wt::WContainerWidget* parent = 0);
-    void centerToGeoLocation();
-};
-
-class PlaceWidget::Private
-{
-public:
-    Private(const Wt::Dbo::ptr< AstroSession >& astroSession, Session& session, PlaceWidget* q);
-    Wt::Dbo::ptr< AstroSession > astroSession;
-    Session &session;
-    Wt::JSignal<> mapReady;
-    Wt::WGoogleMapMod::Coordinate currentPlace;
-    Wt::Signal<double,double> placeChanged;
+  AutoPostResource(const std::string &postUrl, const std::map<std::string,std::string> &params, Wt::WObject *parent=0);
+  virtual void handleRequest (const Wt::Http::Request &request, Wt::Http::Response &response);
 private:
-    class PlaceWidget* const q;
+  std::string postUrl;
+  std::map<std::string,std::string> params;
 };
-#endif // PLACEWIDGET_P_H
+
+#endif
