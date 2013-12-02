@@ -49,6 +49,7 @@
 #include <boost/format.hpp>
 #include <Wt/WImage>
 #include <Wt/WLabel>
+#include <Wt/WTextArea>
 #include <Wt/WStandardItemModel>
 #include <Wt/WStandardItem>
 #include "constellationfinder.h"
@@ -205,6 +206,16 @@ void AstroSessionTab::Private::populate()
     row->elementAt(7)->addWidget(new WText{ WDateTime::fromPosixTime( bestAltitude.when).time().toString() });
     row->elementAt(8)->addWidget(new WText{ Utils::htmlEncode(WString::fromUTF8(bestAltitude.coordinates.altitude.printable() )) });
     row->elementAt(9)->addWidget(new ObjectDifficultyWidget{sessionObject, selectedTelescope, bestAltitude.coordinates.altitude.degrees() }); 
+    WTableRow *descriptionRow = objectsTable->insertRow(objectsTable->rowCount());
+    WTableCell *descriptionCell = descriptionRow->elementAt(0);
+    descriptionCell->setColumnSpan(11);
+    WTextArea *descriptionTextArea = WW<WTextArea>().css("input-block-level");
+    WContainerWidget *descriptionContainer = WW<WContainerWidget>().add(descriptionTextArea).setHidden(true);
+    descriptionCell->addWidget(descriptionContainer);
+    
+    row->elementAt(10)->addWidget(WW<WPushButton>("Description").css("btn").onClick([=](WMouseEvent){
+      descriptionContainer->setHidden(!descriptionContainer->isHidden(), {WAnimation::SlideInFromTop});
+    }));
     row->elementAt(10)->addWidget(WW<WPushButton>("Remove").css("btn btn-danger").onClick([=](WMouseEvent){
       WMessageBox *confirmation = new WMessageBox("Confirm removal", "Are you sure?", Wt::Question, Wt::Ok | Wt::Cancel);
       confirmation->buttonClicked().connect([=](StandardButton b, _n5){
