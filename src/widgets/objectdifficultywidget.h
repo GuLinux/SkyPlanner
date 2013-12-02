@@ -23,13 +23,13 @@
 #include <Wt/WContainerWidget>
 #include "utils/d_ptr.h"
 
+struct NgcObject;
 class Telescope;
-class AstroSessionObject;
 class ObjectDifficultyWidget : public Wt::WContainerWidget
 {
   public:
     ~ObjectDifficultyWidget();
-    ObjectDifficultyWidget( const Wt::Dbo::ptr<AstroSessionObject> &object, const Wt::Dbo::ptr<Telescope> &telescope, double maxAltitudeInDegrees, Wt::WContainerWidget *parent = 0 );
+    ObjectDifficultyWidget( const Wt::Dbo::ptr< NgcObject > &object, const Wt::Dbo::ptr< Telescope > &telescope, double maxAltitudeInDegrees, Wt::WContainerWidget *parent = 0 );
 private:
     D_PTR;
 };

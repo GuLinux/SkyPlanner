@@ -206,7 +206,7 @@ void AstroSessionTab::Private::populate()
     auto bestAltitude = sessionObject->bestAltitude(ephemeris, 1);
     row->elementAt(7)->addWidget(new WText{ WDateTime::fromPosixTime( bestAltitude.when).time().toString() });
     row->elementAt(8)->addWidget(new WText{ Utils::htmlEncode(WString::fromUTF8(bestAltitude.coordinates.altitude.printable() )) });
-    row->elementAt(9)->addWidget(new ObjectDifficultyWidget{sessionObject, selectedTelescope, bestAltitude.coordinates.altitude.degrees() }); 
+    row->elementAt(9)->addWidget(new ObjectDifficultyWidget{sessionObject->ngcObject(), selectedTelescope, bestAltitude.coordinates.altitude.degrees() }); 
     WTableRow *descriptionRow = objectsTable->insertRow(objectsTable->rowCount());
     WTableCell *descriptionCell = descriptionRow->elementAt(0);
     descriptionCell->setHidden(true);

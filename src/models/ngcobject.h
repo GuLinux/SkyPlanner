@@ -26,6 +26,7 @@
 #include <string>
 #include "types.h"
 
+class Telescope;
 class AstroSessionObject;
 class NebulaDenomination;
 namespace dbo = Wt::Dbo;
@@ -57,6 +58,8 @@ public:
     float angularSize() const;
     NebulaType type() const;
     std::string typeDescription() const;
+    int32_t difficulty(const dbo::ptr<Telescope> &telescope) const;
+
     template<class Action>
     void persist(Action& a) {
 	dbo::id(a, _objectId, "object_id");

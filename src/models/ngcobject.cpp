@@ -18,6 +18,7 @@
  */
 
 #include "Models"
+#include <utils/utils.h>
 #include <map>
 
 using namespace std;
@@ -60,6 +61,15 @@ Coordinates::Equatorial NgcObject::coordinates() const
 {
   return { Angle::radians(rightAscension()), Angle::radians(declination()) };
 }
+
+int32_t NgcObject::difficulty( const Wt::Dbo::ptr< Telescope > &telescope ) const
+{
+  if(! telescope || magnitude() > 90)
+    return -1;
+  double magnitudeLimit = telescope->limitMagnitudeGain() + 7.5 ; // we use 7.5 as visual magnitude limit to cut us some slack...
+  return Utils::exponentialPercentage(magnitude(), magnitudeLimit, 1.2);
+}
+
 
 NgcObject::NebulaType NgcObject::type() const
 {

@@ -38,6 +38,7 @@
 #include <boost/thread.hpp>
 #include "constellationfinder.h"
 #include "widgets/objectnameswidget.h"
+#include "widgets/objectdifficultywidget.h"
 
 using namespace Wt;
 using namespace WtCommons;
@@ -79,8 +80,9 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsTable()
       suggestedObjectsTable->elementAt(0, 0)->addWidget(new WText{"Object Names"});
       suggestedObjectsTable->elementAt(0, 1)->addWidget(new WText{"Constellation"});
       suggestedObjectsTable->elementAt(0, 2)->addWidget(new WText{"Magnitude"});
-      suggestedObjectsTable->elementAt(0, 3)->addWidget(new WText{"Transit Time"});
-      suggestedObjectsTable->elementAt(0, 4)->addWidget(new WText{"Transit Altitude"});
+      suggestedObjectsTable->elementAt(0, 3)->addWidget(new WText{"Difficulty"});
+      suggestedObjectsTable->elementAt(0, 4)->addWidget(new WText{"Transit Time"});
+      suggestedObjectsTable->elementAt(0, 5)->addWidget(new WText{"Transit Altitude"});
       for(int i=startOffset; i<min(startOffset+size, suggestedObjectsList->size()); i++) {
 	NgcObjectPtr &ngcObject = suggestedObjectsList->at(i).first;
 	Ephemeris::BestAltitude &bestAltitude = suggestedObjectsList->at(i).second;
@@ -96,9 +98,10 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsTable()
 	row->elementAt(1)->addWidget(new WText{ ConstellationFinder::getName(ngcObject->coordinates()).name });
 	row->elementAt(2)->addWidget(new WText{format("%.1f") % ngcObject->magnitude()});
 	WDateTime transit = WDateTime::fromPosixTime(bestAltitude.when);
-	row->elementAt(3)->addWidget(new WText{transit.time().toString()});
-	row->elementAt(4)->addWidget(new WText{Utils::htmlEncode(WString::fromUTF8(bestAltitude.coordinates.altitude.printable()))});
-	row->elementAt(5)->addWidget(WW<WPushButton>("Add").css("btn btn-primary btn-mini").onClick([=](WMouseEvent){
+	row->elementAt(3)->addWidget(new ObjectDifficultyWidget(ngcObject, selectedTelescope, 99 /* TODO: hack, to be replaced */));
+        row->elementAt(4)->addWidget(new WText{transit.time().toString()});
+	row->elementAt(5)->addWidget(new WText{Utils::htmlEncode(WString::fromUTF8(bestAltitude.coordinates.altitude.printable()))});
+	row->elementAt(6)->addWidget(WW<WPushButton>("Add").css("btn btn-primary btn-mini").onClick([=](WMouseEvent){
 	  Dbo::Transaction t(session);
 	  astroSession.modify()->astroSessionObjects().insert(new AstroSessionObject(ngcObject));
 	  t.commit();
@@ -199,6 +202,7 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsList( double magnitud
 void SelectObjectsWidget::populateFor( const Dbo::ptr< Telescope > &telescope )
 {
   double magnitudeLimit = (telescope ? telescope->limitMagnitudeGain() + 6.5 : 12);
+  d->selectedTelescope = telescope;
   d->populateSuggestedObjectsList(magnitudeLimit);
 }
 

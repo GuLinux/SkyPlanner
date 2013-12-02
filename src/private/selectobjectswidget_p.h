@@ -41,6 +41,7 @@ public:
     std::mutex sessionLockMutex;
     std::mutex suggestedObjectsListMutex;
     int pagesCurrentIndex = 0;
+    Wt::Dbo::ptr< Telescope > selectedTelescope;
 private:
     class SelectObjectsWidget* const q;
 };

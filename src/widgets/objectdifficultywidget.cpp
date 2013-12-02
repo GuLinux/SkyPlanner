@@ -41,7 +41,7 @@ ObjectDifficultyWidget::~ObjectDifficultyWidget()
 
 }
 
-ObjectDifficultyWidget::ObjectDifficultyWidget( const Wt::Dbo::ptr< AstroSessionObject > &object, const Wt::Dbo::ptr< Telescope > &telescope, double maxAltitudeInDegrees, Wt::WContainerWidget *parent )
+ObjectDifficultyWidget::ObjectDifficultyWidget( const Wt::Dbo::ptr< NgcObject > &object, const Wt::Dbo::ptr< Telescope > &telescope, double maxAltitudeInDegrees, Wt::WContainerWidget *parent )
   : WContainerWidget(parent), d(this)
 {
   int difficulty = object->difficulty(telescope);
