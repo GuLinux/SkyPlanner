@@ -41,8 +41,8 @@ public:
     ObservabilityRange &delta(const boost::posix_time::time_duration &duration);
   };
   AstroSession();
-  AstroSession(const std::string &name, const boost::posix_time::ptime &when);
-  AstroSession(const std::string &name, const Wt::WDateTime &when);
+  AstroSession(const std::string &name, const boost::posix_time::ptime &when, const dbo::ptr<User> &user = dbo::ptr<User>() );
+  AstroSession(const std::string &name, const Wt::WDateTime &when, const dbo::ptr<User> &user = dbo::ptr<User>() );
   
   std::string name() const;
   boost::posix_time::ptime when() const;

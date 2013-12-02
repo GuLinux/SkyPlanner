@@ -28,12 +28,12 @@ AstroSession::AstroSession()
 {
 }
 
-AstroSession::AstroSession(const std::string& name, const boost::posix_time::ptime& when)
-  : _name(name), _when(when)
+AstroSession::AstroSession(const std::string& name, const boost::posix_time::ptime& when, const dbo::ptr<User> &user)
+  : _name(name), _when(when), _user(user)
 {
 }
-AstroSession::AstroSession(const std::string& name, const WDateTime& when)
-  : _name(name), _when(when.toPosixTime())
+AstroSession::AstroSession(const std::string& name, const WDateTime& when, const dbo::ptr<User> &user)
+  : _name(name), _when(when.toPosixTime()), _user(user)
 {
 }
 

@@ -26,6 +26,7 @@ class WTable;
 }
 
 class Session;
+class AstroSession;
 class AstroSessionsListTab::Private
 {
 public:
@@ -34,6 +35,7 @@ public:
     Wt::WTable *sessionsTable;
     void populateSessions();
     Wt::Signal<Wt::Dbo::ptr<AstroSession>> sessionClicked;
+    Wt::Dbo::ptr<AstroSession> addNew(const Wt::WString &name, const Wt::WDate &date);
 private:
     class AstroSessionsListTab* const q;
 };

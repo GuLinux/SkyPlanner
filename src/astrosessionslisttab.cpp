@@ -28,6 +28,7 @@
 #include <Wt/WPushButton>
 #include <Wt/WTable>
 #include <Wt/WMessageBox>
+#include <Wt/WLabel>
 #include <Wt/Auth/Login>
 using namespace Wt;
 using namespace WtCommons;
@@ -53,16 +54,21 @@ AstroSessionsListTab::AstroSessionsListTab(Session &session, Wt::WContainerWidge
   
   WPushButton *newSessionAdd = WW<WPushButton>("Add").css("btn btn-primary").onClick([=](WMouseEvent){
    if(!d->session.login().loggedIn() || ! d->session.user()) return;
-    Dbo::Transaction t(d->session);
-    d->session.user().modify()->astroSessions().insert(new AstroSession( newSessionName->text().toUTF8(), WDateTime{newSessionDate->date()} ));
-    t.commit();
+    d->addNew(newSessionName->text(), newSessionDate->date());
     d->populateSessions();
   });
-  addWidget(WW<WContainerWidget>().css("form-inline").add(newSessionName).add(newSessionDate).add(newSessionAdd));
+  addWidget(WW<WContainerWidget>().css("form-inline").add(new WLabel{"Add New: "}).add(newSessionName).add(newSessionDate).add(newSessionAdd));
   addWidget(d->sessionsTable = WW<WTable>().addCss("table table-striped table-hover"));
   d->sessionsTable->setHeaderCount(1);
   d->populateSessions();
   d->session.login().changed().connect([=](_n6){ d->populateSessions(); });
+}
+
+Dbo::ptr<AstroSession> AstroSessionsListTab::Private::addNew(const Wt::WString &name, const Wt::WDate &date)
+{
+  Dbo::Transaction t(session);
+  Dbo::ptr<AstroSession> astroSession = session.add(new AstroSession( name.toUTF8(), WDateTime{date}, session.user() ));
+  return astroSession;
 }
 
 
