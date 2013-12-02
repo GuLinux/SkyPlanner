@@ -89,10 +89,18 @@ ObjectNamesWidget::ObjectNamesWidget(const Wt::Dbo::ptr<NgcObject> &object, Sess
 	<< "&month=" <<astroSession->when().date().month().as_number() 
 	<< "&day=" << astroSession->when().date().day();
       if(astroSession->position()) {
-	Angle::Sexagesimal longitude = astroSession->position().longitude.sexagesimal();
-	Angle::Sexagesimal latitude = astroSession->position().latitude.sexagesimal();
-	dsoBrowserLink << "&lat_deg=" << latitude.degrees << "&lat_min=" << latitude.minutes << "&lat_sec=" << static_cast<int>(latitude.seconds);
-	dsoBrowserLink << "&lon_deg=" << longitude.degrees << "&lon_min=" << longitude.minutes << "&lon_sec=" << static_cast<int>(longitude.seconds);
+	cerr << "Longitude: " << astroSession->position().longitude.degrees() << endl;
+	string longitudeEmisphere = astroSession->position().longitude.degrees() > 0 ? "E" : "W" ;
+	Angle::Sexagesimal longitude = astroSession->position().longitude.degrees() > 0 
+	  ? astroSession->position().longitude.sexagesimal()
+	  : Angle::degrees(-astroSession->position().longitude.degrees() ).sexagesimal();
+	
+	string latitudeEmisphere = astroSession->position().latitude.degrees() > 0 ? "N" : "S";
+	Angle::Sexagesimal latitude = (astroSession->position().latitude.degrees() > 0)
+	  ? astroSession->position().latitude.sexagesimal()
+	  : Angle::degrees(-astroSession->position().latitude.degrees()).sexagesimal();
+	dsoBrowserLink << "&lat_deg=" << latitude.degrees << "&lat_min=" << latitude.minutes << "&lat_sec=" << static_cast<int>(latitude.seconds) << "&lon_hem=" << longitudeEmisphere;
+	dsoBrowserLink << "&lon_deg=" << longitude.degrees << "&lon_min=" << longitude.minutes << "&lon_sec=" << static_cast<int>(longitude.seconds) << "&lat_hem=" << latitudeEmisphere;
       // ?lat_deg=45&lat_min=29&lat_sec=31&lat_hem=N&month=12&day=2&year=2013&timezone=0&lon_deg=9&lon_min=17&lon_sec=53&lon_hem=E&min_alt=0&hour=0
       }
       addLink("DSO Browser", dsoBrowserLink.str());
