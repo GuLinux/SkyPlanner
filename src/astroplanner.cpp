@@ -46,6 +46,7 @@ AstroPlanner::~AstroPlanner()
 AstroPlanner::AstroPlanner( const WEnvironment &environment )
   : WApplication( environment ), d( this )
 {
+  setTitle("AstroPlanner");
   enableUpdates(true);
   setTheme( new WBootstrapTheme( this ) );
   requireJQuery("http://codeorigin.jquery.com/jquery-1.8.3.min.js");
