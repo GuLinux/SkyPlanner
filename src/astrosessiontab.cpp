@@ -52,6 +52,7 @@
 #include <Wt/WTextArea>
 #include <Wt/WStandardItemModel>
 #include <Wt/WStandardItem>
+#include <Wt/WToolBar>
 #include "constellationfinder.h"
 
 using namespace Wt;
@@ -212,11 +213,12 @@ void AstroSessionTab::Private::populate()
     WTextArea *descriptionTextArea = WW<WTextArea>().css("input-block-level");
     WContainerWidget *descriptionContainer = WW<WContainerWidget>().add(descriptionTextArea).setHidden(true);
     descriptionCell->addWidget(descriptionContainer);
-    
-    row->elementAt(10)->addWidget(WW<WPushButton>("Description").css("btn").onClick([=](WMouseEvent){
+    WToolBar *actions = new WToolBar;
+    row->elementAt(10)->addWidget(actions);
+    actions->addButton(WW<WPushButton>("Description").css("btn btn-small").onClick([=](WMouseEvent){
       descriptionContainer->setHidden(!descriptionContainer->isHidden(), {WAnimation::SlideInFromTop});
     }));
-    row->elementAt(10)->addWidget(WW<WPushButton>("Remove").css("btn btn-danger").onClick([=](WMouseEvent){
+    actions->addButton(WW<WPushButton>("Remove").css("btn btn-danger btn-small").onClick([=](WMouseEvent){
       WMessageBox *confirmation = new WMessageBox("Confirm removal", "Are you sure?", Wt::Question, Wt::Ok | Wt::Cancel);
       confirmation->buttonClicked().connect([=](StandardButton b, _n5){
         if(b != Wt::Ok) {
