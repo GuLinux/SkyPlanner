@@ -33,8 +33,11 @@ public:
   AstroSessionObject();
   AstroSessionObject(const dbo::ptr<NgcObject> &ngcObject);
   dbo::ptr<NgcObject> ngcObject() const;
+  std::string description() const;
+  void setDescription(const std::string &description);
   template<typename Action>
   void persist(Action& a) {
+    dbo::field(a, _description, "description");
     dbo::belongsTo(a, _astroSession);
     dbo::belongsTo(a, _ngcObject);
   }
@@ -50,6 +53,7 @@ public:
 private:
   dbo::ptr<AstroSession> _astroSession;
   dbo::ptr<NgcObject> _ngcObject;
+  std::string _description;
 };
 
 #endif // ASTROSESSIONOBJECT_H

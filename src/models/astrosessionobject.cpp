@@ -57,3 +57,13 @@ int32_t AstroSessionObject::difficulty( const Wt::Dbo::ptr< Telescope > &telesco
   double magnitudeLimit = telescope->limitMagnitudeGain() + 7.5 ; // we use 7.5 as visual magnitude limit to cut us some slack...
   return Utils::exponentialPercentage(_ngcObject->magnitude(), magnitudeLimit, 1.2);
 }
+
+void AstroSessionObject::setDescription(const string &description)
+{
+  _description = description;
+}
+
+string AstroSessionObject::description() const
+{
+  return _description;
+}
