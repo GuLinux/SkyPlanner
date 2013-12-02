@@ -490,7 +490,6 @@ pair<double,double> precess(double ra1, double dec1, double epoch1, double epoch
     double _2;
   };
   double cdr, csr;
-  array<double,3> x1, x2;
   vector<vector<double>> r{vector<double>{0.0, 0.0, 0.0}, vector<double>{0.0, 0.0, 0.0}, vector<double>{0.0, 0.0, 0.0}};
   
   double t, st, a, b, c, sina, sinb, sinc, cosa, cosb, cosc, ra2, dec2;
@@ -498,7 +497,7 @@ pair<double,double> precess(double ra1, double dec1, double epoch1, double epoch
   cdr = M_PI / 180.0;
   csr = cdr / 3600.0;
   a = cos(dec1);
-  x1 = {a* cos(ra1), a* sin(ra1), sin(dec1)};
+  vector<double> x1{a* cos(ra1), a* sin(ra1), sin(dec1)};
   t = 0.001*(epoch2 - epoch1);
   st = 0.001*(epoch1 - 1900.0);
   a = csr*t*(23042.53 + st*(139.75 + 0.06*st) + t*(30.23 - 0.27*st + 18.0*t));
@@ -519,7 +518,7 @@ pair<double,double> precess(double ra1, double dec1, double epoch1, double epoch
   r[2][0] = cosa*sinc;
   r[2][1] = -sina*sinc;
   r[2][2] = cosc;
-  x2 = {0.0, 0.0, 0.0};
+  vector<double> x2 {0.0, 0.0, 0.0};
   for (int i = 0; i < 3; i++)
       x2[i] = r[i][0]*x1[0] + r[i][1]*x1[1] + r[i][2]*x1[2];
   ra2 = atan2(x2[1], x2[0]);
