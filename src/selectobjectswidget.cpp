@@ -98,7 +98,7 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsTable()
 	WDateTime transit = WDateTime::fromPosixTime(bestAltitude.when);
 	row->elementAt(3)->addWidget(new WText{transit.time().toString()});
 	row->elementAt(4)->addWidget(new WText{Utils::htmlEncode(WString::fromUTF8(bestAltitude.coordinates.altitude.printable()))});
-	row->elementAt(5)->addWidget(WW<WPushButton>("Add").css("btn btn-primary").onClick([=](WMouseEvent){
+	row->elementAt(5)->addWidget(WW<WPushButton>("Add").css("btn btn-primary btn-mini").onClick([=](WMouseEvent){
 	  Dbo::Transaction t(session);
 	  astroSession.modify()->astroSessionObjects().insert(new AstroSessionObject(ngcObject));
 	  t.commit();
@@ -224,7 +224,7 @@ void SelectObjectsWidget::Private::searchByCatalogueTab(Dbo::Transaction& transa
       row->elementAt(0)->addWidget(new WText{nebula->catalogue()});
       row->elementAt(1)->addWidget(new WText{WString("{1}").arg(nebula->number())});
       row->elementAt(2)->addWidget(new WText{nebula->comment()});
-      row->elementAt(3)->addWidget(WW<WPushButton>("Add").css("btn btn-primary").onClick([=](WMouseEvent){
+      row->elementAt(3)->addWidget(WW<WPushButton>("Add").css("btn btn-primary btn-mini").onClick([=](WMouseEvent){
         Dbo::Transaction t(session);
         astroSession.modify()->astroSessionObjects().insert(new AstroSessionObject(nebula->ngcObject()));
         t.commit();

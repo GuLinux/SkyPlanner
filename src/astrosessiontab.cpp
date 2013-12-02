@@ -209,14 +209,21 @@ void AstroSessionTab::Private::populate()
     row->elementAt(9)->addWidget(new ObjectDifficultyWidget{sessionObject, selectedTelescope, bestAltitude.coordinates.altitude.degrees() }); 
     WTableRow *descriptionRow = objectsTable->insertRow(objectsTable->rowCount());
     WTableCell *descriptionCell = descriptionRow->elementAt(0);
+    descriptionCell->setHidden(true);
     descriptionCell->setColumnSpan(11);
-    WTextArea *descriptionTextArea = WW<WTextArea>().css("input-block-level");
-    WContainerWidget *descriptionContainer = WW<WContainerWidget>().add(descriptionTextArea).setHidden(true);
+    WTextArea *descriptionTextArea = WW<WTextArea>(sessionObject->description()).css("input-block-level");
+    WContainerWidget *descriptionContainer = WW<WContainerWidget>()
+      .add(new WLabel{"Your notes and description"})
+      .add(descriptionTextArea)
+      .add(WW<WPushButton>("Save").css("btn btn-mini btn-primary pull-right").onClick([=](WMouseEvent){
+        Dbo::Transaction t(session);
+        sessionObject.modify()->setDescription(descriptionTextArea->text().toUTF8());
+      }));
     descriptionCell->addWidget(descriptionContainer);
     WToolBar *actions = new WToolBar;
     row->elementAt(10)->addWidget(actions);
     actions->addButton(WW<WPushButton>("Description").css("btn btn-mini").onClick([=](WMouseEvent){
-      descriptionContainer->setHidden(!descriptionContainer->isHidden(), {WAnimation::SlideInFromTop});
+      descriptionCell->setHidden(!descriptionCell->isHidden(), {WAnimation::SlideInFromTop});
     }));
     actions->addButton(WW<WPushButton>("Remove").css("btn btn-danger btn-mini").onClick([=](WMouseEvent){
       WMessageBox *confirmation = new WMessageBox("Confirm removal", "Are you sure?", Wt::Question, Wt::Ok | Wt::Cancel);
