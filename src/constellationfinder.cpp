@@ -491,7 +491,8 @@ pair<double,double> precess(double ra1, double dec1, double epoch1, double epoch
   };
   double cdr, csr;
   array<double,3> x1, x2;
-  array<array<double,3>, 3> r;
+  vector<vector<double>> r{vector<double>{0.0, 0.0, 0.0}, vector<double>{0.0, 0.0, 0.0}, vector<double>{0.0, 0.0, 0.0}};
+  
   double t, st, a, b, c, sina, sinb, sinc, cosa, cosb, cosc, ra2, dec2;
 
   cdr = M_PI / 180.0;
@@ -509,7 +510,6 @@ pair<double,double> precess(double ra1, double dec1, double epoch1, double epoch
   cosa = cos(a);
   cosb = cos(b);
   cosc = cos(c);
-  r = {array<double,3>{0.0, 0.0, 0.0}, array<double,3>{0.0, 0.0, 0.0}, array<double,3>{0.0, 0.0, 0.0}};
   r[0][0] = cosa*cosb*cosc - sina*sinb;
   r[0][1] = -cosa*sinb - sina*cosb*cosc;
   r[0][2] = -cosb*sinc;
