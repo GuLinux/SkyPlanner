@@ -27,6 +27,8 @@
 #include "utils/autopostresource.h"
 #include <Wt/WPopupMenu>
 #include <Wt/WAnchor>
+#include <Wt/WJavaScript>
+#include <Wt/WTemplate>
 #include "session.h"
 #include "types.h"
 
@@ -53,6 +55,14 @@ ObjectNamesWidget::ObjectNamesWidget(const Wt::Dbo::ptr<NgcObject> &object, Sess
       separator = ", ";
     }
     WAnchor *namesText = WW<WAnchor>("", Utils::htmlEncode(WString::fromUTF8(namesStream.str()))).css("link");
+    WTemplate *ngcIcMenuHiddenForm = new WTemplate();
+    ngcIcMenuHiddenForm->setTemplateText("<form id='autopost_${template_id}' method='post' action='http://www.ngcicproject.org/ngcicdb.asp' target=_BLANK>\
+    <input type='hidden' name='ngcicobject' value='${ngcicobject_id}' /></form>", XHTMLUnsafeText);
+    ngcIcMenuHiddenForm->bindString("template_id", ngcIcMenuHiddenForm->id() );
+    ngcIcMenuHiddenForm->bindString("ngcicobject_id", object->objectId() );
+    addWidget(ngcIcMenuHiddenForm);
+    ngcIcMenuHiddenForm->setHidden(true);
+    
     namesText->clicked().connect([=](WMouseEvent e) {
       Dbo::Transaction t(d->session);
       WPopupMenu *popup = new WPopupMenu();
@@ -63,10 +73,7 @@ ObjectNamesWidget::ObjectNamesWidget(const Wt::Dbo::ptr<NgcObject> &object, Sess
       };
       popup->addSectionHeader("More Information");
       WMenuItem *ngcIcMenuItem = popup->addItem("NGC-IC Project Page");
-      ngcIcMenuItem->setLink(new AutoPostResource{"http://www.ngcicproject.org/ngcicdb.asp", {{"ngcicobject", object->objectId() }}, popup});
-      ngcIcMenuItem->setLinkTarget(TargetNewWindow);
-      WMenuItem *dsoBrowser = popup->addItem("DSO Browser");
-      stringstream dsoBrowserLink;
+      ngcIcMenuItem->setLink((format("javascript:$('#autopost_%s').submit();") % ngcIcMenuHiddenForm->id()).str());
       string catName;
       int catNumber;
       for(auto nebula: object->nebulae()) {
@@ -76,8 +83,11 @@ ObjectNamesWidget::ObjectNamesWidget(const Wt::Dbo::ptr<NgcObject> &object, Sess
 	}
       }
       
+      stringstream dsoBrowserLink;
       dsoBrowserLink << "http://dso-browser.com/dso/info/" << catName << "/" << catNumber;
-      dsoBrowserLink << "?year=" << astroSession->when().date().year() << "&month=" <<astroSession->when().date().month().as_number() << "&day=" << astroSession->when().date().day();
+      dsoBrowserLink << "?year=" << astroSession->when().date().year() 
+	<< "&month=" <<astroSession->when().date().month().as_number() 
+	<< "&day=" << astroSession->when().date().day();
       if(astroSession->position()) {
 	Angle::Sexagesimal longitude = astroSession->position().longitude.sexagesimal();
 	Angle::Sexagesimal latitude = astroSession->position().latitude.sexagesimal();
@@ -85,8 +95,7 @@ ObjectNamesWidget::ObjectNamesWidget(const Wt::Dbo::ptr<NgcObject> &object, Sess
 	dsoBrowserLink << "&lon_deg=" << longitude.degrees << "&lon_min=" << longitude.minutes << "&lon_sec=" << static_cast<int>(longitude.seconds);
       // ?lat_deg=45&lat_min=29&lat_sec=31&lat_hem=N&month=12&day=2&year=2013&timezone=0&lon_deg=9&lon_min=17&lon_sec=53&lon_hem=E&min_alt=0&hour=0
       }
-      dsoBrowser->setLink(dsoBrowserLink.str());
-      dsoBrowser->setLinkTarget(TargetNewWindow);
+      addLink("DSO Browser", dsoBrowserLink.str());
       
       popup->addSectionHeader("Search");
       addLink("Google Search", (format("http://www.google.com/search?q=%s%%20%s") % catName % catNumber ).str() );
