@@ -75,7 +75,7 @@ void AstroSessionsListTab::Private::populateSessions()
      if(!session.login().loggedIn() || ! session.user()) return;
      for(auto astroSession: session.user()->astroSessions()) {
        WTableRow *row = sessionsTable->insertRow(sessionsTable->rowCount());
-       row->elementAt(0)->addWidget(WW<WAnchor>("", astroSession->name()).onClick([=](WMouseEvent){
+       row->elementAt(0)->addWidget(WW<WAnchor>("#", astroSession->name()).onClick([=](WMouseEvent){
 	 sessionClicked.emit(astroSession);
       }));
        row->elementAt(1)->addWidget(new WText{astroSession->wDateWhen().date().toString()});

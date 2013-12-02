@@ -197,16 +197,16 @@ void AstroSessionTab::Private::populate()
       separator = ", ";
     }
     sessionObject->bestAltitude(ephemeris);
-    row->elementAt(0)->addWidget(new WText(namesStream.str()));
-    row->elementAt(1)->addWidget(new WText( Utils::htmlEncode( sessionObject->coordinates().rightAscension.printable(Angle::Hourly) ) ));
-    row->elementAt(2)->addWidget(new WText( Utils::htmlEncode( WString::fromUTF8( sessionObject->coordinates().declination.printable() )) ));
-    row->elementAt(3)->addWidget(new WText( Utils::htmlEncode( WString::fromUTF8( Angle::degrees(sessionObject->ngcObject()->angularSize()).printable() )) ));
-    row->elementAt(4)->addWidget(new WText( format("%.3f") % sessionObject->ngcObject()->magnitude()));
-    row->elementAt(5)->addWidget(new WText(sessionObject->ngcObject()->typeDescription() ));
+    row->elementAt(0)->addWidget(new WText{namesStream.str()});
+    row->elementAt(1)->addWidget(new WText{ Utils::htmlEncode( sessionObject->coordinates().rightAscension.printable(Angle::Hourly) ) });
+    row->elementAt(2)->addWidget(new WText{ Utils::htmlEncode( WString::fromUTF8( sessionObject->coordinates().declination.printable() )) });
+    row->elementAt(3)->addWidget(new WText{ Utils::htmlEncode( WString::fromUTF8( Angle::degrees(sessionObject->ngcObject()->angularSize()).printable() )) });
+    row->elementAt(4)->addWidget(new WText{ format("%.1f") % sessionObject->ngcObject()->magnitude()});
+    row->elementAt(5)->addWidget(new WText{sessionObject->ngcObject()->typeDescription() });
     auto bestAltitude = sessionObject->bestAltitude(ephemeris, 1);
-    row->elementAt(6)->addWidget(new WText( WDateTime::fromPosixTime( bestAltitude.when).time().toString() ));
-    row->elementAt(7)->addWidget(new WText( Utils::htmlEncode(WString::fromUTF8(bestAltitude.coordinates.altitude.printable() )) ));
-    row->elementAt(8)->addWidget(new ObjectDifficultyWidget(sessionObject, selectedTelescope)); 
+    row->elementAt(6)->addWidget(new WText{ WDateTime::fromPosixTime( bestAltitude.when).time().toString() });
+    row->elementAt(7)->addWidget(new WText{ Utils::htmlEncode(WString::fromUTF8(bestAltitude.coordinates.altitude.printable() )) });
+    row->elementAt(8)->addWidget(new ObjectDifficultyWidget{sessionObject, selectedTelescope, bestAltitude.coordinates.altitude.degrees() }); 
     row->elementAt(9)->addWidget(WW<WPushButton>("Remove").css("btn btn-danger").onClick([=](WMouseEvent){
       WMessageBox *confirmation = new WMessageBox("Confirm removal", "Are you sure?", Wt::Question, Wt::Ok | Wt::Cancel);
       confirmation->buttonClicked().connect([=](StandardButton b, _n5){

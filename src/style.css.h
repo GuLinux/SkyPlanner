@@ -14,6 +14,14 @@ std::vector<uint8_t> styleCss() {
     .gm-style img {
       max-width: none;
     }
+    .link {
+      cursor: pointer;
+    }
+    .object-difficulty-box {
+      font-family: "monospace";
+      border-style:solid;
+      border-width:5px;
+    }
   );
   return std::vector<uint8_t>(css.begin(), css.end());
 }

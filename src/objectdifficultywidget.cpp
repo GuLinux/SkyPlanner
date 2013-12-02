@@ -22,17 +22,54 @@
 #include "Wt-Commons/wt_helpers.h"
 #include "utils/format.h"
 #include <Wt/WText>
+#include "utils/d_ptr_implementation.h"
+
 
 using namespace WtCommons;
 using namespace Wt;
 using namespace std;
+
+class ObjectDifficultyWidget::Private {
+public:
+  Private(ObjectDifficultyWidget *q) : q(q) {}
+private:
+  ObjectDifficultyWidget * const q;
+};
+
 ObjectDifficultyWidget::~ObjectDifficultyWidget()
 {
 
 }
 
-ObjectDifficultyWidget::ObjectDifficultyWidget( const Wt::Dbo::ptr< AstroSessionObject > &object, const Wt::Dbo::ptr< Telescope > &telescope, Wt::WContainerWidget *parent )
-  : WContainerWidget(parent)
+ObjectDifficultyWidget::ObjectDifficultyWidget( const Wt::Dbo::ptr< AstroSessionObject > &object, const Wt::Dbo::ptr< Telescope > &telescope, double maxAltitudeInDegrees, Wt::WContainerWidget *parent )
+  : WContainerWidget(parent), d(this)
 {
-  addWidget(new WText( format("%d%%") % object->difficulty(telescope)));
+  int difficulty = object->difficulty(telescope);
+  if(maxAltitudeInDegrees < 10.) {
+    addWidget(new WText{"Too low"});
+    return;
+  }
+  string difficultyText;
+  difficulty = difficulty > 0 ? difficulty/25 : -1;
+  switch(difficulty) {
+    case -1:
+      difficultyText = "N/A";
+      break;
+    case 0:
+      difficultyText = "Very easy";
+      break;
+    case 1:
+      difficultyText = "Easy";
+      break;
+    case 2:
+      difficultyText = "Average";
+      break;
+    case 3:
+      difficultyText = "Difficult";
+      break;
+    case 4:
+      difficultyText = "Out of range";
+      break;
+  } 
+  addWidget(new WText{difficultyText});
 }

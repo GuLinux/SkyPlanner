@@ -5,6 +5,7 @@
  * See the LICENSE file for terms of use.
  *
  * Contributed by: Richard Ulrich.
+ * Modified by: Marco Gulino (places library inclusion, and v2 removal and cleanup).
  */
 
 #include "WGoogleMap"

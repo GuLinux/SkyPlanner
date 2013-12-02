@@ -90,7 +90,7 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsTable()
 	  separator = ", ";
 	}
 	row->elementAt(0)->addWidget(new WText{Utils::htmlEncode(WString::fromUTF8(names.str()))});
-	row->elementAt(1)->addWidget(new WText{format("%.3f") % ngcObject->magnitude()});
+	row->elementAt(1)->addWidget(new WText{format("%.1f") % ngcObject->magnitude()});
 	WDateTime transit = WDateTime::fromPosixTime(bestAltitude.when);
 	row->elementAt(2)->addWidget(new WText{transit.time().toString()});
 	row->elementAt(3)->addWidget(new WText{Utils::htmlEncode(WString::fromUTF8(bestAltitude.coordinates.altitude.printable()))});
