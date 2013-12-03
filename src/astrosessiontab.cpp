@@ -53,6 +53,8 @@
 #include <Wt/WTemplate>
 #include "constellationfinder.h"
 #include "printableastrosessionresource.h"
+#include <Wt/WSlider>
+
 
 using namespace Wt;
 using namespace WtCommons;
@@ -132,10 +134,17 @@ void AstroSessionTab::Private::reload()
     sessionActions->addButton(WW<WPushButton>("Printable Version").css("btn btn-info").onClick([=](WMouseEvent){
       WDialog *printableDialog = new WDialog("Printable Version");
       WPushButton *okButton;
+      WSlider *slider = new WSlider();
       printableDialog->footer()->addWidget(okButton = WW<WPushButton>("Ok").css("btn btn-primary").onClick([=](WMouseEvent){ printableDialog->accept(); }));
       printableDialog->footer()->addWidget(WW<WPushButton>("Cancel").css("btn btn-danger").onClick([=](WMouseEvent){ printableDialog->reject(); }));
-      okButton->setLink(new PrintableAstroSessionResource(astroSession, session, selectedTelescope, q));
+      auto printableResource = new PrintableAstroSessionResource(astroSession, session, selectedTelescope, q);
+      okButton->setLink(printableResource);
       okButton->setLinkTarget(TargetNewWindow);
+      printableDialog->contents()->addWidget(new WLabel("Spacing between objects rows"));
+      printableDialog->contents()->addWidget(new WBreak);
+      slider->setMaximum(10);
+      slider->valueChanged().connect([=](int v, _n5){printableResource->setRowsSpacing(v); });
+      printableDialog->contents()->addWidget(slider);
       printableDialog->show();
     }));
     actionsContainer->addWidget(sessionActions);

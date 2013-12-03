@@ -31,6 +31,7 @@ public:
     Wt::Dbo::ptr<AstroSession> astroSession;
     Session &session;
     Wt::Dbo::ptr<Telescope> telescope;
+    int rowsSpacing;
 private:
     class PrintableAstroSessionResource* const q;
 };

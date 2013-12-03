@@ -32,6 +32,7 @@ public:
   PrintableAstroSessionResource(const Wt::Dbo::ptr<AstroSession> &astroSession, Session &session, const Wt::Dbo::ptr<Telescope> &telescope, Wt::WObject *parent = 0);
   virtual ~PrintableAstroSessionResource();
   virtual void handleRequest(const Wt::Http::Request &request, Wt::Http::Response &response);
+  void setRowsSpacing(int spacing);
 private:
     D_PTR;
 };

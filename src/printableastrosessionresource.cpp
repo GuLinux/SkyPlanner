@@ -36,7 +36,7 @@ using namespace Wt;
 using namespace std;
 
 PrintableAstroSessionResource::Private::Private(const Dbo::ptr< AstroSession >& astroSession, Session& session, const Dbo::ptr<Telescope> &telescope, PrintableAstroSessionResource* q) 
-  : astroSession(astroSession), session(session), telescope(telescope), q(q)
+  : astroSession(astroSession), session(session), telescope(telescope), rowsSpacing(0), q(q)
 {
 }
 
@@ -49,10 +49,26 @@ PrintableAstroSessionResource::~PrintableAstroSessionResource()
 {
 }
 
+void PrintableAstroSessionResource::setRowsSpacing(int spacing)
+{
+  d->rowsSpacing = spacing;
+}
+
 void PrintableAstroSessionResource::handleRequest(const Wt::Http::Request &request, Wt::Http::Response &response) {
   WTemplate printable;
   Dbo::Transaction t(d->session);
-  printable.setTemplateText("<html><head><title>${title}</title><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"></head> \
+  printable.setTemplateText("<html>\
+    <head>\
+      <title>${title}</title>\
+      <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\
+      <style type=\"text/css\">\
+      @media print {\
+	table { page-break-inside:auto }\
+	tr    { page-break-inside:avoid; page-break-after:auto }\
+	td    { page-break-inside:avoid; page-break-after:auto }\
+      }\
+      </style>\
+    </head> \
   <body>\
   <center><h2>${title}</h2></center>\
   ${<have-place>}\
@@ -113,8 +129,14 @@ void PrintableAstroSessionResource::handleRequest(const Wt::Http::Request &reque
     <td>${highestAt}</td>\
     <td>${maxAltitude}</td>\
     ${</have-place>}\
-    <td>${difficulty}</td>\
-    </tr>\n", XHTMLUnsafeText);
+    <td>${difficulty}</td></tr>\
+    ${<have-description>}\
+    <tr><td colspan=\"${total-columns}\">${description}</td></tr>\
+    ${</have-description>}\
+    ${<have-rows-spacing>}\
+    <tr><td colspan=\"${total-columns}\" style=\"height: ${rows-spacing}em\" /></tr>\
+    ${</have-rows-spacing>}\
+    \n", XHTMLUnsafeText);
     rowTemplate.bindWidget("namesWidget", new ObjectNamesWidget{sessionObject->ngcObject(), d->session, d->astroSession, ObjectNamesWidget::Printable});
     rowTemplate.bindString("ar", Utils::htmlEncode( sessionObject->coordinates().rightAscension.printable(Angle::Hourly) ));
     rowTemplate.bindWidget("dec", new WText{Utils::htmlEncode( WString::fromUTF8( sessionObject->coordinates().declination.printable() )) } );
@@ -123,12 +145,17 @@ void PrintableAstroSessionResource::handleRequest(const Wt::Http::Request &reque
     rowTemplate.bindString("magnitude", format("%.1f") % sessionObject->ngcObject()->magnitude() );
     rowTemplate.bindString("type", sessionObject->ngcObject()->typeDescription());
     rowTemplate.setCondition("have-place", d->astroSession->position());
+    rowTemplate.bindInt("total-columns", d->astroSession->position() ? 10 : 8);
     auto bestAltitude = sessionObject->bestAltitude(ephemeris, 1);
     if(d->astroSession->position()) {
       rowTemplate.bindString("highestAt", WDateTime::fromPosixTime( bestAltitude.when).time().toString() );
       rowTemplate.bindString("maxAltitude", Utils::htmlEncode(WString::fromUTF8(bestAltitude.coordinates.altitude.printable() )) );
     }
     rowTemplate.bindWidget("difficulty", new ObjectDifficultyWidget{sessionObject->ngcObject(), d->telescope, bestAltitude.coordinates.altitude.degrees() });
+    rowTemplate.setCondition("have-description",  !sessionObject->description().empty());
+    rowTemplate.bindString("description", Utils::htmlEncode(WString::fromUTF8(sessionObject->description())));
+    rowTemplate.setCondition("have-rows-spacing", d->rowsSpacing > 0);
+    rowTemplate.bindString("rows-spacing", format("%.1f") % (static_cast<double>(d->rowsSpacing) * 1.3) );
     rowTemplate.renderTemplate(tableRows);
   }
   printable.bindString("table-rows", WString::fromUTF8(tableRows.str()));
