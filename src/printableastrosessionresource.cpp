@@ -43,7 +43,6 @@ PrintableAstroSessionResource::Private::Private(const Dbo::ptr< AstroSession >& 
 PrintableAstroSessionResource::PrintableAstroSessionResource(const Dbo::ptr<AstroSession> &astroSession, Session &session, const Dbo::ptr<Telescope> &telescope, WObject* parent)
   : WResource(parent), d(astroSession, session, telescope, this)
 {
-  setInternalPath("astrosession_printable");
 }
 
 PrintableAstroSessionResource::~PrintableAstroSessionResource()
