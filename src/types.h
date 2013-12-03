@@ -38,7 +38,8 @@ class Angle {
     double radians() const;
     double hours() const;
     enum Format { Hourly, Degrees };
-    std::string printable(Format format = Degrees) const;
+    enum PrintFormat{ UTF8, HTML};
+    std::string printable(Format format = Degrees, PrintFormat printFormat = UTF8 ) const;
     operator bool() const;
   private:
     Angle(double degrees);

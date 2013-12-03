@@ -33,6 +33,7 @@
 #include "widgets/objectdifficultywidget.h"
 #include <hpdf.h>
 #include <Wt/Render/WPdfRenderer>
+#include <Wt/WServer>
 
 using namespace Wt;
 using namespace std;
@@ -66,57 +67,58 @@ void PrintableAstroSessionResource::setReportType(ReportType type)
 }
 
 namespace {
-    void error_handler(HPDF_STATUS error_no, HPDF_STATUS detail_no,
-		       void *user_data) {
-	fprintf(stderr, "libharu error: error_no=%04X, detail_no=%d\n",
-		(unsigned int) error_no, (int) detail_no);
+    void error_handler(HPDF_STATUS error_no, HPDF_STATUS detail_no, void *user_data) {
+      WServer::instance()->log("error") << (format("libharu error: error_no=%04X, detail_no=%d\n") % (unsigned int) error_no % (int) detail_no).str();
     }
 }
 
 void PrintableAstroSessionResource::handleRequest(const Wt::Http::Request &request, Wt::Http::Response &response) {
   WTemplate printable;
   Dbo::Transaction t(d->session);
-  printable.setTemplateText("<html>\
-    <head>\
-      <title>${title}</title>\
+  printable.setTemplateText("<html>\n\
+    <head>\n\
+      ${<render-type-html>}\
       <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\
-      <style type=\"text/css\">\
+      <title>${title}</title>\n\
+      ${</render-type-html>}\
+      <style type=\"text/css\">\n\
       @media print {\
 	table { page-break-inside:auto }\
 	tr    { page-break-inside:avoid; page-break-after:auto }\
 	td    { page-break-inside:avoid; page-break-after:auto }\
       }\
-      </style>\
-    </head> \
-  <body>\
-  <center><h2>${title}</h2></center>\
+      </style>\n\
+    </head>\
+  <body>\n\
+  <center><h2>${title}</h2></center>\n\
   ${<have-place>}\
-  <p>${sessionDate}, Moon Phase: ${moonPhase}%</p>\
-  <p>Sun: rising at ${sunRise}, setting at ${sunSet}</p>\
-  <p>Moon: rising at ${moonRise}, setting at ${moonSet}</p>\
+  <p>${sessionDate}, Moon Phase: ${moonPhase}%</p>\n\
+  <p>Sun: rising at ${sunRise}, setting at ${sunSet}</p>\n\
+  <p>Moon: rising at ${moonRise}, setting at ${moonSet}</p>\n\
   ${<have-telescope>}<p>Suggestions for telescope: \"${telescope-name}\", diameter ${telescope-diameter}mm, focal length ${telescope-focal-length}mm</p>${</have-telescope>}\
   ${</have-place>}\
-  <table border=\"1\">\
-    <tr>\
-      <th>Names</th>\
-      <th>AR</th>\
-      <th>Dec</th>\
-      <th>Constellation</th>\
-      <th>Size</th>\
-      <th>Magn.</th>\
-      <th>Type</th>\
+  <table border=\"1\">\n\
+    <tr>\n\
+      <th>Names</th>\n\
+      <th>AR</th>\n\
+      <th>Dec</th>\n\
+      <th>Constellation</th>\n\
+      <th>Size</th>\n\
+      <th>Magn.</th>\n\
+      <th>Type</th>\n\
       ${<have-place>}\
-      <th>Highest</th>\
-      <th>Max</th>\
+      <th>Highest</th>\n\
+      <th>Max</th>\n\
       ${</have-place>}\
       ${<have-telescope>}\
-      <th>Difficulty</th>\
+      <th>Difficulty</th>\n\
       ${</have-telescope>}\
-    </tr>\
+    </tr>\n\
     ${table-rows}\
-  </table>\
-  </body></html>\
+  </table>\n\
+  </body></html>\n\
   ", XHTMLUnsafeText);
+  printable.setCondition("render-type-html", d->reportType == HTML);
   printable.bindString("title", d->astroSession->name());
   printable.setCondition("have-place", d->astroSession->position());
   printable.setCondition("have-telescope", d->telescope);
@@ -145,34 +147,34 @@ void PrintableAstroSessionResource::handleRequest(const Wt::Http::Request &reque
   });
   for(auto sessionObject: sessionObjects) {
     WTemplate rowTemplate;
-    rowTemplate.setTemplateText("<tr>\
-    <td>${namesWidget}</td>\
-    <td>${ar}</td>\
-    <td>${dec}</td>\
-    <td>${constellation}</td>\
-    <td>${size}</td>\
-    <td>${magnitude}</td>\
-    <td>${type}</td>\
+    rowTemplate.setTemplateText("<tr>\n\
+    <td>${namesWidget}</td>\n\
+    <td>${ar}</td>\n\
+    <td>${dec}</td>\n\
+    <td>${constellation}</td>\n\
+    <td>${size}</td>\n\
+    <td>${magnitude}</td>\n\
+    <td>${type}</td>\n\
     ${<have-place>}\
-    <td>${highestAt}</td>\
-    <td>${maxAltitude}</td>\
+    <td>${highestAt}</td>\n\
+    <td>${maxAltitude}</td>\n\
     ${</have-place>}\
     ${<have-telescope>}\
-    <td>${difficulty}</td>\
+    <td>${difficulty}</td>\n\
     ${</have-telescope>}\
-    </tr>\
+    </tr>\n\
     ${<have-description>}\
-    <tr><td colspan=\"${total-columns}\">${description}</td></tr>\
+    <tr><td colspan=\"${total-columns}\">${description}</td></tr>\n\
     ${</have-description>}\
     ${<have-rows-spacing>}\
-    <tr><td colspan=\"${total-columns}\" style=\"height: ${rows-spacing}em\" /></tr>\
+    <tr><td colspan=\"${total-columns}\" style=\"height: ${rows-spacing}em\" /></tr>\n\
     ${</have-rows-spacing>}\
     \n", XHTMLUnsafeText);
     rowTemplate.bindWidget("namesWidget", new ObjectNamesWidget{sessionObject->ngcObject(), d->session, d->astroSession, ObjectNamesWidget::Printable});
-    rowTemplate.bindString("ar", Utils::htmlEncode( sessionObject->coordinates().rightAscension.printable(Angle::Hourly) ));
-    rowTemplate.bindWidget("dec", new WText{Utils::htmlEncode( WString::fromUTF8( sessionObject->coordinates().declination.printable() )) } );
+    rowTemplate.bindString("ar", sessionObject->coordinates().rightAscension.printable(Angle::Hourly));
+    rowTemplate.bindWidget("dec", new WText{WString::fromUTF8( sessionObject->coordinates().declination.printable(Angle::Degrees, Angle::HTML) ) } );
     rowTemplate.bindString("constellation", ConstellationFinder::getName(sessionObject->coordinates()).name);
-    rowTemplate.bindString("size", Utils::htmlEncode( WString::fromUTF8( Angle::degrees(sessionObject->ngcObject()->angularSize()).printable() )));
+    rowTemplate.bindString("size", WString::fromUTF8( Angle::degrees(sessionObject->ngcObject()->angularSize()).printable(Angle::Degrees, Angle::HTML) ));
     rowTemplate.bindString("magnitude", format("%.1f") % sessionObject->ngcObject()->magnitude() );
     rowTemplate.bindString("type", sessionObject->ngcObject()->typeDescription());
     rowTemplate.setCondition("have-place", d->astroSession->position());
@@ -181,7 +183,7 @@ void PrintableAstroSessionResource::handleRequest(const Wt::Http::Request &reque
     auto bestAltitude = sessionObject->bestAltitude(ephemeris, 1);
     if(d->astroSession->position()) {
       rowTemplate.bindString("highestAt", WDateTime::fromPosixTime( bestAltitude.when).time().toString() );
-      rowTemplate.bindString("maxAltitude", Utils::htmlEncode(WString::fromUTF8(bestAltitude.coordinates.altitude.printable() )) );
+      rowTemplate.bindString("maxAltitude", WString::fromUTF8(bestAltitude.coordinates.altitude.printable(Angle::Degrees, Angle::HTML)) );
     }
     rowTemplate.bindWidget("difficulty", new ObjectDifficultyWidget{sessionObject->ngcObject(), d->telescope, bestAltitude.coordinates.altitude.degrees() });
     rowTemplate.setCondition("have-description",  !sessionObject->description().empty());
@@ -191,7 +193,6 @@ void PrintableAstroSessionResource::handleRequest(const Wt::Http::Request &reque
     rowTemplate.renderTemplate(tableRows);
   }
   printable.bindString("table-rows", WString::fromUTF8(tableRows.str()));
-  // d->reportType = PDF;
   if(d->reportType == HTML) {
     printable.renderTemplate(response.out());
     return;
@@ -200,16 +201,19 @@ void PrintableAstroSessionResource::handleRequest(const Wt::Http::Request &reque
   response.setMimeType("application/pdf");
   HPDF_Doc pdf = HPDF_New(error_handler, 0);
   //HPDF_UseUTFEncodings(pdf);
+  //HPDF_SetCurrentEncoder(pdf, "UTF-8"); 
   
   HPDF_Page page = HPDF_AddPage(pdf);
-  HPDF_Page_SetSize(page, HPDF_PAGE_SIZE_A4, HPDF_PAGE_PORTRAIT);
-
+  HPDF_Page_SetSize(page, HPDF_PAGE_SIZE_A4, HPDF_PAGE_LANDSCAPE);
   Wt::Render::WPdfRenderer renderer(pdf, page);
   renderer.setMargin(2.54);
   renderer.setDpi(96);
+  renderer.addFontCollection("/usr/share/fonts", true);
   stringstream buffer;
   printable.renderTemplate(buffer);
-  renderer.render(WString::fromUTF8(buffer.str()));
+  string b = buffer.str();
+  boost::replace_all(b, "°", "&deg;");
+  renderer.render(WString::fromUTF8(b));
   
   HPDF_SaveToStream(pdf);
   unsigned int size = HPDF_GetStreamSize(pdf);

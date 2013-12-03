@@ -53,10 +53,11 @@ AstroSessionsListTab::AstroSessionsListTab(Session &session, Wt::WContainerWidge
   setMinimumSize(WLength::Auto, 500);
   
   WPushButton *newSessionAdd = WW<WPushButton>("Add").css("btn btn-primary").onClick([=](WMouseEvent){
-   if(!d->session.login().loggedIn() || ! d->session.user()) return;
+   if(!d->session.login().loggedIn() || ! d->session.user() || newSessionName->text().empty()) return;
     d->addNew(newSessionName->text(), newSessionDate->date());
     d->populateSessions();
-  });
+  }).setEnabled(false);
+  newSessionName->keyWentUp().connect([=](WKeyEvent){ newSessionAdd->setEnabled(!newSessionName->text().empty() );});
   addWidget(WW<WContainerWidget>().css("form-inline").add(new WLabel{"Add New: "}).add(newSessionName).add(newSessionDate).add(newSessionAdd));
   addWidget(d->sessionsTable = WW<WTable>().addCss("table table-striped table-hover"));
   d->sessionsTable->setHeaderCount(1);

@@ -79,7 +79,7 @@ Angle::Sexagesimal Angle::sexagesimal() const
   return {degrees_i, minutes_i, angle};
 }
 
-string Angle::printable(Format format) const
+string Angle::printable(Format format, PrintFormat printFormat) const
 {
   if(format == Hourly) {
     double time = hours();
@@ -93,7 +93,7 @@ string Angle::printable(Format format) const
   }
 
   Sexagesimal asSexagesimal = sexagesimal();
-  return (boost::format("%d\302\260 %2d' %.3f\"") % asSexagesimal.degrees % asSexagesimal.minutes % asSexagesimal.seconds ).str();
+  return (boost::format("%d%s %2d' %.3f\"") % asSexagesimal.degrees % (printFormat == HTML ? "&deg;" : "\302\260") % asSexagesimal.minutes % asSexagesimal.seconds ).str();
 }
 
  

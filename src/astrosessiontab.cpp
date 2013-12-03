@@ -132,6 +132,7 @@ void AstroSessionTab::Private::reload()
     printableDialog->footer()->addWidget(okButton = WW<WPushButton>("Ok").css("btn btn-primary").onClick([=](WMouseEvent){ printableDialog->accept(); }));
     printableDialog->footer()->addWidget(WW<WPushButton>("Cancel").css("btn btn-danger").onClick([=](WMouseEvent){ printableDialog->reject(); }));
     auto printableResource = new PrintableAstroSessionResource(astroSession, session, q);
+    printableResource->setReportType(PrintableAstroSessionResource::PDF);
     okButton->setLink(printableResource);
     okButton->setLinkTarget(TargetNewWindow);
     printableDialog->contents()->addWidget(new WLabel("Spacing between objects rows"));
@@ -140,6 +141,11 @@ void AstroSessionTab::Private::reload()
     slider->valueChanged().connect([=](int v, _n5){printableResource->setRowsSpacing(v); });
     printableDialog->contents()->addWidget(slider);
     printableDialog->contents()->addWidget(new WBreak);
+    WComboBox *formatCombo = new WComboBox();
+    formatCombo->addItem("PDF");
+    formatCombo->addItem("HTML");
+    formatCombo->activated().connect([=](int r, _n5){ printableResource->setReportType(r==0 ? PrintableAstroSessionResource::PDF : PrintableAstroSessionResource::HTML); });
+    printableDialog->contents()->addWidget(WW<WContainerWidget>().add(new WLabel{"Export as..."}).add(formatCombo).add(new WBreak));
     Dbo::Transaction t(session);
     auto telescopes = session.user()->telescopes();
     switch(telescopes.size()) {
