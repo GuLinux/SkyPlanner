@@ -83,7 +83,7 @@ void AstroSessionsListTab::Private::populateSessions()
     sessionsTable->elementAt(0,0)->addWidget(new WText{"Name"});
     sessionsTable->elementAt(0,1)->addWidget(new WText{"Date"});
      if(!session.login().loggedIn() || ! session.user()) return;
-     for(auto astroSession: session.find<AstroSession>().where("user_id = ?").bind(session.user().id()).orderBy("when DESC").resultList() ) {
+     for(auto astroSession: session.find<AstroSession>().where("user_id = ?").bind(session.user().id()).orderBy("\"when\" DESC").resultList() ) {
        WTableRow *row = sessionsTable->insertRow(sessionsTable->rowCount());
        row->elementAt(0)->addWidget(WW<WAnchor>("#", astroSession->name()).onClick([=](WMouseEvent){
 	 sessionClicked.emit(astroSession);
