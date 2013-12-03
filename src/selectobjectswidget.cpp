@@ -224,8 +224,7 @@ void SelectObjectsWidget::Private::searchByCatalogueTab(Dbo::Transaction& transa
   WLineEdit *catalogueNumber = WW<WLineEdit>();
   WTable *resultsTable = WW<WTable>().addCss("table table-striped table-hover");
 
-  // TODO: .......
-  for(auto cat: vector<string>{"Messier", "NGC", "IC", "Caldwell"})
+  for(auto cat: session.query<string>("select distinct catalogue from denominations WHERE catalogue <> ''").resultList())
     cataloguesCombo->addItem(cat);
   catalogueNumber->setEmptyText("Catalogue Number");
   auto searchByCatalogueNumber = [=] {
