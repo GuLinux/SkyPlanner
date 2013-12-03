@@ -21,6 +21,7 @@
 #define SELECTOBJECTSWIDGET_P_H
 #include "selectobjectswidget.h"
 #include <mutex>
+#include <boost/thread.hpp>
 
 class NgcObject;
 class SelectObjectsWidget::Private
@@ -40,11 +41,13 @@ public:
     typedef std::vector<std::pair<NgcObjectPtr,Ephemeris::BestAltitude>> NgcObjectsList; 
     std::shared_ptr<NgcObjectsList> suggestedObjectsList; 
     std::mutex sessionLockMutex;
-    std::mutex suggestedObjectsListMutex;
+    static std::mutex suggestedObjectsListMutex;
     int pagesCurrentIndex = 0;
     Wt::Dbo::ptr< Telescope > selectedTelescope;
     void populateHeaders(Wt::WTable *table);
     void append(Wt::WTable *table, const Wt::Dbo::ptr<NgcObject> &ngcObject, const Ephemeris::BestAltitude &bestAltitude);
+    boost::thread bgThread;
+    bool aborted = false;
 private:
     class SelectObjectsWidget* const q;
 };

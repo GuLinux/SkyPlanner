@@ -48,6 +48,7 @@ AstroSessionsPage::AstroSessionsPage(Session &session, WContainerWidget* parent)
     for(auto tab: d->tabs) {
       if(tab.first == astroSession) {
 	tabs->removeTab(tab.second);
+	delete tab.second;
 	d->tabs.erase(tab.first);
       }
     }

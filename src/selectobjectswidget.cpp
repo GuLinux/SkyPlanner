@@ -51,6 +51,8 @@ SelectObjectsWidget::Private::Private(const Dbo::ptr< AstroSession >& astroSessi
 
 SelectObjectsWidget::~SelectObjectsWidget()
 {
+  d->aborted = true;
+  d->bgThread.join();
 }
 
 Signal< NoClass >& SelectObjectsWidget::objectsListChanged() const
@@ -108,7 +110,7 @@ void SelectObjectsWidget::Private::append(WTable *table, const Dbo::ptr<NgcObjec
 void SelectObjectsWidget::Private::populateSuggestedObjectsTable()
 {
     unique_lock<mutex>(suggestedObjectsListMutex);
-    if(!suggestedObjectsList)
+    if(!suggestedObjectsList || aborted)
       return;
     auto populateRange = [=] (int startOffset, uint64_t size) {
       Dbo::Transaction transaction(session);
@@ -171,13 +173,17 @@ void SelectObjectsWidget::Private::suggestedObjects(Dbo::Transaction& transactio
   suggestedObjectsContainer->addWidget(suggestedObjectsTablePagination);
 }
 
+mutex SelectObjectsWidget::Private::suggestedObjectsListMutex;
 void SelectObjectsWidget::Private::populateSuggestedObjectsList( double magnitudeLimit )
 {
   unique_lock<mutex> l1(suggestedObjectsListMutex);
   suggestedObjectsTable->clear();
   suggestedObjectsList.reset(new NgcObjectsList);
   WApplication *app = wApp;
-  boost::thread([=]{
+  aborted = true;
+  bgThread.join();
+  aborted = false;
+  bgThread = boost::thread([=]{
     unique_lock<mutex> l2(suggestedObjectsListMutex);
     unique_lock<mutex> lockSession(sessionLockMutex);
     NgcObjectsList &suggObjList = *suggestedObjectsList;
@@ -186,6 +192,7 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsList( double magnitud
     Ephemeris ephemeris(astroSession->position());
     AstroSession::ObservabilityRange range = astroSession->observabilityRange(ephemeris).delta({1,20,0});
     for(auto object: objects) {
+      if(aborted) return;
       auto bestAltitude = ephemeris.findBestAltitude(object->coordinates(), range.begin, range.end);
       if(bestAltitude.coordinates.altitude.degrees() > 17.)
         suggestedObjectsList->push_back({object, bestAltitude});
@@ -201,6 +208,7 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsList( double magnitud
     sort(suggObjList.rbegin(), suggObjList.rend(), [&observabilityIndex](const pair<NgcObjectPtr,Ephemeris::BestAltitude> &a, const pair<NgcObjectPtr,Ephemeris::BestAltitude> &b){
       return observabilityIndex(a.first) < observabilityIndex(b.first);
     });
+    if(aborted) return;
     WServer::instance()->post(app->sessionId(), [=]{
       suggestedObjectsLoaded.emit();
       app->triggerUpdate();
