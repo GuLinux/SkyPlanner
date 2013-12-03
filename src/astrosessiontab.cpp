@@ -134,7 +134,7 @@ void AstroSessionTab::Private::reload()
       WPushButton *okButton;
       printableDialog->footer()->addWidget(okButton = WW<WPushButton>("Ok").css("btn btn-primary").onClick([=](WMouseEvent){ printableDialog->accept(); }));
       printableDialog->footer()->addWidget(WW<WPushButton>("Cancel").css("btn btn-danger").onClick([=](WMouseEvent){ printableDialog->reject(); }));
-      okButton->setLink(new PrintableAstroSessionResource(astroSession, session, q));
+      okButton->setLink(new PrintableAstroSessionResource(astroSession, session, selectedTelescope, q));
       okButton->setLinkTarget(TargetNewWindow);
       printableDialog->show();
     }));

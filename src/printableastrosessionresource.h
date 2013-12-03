@@ -24,11 +24,12 @@
 #include "utils/d_ptr.h"
 
 class Session;
+class Telescope;
 class AstroSession;
 class PrintableAstroSessionResource : public Wt::WResource
 {
 public:
-  PrintableAstroSessionResource(const Wt::Dbo::ptr<AstroSession> &astroSession, Session &session, Wt::WObject *parent = 0);
+  PrintableAstroSessionResource(const Wt::Dbo::ptr<AstroSession> &astroSession, Session &session, const Wt::Dbo::ptr<Telescope> &telescope, Wt::WObject *parent = 0);
   virtual ~PrintableAstroSessionResource();
   virtual void handleRequest(const Wt::Http::Request &request, Wt::Http::Response &response);
 private:
