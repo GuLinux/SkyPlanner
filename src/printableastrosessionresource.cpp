@@ -205,10 +205,10 @@ void PrintableAstroSessionResource::handleRequest(const Wt::Http::Request &reque
   HPDF_UseUTFEncodings(pdf);
   HPDF_SetCurrentEncoder(pdf, "UTF-8");
 #else
-#warning Using a version of libharu that doesn't support UTF-8
+#warning "Using a version of libharu that doesn't support UTF-8"
 #endif
 #else
-#warning Using a version of libharu that doesn't support UTF-8
+#warning "Using a version of libharu that doesn't support UTF-8"
 #endif
   HPDF_Page page = HPDF_AddPage(pdf);
   HPDF_Page_SetSize(page, HPDF_PAGE_SIZE_A4, HPDF_PAGE_LANDSCAPE);
