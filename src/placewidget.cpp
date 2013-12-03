@@ -113,15 +113,25 @@ PlaceWidget::PlaceWidget(const Wt::Dbo::ptr< AstroSession >& astroSession, Sessi
     : d(astroSession, session, this)
 {
   addWidget(new WText("Just click a point on the map to set the observation place. Use the search box to find places by name."));
+  WContainerWidget *googleMapsLinkContainer = new WContainerWidget;
+  addWidget(googleMapsLinkContainer);
+  auto linkToGoogleMaps = [=](double latitude, double longitude) {
+    googleMapsLinkContainer->clear();
+    string url = format("http://maps.google.com/maps?q=%f,%f1") % latitude % longitude;
+    auto link = new WAnchor(url, "Open in Google Maps");
+    link->setTarget(TargetNewWindow);
+    googleMapsLinkContainer->addWidget(link);
+  };
   WLineEdit *searchBox = WW<WLineEdit>(this).css("controls");
   searchBox->setWidth(500);
   searchBox->setMargin(10);
   MapsWidget *map = new MapsWidget(searchBox, d->mapReady, this);
   map->setHeight(450);
   if(astroSession->position()) {
-    d->currentPlace = {astroSession->position().latitude.degrees(), astroSession->position().longitude.degrees()};
-    map->setCenter(d->currentPlace);
-    map->addMarker(d->currentPlace);
+    WGoogleMap::Coordinate currentPlace = {astroSession->position().latitude.degrees(), astroSession->position().longitude.degrees()};
+    map->setCenter(currentPlace);
+    map->addMarker(currentPlace);
+    linkToGoogleMaps(currentPlace.latitude(), currentPlace.longitude());
   }
   else {
     map->centerToGeoLocation();
@@ -133,6 +143,7 @@ PlaceWidget::PlaceWidget(const Wt::Dbo::ptr< AstroSession >& astroSession, Sessi
     astroSession.modify()->setPosition(Coordinates::LatLng{Angle::degrees(c.latitude()), Angle::degrees(c.longitude())});
     t.commit();
     d->placeChanged.emit(c.latitude(), c.longitude());
+    linkToGoogleMaps(c.latitude(), c.longitude());
   });
 }
 

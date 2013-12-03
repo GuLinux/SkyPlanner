@@ -36,7 +36,6 @@ public:
     Wt::Dbo::ptr< AstroSession > astroSession;
     Session &session;
     Wt::JSignal<> mapReady;
-    Wt::WGoogleMapMod::Coordinate currentPlace;
     Wt::Signal<double,double> placeChanged;
 private:
     class PlaceWidget* const q;
