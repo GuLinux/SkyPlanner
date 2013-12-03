@@ -30,7 +30,7 @@ class AstroSessionTab : public Wt::WContainerWidget
 public:
     ~AstroSessionTab();
     AstroSessionTab(const Wt::Dbo::ptr<AstroSession>& astroSession, Session& session, Wt::WContainerWidget* parent = 0);
-
+    Wt::Signal<std::string> &nameChanged() const;
 private:
     D_PTR;
 };

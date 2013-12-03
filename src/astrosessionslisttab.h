@@ -31,6 +31,7 @@ public:
     ~AstroSessionsListTab();
     AstroSessionsListTab(Session &session, Wt::WContainerWidget* parent = 0);
     Wt::Signal<Wt::Dbo::ptr<AstroSession>> &sessionClicked() const;
+    void reload();
 private:
     D_PTR;
 };

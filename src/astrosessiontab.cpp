@@ -34,11 +34,6 @@
 #include <Wt/WTabWidget>
 #include <Wt/WMessageBox>
 #include <boost/format.hpp>
-#include "aaplus/AADate.h"
-#include "aaplus/AAMoon.h"
-#include "aaplus/AAMoonIlluminatedFraction.h"
-#include "aaplus/AAElliptical.h"
-#include "aaplus/AARiseTransitSet.h"
 #include "ephemeris.h"
 #include "types.h"
 #include "selectobjectswidget.h"
@@ -52,7 +47,10 @@
 #include <Wt/WTextArea>
 #include <Wt/WStandardItemModel>
 #include <Wt/WStandardItem>
+#include <Wt/WDateEdit>
+#include <Wt/WLineEdit>
 #include <Wt/WToolBar>
+#include <Wt/WTemplate>
 #include "constellationfinder.h"
 
 using namespace Wt;
@@ -70,45 +68,68 @@ AstroSessionTab::~AstroSessionTab()
 AstroSessionTab::AstroSessionTab(const Dbo::ptr<AstroSession>& astroSession, Session& session, WContainerWidget* parent)
     : WContainerWidget(parent), d(astroSession, session, this)
 {
-  WContainerWidget *telescopeComboContainer = WW<WContainerWidget>().setMargin(10);
-  addWidget(telescopeComboContainer);
-  
+  d->reload();
+}
+
+
+void AstroSessionTab::Private::reload()
+{
+  q->clear();
+  WContainerWidget *actionsContainer = WW<WContainerWidget>().setMargin(10);
+  q->addWidget(actionsContainer);
   
   WContainerWidget *sessionInfo = WW<WContainerWidget>();
   sessionInfo->addWidget(new WText(astroSession->wDateWhen().date().toString("dddd dd MMMM yyyy")));
   PlaceWidget *placeWidget = new PlaceWidget(astroSession, session);
   placeWidget->placeChanged().connect([=](double lat, double lng, _n4) {
-    d->updatePositionDetails();
+    updatePositionDetails();
   });
-  sessionInfo->addWidget(d->positionDetails = WW<WContainerWidget>());
-  auto locationPanel = d->addPanel("Location", placeWidget ); 
-  d->addPanel("Information", sessionInfo);
+  sessionInfo->addWidget(positionDetails = WW<WContainerWidget>());
+  auto locationPanel = addPanel("Location", placeWidget ); 
+  addPanel("Information", sessionInfo);
   if(astroSession->position()) {
     placeWidget->mapReady().connect([=](_n6){ WTimer::singleShot(1500, [=](WMouseEvent){ locationPanel->collapse(); }); });
   }
   SelectObjectsWidget *addObjectsTabWidget = new SelectObjectsWidget(astroSession, session);
-  d->addPanel("Add Observable Object", addObjectsTabWidget, true);
+  addPanel("Add Observable Object", addObjectsTabWidget, true);
 
-  addObjectsTabWidget->objectsListChanged().connect([=](_n6){d->populate(); });
-  addWidget(new WText{"<h3>Objects</h3>"});
+  addObjectsTabWidget->objectsListChanged().connect([=](_n6){populate(); });
+  q->addWidget(new WText{"<h3>Objects</h3>"});
 
-  addWidget(d->objectsTable = WW<WTable>().addCss("table table-striped table-hover"));
-  d->objectsTable->setHeaderCount(1);
+  q->addWidget(objectsTable = WW<WTable>().addCss("table table-striped table-hover"));
+  objectsTable->setHeaderCount(1);
   
-  Dbo::Transaction t(d->session);
-  auto telescopes = d->session.user()->telescopes();
+  Dbo::Transaction t(session);
+  auto telescopes = session.user()->telescopes();
   if(telescopes.size() > 0) {
     WComboBox *telescopeCombo = new WComboBox;
     telescopeCombo->setWidth(350);
-    WLabel *telescopeComboLabel = new WLabel("Telescope: ");;
+    WLabel *telescopeComboLabel = WW<WLabel>("Telescope: ").setMargin(10);
     telescopeComboLabel->setBuddy(telescopeCombo);
-    telescopeComboContainer->addStyleClass("form-inline");
-    telescopeComboContainer->addWidget(telescopeComboLabel);
-    telescopeComboContainer->addWidget(telescopeCombo);
-    WStandardItemModel *model = new WStandardItemModel(this);
+    actionsContainer->addWidget(WW<WPushButton>("Change name or date").css("btn").onClick([=](WMouseEvent){
+      WDialog *changeNameOrDateDialog = new WDialog("Change name or date");
+      WLineEdit *sessionName = WW<WLineEdit>(astroSession->name()).css("input-block-level");
+      WDateEdit *sessionDate = WW<WDateEdit>().css("input-block-level");
+      sessionDate->setDate(astroSession->wDateWhen().date());
+      changeNameOrDateDialog->footer()->addWidget(WW<WPushButton>("Ok").css("btn btn-primary").onClick([=](WMouseEvent){
+	Dbo::Transaction t(session);
+	astroSession.modify()->setName(sessionName->text().toUTF8());
+	astroSession.modify()->setDateTime(WDateTime{sessionDate->date()});
+	changeNameOrDateDialog->accept();
+	nameChanged.emit(astroSession->name());
+	reload();
+      }));
+      WTemplate *form = new WTemplate("<form><fieldset><label>Name</label>${sessionName}<label>Date</label>${sessionDate}</fieldset></form>");
+      form->bindWidget("sessionName", sessionName);
+      form->bindWidget("sessionDate", sessionDate);
+      changeNameOrDateDialog->contents()->addWidget(form);
+      changeNameOrDateDialog->show();
+    }));
+    actionsContainer->addWidget(WW<WContainerWidget>().css("form-inline pull-right").add(telescopeComboLabel).add(telescopeCombo));
+    WStandardItemModel *model = new WStandardItemModel(q);
     for(auto telescope: telescopes) {
-      if(!d->selectedTelescope)
-        d->selectedTelescope = telescope;
+      if(!selectedTelescope)
+        selectedTelescope = telescope;
       WStandardItem *item = new WStandardItem(telescope->name());
       item->setData(telescope);
       model->appendRow(item);
@@ -116,19 +137,25 @@ AstroSessionTab::AstroSessionTab(const Dbo::ptr<AstroSession>& astroSession, Ses
     telescopeCombo->setModel(model);
     
     telescopeCombo->activated().connect([=](int index, _n5){
-      d->selectedTelescope = boost::any_cast<Dbo::ptr<Telescope>>(model->item(index)->data());
-      d->populate();
-      addObjectsTabWidget->populateFor(d->selectedTelescope);
+      selectedTelescope = boost::any_cast<Dbo::ptr<Telescope>>(model->item(index)->data());
+      populate();
+      addObjectsTabWidget->populateFor(selectedTelescope);
     });
   } else {
-    telescopeComboContainer->addWidget(new WText{"Add one or more telescopes in the \"My Telescopes\" section to see personalized suggestions and data here."});
+    actionsContainer->addWidget(new WText{"Add one or more telescopes in the \"My Telescopes\" section to see personalized suggestions and data here."});
   }
   
-  d->populate();
-  d->updatePositionDetails();
+  populate();
+  updatePositionDetails();
   WTimer::singleShot(200, [=](WMouseEvent) {
-    addObjectsTabWidget->populateFor(d->selectedTelescope);
+    addObjectsTabWidget->populateFor(selectedTelescope);
   });
+}
+
+
+Wt::Signal<std::string> &AstroSessionTab::nameChanged() const
+{
+  return d->nameChanged;
 }
 
 void AstroSessionTab::Private::updatePositionDetails()

@@ -48,6 +48,10 @@ AstroSessionsPage::AstroSessionsPage(Session &session, WContainerWidget* parent)
     if(d->tabs.count(astroSession) == 0) {
       auto astroSessionTab = new AstroSessionTab(astroSession, d->session);
       WMenuItem *newTab = tabs->addTab(astroSessionTab, astroSession->name());
+      astroSessionTab->nameChanged().connect([=](const string &newName,_n5){
+	newTab->setText(WString::fromUTF8(newName));
+	astroSessionsListTab->reload();
+      });
       newTab->setCloseable(true);
       d->tabs[astroSession] = astroSessionTab;
     }

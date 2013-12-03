@@ -37,6 +37,16 @@ AstroSession::AstroSession(const std::string& name, const WDateTime& when, const
 {
 }
 
+void AstroSession::setDateTime(const Wt::WDateTime &when)
+{
+  _when = when.toPosixTime();
+}
+
+void AstroSession::setName(const std::string &name)
+{
+  _name = name;
+}
+
 std::string AstroSession::name() const
 {
   return _name;

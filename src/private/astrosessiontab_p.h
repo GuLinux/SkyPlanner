@@ -28,6 +28,7 @@ class AstroSessionTab::Private
 {
 public:
     Private(const Wt::Dbo::ptr<AstroSession>& astroSession, Session& session, AstroSessionTab* q);
+    void reload();
     Wt::Dbo::ptr<AstroSession> astroSession;
     Session &session;
     Wt::WTable *objectsTable;
@@ -37,6 +38,7 @@ public:
     void updatePositionDetails();
     Forecast forecast;
     Wt::Dbo::ptr<Telescope> selectedTelescope;
+    Wt::Signal<std::string> nameChanged;
 private:
     class AstroSessionTab* const q;
 };
