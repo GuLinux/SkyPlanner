@@ -69,6 +69,42 @@ SelectObjectsWidget::SelectObjectsWidget(const Dbo::ptr< AstroSession >& astroSe
     d->suggestedObjects(t);
 }
 
+void SelectObjectsWidget::Private::populateHeaders(WTable *table)
+{
+  table->clear();
+  table->elementAt(0, 0)->addWidget(new WText{"Object Names"});
+  table->elementAt(0, 1)->addWidget(new WText{"Constellation"});
+  table->elementAt(0, 2)->addWidget(new WText{"Magnitude"});
+  table->elementAt(0, 3)->addWidget(new WText{"Difficulty"});
+  table->elementAt(0, 4)->addWidget(new WText{"Transit Time"});
+  table->elementAt(0, 5)->addWidget(new WText{"Transit Altitude"});
+}
+
+void SelectObjectsWidget::Private::append(WTable *table, const Dbo::ptr<NgcObject> &ngcObject, const Ephemeris::BestAltitude &bestAltitude)
+{
+  WTableRow *row = table->insertRow(table->rowCount());
+  stringstream names;
+  string separator = "";
+  for(auto denomination: ngcObject->nebulae()) {
+    names << separator << denomination->name();
+    separator = ", ";
+  }
+  row->elementAt(0)->addWidget(new ObjectNamesWidget{ngcObject, session, astroSession});
+  row->elementAt(1)->addWidget(new WText{ ConstellationFinder::getName(ngcObject->coordinates()).name });
+  row->elementAt(2)->addWidget(new WText{format("%.1f") % ngcObject->magnitude()});
+  WDateTime transit = WDateTime::fromPosixTime(bestAltitude.when);
+  row->elementAt(3)->addWidget(new ObjectDifficultyWidget(ngcObject, selectedTelescope, 99 /* TODO: hack, to be replaced */));
+  row->elementAt(4)->addWidget(new WText{transit.time().toString()});
+  row->elementAt(5)->addWidget(new WText{Utils::htmlEncode(WString::fromUTF8(bestAltitude.coordinates.altitude.printable()))});
+  row->elementAt(6)->addWidget(WW<WPushButton>("Add").css("btn btn-primary btn-mini").onClick([=](WMouseEvent){
+    Dbo::Transaction t(session);
+    astroSession.modify()->astroSessionObjects().insert(new AstroSessionObject(ngcObject));
+    t.commit();
+    objectsListChanged.emit();
+  }));
+}
+
+
 void SelectObjectsWidget::Private::populateSuggestedObjectsTable()
 {
     unique_lock<mutex>(suggestedObjectsListMutex);
@@ -76,37 +112,11 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsTable()
       return;
     auto populateRange = [=] (int startOffset, uint64_t size) {
       Dbo::Transaction transaction(session);
-      suggestedObjectsTable->clear();
-      suggestedObjectsTable->elementAt(0, 0)->addWidget(new WText{"Object Names"});
-      suggestedObjectsTable->elementAt(0, 1)->addWidget(new WText{"Constellation"});
-      suggestedObjectsTable->elementAt(0, 2)->addWidget(new WText{"Magnitude"});
-      suggestedObjectsTable->elementAt(0, 3)->addWidget(new WText{"Difficulty"});
-      suggestedObjectsTable->elementAt(0, 4)->addWidget(new WText{"Transit Time"});
-      suggestedObjectsTable->elementAt(0, 5)->addWidget(new WText{"Transit Altitude"});
+      populateHeaders(suggestedObjectsTable);
       for(int i=startOffset; i<min(startOffset+size, suggestedObjectsList->size()); i++) {
 	NgcObjectPtr &ngcObject = suggestedObjectsList->at(i).first;
 	Ephemeris::BestAltitude &bestAltitude = suggestedObjectsList->at(i).second;
-	
-	WTableRow *row = suggestedObjectsTable->insertRow(suggestedObjectsTable->rowCount());
-	stringstream names;
-	string separator = "";
-	for(auto denomination: ngcObject->nebulae()) {
-	  names << separator << denomination->name();
-	  separator = ", ";
-	}
-	row->elementAt(0)->addWidget(new ObjectNamesWidget{ngcObject, session, astroSession});
-	row->elementAt(1)->addWidget(new WText{ ConstellationFinder::getName(ngcObject->coordinates()).name });
-	row->elementAt(2)->addWidget(new WText{format("%.1f") % ngcObject->magnitude()});
-	WDateTime transit = WDateTime::fromPosixTime(bestAltitude.when);
-	row->elementAt(3)->addWidget(new ObjectDifficultyWidget(ngcObject, selectedTelescope, 99 /* TODO: hack, to be replaced */));
-        row->elementAt(4)->addWidget(new WText{transit.time().toString()});
-	row->elementAt(5)->addWidget(new WText{Utils::htmlEncode(WString::fromUTF8(bestAltitude.coordinates.altitude.printable()))});
-	row->elementAt(6)->addWidget(WW<WPushButton>("Add").css("btn btn-primary btn-mini").onClick([=](WMouseEvent){
-	  Dbo::Transaction t(session);
-	  astroSession.modify()->astroSessionObjects().insert(new AstroSessionObject(ngcObject));
-	  t.commit();
-	  objectsListChanged.emit();
-	}));
+	append(suggestedObjectsTable, ngcObject, bestAltitude);
       }
     };
     static const int pagesSize = 30;
@@ -223,17 +233,12 @@ void SelectObjectsWidget::Private::searchByCatalogueTab(Dbo::Transaction& transa
     resultsTable->clear();
     dbo::collection<dbo::ptr<NebulaDenomination>> denominations = session.find<NebulaDenomination>().where("catalogue = ?").where("number = ?")
       .bind(cataloguesCombo->currentText()).bind(catalogueNumber->text());
+    populateHeaders(resultsTable);
+    Ephemeris ephemeris(astroSession->position());
+    AstroSession::ObservabilityRange range = astroSession->observabilityRange(ephemeris).delta({1,20,0});
     for(auto nebula: denominations) {
-      WTableRow *row = resultsTable->insertRow(resultsTable->rowCount());
-      row->elementAt(0)->addWidget(new WText{nebula->catalogue()});
-      row->elementAt(1)->addWidget(new WText{WString("{1}").arg(nebula->number())});
-      row->elementAt(2)->addWidget(new WText{nebula->comment()});
-      row->elementAt(3)->addWidget(WW<WPushButton>("Add").css("btn btn-primary btn-mini").onClick([=](WMouseEvent){
-        Dbo::Transaction t(session);
-        astroSession.modify()->astroSessionObjects().insert(new AstroSessionObject(nebula->ngcObject()));
-        t.commit();
-        objectsListChanged.emit();
-      }));
+      auto bestAltitude = ephemeris.findBestAltitude(nebula->ngcObject()->coordinates(), range.begin, range.end);
+      append(resultsTable, nebula->ngcObject(), bestAltitude);
     }
   };
   catalogueNumber->changed().connect([=](_n1){ searchByCatalogueNumber(); });
