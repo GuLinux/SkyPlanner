@@ -200,9 +200,12 @@ void PrintableAstroSessionResource::handleRequest(const Wt::Http::Request &reque
   suggestFileName(format("%s.pdf") % d->astroSession->name());
   response.setMimeType("application/pdf");
   HPDF_Doc pdf = HPDF_New(error_handler, 0);
-  //HPDF_UseUTFEncodings(pdf);
-  //HPDF_SetCurrentEncoder(pdf, "UTF-8"); 
-  
+#if HPDF_MAJOR_VERSION >= 2
+#if HPDF_MINOR_VERSION >= 3
+  HPDF_UseUTFEncodings(pdf);
+  HPDF_SetCurrentEncoder(pdf, "UTF-8");
+#endif
+#endif
   HPDF_Page page = HPDF_AddPage(pdf);
   HPDF_Page_SetSize(page, HPDF_PAGE_SIZE_A4, HPDF_PAGE_LANDSCAPE);
   Wt::Render::WPdfRenderer renderer(pdf, page);

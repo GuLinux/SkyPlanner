@@ -2,7 +2,8 @@ include_directories(models)
 
 include(aaplus/source_files.cmake)
 include(widgets/source_files.cmake)
-
+set(LIBHARU_PREFIX /usr CACHE PATH "LibHaru path prefix")
+include_directories(${LIBHARU_PREFIX}/include/)
 set(NgcIcCatalog_SRCS
   forecast.cpp
   placewidget.cpp
@@ -32,7 +33,8 @@ set(NgcIcCatalog_MODELS_SRCS
   models/ngcobject.cpp
 )
 
+
 add_executable(NgcIcCatalog ${NgcIcCatalog_SRCS} ${NgcIcCatalog_MODELS_SRCS} ${AAPLUS_SRCS} ${Widgets_SRCS} )
-target_link_libraries(NgcIcCatalog ${Wt_LIBRARIES} ${Boost_LIBRARIES} hpdf )
+target_link_libraries(NgcIcCatalog ${Wt_LIBRARIES} ${Boost_LIBRARIES} ${LIBHARU_PREFIX}/lib/libhpdf.so )
 install(TARGETS NgcIcCatalog RUNTIME DESTINATION bin)
 
