@@ -32,6 +32,7 @@ public:
     Session &session;
     Wt::Dbo::ptr<Telescope> telescope;
     int rowsSpacing;
+    ReportType reportType = HTML;
 private:
     class PrintableAstroSessionResource* const q;
 };

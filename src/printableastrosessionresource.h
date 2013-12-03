@@ -29,11 +29,13 @@ class AstroSession;
 class PrintableAstroSessionResource : public Wt::WResource
 {
 public:
+  enum ReportType { HTML, PDF };
   PrintableAstroSessionResource(const Wt::Dbo::ptr<AstroSession> &astroSession, Session &session, Wt::WObject *parent = 0);
   virtual ~PrintableAstroSessionResource();
   virtual void handleRequest(const Wt::Http::Request &request, Wt::Http::Response &response);
   void setRowsSpacing(int spacing);
   void setTelescope(const Wt::Dbo::ptr<Telescope> &telescope);
+  void setReportType(ReportType type);
 private:
     D_PTR;
 };

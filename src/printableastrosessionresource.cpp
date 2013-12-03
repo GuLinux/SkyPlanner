@@ -31,6 +31,8 @@
 #include "widgets/objectnameswidget.h"
 #include "constellationfinder.h"
 #include "widgets/objectdifficultywidget.h"
+#include <hpdf.h>
+#include <Wt/Render/WPdfRenderer>
 
 using namespace Wt;
 using namespace std;
@@ -56,6 +58,19 @@ void PrintableAstroSessionResource::setTelescope(const Dbo::ptr<Telescope> &tele
 void PrintableAstroSessionResource::setRowsSpacing(int spacing)
 {
   d->rowsSpacing = spacing;
+}
+
+void PrintableAstroSessionResource::setReportType(ReportType type)
+{
+  d->reportType = type;
+}
+
+namespace {
+    void error_handler(HPDF_STATUS error_no, HPDF_STATUS detail_no,
+		       void *user_data) {
+	fprintf(stderr, "libharu error: error_no=%04X, detail_no=%d\n",
+		(unsigned int) error_no, (int) detail_no);
+    }
 }
 
 void PrintableAstroSessionResource::handleRequest(const Wt::Http::Request &request, Wt::Http::Response &response) {
@@ -176,5 +191,31 @@ void PrintableAstroSessionResource::handleRequest(const Wt::Http::Request &reque
     rowTemplate.renderTemplate(tableRows);
   }
   printable.bindString("table-rows", WString::fromUTF8(tableRows.str()));
-  printable.renderTemplate(response.out());
+  // d->reportType = PDF;
+  if(d->reportType == HTML) {
+    printable.renderTemplate(response.out());
+    return;
+  }
+  suggestFileName(format("%s.pdf") % d->astroSession->name());
+  response.setMimeType("application/pdf");
+  HPDF_Doc pdf = HPDF_New(error_handler, 0);
+  //HPDF_UseUTFEncodings(pdf);
+  
+  HPDF_Page page = HPDF_AddPage(pdf);
+  HPDF_Page_SetSize(page, HPDF_PAGE_SIZE_A4, HPDF_PAGE_PORTRAIT);
+
+  Wt::Render::WPdfRenderer renderer(pdf, page);
+  renderer.setMargin(2.54);
+  renderer.setDpi(96);
+  stringstream buffer;
+  printable.renderTemplate(buffer);
+  renderer.render(WString::fromUTF8(buffer.str()));
+  
+  HPDF_SaveToStream(pdf);
+  unsigned int size = HPDF_GetStreamSize(pdf);
+  HPDF_BYTE *buf = new HPDF_BYTE[size];
+  HPDF_ReadFromStream (pdf, buf, &size);
+  HPDF_Free(pdf);
+  response.out().write((char*)buf, size);
+  delete[] buf;
 }

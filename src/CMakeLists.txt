@@ -33,6 +33,6 @@ set(NgcIcCatalog_MODELS_SRCS
 )
 
 add_executable(NgcIcCatalog ${NgcIcCatalog_SRCS} ${NgcIcCatalog_MODELS_SRCS} ${AAPLUS_SRCS} ${Widgets_SRCS} )
-target_link_libraries(NgcIcCatalog ${Wt_LIBRARIES} ${Boost_LIBRARIES} )
+target_link_libraries(NgcIcCatalog ${Wt_LIBRARIES} ${Boost_LIBRARIES} hpdf )
 install(TARGETS NgcIcCatalog RUNTIME DESTINATION bin)
 
