@@ -44,7 +44,7 @@ private:
   ObjectNamesWidget * const q;
 };
 
-ObjectNamesWidget::ObjectNamesWidget(const Wt::Dbo::ptr<NgcObject> &object, Session &session, const Wt::Dbo::ptr<AstroSession> &astroSession, WContainerWidget *parent)
+ObjectNamesWidget::ObjectNamesWidget(const Wt::Dbo::ptr<NgcObject> &object, Session &session, const Wt::Dbo::ptr<AstroSession> &astroSession, RenderType renderType, WContainerWidget *parent)
   : WContainerWidget(parent), d(session, this)
 {
     auto names = object->nebulae();
@@ -55,6 +55,9 @@ ObjectNamesWidget::ObjectNamesWidget(const Wt::Dbo::ptr<NgcObject> &object, Sess
       separator = ", ";
     }
     WAnchor *namesText = WW<WAnchor>("", Utils::htmlEncode(WString::fromUTF8(namesStream.str()))).css("link");
+    addWidget(namesText);
+    if(renderType == Printable)
+      return;
     WTemplate *ngcIcMenuHiddenForm = new WTemplate();
     ngcIcMenuHiddenForm->setTemplateText("<form id='autopost_${template_id}' method='post' action='http://www.ngcicproject.org/ngcicdb.asp' target=_BLANK>\
     <input type='hidden' name='ngcicobject' value='${ngcicobject_id}' /></form>", XHTMLUnsafeText);
@@ -110,7 +113,6 @@ ObjectNamesWidget::ObjectNamesWidget(const Wt::Dbo::ptr<NgcObject> &object, Sess
       addLink("Google Images Search", (format("http://www.google.com/images?q=%s%%20%s") % catName % catNumber ).str() );
       popup->popup(e);
     });
-    addWidget(namesText);
 }
 
 ObjectNamesWidget::~ObjectNamesWidget()

@@ -80,7 +80,7 @@ void AstroSessionTab::Private::reload()
   q->addWidget(actionsContainer);
   
   WContainerWidget *sessionInfo = WW<WContainerWidget>();
-  sessionInfo->addWidget(new WText(astroSession->wDateWhen().date().toString("dddd dd MMMM yyyy")));
+  sessionInfo->addWidget(new WText{astroSession->wDateWhen().date().toString("dddd dd MMMM yyyy")});
   PlaceWidget *placeWidget = new PlaceWidget(astroSession, session);
   SelectObjectsWidget *addObjectsTabWidget = new SelectObjectsWidget(astroSession, session);
   placeWidget->placeChanged().connect([=](double lat, double lng, _n4) {
@@ -192,14 +192,15 @@ void AstroSessionTab::Private::updatePositionDetails()
   Ephemeris::RiseTransitSet sun = ephemeris.sun(astroSession->when());
   Ephemeris::RiseTransitSet moon = ephemeris.moon(astroSession->when());
 
+  auto formatTime = [](const boost::posix_time::ptime &t) { return (format("%02d:%02d") % t.time_of_day().hours() % t.time_of_day().minutes()).str(); };
   positionDetails->addWidget(new WText(WString("Sun: rising at {1}, setting at {2}")
-    .arg(WDateTime::fromPosixTime(sun.rise).toString())
-    .arg(WDateTime::fromPosixTime(sun.set).toString())
+    .arg(formatTime(sun.rise))
+    .arg(formatTime(sun.set))
   ));
   positionDetails->addWidget(new WBreak);
   positionDetails->addWidget(new WText(WString("Moon: rising at {1}, setting at {2}")
-    .arg(WDateTime::fromPosixTime(sun.rise).toString())
-    .arg(WDateTime::fromPosixTime(sun.set).toString())
+    .arg(formatTime(moon.rise))
+    .arg(formatTime(moon.set))
   ));
   positionDetails->addWidget(new WBreak);
   addMoonPhaseDetails(ephemeris);

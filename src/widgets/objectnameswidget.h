@@ -27,7 +27,8 @@ class AstroSession;
 class Session;
 class ObjectNamesWidget : public Wt::WContainerWidget {
 public:
-  ObjectNamesWidget(const Wt::Dbo::ptr<NgcObject> &object, Session &session, const Wt::Dbo::ptr<AstroSession> &astroSession, Wt::WContainerWidget *parent = 0);
+  enum RenderType {Normal, Printable};
+  ObjectNamesWidget(const Wt::Dbo::ptr<NgcObject> &object, Session &session, const Wt::Dbo::ptr<AstroSession> &astroSession, RenderType renderType = Normal, Wt::WContainerWidget *parent = 0);
   ~ObjectNamesWidget();
 private:
   D_PTR;
