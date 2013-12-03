@@ -21,7 +21,7 @@ int main(int argc, char **argv) {
         server.setServerConfiguration(argc, argv, WTHTTP_CONFIGURATION);
         server.addResource(new NgcResource, "/ngc");
 	server.addResource(new WMemoryResource("text/css", styleCss()), "/astroplanner_style.css");
-        server.addEntryPoint(Wt::Application, createAstroPlanner, "/");
+        server.addEntryPoint(Wt::Application, createAstroPlanner);
         Session::configureAuth();
         if (server.start()) {
             int sig = WServer::waitForShutdown(argv[0]);
