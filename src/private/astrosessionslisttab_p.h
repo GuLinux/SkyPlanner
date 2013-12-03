@@ -35,6 +35,7 @@ public:
     Wt::WTable *sessionsTable;
     void populateSessions();
     Wt::Signal<Wt::Dbo::ptr<AstroSession>> sessionClicked;
+    Wt::Signal<Wt::Dbo::ptr<AstroSession>> deletingSession;
     Wt::Dbo::ptr<AstroSession> addNew(const Wt::WString &name, const Wt::WDate &date);
 private:
     class AstroSessionsListTab* const q;

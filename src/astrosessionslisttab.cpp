@@ -98,6 +98,7 @@ void AstroSessionsListTab::Private::populateSessions()
 	     return;
 	   }
 	   confirm->accept();
+	   deletingSession.emit(astroSession);
            Dbo::Transaction t(session);
 	   session.user().modify()->astroSessions().erase(astroSession);
 	   t.commit();
@@ -107,6 +108,10 @@ void AstroSessionsListTab::Private::populateSessions()
      }
 }
 
+Signal< Dbo::ptr< AstroSession > >& AstroSessionsListTab::deletingSession() const
+{
+  return d->deletingSession;
+}
 Signal< Dbo::ptr< AstroSession > >& AstroSessionsListTab::sessionClicked() const
 {
   return d->sessionClicked;

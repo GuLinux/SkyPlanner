@@ -44,6 +44,14 @@ AstroSessionsPage::AstroSessionsPage(Session &session, WContainerWidget* parent)
 {
   WTabWidget *tabs = new WTabWidget(this);
   auto astroSessionsListTab = new AstroSessionsListTab(session);
+  astroSessionsListTab->deletingSession().connect([=](const Dbo::ptr<AstroSession> &astroSession, _n5){
+    for(auto tab: d->tabs) {
+      if(tab.first == astroSession) {
+	tabs->removeTab(tab.second);
+	d->tabs.erase(tab.first);
+      }
+    }
+  });
   astroSessionsListTab->sessionClicked().connect([=](const Dbo::ptr<AstroSession> &astroSession, _n5){
     if(d->tabs.count(astroSession) == 0) {
       auto astroSessionTab = new AstroSessionTab(astroSession, d->session);
