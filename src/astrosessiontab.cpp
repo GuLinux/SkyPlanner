@@ -104,50 +104,77 @@ void AstroSessionTab::Private::reload()
   objectsTable->setHeaderCount(1);
   
   Dbo::Transaction t(session);
+  WToolBar *sessionActions = WW<WToolBar>();
+    
+  sessionActions->addButton(WW<WPushButton>("Change name or date").css("btn").onClick([=](WMouseEvent){
+    WDialog *changeNameOrDateDialog = new WDialog("Change name or date");
+    WLineEdit *sessionName = WW<WLineEdit>(astroSession->name()).css("input-block-level");
+    WDateEdit *sessionDate = WW<WDateEdit>().css("input-block-level");
+    sessionDate->setDate(astroSession->wDateWhen().date());
+    changeNameOrDateDialog->footer()->addWidget(WW<WPushButton>("Ok").css("btn btn-primary").onClick([=](WMouseEvent){
+      Dbo::Transaction t(session);
+      astroSession.modify()->setName(sessionName->text().toUTF8());
+      astroSession.modify()->setDateTime(WDateTime{sessionDate->date()});
+      changeNameOrDateDialog->accept();
+      nameChanged.emit(astroSession->name());
+      reload();
+    }));
+    WTemplate *form = new WTemplate("<form><fieldset><label>Name</label>${sessionName}<label>Date</label>${sessionDate}</fieldset></form>");
+    form->bindWidget("sessionName", sessionName);
+    form->bindWidget("sessionDate", sessionDate);
+    changeNameOrDateDialog->contents()->addWidget(form);
+    changeNameOrDateDialog->show();
+  }));
+  sessionActions->addButton(WW<WPushButton>("Printable Version").css("btn btn-info").onClick([=](WMouseEvent){
+    WDialog *printableDialog = new WDialog("Printable Version");
+    WPushButton *okButton;
+    WSlider *slider = new WSlider();
+    printableDialog->footer()->addWidget(okButton = WW<WPushButton>("Ok").css("btn btn-primary").onClick([=](WMouseEvent){ printableDialog->accept(); }));
+    printableDialog->footer()->addWidget(WW<WPushButton>("Cancel").css("btn btn-danger").onClick([=](WMouseEvent){ printableDialog->reject(); }));
+    auto printableResource = new PrintableAstroSessionResource(astroSession, session, q);
+    okButton->setLink(printableResource);
+    okButton->setLinkTarget(TargetNewWindow);
+    printableDialog->contents()->addWidget(new WLabel("Spacing between objects rows"));
+    printableDialog->contents()->addWidget(new WBreak);
+    slider->setMaximum(10);
+    slider->valueChanged().connect([=](int v, _n5){printableResource->setRowsSpacing(v); });
+    printableDialog->contents()->addWidget(slider);
+    printableDialog->contents()->addWidget(new WBreak);
+    Dbo::Transaction t(session);
+    auto telescopes = session.user()->telescopes();
+    switch(telescopes.size()) {
+      case 0:
+	printableDialog->contents()->addWidget(new WText{"Please add one or more telescope to see suggestions"});
+	break;
+      case 1:
+	printableResource->setTelescope(telescopes.front());
+	printableDialog->contents()->addWidget(new WText{WString("Using Telescope {1}").arg(telescopes.front()->name()) });
+	break;
+      default:
+	printableResource->setTelescope(telescopes.front());
+	printableDialog->contents()->addWidget(new WLabel{"Telescope: "});
+	WComboBox *telescopesCombo = new WComboBox(printableDialog->contents());
+	WStandardItemModel *telescopesModel = new WStandardItemModel(printableDialog);
+	telescopesCombo->setModel(telescopesModel);
+	for(auto telescope: telescopes) {
+	  WStandardItem *item = new WStandardItem(telescope->name());
+	  item->setData(telescope);
+	  telescopesModel->appendRow(item);
+	}
+	telescopesCombo->activated().connect([=](int i, _n5) {
+	  printableResource->setTelescope(boost::any_cast<Dbo::ptr<Telescope>>(telescopesModel->item(i)->data()));
+	});
+    }
+    printableDialog->show();
+  }));
+  actionsContainer->addWidget(sessionActions);
   auto telescopes = session.user()->telescopes();
   if(telescopes.size() > 0) {
     WComboBox *telescopeCombo = new WComboBox;
     telescopeCombo->setWidth(350);
     WLabel *telescopeComboLabel = WW<WLabel>("Telescope: ").setMargin(10);
     telescopeComboLabel->setBuddy(telescopeCombo);
-    WToolBar *sessionActions = WW<WToolBar>();
-    
-    sessionActions->addButton(WW<WPushButton>("Change name or date").css("btn").onClick([=](WMouseEvent){
-      WDialog *changeNameOrDateDialog = new WDialog("Change name or date");
-      WLineEdit *sessionName = WW<WLineEdit>(astroSession->name()).css("input-block-level");
-      WDateEdit *sessionDate = WW<WDateEdit>().css("input-block-level");
-      sessionDate->setDate(astroSession->wDateWhen().date());
-      changeNameOrDateDialog->footer()->addWidget(WW<WPushButton>("Ok").css("btn btn-primary").onClick([=](WMouseEvent){
-	Dbo::Transaction t(session);
-	astroSession.modify()->setName(sessionName->text().toUTF8());
-	astroSession.modify()->setDateTime(WDateTime{sessionDate->date()});
-	changeNameOrDateDialog->accept();
-	nameChanged.emit(astroSession->name());
-	reload();
-      }));
-      WTemplate *form = new WTemplate("<form><fieldset><label>Name</label>${sessionName}<label>Date</label>${sessionDate}</fieldset></form>");
-      form->bindWidget("sessionName", sessionName);
-      form->bindWidget("sessionDate", sessionDate);
-      changeNameOrDateDialog->contents()->addWidget(form);
-      changeNameOrDateDialog->show();
-    }));
-    sessionActions->addButton(WW<WPushButton>("Printable Version").css("btn btn-info").onClick([=](WMouseEvent){
-      WDialog *printableDialog = new WDialog("Printable Version");
-      WPushButton *okButton;
-      WSlider *slider = new WSlider();
-      printableDialog->footer()->addWidget(okButton = WW<WPushButton>("Ok").css("btn btn-primary").onClick([=](WMouseEvent){ printableDialog->accept(); }));
-      printableDialog->footer()->addWidget(WW<WPushButton>("Cancel").css("btn btn-danger").onClick([=](WMouseEvent){ printableDialog->reject(); }));
-      auto printableResource = new PrintableAstroSessionResource(astroSession, session, selectedTelescope, q);
-      okButton->setLink(printableResource);
-      okButton->setLinkTarget(TargetNewWindow);
-      printableDialog->contents()->addWidget(new WLabel("Spacing between objects rows"));
-      printableDialog->contents()->addWidget(new WBreak);
-      slider->setMaximum(10);
-      slider->valueChanged().connect([=](int v, _n5){printableResource->setRowsSpacing(v); });
-      printableDialog->contents()->addWidget(slider);
-      printableDialog->show();
-    }));
-    actionsContainer->addWidget(sessionActions);
+
     actionsContainer->addWidget(WW<WContainerWidget>().css("form-inline pull-right").add(telescopeComboLabel).add(telescopeCombo));
     WStandardItemModel *model = new WStandardItemModel(q);
     for(auto telescope: telescopes) {
@@ -165,7 +192,7 @@ void AstroSessionTab::Private::reload()
       addObjectsTabWidget->populateFor(selectedTelescope);
     });
   } else {
-    actionsContainer->addWidget(new WText{"Add one or more telescopes in the \"My Telescopes\" section to see personalized suggestions and data here."});
+    actionsContainer->addWidget(WW<WText>("Add one or more telescopes in the \"My Telescopes\" section to see personalized suggestions and data here.").css("pull-right"));
   }
   
   populate();

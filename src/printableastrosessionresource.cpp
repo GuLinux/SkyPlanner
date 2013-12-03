@@ -35,13 +35,13 @@
 using namespace Wt;
 using namespace std;
 
-PrintableAstroSessionResource::Private::Private(const Dbo::ptr< AstroSession >& astroSession, Session& session, const Dbo::ptr<Telescope> &telescope, PrintableAstroSessionResource* q) 
-  : astroSession(astroSession), session(session), telescope(telescope), rowsSpacing(0), q(q)
+PrintableAstroSessionResource::Private::Private(const Dbo::ptr< AstroSession >& astroSession, Session& session, PrintableAstroSessionResource* q) 
+  : astroSession(astroSession), session(session), rowsSpacing(0), q(q)
 {
 }
 
-PrintableAstroSessionResource::PrintableAstroSessionResource(const Dbo::ptr<AstroSession> &astroSession, Session &session, const Dbo::ptr<Telescope> &telescope, WObject* parent)
-  : WResource(parent), d(astroSession, session, telescope, this)
+PrintableAstroSessionResource::PrintableAstroSessionResource(const Dbo::ptr<AstroSession> &astroSession, Session &session, WObject* parent)
+  : WResource(parent), d(astroSession, session, this)
 {
 }
 
@@ -49,6 +49,10 @@ PrintableAstroSessionResource::~PrintableAstroSessionResource()
 {
 }
 
+void PrintableAstroSessionResource::setTelescope(const Dbo::ptr<Telescope> &telescope)
+{
+  d->telescope = telescope;
+}
 void PrintableAstroSessionResource::setRowsSpacing(int spacing)
 {
   d->rowsSpacing = spacing;
@@ -75,6 +79,7 @@ void PrintableAstroSessionResource::handleRequest(const Wt::Http::Request &reque
   <p>${sessionDate}, Moon Phase: ${moonPhase}%</p>\
   <p>Sun: rising at ${sunRise}, setting at ${sunSet}</p>\
   <p>Moon: rising at ${moonRise}, setting at ${moonSet}</p>\
+  ${<have-telescope>}<p>Suggestions for telescope: \"${telescope-name}\", diameter ${telescope-diameter}mm, focal length ${telescope-focal-length}mm</p>${</have-telescope>}\
   ${</have-place>}\
   <table border=\"1\">\
     <tr>\
@@ -89,7 +94,9 @@ void PrintableAstroSessionResource::handleRequest(const Wt::Http::Request &reque
       <th>Highest</th>\
       <th>Max</th>\
       ${</have-place>}\
+      ${<have-telescope>}\
       <th>Difficulty</th>\
+      ${</have-telescope>}\
     </tr>\
     ${table-rows}\
   </table>\
@@ -97,6 +104,12 @@ void PrintableAstroSessionResource::handleRequest(const Wt::Http::Request &reque
   ", XHTMLUnsafeText);
   printable.bindString("title", d->astroSession->name());
   printable.setCondition("have-place", d->astroSession->position());
+  printable.setCondition("have-telescope", d->telescope);
+  if(d->telescope) {
+    printable.bindString("telescope-name", d->telescope->name());
+    printable.bindInt("telescope-diameter", d->telescope->diameter());
+    printable.bindInt("telescope-focal-length", d->telescope->focalLength());
+  }
   Ephemeris ephemeris(d->astroSession->position());
   printable.bindInt("moonPhase", static_cast<int>(ephemeris.moonPhase(d->astroSession->when()).illuminated_fraction*100.));
   printable.bindString("sessionDate", d->astroSession->wDateWhen().date().toString("dddd dd MMMM yyyy"));
@@ -129,7 +142,10 @@ void PrintableAstroSessionResource::handleRequest(const Wt::Http::Request &reque
     <td>${highestAt}</td>\
     <td>${maxAltitude}</td>\
     ${</have-place>}\
-    <td>${difficulty}</td></tr>\
+    ${<have-telescope>}\
+    <td>${difficulty}</td>\
+    ${</have-telescope>}\
+    </tr>\
     ${<have-description>}\
     <tr><td colspan=\"${total-columns}\">${description}</td></tr>\
     ${</have-description>}\
@@ -145,6 +161,7 @@ void PrintableAstroSessionResource::handleRequest(const Wt::Http::Request &reque
     rowTemplate.bindString("magnitude", format("%.1f") % sessionObject->ngcObject()->magnitude() );
     rowTemplate.bindString("type", sessionObject->ngcObject()->typeDescription());
     rowTemplate.setCondition("have-place", d->astroSession->position());
+    rowTemplate.setCondition("have-telescope", d->telescope);
     rowTemplate.bindInt("total-columns", d->astroSession->position() ? 10 : 8);
     auto bestAltitude = sessionObject->bestAltitude(ephemeris, 1);
     if(d->astroSession->position()) {

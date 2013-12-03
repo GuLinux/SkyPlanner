@@ -27,7 +27,7 @@ class Session;
 class PrintableAstroSessionResource::Private
 {
 public:
-    Private(const Wt::Dbo::ptr<AstroSession> &astroSession, Session &session, const Wt::Dbo::ptr<Telescope> &telescope, PrintableAstroSessionResource* q);
+    Private(const Wt::Dbo::ptr<AstroSession> &astroSession, Session &session, PrintableAstroSessionResource* q);
     Wt::Dbo::ptr<AstroSession> astroSession;
     Session &session;
     Wt::Dbo::ptr<Telescope> telescope;
