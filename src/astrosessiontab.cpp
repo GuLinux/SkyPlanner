@@ -52,6 +52,7 @@
 #include <Wt/WToolBar>
 #include <Wt/WTemplate>
 #include "constellationfinder.h"
+#include "printableastrosessionresource.h"
 
 using namespace Wt;
 using namespace WtCommons;
@@ -81,7 +82,9 @@ void AstroSessionTab::Private::reload()
   WContainerWidget *sessionInfo = WW<WContainerWidget>();
   sessionInfo->addWidget(new WText(astroSession->wDateWhen().date().toString("dddd dd MMMM yyyy")));
   PlaceWidget *placeWidget = new PlaceWidget(astroSession, session);
+  SelectObjectsWidget *addObjectsTabWidget = new SelectObjectsWidget(astroSession, session);
   placeWidget->placeChanged().connect([=](double lat, double lng, _n4) {
+    addObjectsTabWidget->populateFor(selectedTelescope);
     updatePositionDetails();
   });
   sessionInfo->addWidget(positionDetails = WW<WContainerWidget>());
@@ -90,7 +93,6 @@ void AstroSessionTab::Private::reload()
   if(astroSession->position()) {
     placeWidget->mapReady().connect([=](_n6){ WTimer::singleShot(1500, [=](WMouseEvent){ locationPanel->collapse(); }); });
   }
-  SelectObjectsWidget *addObjectsTabWidget = new SelectObjectsWidget(astroSession, session);
   addPanel("Add Observable Object", addObjectsTabWidget, true);
 
   addObjectsTabWidget->objectsListChanged().connect([=](_n6){populate(); });
@@ -106,7 +108,9 @@ void AstroSessionTab::Private::reload()
     telescopeCombo->setWidth(350);
     WLabel *telescopeComboLabel = WW<WLabel>("Telescope: ").setMargin(10);
     telescopeComboLabel->setBuddy(telescopeCombo);
-    actionsContainer->addWidget(WW<WPushButton>("Change name or date").css("btn").onClick([=](WMouseEvent){
+    WToolBar *sessionActions = WW<WToolBar>();
+    
+    sessionActions->addButton(WW<WPushButton>("Change name or date").css("btn").onClick([=](WMouseEvent){
       WDialog *changeNameOrDateDialog = new WDialog("Change name or date");
       WLineEdit *sessionName = WW<WLineEdit>(astroSession->name()).css("input-block-level");
       WDateEdit *sessionDate = WW<WDateEdit>().css("input-block-level");
@@ -125,6 +129,16 @@ void AstroSessionTab::Private::reload()
       changeNameOrDateDialog->contents()->addWidget(form);
       changeNameOrDateDialog->show();
     }));
+    sessionActions->addButton(WW<WPushButton>("Printable Version").css("btn btn-info").onClick([=](WMouseEvent){
+      WDialog *printableDialog = new WDialog("Printable Version");
+      WPushButton *okButton;
+      printableDialog->footer()->addWidget(okButton = WW<WPushButton>("Ok").css("btn btn-primary").onClick([=](WMouseEvent){ printableDialog->accept(); }));
+      printableDialog->footer()->addWidget(WW<WPushButton>("Cancel").css("btn btn-danger").onClick([=](WMouseEvent){ printableDialog->reject(); }));
+      okButton->setLink(new PrintableAstroSessionResource(astroSession, session, q));
+      okButton->setLinkTarget(TargetNewWindow);
+      printableDialog->show();
+    }));
+    actionsContainer->addWidget(sessionActions);
     actionsContainer->addWidget(WW<WContainerWidget>().css("form-inline pull-right").add(telescopeComboLabel).add(telescopeCombo));
     WStandardItemModel *model = new WStandardItemModel(q);
     for(auto telescope: telescopes) {

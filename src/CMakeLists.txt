@@ -20,6 +20,7 @@ set(NgcIcCatalog_SRCS
   utils/autopostresource.cpp
   telescopespage.cpp
   constellationfinder.cpp
+  printableastrosessionresource.cpp
 )
 
 set(NgcIcCatalog_MODELS_SRCS
