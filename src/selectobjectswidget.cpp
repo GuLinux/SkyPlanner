@@ -116,7 +116,7 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsTable()
       Dbo::Transaction transaction(session);
       populateHeaders(suggestedObjectsTable);
       for(int i=startOffset; i<min(startOffset+size, suggestedObjectsList->size()); i++) {
-	NgcObjectPtr &ngcObject = suggestedObjectsList->at(i).first;
+	NgcObjectPtr ngcObject = session.find<NgcObject>().where("object_id = ?").bind(suggestedObjectsList->at(i).first.id());
 	Ephemeris::BestAltitude &bestAltitude = suggestedObjectsList->at(i).second;
 	append(suggestedObjectsTable, ngcObject, bestAltitude);
       }
@@ -187,8 +187,9 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsList( double magnitud
     unique_lock<mutex> l2(suggestedObjectsListMutex);
     unique_lock<mutex> lockSession(sessionLockMutex);
     NgcObjectsList &suggObjList = *suggestedObjectsList;
-    Dbo::Transaction t(session);
-    dbo::collection<NgcObjectPtr> objects = session.find<NgcObject>().where("magnitude < ?").bind(magnitudeLimit);
+    Session threadSession;
+    Dbo::Transaction t(threadSession);
+    dbo::collection<NgcObjectPtr> objects = threadSession.find<NgcObject>().where("magnitude < ?").bind(magnitudeLimit);
     Ephemeris ephemeris(astroSession->position());
     AstroSession::ObservabilityRange range = astroSession->observabilityRange(ephemeris).delta({1,20,0});
     for(auto object: objects) {
