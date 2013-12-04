@@ -89,11 +89,11 @@ string Angle::printable(Format format, PrintFormat printFormat) const
     int minutes_i = static_cast<int>(time);
     time -= minutes_i;
     time *= 60.;
-    return (boost::format("%dh %2dm %.3fs") % hours_i % minutes_i % time ).str();
+    return (boost::format("%dh %2dm %.1fs") % hours_i % minutes_i % time ).str();
   }
 
   Sexagesimal asSexagesimal = sexagesimal();
-  return (boost::format("%d%s %2d' %.3f\"") % asSexagesimal.degrees % (printFormat == HTML ? "&deg;" : "\302\260") % asSexagesimal.minutes % asSexagesimal.seconds ).str();
+  return (boost::format("%d%s %2d' %.1f\"") % asSexagesimal.degrees % (printFormat == HTML ? "&deg;" : "\302\260") % asSexagesimal.minutes % asSexagesimal.seconds ).str();
 }
 
  
