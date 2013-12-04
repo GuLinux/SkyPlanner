@@ -105,7 +105,6 @@ void PrintableAstroSessionResource::handleRequest(const Wt::Http::Request &reque
       <style type=\"text/css\">\n\
       	table { page-break-inside:auto }\
 	tr    { page-break-inside:avoid; page-break-after:auto }\
-	td    { page-break-inside:avoid; page-break-after:auto }\
       </style>\n\
   ${</render-type-pdf>}\
   <h2 style=\"text-align: center; \">${title}</h2>\n\
@@ -116,23 +115,27 @@ void PrintableAstroSessionResource::handleRequest(const Wt::Http::Request &reque
   ${<have-telescope>}<p>Suggestions for telescope: \"${telescope-name}\", diameter ${telescope-diameter}mm, focal length ${telescope-focal-length}mm</p>${</have-telescope>}\
   ${</have-place>}\
   <table border=\"1\">\n\
-    <tr>\n\
-      <th>Names</th>\n\
-      <th>AR</th>\n\
-      <th>Dec</th>\n\
-      <th>Constellation</th>\n\
-      <th>Size</th>\n\
-      <th>Magn.</th>\n\
-      <th>Type</th>\n\
-      ${<have-place>}\
-      <th>Highest</th>\n\
-      <th>Max</th>\n\
-      ${</have-place>}\
-      ${<have-telescope>}\
-      <th>Difficulty</th>\n\
-      ${</have-telescope>}\
-    </tr>\n\
-    ${table-rows}\
+    <thead>\n\
+      <tr>\n\
+	<th>Names</th>\n\
+	<th>AR</th>\n\
+	<th>Dec</th>\n\
+	<th>Constellation</th>\n\
+	<th>Size</th>\n\
+	<th>Magn.</th>\n\
+	<th>Type</th>\n\
+	${<have-place>}\
+	<th>Highest</th>\n\
+	<th>Max</th>\n\
+	${</have-place>}\
+	${<have-telescope>}\
+	<th>Difficulty</th>\n\
+	${</have-telescope>}\
+      </tr>\n\
+    </thead>\n\
+    <tbody>\n\
+      ${table-rows}\
+    </tbody>\n\
   </table>\n\
   ${<render-type-html>}\
   </body></html>\n\
@@ -168,7 +171,7 @@ void PrintableAstroSessionResource::handleRequest(const Wt::Http::Request &reque
   });
   for(auto sessionObject: sessionObjects) {
     WTemplate rowTemplate;
-    rowTemplate.setTemplateText("<tr>\n\
+    rowTemplate.setTemplateText("<tr style=\"page-break-inside:avoid; page-break-after:auto\">\n\
     <td>${namesWidget}</td>\n\
     <td>${ar}</td>\n\
     <td>${dec}</td>\n\
@@ -188,7 +191,9 @@ void PrintableAstroSessionResource::handleRequest(const Wt::Http::Request &reque
     <tr><td colspan=\"${total-columns}\">${description}</td></tr>\n\
     ${</have-description>}\
     ${<have-rows-spacing>}\
-    <tr><td colspan=\"${total-columns}\" style=\"height: ${rows-spacing}em\" /></tr>\n\
+    <tr style=\"page-break-inside:avoid; page-break-after:auto\">\
+      <td colspan=\"${total-columns}\" style=\"height: ${rows-spacing}em; page-break-inside:avoid; page-break-after:auto\" />\
+    </tr>\n\
     ${</have-rows-spacing>}\
     \n", XHTMLUnsafeText);
     rowTemplate.bindWidget("namesWidget", new ObjectNamesWidget{sessionObject->ngcObject(), d->session, d->astroSession, ObjectNamesWidget::Printable});
@@ -235,6 +240,7 @@ void PrintableAstroSessionResource::handleRequest(const Wt::Http::Request &reque
   printable.renderTemplate(buffer);
   string b = buffer.str();
   boost::replace_all(b, "°", "&deg;");
+//   cerr << "--------------------" << endl << b << endl << "----------------------" << endl;
   renderer.render(WString::fromUTF8(b));
   
   HPDF_SaveToStream(pdf);
