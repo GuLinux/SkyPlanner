@@ -28,7 +28,9 @@ class AstroPlanner : public Wt::WApplication
 public:
     ~AstroPlanner();
     AstroPlanner(const Wt::WEnvironment& environment);
-
+    static AstroPlanner *instance();
+    enum NotificationType { Alert, Error, Success, Information };
+    void notification(const Wt::WString &title, const Wt::WString &content, NotificationType type, int autoHideSeconds = 0);
 private:
     D_PTR;
 };

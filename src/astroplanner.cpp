@@ -30,6 +30,9 @@
 #include "astrosessionspage.h"
 #include <Wt/Auth/PasswordService>
 #include <Wt/Auth/Login>
+#include <Wt/WPushButton>
+#include <Wt/WText>
+#include <Wt/WTimer>
 
 using namespace std;
 using namespace Wt;
@@ -41,6 +44,12 @@ AstroPlanner::Private::Private( AstroPlanner *q ) : q( q )
 
 AstroPlanner::~AstroPlanner()
 {
+}
+
+
+AstroPlanner *AstroPlanner::instance()
+{
+  return dynamic_cast<AstroPlanner*>(wApp);
 }
 
 AstroPlanner::AstroPlanner( const WEnvironment &environment )
@@ -56,6 +65,7 @@ AstroPlanner::AstroPlanner( const WEnvironment &environment )
   navBar->setResponsive( true );
   navBar->setTitle( "AstroPlanner" );
   useStyleSheet( "/astroplanner_style.css" );
+  root()->addWidget(d->notifications = new WContainerWidget);
   WStackedWidget *widgets = new WStackedWidget( root() );
   widgets->setTransitionAnimation({WAnimation::AnimationEffect::Fade});
   WMenu *navBarMenu = new WMenu(widgets);
@@ -98,4 +108,31 @@ AstroPlanner::AstroPlanner( const WEnvironment &environment )
   });
   setMenuItemsVisibility();
   setLoggedInWidget();
+}
+
+void AstroPlanner::notification(const WString &title, const WString &content, NotificationType type, int autoHideSeconds)
+{
+  static map<NotificationType,string> notificationStyles {
+    {Error, "alert-error"},
+    {Success, "alert-success"},
+    {Information, "alert-information"},
+  };
+  WContainerWidget *notification = WW<WContainerWidget>().addCss("alert alert-block").addCss(notificationStyles[type]).setHidden(true);
+  auto deleteNotification = [=](WMouseEvent) {
+    notification->animateHide({WAnimation::Fade, WAnimation::EaseInOut, 500});
+    WTimer::singleShot(3000, [=](WMouseEvent){delete notification; });
+  };
+  if(autoHideSeconds<=0) {
+    WPushButton *closeButton = WW<WPushButton>().css("close").onClick(deleteNotification);
+    closeButton->setTextFormat(XHTMLUnsafeText);
+    closeButton->setText("&times;");
+    notification->addWidget(closeButton);
+  } else {
+    WTimer::singleShot(1000*autoHideSeconds, deleteNotification);
+  }
+  
+  notification->addWidget(new WText{WString("<h4>{1}</h4>").arg(title) });
+  notification->addWidget(new WText{content});
+  d->notifications->addWidget(notification);
+  notification->animateShow({WAnimation::Fade, WAnimation::EaseInOut, 500});
 }

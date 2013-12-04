@@ -39,6 +39,7 @@
 #include "constellationfinder.h"
 #include "widgets/objectnameswidget.h"
 #include "widgets/objectdifficultywidget.h"
+#include "astroplanner.h"
 
 using namespace Wt;
 using namespace WtCommons;
@@ -100,6 +101,11 @@ void SelectObjectsWidget::Private::append(WTable *table, const Dbo::ptr<NgcObjec
   row->elementAt(5)->addWidget(new WText{Utils::htmlEncode(WString::fromUTF8(bestAltitude.coordinates.altitude.printable()))});
   row->elementAt(6)->addWidget(WW<WPushButton>("Add").css("btn btn-primary btn-mini").onClick([=](WMouseEvent){
     Dbo::Transaction t(session);
+    int existing = session.query<int>("select count(*) from astro_session_object where astro_session_id = ? AND objects_object_id = ? ").bind(astroSession.id() ).bind(ngcObject->objectId() );
+    if(existing>0) {
+      AstroPlanner::instance()->notification("Warning", "Object already added to this session, skipping.", AstroPlanner::Alert, 10);
+      return;
+    }
     astroSession.modify()->astroSessionObjects().insert(new AstroSessionObject(ngcObject));
     t.commit();
     objectsListChanged.emit();

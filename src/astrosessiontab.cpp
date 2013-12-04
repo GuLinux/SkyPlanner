@@ -54,6 +54,7 @@
 #include "constellationfinder.h"
 #include "printableastrosessionresource.h"
 #include <Wt/WSlider>
+#include "astroplanner.h"
 
 
 using namespace Wt;
@@ -302,6 +303,7 @@ void AstroSessionTab::Private::populate()
       .add(WW<WPushButton>("Save").css("btn btn-mini btn-primary pull-right").onClick([=](WMouseEvent){
         Dbo::Transaction t(session);
         sessionObject.modify()->setDescription(descriptionTextArea->text().toUTF8());
+	AstroPlanner::instance()->notification("Success", "Description saved!", AstroPlanner::Success, 5);
       }));
     descriptionCell->addWidget(descriptionContainer);
     WToolBar *actions = new WToolBar;
