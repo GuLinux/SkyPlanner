@@ -85,26 +85,30 @@ namespace {
 void PrintableAstroSessionResource::handleRequest(const Wt::Http::Request &request, Wt::Http::Response &response) {
   WTemplate printable;
   Dbo::Transaction t(d->session);
-  printable.setTemplateText("<html>\n\
+  printable.setTemplateText("\
+  ${<render-type-html>}\
+  <html>\n\
     <head>\n\
-      ${<render-type-html>}\
       <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\
       <title>${title}</title>\n\
-      ${</render-type-html>}\
       <style type=\"text/css\">\n\
-      ${<render-type-html>}\
       @media print {\
-      ${</render-type-html>}\
 	table { page-break-inside:auto }\
 	tr    { page-break-inside:avoid; page-break-after:auto }\
 	td    { page-break-inside:avoid; page-break-after:auto }\
-      ${<render-type-html>}\
       }\
-      ${</render-type-html>}\
       </style>\n\
     </head>\
   <body>\n\
-  <center><h2>${title}</h2></center>\n\
+  ${</render-type-html>}\
+  ${<render-type-pdf>}\
+      <style type=\"text/css\">\n\
+      	table { page-break-inside:auto }\
+	tr    { page-break-inside:avoid; page-break-after:auto }\
+	td    { page-break-inside:avoid; page-break-after:auto }\
+      </style>\n\
+  ${</render-type-pdf>}\
+  <h2 style=\"text-align: center; \">${title}</h2>\n\
   ${<have-place>}\
   <p>${sessionDate}, Moon Phase: ${moonPhase}%</p>\n\
   <p>Sun: rising at ${sunRise}, setting at ${sunSet}</p>\n\
@@ -130,9 +134,12 @@ void PrintableAstroSessionResource::handleRequest(const Wt::Http::Request &reque
     </tr>\n\
     ${table-rows}\
   </table>\n\
+  ${<render-type-html>}\
   </body></html>\n\
+  ${</render-type-html>}\
   ", XHTMLUnsafeText);
   printable.setCondition("render-type-html", d->reportType == HTML);
+  printable.setCondition("render-type-pdf", d->reportType == PDF);
   printable.bindString("title", d->astroSession->name());
   printable.setCondition("have-place", d->astroSession->position());
   printable.setCondition("have-telescope", d->telescope);
