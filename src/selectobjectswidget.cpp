@@ -76,11 +76,12 @@ void SelectObjectsWidget::Private::populateHeaders(WTable *table)
 {
   table->clear();
   table->elementAt(0, 0)->addWidget(new WText{"Object Names"});
-  table->elementAt(0, 1)->addWidget(new WText{"Constellation"});
-  table->elementAt(0, 2)->addWidget(new WText{"Magnitude"});
-  table->elementAt(0, 3)->addWidget(new WText{"Difficulty"});
-  table->elementAt(0, 4)->addWidget(new WText{"Transit Time"});
-  table->elementAt(0, 5)->addWidget(new WText{"Transit Altitude"});
+  table->elementAt(0, 1)->addWidget(new WText{"Type"});
+  table->elementAt(0, 2)->addWidget(new WText{"Constellation"});
+  table->elementAt(0, 3)->addWidget(new WText{"Magnitude"});
+  table->elementAt(0, 4)->addWidget(new WText{"Difficulty"});
+  table->elementAt(0, 5)->addWidget(new WText{"Transit Time"});
+  table->elementAt(0, 6)->addWidget(new WText{"Transit Altitude"});
 }
 
 void SelectObjectsWidget::Private::append(WTable *table, const Dbo::ptr<NgcObject> &ngcObject, const Ephemeris::BestAltitude &bestAltitude)
@@ -96,13 +97,14 @@ void SelectObjectsWidget::Private::append(WTable *table, const Dbo::ptr<NgcObjec
   if(existing > 0)
     row->addStyleClass("success");
   row->elementAt(0)->addWidget(new ObjectNamesWidget{ngcObject, session, astroSession});
-  row->elementAt(1)->addWidget(new WText{ ConstellationFinder::getName(ngcObject->coordinates()).name });
-  row->elementAt(2)->addWidget(new WText{format("%.1f") % ngcObject->magnitude()});
+  row->elementAt(1)->addWidget(new WText{ ngcObject->typeDescription() });
+  row->elementAt(2)->addWidget(new WText{ ConstellationFinder::getName(ngcObject->coordinates()).name });
+  row->elementAt(3)->addWidget(new WText{format("%.1f") % ngcObject->magnitude()});
   WDateTime transit = WDateTime::fromPosixTime(bestAltitude.when);
-  row->elementAt(3)->addWidget(new ObjectDifficultyWidget(ngcObject, selectedTelescope, 99 /* TODO: hack, to be replaced */));
-  row->elementAt(4)->addWidget(new WText{transit.time().toString()});
-  row->elementAt(5)->addWidget(new WText{Utils::htmlEncode(WString::fromUTF8(bestAltitude.coordinates.altitude.printable()))});
-  row->elementAt(6)->addWidget(WW<WPushButton>("Add").css("btn btn-primary btn-mini").onClick([=](WMouseEvent){
+  row->elementAt(4)->addWidget(new ObjectDifficultyWidget(ngcObject, selectedTelescope, 99 /* TODO: hack, to be replaced */));
+  row->elementAt(5)->addWidget(new WText{transit.time().toString()});
+  row->elementAt(6)->addWidget(new WText{Utils::htmlEncode(WString::fromUTF8(bestAltitude.coordinates.altitude.printable()))});
+  row->elementAt(7)->addWidget(WW<WPushButton>("Add").css("btn btn-primary btn-mini").onClick([=](WMouseEvent){
     Dbo::Transaction t(session);
     int existing = session.query<int>("select count(*) from astro_session_object where astro_session_id = ? AND objects_object_id = ? ").bind(astroSession.id() ).bind(ngcObject->objectId() );
     if(existing>0) {

@@ -258,12 +258,12 @@ void AstroSessionTab::Private::populate()
 {
   objectsTable->clear();
   objectsTable->elementAt(0,0)->addWidget(new WText{"Names"});
-  objectsTable->elementAt(0,1)->addWidget(new WText{"AR"});
-  objectsTable->elementAt(0,2)->addWidget(new WText{"DEC"});
-  objectsTable->elementAt(0,3)->addWidget(new WText{"Constellation"});
-  objectsTable->elementAt(0,4)->addWidget(new WText{"Angular Size"});
-  objectsTable->elementAt(0,5)->addWidget(new WText{"Magnitude"});
-  objectsTable->elementAt(0,6)->addWidget(new WText{"Type"});
+  objectsTable->elementAt(0,1)->addWidget(new WText{"Type"});
+  objectsTable->elementAt(0,2)->addWidget(new WText{"AR"});
+  objectsTable->elementAt(0,3)->addWidget(new WText{"DEC"});
+  objectsTable->elementAt(0,4)->addWidget(new WText{"Constellation"});
+  objectsTable->elementAt(0,5)->addWidget(new WText{"Angular Size"});
+  objectsTable->elementAt(0,6)->addWidget(new WText{"Magnitude"});
   objectsTable->elementAt(0,7)->addWidget(new WText{"Highest Time"});
   objectsTable->elementAt(0,8)->addWidget(new WText{"Max Altitude"});
   objectsTable->elementAt(0,9)->addWidget(new WText{"Difficulty"});
@@ -282,12 +282,12 @@ void AstroSessionTab::Private::populate()
     WTableRow *row = objectsTable->insertRow(objectsTable->rowCount());
     sessionObject->bestAltitude(ephemeris);
     row->elementAt(0)->addWidget(new ObjectNamesWidget{sessionObject->ngcObject(), session, astroSession});
-    row->elementAt(1)->addWidget(new WText{ Utils::htmlEncode( sessionObject->coordinates().rightAscension.printable(Angle::Hourly) ) });
-    row->elementAt(2)->addWidget(new WText{ Utils::htmlEncode( WString::fromUTF8( sessionObject->coordinates().declination.printable() )) });
-    row->elementAt(3)->addWidget(new WText{ ConstellationFinder::getName(sessionObject->coordinates()).name });
-    row->elementAt(4)->addWidget(new WText{ Utils::htmlEncode( WString::fromUTF8( Angle::degrees(sessionObject->ngcObject()->angularSize()).printable() )) });
-    row->elementAt(5)->addWidget(new WText{ format("%.1f") % sessionObject->ngcObject()->magnitude()});
-    row->elementAt(6)->addWidget(new WText{sessionObject->ngcObject()->typeDescription() });
+    row->elementAt(1)->addWidget(new WText{sessionObject->ngcObject()->typeDescription() });
+    row->elementAt(2)->addWidget(new WText{ Utils::htmlEncode( sessionObject->coordinates().rightAscension.printable(Angle::Hourly) ) });
+    row->elementAt(3)->addWidget(new WText{ Utils::htmlEncode( WString::fromUTF8( sessionObject->coordinates().declination.printable() )) });
+    row->elementAt(4)->addWidget(new WText{ ConstellationFinder::getName(sessionObject->coordinates()).name });
+    row->elementAt(5)->addWidget(new WText{ Utils::htmlEncode( WString::fromUTF8( Angle::degrees(sessionObject->ngcObject()->angularSize()).printable() )) });
+    row->elementAt(6)->addWidget(new WText{ format("%.1f") % sessionObject->ngcObject()->magnitude()});
     auto bestAltitude = sessionObject->bestAltitude(ephemeris, 1);
     row->elementAt(7)->addWidget(new WText{ WDateTime::fromPosixTime( bestAltitude.when).time().toString() });
     row->elementAt(8)->addWidget(new WText{ Utils::htmlEncode(WString::fromUTF8(bestAltitude.coordinates.altitude.printable() )) });
