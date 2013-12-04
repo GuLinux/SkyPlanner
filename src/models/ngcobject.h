@@ -57,6 +57,7 @@ public:
     float magnitude() const;
     float angularSize() const;
     NebulaType type() const;
+    static std::string typeDescription(NebulaType type);
     std::string typeDescription() const;
     int32_t difficulty(const dbo::ptr<Telescope> &telescope) const;
 

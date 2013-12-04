@@ -91,6 +91,10 @@ NgcObject::NebulaType NgcObject::type() const
 */
 std::string NgcObject::typeDescription() const
 {
+  return typeDescription(type());
+}
+std::string NgcObject::typeDescription(NebulaType nebulaType)
+{
   static map<NebulaType,string> descriptions {
     {NebGx, "Galaxy"},
     {NebOc, "Open star cluster"},
@@ -102,6 +106,6 @@ std::string NgcObject::typeDescription() const
     {NebCn, "Cluster with nebulosity"},
     {NebUnknown, "Unknown"},
   };
-  return descriptions[type()];
+  return descriptions[nebulaType];
 }
 
