@@ -138,7 +138,7 @@ void AstroSessionTab::Private::reload()
     printableDialog->contents()->addWidget(new WLabel("Spacing between objects rows"));
     printableDialog->contents()->addWidget(new WBreak);
     WSlider *emptyRowsSlider = new WSlider();
-    emptyRowsSlider->setWidth(200);
+    emptyRowsSlider->setWidth(500);
     emptyRowsSlider->setMaximum(10);
     emptyRowsSlider->valueChanged().connect([=](int v, _n5){printableResource->setRowsSpacing(v); });
     printableDialog->contents()->addWidget(emptyRowsSlider);
@@ -155,7 +155,7 @@ void AstroSessionTab::Private::reload()
       fontScalingSlider->setEnabled(r==0);
     });
     printableDialog->contents()->addWidget(WW<WContainerWidget>().add(new WLabel{"Export as..."}).add(formatCombo).add(new WBreak));
-    fontScalingSlider->setWidth(200);
+    fontScalingSlider->setWidth(500);
     fontScalingSlider->setMaximum(40);
     fontScalingSlider->setValue(20);
     WText *fontScalingValue = new WText("100%");

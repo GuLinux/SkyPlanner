@@ -178,10 +178,10 @@ void PrintableAstroSessionResource::handleRequest(const Wt::Http::Request &reque
     WTemplate rowTemplate;
     rowTemplate.setTemplateText("<tr style=\"page-break-inside:avoid; page-break-after:auto\">\n\
     <td>${namesWidget}</td>\n\
-    <td>${ar}</td>\n\
-    <td>${dec}</td>\n\
+    <td style='white-space:nowrap;'>${ar}</td>\n\
+    <td style='white-space:nowrap;'>${dec}</td>\n\
     <td>${constellation}</td>\n\
-    <td>${size}</td>\n\
+    <td style='white-space:nowrap;'>${size}</td>\n\
     <td>${magnitude}</td>\n\
     <td>${type}</td>\n\
     ${<have-place>}\
