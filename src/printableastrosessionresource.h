@@ -36,6 +36,7 @@ public:
   void setRowsSpacing(int spacing);
   void setTelescope(const Wt::Dbo::ptr<Telescope> &telescope);
   void setReportType(ReportType type);
+  void setFontScale(double fontScale);
 private:
     D_PTR;
 };

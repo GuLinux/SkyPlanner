@@ -76,6 +76,11 @@ void PrintableAstroSessionResource::setReportType(ReportType type)
   d->reportType = type;
 }
 
+void PrintableAstroSessionResource::setFontScale(double fontScale)
+{
+  d->fontScale = fontScale;
+}
+
 namespace {
     void error_handler(HPDF_STATUS error_no, HPDF_STATUS detail_no, void *user_data) {
       WServer::instance()->log("error") << (format("libharu error: error_no=%04X, detail_no=%d\n") % (unsigned int) error_no % (int) detail_no).str();
@@ -233,8 +238,9 @@ void PrintableAstroSessionResource::handleRequest(const Wt::Http::Request &reque
   HPDF_Page page = HPDF_AddPage(pdf);
   HPDF_Page_SetSize(page, HPDF_PAGE_SIZE_A4, HPDF_PAGE_LANDSCAPE);
   Wt::Render::WPdfRenderer renderer(pdf, page);
-  renderer.setMargin(2.54);
+  renderer.setMargin(1.2);
   renderer.setDpi(96);
+  renderer.setFontScale(d->fontScale);
   renderer.addFontCollection("/usr/share/fonts", true);
   stringstream buffer;
   printable.renderTemplate(buffer);

@@ -129,7 +129,6 @@ void AstroSessionTab::Private::reload()
   sessionActions->addButton(WW<WPushButton>("Printable Version").css("btn btn-info").onClick([=](WMouseEvent){
     WDialog *printableDialog = new WDialog("Printable Version");
     WPushButton *okButton;
-    WSlider *slider = new WSlider();
     printableDialog->footer()->addWidget(okButton = WW<WPushButton>("Ok").css("btn btn-primary").onClick([=](WMouseEvent){ printableDialog->accept(); }));
     printableDialog->footer()->addWidget(WW<WPushButton>("Cancel").css("btn btn-danger").onClick([=](WMouseEvent){ printableDialog->reject(); }));
     auto printableResource = new PrintableAstroSessionResource(astroSession, session, q);
@@ -138,15 +137,38 @@ void AstroSessionTab::Private::reload()
     okButton->setLinkTarget(TargetNewWindow);
     printableDialog->contents()->addWidget(new WLabel("Spacing between objects rows"));
     printableDialog->contents()->addWidget(new WBreak);
-    slider->setMaximum(10);
-    slider->valueChanged().connect([=](int v, _n5){printableResource->setRowsSpacing(v); });
-    printableDialog->contents()->addWidget(slider);
+    WSlider *emptyRowsSlider = new WSlider();
+    emptyRowsSlider->setWidth(200);
+    emptyRowsSlider->setMaximum(10);
+    emptyRowsSlider->valueChanged().connect([=](int v, _n5){printableResource->setRowsSpacing(v); });
+    printableDialog->contents()->addWidget(emptyRowsSlider);
     printableDialog->contents()->addWidget(new WBreak);
+    
+
+    
+    WSlider *fontScalingSlider = new WSlider();
     WComboBox *formatCombo = new WComboBox();
     formatCombo->addItem("PDF");
     formatCombo->addItem("HTML");
-    formatCombo->activated().connect([=](int r, _n5){ printableResource->setReportType(r==0 ? PrintableAstroSessionResource::PDF : PrintableAstroSessionResource::HTML); });
+    formatCombo->activated().connect([=](int r, _n5){
+      printableResource->setReportType(r==0 ? PrintableAstroSessionResource::PDF : PrintableAstroSessionResource::HTML); 
+      fontScalingSlider->setEnabled(r==0);
+    });
     printableDialog->contents()->addWidget(WW<WContainerWidget>().add(new WLabel{"Export as..."}).add(formatCombo).add(new WBreak));
+    fontScalingSlider->setWidth(200);
+    fontScalingSlider->setMaximum(40);
+    fontScalingSlider->setValue(10);
+    WText *fontScalingValue = new WText("100%");
+    fontScalingSlider->valueChanged().connect([=](int v, _n5){
+      double value = 2. / 40. * static_cast<double>(v);
+      printableResource->setFontScale( value );
+      fontScalingValue->setText(format("%d%%") % static_cast<int>(value*100));
+    });
+    printableDialog->contents()->addWidget(new WLabel("Fonts size (PDF Only)"));
+    printableDialog->contents()->addWidget(new WBreak);
+    printableDialog->contents()->addWidget(WW<WContainerWidget>().add(fontScalingSlider).add(fontScalingValue));
+    printableDialog->contents()->addWidget(new WBreak);
+    
     Dbo::Transaction t(session);
     auto telescopes = session.user()->telescopes();
     switch(telescopes.size()) {
