@@ -92,11 +92,15 @@ void PrintableAstroSessionResource::handleRequest(const Wt::Http::Request &reque
       <title>${title}</title>\n\
       ${</render-type-html>}\
       <style type=\"text/css\">\n\
+      ${<render-type-html>}\
       @media print {\
+      ${</render-type-html>}\
 	table { page-break-inside:auto }\
 	tr    { page-break-inside:avoid; page-break-after:auto }\
 	td    { page-break-inside:avoid; page-break-after:auto }\
+      ${<render-type-html>}\
       }\
+      ${</render-type-html>}\
       </style>\n\
     </head>\
   <body>\n\
