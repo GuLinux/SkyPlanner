@@ -39,9 +39,9 @@ public:
     void populateSuggestedObjectsList( double magnitudeLimit );
     Wt::Signal<> suggestedObjectsLoaded;
     typedef std::vector<std::pair<NgcObjectPtr,Ephemeris::BestAltitude>> NgcObjectsList; 
-    std::shared_ptr<NgcObjectsList> suggestedObjectsList; 
+    NgcObjectsList suggestedObjectsList; 
     std::mutex sessionLockMutex;
-    static std::mutex suggestedObjectsListMutex;
+    std::mutex suggestedObjectsListMutex;
     int pagesCurrentIndex = 0;
     Wt::Dbo::ptr< Telescope > selectedTelescope;
     void populateHeaders(Wt::WTable *table);

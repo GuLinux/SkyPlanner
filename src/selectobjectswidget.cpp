@@ -110,18 +110,18 @@ void SelectObjectsWidget::Private::append(WTable *table, const Dbo::ptr<NgcObjec
 void SelectObjectsWidget::Private::populateSuggestedObjectsTable()
 {
     unique_lock<mutex>(suggestedObjectsListMutex);
-    if(!suggestedObjectsList || aborted)
+    if(suggestedObjectsList.empty() || aborted)
       return;
     auto populateRange = [=] (int startOffset, uint64_t size) {
       Dbo::Transaction transaction(session);
       populateHeaders(suggestedObjectsTable);
-      for(int i=startOffset; i<min(startOffset+size, suggestedObjectsList->size()); i++) {
-	NgcObjectPtr ngcObject = session.find<NgcObject>().where("object_id = ?").bind(suggestedObjectsList->at(i).first.id());
-	Ephemeris::BestAltitude &bestAltitude = suggestedObjectsList->at(i).second;
+      for(int i=startOffset; i<min(startOffset+size, suggestedObjectsList.size()); i++) {
+	NgcObjectPtr ngcObject = session.find<NgcObject>().where("object_id = ?").bind(suggestedObjectsList.at(i).first.id());
+	Ephemeris::BestAltitude &bestAltitude = suggestedObjectsList.at(i).second;
 	append(suggestedObjectsTable, ngcObject, bestAltitude);
       }
     };
-    static const int pagesSize = 30;
+    static const int pagesSize = 20;
     suggestedObjectsTablePagination->clear();
     suggestedObjectsTablePagination->setStyleClass("pagination pagination-mini");
     WContainerWidget *paginationWidget = WW<WContainerWidget>();
@@ -145,7 +145,7 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsTable()
     previousButton->addWidget(WW<WAnchor>("", "&laquo;" ).onClick([=](WMouseEvent){ activatePage(pagesCurrentIndex-1); }));
     nextButton->addWidget(WW<WAnchor>("", "&raquo;" ).onClick([=](WMouseEvent){ activatePage(pagesCurrentIndex+1); }));
     paginationWidget->addWidget(previousButton);
-    for(int i=0; i*pagesSize <=suggestedObjectsList->size(); i++) {
+    for(int i=0; i*pagesSize <=suggestedObjectsList.size(); i++) {
       WContainerWidget *page = WW<WContainerWidget>().add(WW<WAnchor>("", boost::lexical_cast<string>(i) ).onClick([=](WMouseEvent){ activatePage(i); }) );
       pages->push_back(page);
       paginationWidget->addWidget(page);
@@ -173,12 +173,11 @@ void SelectObjectsWidget::Private::suggestedObjects(Dbo::Transaction& transactio
   suggestedObjectsContainer->addWidget(suggestedObjectsTablePagination);
 }
 
-mutex SelectObjectsWidget::Private::suggestedObjectsListMutex;
 void SelectObjectsWidget::Private::populateSuggestedObjectsList( double magnitudeLimit )
 {
   unique_lock<mutex> l1(suggestedObjectsListMutex);
   suggestedObjectsTable->clear();
-  suggestedObjectsList.reset(new NgcObjectsList);
+  suggestedObjectsList.clear();
   WApplication *app = wApp;
   aborted = true;
   bgThread.join();
@@ -186,7 +185,6 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsList( double magnitud
   bgThread = boost::thread([=]{
     unique_lock<mutex> l2(suggestedObjectsListMutex);
     unique_lock<mutex> lockSession(sessionLockMutex);
-    NgcObjectsList &suggObjList = *suggestedObjectsList;
     Session threadSession;
     Dbo::Transaction t(threadSession);
     dbo::collection<NgcObjectPtr> objects = threadSession.find<NgcObject>().where("magnitude < ?").bind(magnitudeLimit);
@@ -196,7 +194,7 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsList( double magnitud
       if(aborted) return;
       auto bestAltitude = ephemeris.findBestAltitude(object->coordinates(), range.begin, range.end);
       if(bestAltitude.coordinates.altitude.degrees() > 17.)
-        suggestedObjectsList->push_back({object, bestAltitude});
+        suggestedObjectsList.push_back({object, bestAltitude});
     }
 
     boost::posix_time::ptime middleRange = range.begin + ((range.end - range.begin) / 2);
@@ -206,7 +204,7 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsList( double magnitud
       double altitude = ephemeris.arDec2altAz(o->coordinates(), middleRange);
       return magnitudeDelta + altitude;
     };
-    sort(suggObjList.rbegin(), suggObjList.rend(), [&observabilityIndex](const pair<NgcObjectPtr,Ephemeris::BestAltitude> &a, const pair<NgcObjectPtr,Ephemeris::BestAltitude> &b){
+    sort(suggestedObjectsList.rbegin(), suggestedObjectsList.rend(), [&observabilityIndex](const pair<NgcObjectPtr,Ephemeris::BestAltitude> &a, const pair<NgcObjectPtr,Ephemeris::BestAltitude> &b){
       return observabilityIndex(a.first) < observabilityIndex(b.first);
     });
     if(aborted) return;
