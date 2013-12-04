@@ -35,6 +35,16 @@
 #include <Wt/Render/WPdfRenderer>
 #include <Wt/WServer>
 
+#if HPDF_MAJOR_VERSION >= 2
+#if HPDF_MINOR_VERSION >= 3
+#define HAVE_LIBHARU_UTF8
+#endif
+#endif
+
+#ifndef HAVE_LIBHARU_UTF8
+#warning "Using libharu < 2.3, without UTF-8 support, this might lead to undefined results"
+#endif
+
 using namespace Wt;
 using namespace std;
 
@@ -200,15 +210,9 @@ void PrintableAstroSessionResource::handleRequest(const Wt::Http::Request &reque
   suggestFileName(format("%s.pdf") % d->astroSession->name());
   response.setMimeType("application/pdf");
   HPDF_Doc pdf = HPDF_New(error_handler, 0);
-#if HPDF_MAJOR_VERSION >= 2
-#if HPDF_MINOR_VERSION >= 3
+#ifdef HAVE_LIBHARU_UTF8
   HPDF_UseUTFEncodings(pdf);
   HPDF_SetCurrentEncoder(pdf, "UTF-8");
-#else
-#warning "Using a version of libharu that doesn't support UTF-8"
-#endif
-#else
-#warning "Using a version of libharu that doesn't support UTF-8"
 #endif
   HPDF_Page page = HPDF_AddPage(pdf);
   HPDF_Page_SetSize(page, HPDF_PAGE_SIZE_A4, HPDF_PAGE_LANDSCAPE);
