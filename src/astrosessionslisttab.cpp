@@ -30,6 +30,8 @@
 #include <Wt/WMessageBox>
 #include <Wt/WLabel>
 #include <Wt/Auth/Login>
+#include "ephemeris.h"
+#include "utils/format.h"
 using namespace Wt;
 using namespace WtCommons;
 using namespace std;
@@ -56,9 +58,30 @@ AstroSessionsListTab::AstroSessionsListTab(Session &session, Wt::WContainerWidge
    if(!d->session.login().loggedIn() || ! d->session.user() || newSessionName->text().empty()) return;
     d->addNew(newSessionName->text(), newSessionDate->date());
     d->populateSessions();
+    newSessionName->setText("");
   }).setEnabled(false);
   newSessionName->keyWentUp().connect([=](WKeyEvent){ newSessionAdd->setEnabled(!newSessionName->text().empty() );});
   addWidget(WW<WContainerWidget>().css("form-inline").add(new WLabel{"Add New: "}).add(newSessionName).add(newSessionDate).add(newSessionAdd));
+  
+  vector<pair<Ephemeris::LunarPhase,boost::posix_time::ptime>> newMoons;
+  Ephemeris moonPhaseEphemeris{{}};
+  for(int i=-0; i<60; i++) {
+    auto day = boost::posix_time::second_clock::local_time() + boost::posix_time::time_duration(24*i, 0, 0);
+    Ephemeris::LunarPhase phase = moonPhaseEphemeris.moonPhase(day);
+    if(phase.illuminated_fraction < 0.15)
+      newMoons.push_back({phase, day});
+  }
+  addWidget(new WText{"Next nights without moon: "});
+  string separator;
+  for(uint64_t i=0; i<min(newMoons.size(), static_cast<uint64_t>(5)); i++) {
+    if(i>0)
+      addWidget(new WText{", "});
+    auto date = WDateTime::fromPosixTime(newMoons[i].second).date();
+    addWidget(WW<WAnchor>("#", date.toString("dddd, dd MMMM") ).css("link").setMargin(5, Left).onClick([=](WMouseEvent){
+      newSessionDate->setDate(date);
+    }));
+  }
+  
   addWidget(d->sessionsTable = WW<WTable>().addCss("table table-striped table-hover"));
   d->sessionsTable->setHeaderCount(1);
   d->populateSessions();
