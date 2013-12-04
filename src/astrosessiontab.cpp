@@ -157,7 +157,7 @@ void AstroSessionTab::Private::reload()
     printableDialog->contents()->addWidget(WW<WContainerWidget>().add(new WLabel{"Export as..."}).add(formatCombo).add(new WBreak));
     fontScalingSlider->setWidth(200);
     fontScalingSlider->setMaximum(40);
-    fontScalingSlider->setValue(10);
+    fontScalingSlider->setValue(20);
     WText *fontScalingValue = new WText("100%");
     fontScalingSlider->valueChanged().connect([=](int v, _n5){
       double value = 2. / 40. * static_cast<double>(v);
