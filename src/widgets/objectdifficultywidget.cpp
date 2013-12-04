@@ -44,6 +44,7 @@ ObjectDifficultyWidget::~ObjectDifficultyWidget()
 ObjectDifficultyWidget::ObjectDifficultyWidget( const Wt::Dbo::ptr< NgcObject > &object, const Wt::Dbo::ptr< Telescope > &telescope, double maxAltitudeInDegrees, Wt::WContainerWidget *parent )
   : WContainerWidget(parent), d(this)
 {
+  setInline(true);
   int difficulty = object->difficulty(telescope);
   if(maxAltitudeInDegrees < 10.) {
     addWidget(new WText{"Too low"});

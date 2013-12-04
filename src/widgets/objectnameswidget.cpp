@@ -54,10 +54,15 @@ ObjectNamesWidget::ObjectNamesWidget(const Wt::Dbo::ptr<NgcObject> &object, Sess
       namesStream << separator << name->name();
       separator = ", ";
     }
-    WAnchor *namesText = WW<WAnchor>("", Utils::htmlEncode(WString::fromUTF8(namesStream.str()))).css("link");
-    addWidget(namesText);
-    if(renderType == Printable)
+    WString namesJoined = Utils::htmlEncode(WString::fromUTF8(namesStream.str()));
+    if(renderType == Printable) {
+      setInline(true);
+      addWidget(new WText{namesJoined});
       return;
+    }
+    WAnchor *namesText = WW<WAnchor>("", namesJoined).css("link");
+    addWidget(namesText);
+
     WTemplate *ngcIcMenuHiddenForm = new WTemplate();
     ngcIcMenuHiddenForm->setTemplateText("<form id='autopost_${template_id}' method='post' action='http://www.ngcicproject.org/ngcicdb.asp' target=_BLANK>\
     <input type='hidden' name='ngcicobject' value='${ngcicobject_id}' /></form>", XHTMLUnsafeText);
