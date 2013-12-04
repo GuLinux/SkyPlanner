@@ -92,6 +92,9 @@ void SelectObjectsWidget::Private::append(WTable *table, const Dbo::ptr<NgcObjec
     names << separator << denomination->name();
     separator = ", ";
   }
+  int existing = session.query<int>("select count(*) from astro_session_object where astro_session_id = ? AND objects_object_id = ? ").bind(astroSession.id() ).bind(ngcObject->objectId() );
+  if(existing > 0)
+    row->addStyleClass("success");
   row->elementAt(0)->addWidget(new ObjectNamesWidget{ngcObject, session, astroSession});
   row->elementAt(1)->addWidget(new WText{ ConstellationFinder::getName(ngcObject->coordinates()).name });
   row->elementAt(2)->addWidget(new WText{format("%.1f") % ngcObject->magnitude()});
@@ -108,6 +111,7 @@ void SelectObjectsWidget::Private::append(WTable *table, const Dbo::ptr<NgcObjec
     }
     astroSession.modify()->astroSessionObjects().insert(new AstroSessionObject(ngcObject));
     t.commit();
+    row->addStyleClass("success");
     objectsListChanged.emit();
   }));
 }
@@ -127,7 +131,7 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsTable()
 	append(suggestedObjectsTable, ngcObject, bestAltitude);
       }
     };
-    static const int pagesSize = 20;
+    static const int pagesSize = 15;
     suggestedObjectsTablePagination->clear();
     suggestedObjectsTablePagination->setStyleClass("pagination pagination-mini");
     WContainerWidget *paginationWidget = WW<WContainerWidget>();
@@ -166,7 +170,7 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsTable()
 void SelectObjectsWidget::Private::suggestedObjects(Dbo::Transaction& transaction)
 {
   WContainerWidget *suggestedObjectsContainer = WW<WContainerWidget>();
-  suggestedObjectsContainer->setMaximumSize(WLength::Auto, 450);
+//   suggestedObjectsContainer->setMaximumSize(WLength::Auto, 450);
   suggestedObjectsContainer->setOverflow(WContainerWidget::Overflow::OverflowAuto);
   suggestedObjectsTable = WW<WTable>().addCss("table table-striped table-hover");
   suggestedObjectsTablePagination = WW<WContainerWidget>();
