@@ -62,14 +62,6 @@ ObjectNamesWidget::ObjectNamesWidget(const Wt::Dbo::ptr<NgcObject> &object, Sess
     }
     WAnchor *namesText = WW<WAnchor>("", namesJoined).css("link");
     addWidget(namesText);
-
-    WTemplate *ngcIcMenuHiddenForm = new WTemplate();
-    ngcIcMenuHiddenForm->setTemplateText("<form id='autopost_${template_id}' method='post' action='http://www.ngcicproject.org/ngcicdb.asp' target=_BLANK>\
-    <input type='hidden' name='ngcicobject' value='${ngcicobject_id}' /></form>", XHTMLUnsafeText);
-    ngcIcMenuHiddenForm->bindString("template_id", ngcIcMenuHiddenForm->id() );
-    ngcIcMenuHiddenForm->bindString("ngcicobject_id", object->objectId() );
-    addWidget(ngcIcMenuHiddenForm);
-    ngcIcMenuHiddenForm->setHidden(true);
     
     namesText->clicked().connect([=](WMouseEvent e) {
       Dbo::Transaction t(d->session);
@@ -81,7 +73,8 @@ ObjectNamesWidget::ObjectNamesWidget(const Wt::Dbo::ptr<NgcObject> &object, Sess
       };
       popup->addSectionHeader("More Information");
       WMenuItem *ngcIcMenuItem = popup->addItem("NGC-IC Project Page");
-      ngcIcMenuItem->setLink((format("javascript:$('#autopost_%s').submit();") % ngcIcMenuHiddenForm->id()).str());
+      ngcIcMenuItem->setLink(new AutoPostResource{"http://www.ngcicproject.org/ngcicdb.asp", {{"ngcicobject", object->objectId()}}});
+      ngcIcMenuItem->setLinkTarget(TargetNewWindow);
       string catName;
       int catNumber;
       for(auto nebula: object->nebulae()) {
