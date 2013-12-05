@@ -91,7 +91,7 @@ void AstroSessionTab::Private::reload()
     updatePositionDetails();
   });
   sessionInfo->addWidget(positionDetails = WW<WContainerWidget>());
-  auto locationPanel = addPanel("Location", placeWidget ); 
+  auto locationPanel = addPanel("Position", placeWidget ); 
   addPanel("Information", sessionInfo);
   if(astroSession->position()) {
     placeWidget->mapReady().connect([=](_n6){ WTimer::singleShot(1500, [=](WMouseEvent){ locationPanel->collapse(); }); });
