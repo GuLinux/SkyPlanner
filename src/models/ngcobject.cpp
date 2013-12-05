@@ -66,7 +66,7 @@ int32_t NgcObject::difficulty( const Wt::Dbo::ptr< Telescope > &telescope ) cons
 {
   if(! telescope || magnitude() > 90)
     return -1;
-  double magnitudeLimit = telescope->limitMagnitudeGain() + 7.5 ; // we use 7.5 as visual magnitude limit to cut us some slack...
+  double magnitudeLimit = telescope->limitMagnitudeGain() + 6.5 ; // TODO: find proper value
   return Utils::exponentialPercentage(magnitude(), magnitudeLimit, 1.2);
 }
 
