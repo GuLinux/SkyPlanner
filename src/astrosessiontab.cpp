@@ -338,7 +338,7 @@ void AstroSessionTab::Private::populate()
     WToolBar *actions = new WToolBar;
     row->elementAt(10)->addWidget(actions);
     actions->addButton(WW<WPushButton>("Description").css("btn btn-mini").onClick([=](WMouseEvent){
-      descriptionCell->setHidden(!descriptionCell->isHidden(), {WAnimation::SlideInFromTop});
+      descriptionCell->setHidden(!descriptionCell->isHidden());
     }));
     actions->addButton(WW<WPushButton>("Remove").css("btn btn-danger btn-mini").onClick([=](WMouseEvent){
       WMessageBox *confirmation = new WMessageBox("Confirm removal", "Are you sure?", Wt::Question, Wt::Ok | Wt::Cancel);
@@ -365,7 +365,6 @@ WPanel *AstroSessionTab::Private::addPanel( const WString &title, WWidget *widge
   panel->setTitle(title);
   panel->setCollapsible(collapsible);
   panel->setCollapsed(collapsed);
-  //panel->setAnimation({WAnimation::AnimationEffect::SlideInFromTop});
   panel->setCentralWidget(widget);
   return panel;
 }
