@@ -51,7 +51,7 @@ ObjectDifficultyWidget::ObjectDifficultyWidget( const Wt::Dbo::ptr< NgcObject > 
     return;
   }
   string difficultyText;
-  difficulty = difficulty > 0 ? difficulty/25 : -1;
+  difficulty = difficulty > 0 ? difficulty/20 : -1;
   switch(difficulty) {
     case -1:
       difficultyText = "N/A";
@@ -69,6 +69,9 @@ ObjectDifficultyWidget::ObjectDifficultyWidget( const Wt::Dbo::ptr< NgcObject > 
       difficultyText = "Difficult";
       break;
     case 4:
+      difficultyText = "Very Difficult";
+      break;
+    case 5:
       difficultyText = "Out of range";
       break;
   } 

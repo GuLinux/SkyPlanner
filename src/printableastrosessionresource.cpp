@@ -119,6 +119,7 @@ void PrintableAstroSessionResource::handleRequest(const Wt::Http::Request &reque
   <p>Moon: rising at ${moonRise}, setting at ${moonSet}</p>\n\
   ${<have-telescope>}<p>Suggestions for telescope: \"${telescope-name}\", diameter ${telescope-diameter}mm, focal length ${telescope-focal-length}mm</p>${</have-telescope>}\
   ${</have-place>}\
+  <p>${objects-number} objects</p>\
   <table border=\"1\">\n\
     <thead>\n\
       <tr>\n\
@@ -174,6 +175,7 @@ void PrintableAstroSessionResource::handleRequest(const Wt::Http::Request &reque
   sort(begin(sessionObjects), end(sessionObjects), [&](const dbo::ptr<AstroSessionObject> &a, const dbo::ptr<AstroSessionObject> &b){
     return a->bestAltitude(ephemeris, -3 ).when < b->bestAltitude(ephemeris, -3).when;
   });
+  printable.bindInt("objects-number", sessionObjects.size());
   for(auto sessionObject: sessionObjects) {
     WTemplate rowTemplate;
     rowTemplate.setTemplateText("<tr style=\"page-break-inside:avoid; page-break-after:auto\">\n\
