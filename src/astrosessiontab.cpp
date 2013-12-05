@@ -158,7 +158,7 @@ void AstroSessionTab::Private::reload()
     fontScalingSlider->setWidth(500);
     fontScalingSlider->setMaximum(40);
     fontScalingSlider->setValue(20);
-    WText *fontScalingValue = new WText("100%");
+    WText *fontScalingValue = WW<WText>("100%").css("pull-right").setMargin(15, Top);
     fontScalingSlider->valueChanged().connect([=](int v, _n5){
       double value = 2. / 40. * static_cast<double>(v);
       printableResource->setFontScale( value );
