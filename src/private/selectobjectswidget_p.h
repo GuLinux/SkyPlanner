@@ -48,6 +48,7 @@ public:
     void append(Wt::WTable *table, const Wt::Dbo::ptr<NgcObject> &ngcObject, const Ephemeris::BestAltitude &bestAltitude);
     boost::thread bgThread;
     bool aborted = false;
+    NgcObject::NebulaType nebulaTypeFilter = NgcObject::All;
 private:
     class SelectObjectsWidget* const q;
 };

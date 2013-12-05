@@ -96,6 +96,7 @@ std::string NgcObject::typeDescription() const
 std::string NgcObject::typeDescription(NebulaType nebulaType)
 {
   static map<NebulaType,string> descriptions {
+    {All, "All"},
     {NebGx, "Galaxy"},
     {NebOc, "Open star cluster"},
     {NebGc, "Globular star cluster"},

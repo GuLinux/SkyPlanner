@@ -40,6 +40,7 @@
 #include "widgets/objectnameswidget.h"
 #include "widgets/objectdifficultywidget.h"
 #include "astroplanner.h"
+#include <Wt/WGroupBox>
 
 using namespace Wt;
 using namespace WtCommons;
@@ -172,8 +173,17 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsTable()
 void SelectObjectsWidget::Private::suggestedObjects(Dbo::Transaction& transaction)
 {
   WContainerWidget *suggestedObjectsContainer = WW<WContainerWidget>();
-//   suggestedObjectsContainer->setMaximumSize(WLength::Auto, 450);
-  suggestedObjectsContainer->setOverflow(WContainerWidget::Overflow::OverflowAuto);
+  WComboBox *astroTypeCombo = new WComboBox;
+  WLabel *astroTypeLabel = new WLabel("Object Type: ");
+  astroTypeLabel->setBuddy(astroTypeCombo);
+  for(int i=-1; i<NgcObject::NebulaTypeCount; i++)
+    astroTypeCombo->addItem(NgcObject::typeDescription(static_cast<NgcObject::NebulaType>(i)));
+  astroTypeCombo->activated().connect([=](int i, _n5) {
+    nebulaTypeFilter = static_cast<NgcObject::NebulaType>(i-1);
+    q->populateFor(selectedTelescope);
+  });
+  
+  suggestedObjectsContainer->addWidget(WW<WGroupBox>("Filters").add(WW<WContainerWidget>().css("form-inline").add(astroTypeLabel).add(astroTypeCombo)));
   suggestedObjectsTable = WW<WTable>().addCss("table table-striped table-hover");
   suggestedObjectsTablePagination = WW<WContainerWidget>();
   suggestedObjectsLoaded.connect(this, &SelectObjectsWidget::Private::populateSuggestedObjectsTable);
@@ -190,6 +200,7 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsList( double magnitud
   unique_lock<mutex> l1(suggestedObjectsListMutex);
   suggestedObjectsTable->clear();
   suggestedObjectsList.clear();
+  suggestedObjectsTablePagination->clear();
   WApplication *app = wApp;
   aborted = true;
   bgThread.join();
@@ -199,7 +210,12 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsList( double magnitud
     unique_lock<mutex> lockSession(sessionLockMutex);
     Session threadSession;
     Dbo::Transaction t(threadSession);
-    dbo::collection<NgcObjectPtr> objects = threadSession.find<NgcObject>().where("magnitude < ?").bind(magnitudeLimit);
+    auto ngcObjectsQuery = threadSession.find<NgcObject>().where("magnitude < ?").bind(magnitudeLimit);
+    if(nebulaTypeFilter != NgcObject::All) {
+      ngcObjectsQuery.where("\"type\" = ?").bind(nebulaTypeFilter);
+    }
+    dbo::collection<NgcObjectPtr> objects = ngcObjectsQuery.resultList();
+    cerr << "objects size after query: " << objects.size() << endl;
     Ephemeris ephemeris(astroSession->position());
     AstroSession::ObservabilityRange range = astroSession->observabilityRange(ephemeris).delta({1,20,0});
     for(auto object: objects) {

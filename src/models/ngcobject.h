@@ -36,6 +36,7 @@ class NgcObject
 public:
     enum NebulaType
     {
+            All=-1,
             NebGx=0,     //!< Galaxy
             NebOc=1,     //!< Open star cluster
             NebGc=2,     //!< Globular star cluster, usually in the Milky Way Galaxy
@@ -46,6 +47,7 @@ public:
             NebCn=7,     //!< Cluster associated with nebulosity
             NebUnknown=8 //!< Unknown type, catalog errors, "Unidentified Southern Objects" etc.
     };
+    static const int NebulaTypeCount = 9;
     NgcObject();
     ~NgcObject();
     // CREATE TABLE objects (object_id TEXT PRIMARY KEY, ra REAL, dec REAL, magnitude REAL, angular_size REAL, type INTEGER);
