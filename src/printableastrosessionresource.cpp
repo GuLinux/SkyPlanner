@@ -116,12 +116,11 @@ void PrintableAstroSessionResource::handleRequest(const Wt::Http::Request &reque
   ${</render-type-pdf>}\
   <h2 style=\"text-align: center; \">${title}</h2>\n\
   ${<have-place>}\
-  <p>${sessionDate}, Moon Phase: ${moonPhase}%</p>\n\
-  <p>Sun: rising at ${sunRise}, setting at ${sunSet}</p>\n\
-  <p>Moon: rising at ${moonRise}, setting at ${moonSet}</p>\n\
+  <p>${sessionDate}, Moon Phase: ${moonPhase}%, ${objects-number} objects.</p>\n\
+  <div>Sun: rising at ${sunRise}, setting at ${sunSet}<br />\n\
+  Moon: rising at ${moonRise}, setting at ${moonSet}</div>\n\
   ${<have-telescope>}<p>Suggestions for telescope: \"${telescope-name}\", diameter ${telescope-diameter}mm, focal length ${telescope-focal-length}mm</p>${</have-telescope>}\
   ${</have-place>}\
-  <p>${objects-number} objects</p>\
   <table border=\"1\">\n\
     <thead>\n\
       <tr>\n\
