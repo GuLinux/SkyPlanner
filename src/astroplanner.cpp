@@ -55,7 +55,7 @@ AstroPlanner *AstroPlanner::instance()
 AstroPlanner::AstroPlanner( const WEnvironment &environment )
   : WApplication( environment ), d( this )
 {
-  setTitle("AstroPlanner");
+  setTitle("AstrOrganizer");
   enableUpdates(true);
   setTheme( new WBootstrapTheme( this ) );
   requireJQuery("http://codeorigin.jquery.com/jquery-1.8.3.min.js");
@@ -63,8 +63,8 @@ AstroPlanner::AstroPlanner( const WEnvironment &environment )
   cerr << __PRETTY_FUNCTION__ << endl;
   WNavigationBar *navBar = WW<WNavigationBar>( root() ).addCss( "navbar-inverse" );
   navBar->setResponsive( true );
-  navBar->setTitle( "AstroPlanner" );
-  useStyleSheet( "/astroplanner_style.css" );
+  navBar->setTitle( "AstrOrganizer" );
+  useStyleSheet( "/astrorganizer_style.css" );
   root()->addWidget(d->notifications = new WContainerWidget);
   WStackedWidget *widgets = new WStackedWidget( root() );
   widgets->setTransitionAnimation({WAnimation::AnimationEffect::Fade});

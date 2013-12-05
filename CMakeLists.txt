@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 enable_testing()
-project(ngciccatalog)
+project(Astrorganizer)
 enable_testing()
 find_package(Wt 3.3.1 REQUIRED)
 find_package(Qt4 REQUIRED)
