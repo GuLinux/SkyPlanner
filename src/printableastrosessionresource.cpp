@@ -97,6 +97,7 @@ void PrintableAstroSessionResource::handleRequest(const Wt::Http::Request &reque
       <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\
       <title>${title}</title>\n\
       <style type=\"text/css\">\n\
+      body { zoom: ${body-font-scale}; -moz-transform: scale(${body-font-scale}); -moz-transform-origin: 0 0}\
       @media print {\
 	table { page-break-inside:auto }\
 	tr    { page-break-inside:avoid; page-break-after:auto }\
@@ -150,6 +151,7 @@ void PrintableAstroSessionResource::handleRequest(const Wt::Http::Request &reque
   printable.setCondition("render-type-html", d->reportType == HTML);
   printable.setCondition("render-type-pdf", d->reportType == PDF);
   printable.bindString("title", d->astroSession->name());
+  printable.bindString("body-font-scale", format("%.3f") % d->fontScale);
   printable.setCondition("have-place", d->astroSession->position());
   printable.setCondition("have-telescope", d->telescope);
   if(d->telescope) {

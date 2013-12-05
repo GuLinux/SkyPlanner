@@ -196,7 +196,6 @@ void AstroSessionTab::Private::printableVersion()
   formatCombo->addItem("HTML");
   formatCombo->activated().connect([=](int r, _n5){
     printableResource->setReportType(r==0 ? PrintableAstroSessionResource::PDF : PrintableAstroSessionResource::HTML); 
-    fontScalingSlider->setEnabled(r==0);
   });
   printableDialog->contents()->addWidget(WW<WContainerWidget>().add(new WLabel{"Export as..."}).add(formatCombo).add(new WBreak));
   fontScalingSlider->setWidth(500);
@@ -208,7 +207,7 @@ void AstroSessionTab::Private::printableVersion()
     printableResource->setFontScale( value );
     fontScalingValue->setText(format("%d%%") % static_cast<int>(value*100));
   });
-  printableDialog->contents()->addWidget(new WLabel("Fonts size (PDF Only)"));
+  printableDialog->contents()->addWidget(new WLabel("Fonts size"));
   printableDialog->contents()->addWidget(new WBreak);
   printableDialog->contents()->addWidget(WW<WContainerWidget>().add(fontScalingSlider).add(fontScalingValue));
   printableDialog->contents()->addWidget(new WBreak);
@@ -366,7 +365,7 @@ WPanel *AstroSessionTab::Private::addPanel( const WString &title, WWidget *widge
   panel->setTitle(title);
   panel->setCollapsible(collapsible);
   panel->setCollapsed(collapsed);
-  panel->setAnimation({WAnimation::AnimationEffect::SlideInFromTop});
+  //panel->setAnimation({WAnimation::AnimationEffect::SlideInFromTop});
   panel->setCentralWidget(widget);
   return panel;
 }
