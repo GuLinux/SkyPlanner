@@ -126,76 +126,7 @@ void AstroSessionTab::Private::reload()
     changeNameOrDateDialog->contents()->addWidget(form);
     changeNameOrDateDialog->show();
   }));
-  sessionActions->addButton(WW<WPushButton>("Printable Version").css("btn btn-info").onClick([=](WMouseEvent){
-    WDialog *printableDialog = new WDialog("Printable Version");
-    WPushButton *okButton;
-    printableDialog->footer()->addWidget(okButton = WW<WPushButton>("Ok").css("btn btn-primary").onClick([=](WMouseEvent){ printableDialog->accept(); }));
-    printableDialog->footer()->addWidget(WW<WPushButton>("Cancel").css("btn btn-danger").onClick([=](WMouseEvent){ printableDialog->reject(); }));
-    auto printableResource = new PrintableAstroSessionResource(astroSession, session, q);
-    printableResource->setReportType(PrintableAstroSessionResource::PDF);
-    okButton->setLink(printableResource);
-    okButton->setLinkTarget(TargetNewWindow);
-    printableDialog->contents()->addWidget(new WLabel("Spacing between objects rows"));
-    printableDialog->contents()->addWidget(new WBreak);
-    WSlider *emptyRowsSlider = new WSlider();
-    emptyRowsSlider->setWidth(500);
-    emptyRowsSlider->setMaximum(10);
-    emptyRowsSlider->valueChanged().connect([=](int v, _n5){printableResource->setRowsSpacing(v); });
-    printableDialog->contents()->addWidget(emptyRowsSlider);
-    printableDialog->contents()->addWidget(new WBreak);
-    
-
-    
-    WSlider *fontScalingSlider = new WSlider();
-    WComboBox *formatCombo = new WComboBox();
-    formatCombo->addItem("PDF");
-    formatCombo->addItem("HTML");
-    formatCombo->activated().connect([=](int r, _n5){
-      printableResource->setReportType(r==0 ? PrintableAstroSessionResource::PDF : PrintableAstroSessionResource::HTML); 
-      fontScalingSlider->setEnabled(r==0);
-    });
-    printableDialog->contents()->addWidget(WW<WContainerWidget>().add(new WLabel{"Export as..."}).add(formatCombo).add(new WBreak));
-    fontScalingSlider->setWidth(500);
-    fontScalingSlider->setMaximum(40);
-    fontScalingSlider->setValue(20);
-    WText *fontScalingValue = WW<WText>("100%").css("pull-right").setMargin(15, Top);
-    fontScalingSlider->valueChanged().connect([=](int v, _n5){
-      double value = 2. / 40. * static_cast<double>(v);
-      printableResource->setFontScale( value );
-      fontScalingValue->setText(format("%d%%") % static_cast<int>(value*100));
-    });
-    printableDialog->contents()->addWidget(new WLabel("Fonts size (PDF Only)"));
-    printableDialog->contents()->addWidget(new WBreak);
-    printableDialog->contents()->addWidget(WW<WContainerWidget>().add(fontScalingSlider).add(fontScalingValue));
-    printableDialog->contents()->addWidget(new WBreak);
-    
-    Dbo::Transaction t(session);
-    auto telescopes = session.user()->telescopes();
-    switch(telescopes.size()) {
-      case 0:
-	printableDialog->contents()->addWidget(new WText{"Please add one or more telescope to see suggestions"});
-	break;
-      case 1:
-	printableResource->setTelescope(telescopes.front());
-	printableDialog->contents()->addWidget(new WText{WString("Using Telescope {1}").arg(telescopes.front()->name()) });
-	break;
-      default:
-	printableResource->setTelescope(telescopes.front());
-	printableDialog->contents()->addWidget(new WLabel{"Telescope: "});
-	WComboBox *telescopesCombo = new WComboBox(printableDialog->contents());
-	WStandardItemModel *telescopesModel = new WStandardItemModel(printableDialog);
-	telescopesCombo->setModel(telescopesModel);
-	for(auto telescope: telescopes) {
-	  WStandardItem *item = new WStandardItem(telescope->name());
-	  item->setData(telescope);
-	  telescopesModel->appendRow(item);
-	}
-	telescopesCombo->activated().connect([=](int i, _n5) {
-	  printableResource->setTelescope(boost::any_cast<Dbo::ptr<Telescope>>(telescopesModel->item(i)->data()));
-	});
-    }
-    printableDialog->show();
-  }));
+  sessionActions->addButton(WW<WPushButton>("Printable Version").css("btn btn-info").onClick( [=](WMouseEvent){ printableVersion(); } ));
   actionsContainer->addWidget(sessionActions);
   auto telescopes = session.user()->telescopes();
   if(telescopes.size() > 0) {
@@ -235,6 +166,79 @@ void AstroSessionTab::Private::reload()
 Wt::Signal<std::string> &AstroSessionTab::nameChanged() const
 {
   return d->nameChanged;
+}
+
+
+void AstroSessionTab::Private::printableVersion()
+{
+  WDialog *printableDialog = new WDialog("Printable Version");
+  WPushButton *okButton;
+  printableDialog->footer()->addWidget(okButton = WW<WPushButton>("Ok").css("btn btn-primary").onClick([=](WMouseEvent){ printableDialog->accept(); }));
+  printableDialog->footer()->addWidget(WW<WPushButton>("Cancel").css("btn btn-danger").onClick([=](WMouseEvent){ printableDialog->reject(); }));
+  auto printableResource = new PrintableAstroSessionResource(astroSession, session, q);
+  printableResource->setReportType(PrintableAstroSessionResource::PDF);
+  okButton->setLink(printableResource);
+  okButton->setLinkTarget(TargetNewWindow);
+  printableDialog->contents()->addWidget(new WLabel("Spacing between objects rows"));
+  printableDialog->contents()->addWidget(new WBreak);
+  WSlider *emptyRowsSlider = new WSlider();
+  emptyRowsSlider->setWidth(500);
+  emptyRowsSlider->setMaximum(10);
+  emptyRowsSlider->valueChanged().connect([=](int v, _n5){printableResource->setRowsSpacing(v); });
+  printableDialog->contents()->addWidget(emptyRowsSlider);
+  printableDialog->contents()->addWidget(new WBreak);
+  
+
+  
+  WSlider *fontScalingSlider = new WSlider();
+  WComboBox *formatCombo = new WComboBox();
+  formatCombo->addItem("PDF");
+  formatCombo->addItem("HTML");
+  formatCombo->activated().connect([=](int r, _n5){
+    printableResource->setReportType(r==0 ? PrintableAstroSessionResource::PDF : PrintableAstroSessionResource::HTML); 
+    fontScalingSlider->setEnabled(r==0);
+  });
+  printableDialog->contents()->addWidget(WW<WContainerWidget>().add(new WLabel{"Export as..."}).add(formatCombo).add(new WBreak));
+  fontScalingSlider->setWidth(500);
+  fontScalingSlider->setMaximum(40);
+  fontScalingSlider->setValue(20);
+  WText *fontScalingValue = WW<WText>("100%").css("pull-right").setMargin(15, Top);
+  fontScalingSlider->valueChanged().connect([=](int v, _n5){
+    double value = 2. / 40. * static_cast<double>(v);
+    printableResource->setFontScale( value );
+    fontScalingValue->setText(format("%d%%") % static_cast<int>(value*100));
+  });
+  printableDialog->contents()->addWidget(new WLabel("Fonts size (PDF Only)"));
+  printableDialog->contents()->addWidget(new WBreak);
+  printableDialog->contents()->addWidget(WW<WContainerWidget>().add(fontScalingSlider).add(fontScalingValue));
+  printableDialog->contents()->addWidget(new WBreak);
+  
+  Dbo::Transaction t(session);
+  auto telescopes = session.user()->telescopes();
+  switch(telescopes.size()) {
+    case 0:
+      printableDialog->contents()->addWidget(new WText{"Please add one or more telescope to see suggestions"});
+      break;
+    case 1:
+      printableResource->setTelescope(telescopes.front());
+      printableDialog->contents()->addWidget(new WText{WString("Using Telescope {1}").arg(telescopes.front()->name()) });
+      break;
+    default:
+      printableResource->setTelescope(telescopes.front());
+      printableDialog->contents()->addWidget(new WLabel{"Telescope: "});
+      WComboBox *telescopesCombo = new WComboBox(printableDialog->contents());
+      WStandardItemModel *telescopesModel = new WStandardItemModel(printableDialog);
+      telescopesCombo->setModel(telescopesModel);
+      for(auto telescope: telescopes) {
+	WStandardItem *item = new WStandardItem(telescope->name());
+	item->setData(telescope);
+	telescopesModel->appendRow(item);
+      }
+      telescopesCombo->activated().connect([=](int i, _n5) {
+	printableResource->setTelescope(boost::any_cast<Dbo::ptr<Telescope>>(telescopesModel->item(i)->data()));
+      });
+  }
+  printableDialog->show();
 }
 
 void AstroSessionTab::Private::updatePositionDetails()
@@ -296,13 +300,17 @@ void AstroSessionTab::Private::populate()
   
   // TODO: optimize
   auto sessionObjectsDbCollection = astroSession->astroSessionObjects();
-  vector<dbo::ptr<AstroSessionObject>> sessionObjects(sessionObjectsDbCollection.begin(), sessionObjectsDbCollection.end());
-  sort(begin(sessionObjects), end(sessionObjects), [&](const dbo::ptr<AstroSessionObject> &a, const dbo::ptr<AstroSessionObject> &b){
-    return a->bestAltitude(ephemeris, -3 ).when < b->bestAltitude(ephemeris, -3).when;
+  typedef pair<dbo::ptr<AstroSessionObject>, Ephemeris::BestAltitude> AstroSessionObjectElement;
+  vector<AstroSessionObjectElement> sessionObjects;
+  transform(begin(sessionObjectsDbCollection), end(sessionObjectsDbCollection), back_inserter(sessionObjects), [&ephemeris](const dbo::ptr<AstroSessionObject> &o){
+    return AstroSessionObjectElement{o, o->bestAltitude(ephemeris, -3)};
   });
-  for(auto sessionObject: sessionObjects) {
+  sort(begin(sessionObjects), end(sessionObjects), [&](const AstroSessionObjectElement &a, const AstroSessionObjectElement &b){
+    return a.second.when < b.second.when;
+  });
+  for(auto sessionObjectElement: sessionObjects) {
+    dbo::ptr<AstroSessionObject> sessionObject = sessionObjectElement.first;
     WTableRow *row = objectsTable->insertRow(objectsTable->rowCount());
-    sessionObject->bestAltitude(ephemeris);
     row->elementAt(0)->addWidget(new ObjectNamesWidget{sessionObject->ngcObject(), session, astroSession});
     row->elementAt(1)->addWidget(new WText{sessionObject->ngcObject()->typeDescription() });
     row->elementAt(2)->addWidget(new WText{ Utils::htmlEncode( sessionObject->coordinates().rightAscension.printable(Angle::Hourly) ) });

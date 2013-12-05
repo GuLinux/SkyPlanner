@@ -39,6 +39,7 @@ public:
     Forecast forecast;
     Wt::Dbo::ptr<Telescope> selectedTelescope;
     Wt::Signal<std::string> nameChanged;
+    void printableVersion();
 private:
     class AstroSessionTab* const q;
 };
