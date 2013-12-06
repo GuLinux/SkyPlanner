@@ -30,6 +30,8 @@
 #include <Wt/WMessageBox>
 #include <Wt/WLabel>
 #include <Wt/Auth/Login>
+#include <Wt/Utils>
+#include <Wt/WLocalDateTime>
 #include "ephemeris.h"
 #include "utils/format.h"
 using namespace Wt;
@@ -48,20 +50,20 @@ AstroSessionsListTab::AstroSessionsListTab(Session &session, Wt::WContainerWidge
     : d(session, this)
 {
   WLineEdit *newSessionName = WW<WLineEdit>();
-  newSessionName->setEmptyText("Name");
+  newSessionName->setEmptyText(WString::tr("astrosessionslisttab_name"));
   WDateEdit *newSessionDate = WW<WDateEdit>();
-  newSessionDate->setEmptyText("When");
+  newSessionDate->setEmptyText(WString::tr("astrosessionslisttab_when"));
   newSessionDate->setDate(WDate::currentDate());
   setMinimumSize(WLength::Auto, 500);
   
-  WPushButton *newSessionAdd = WW<WPushButton>("Add").css("btn btn-primary").onClick([=](WMouseEvent){
+  WPushButton *newSessionAdd = WW<WPushButton>(WString::tr("buttons_add")).css("btn btn-primary btn-small").onClick([=](WMouseEvent){
    if(!d->session.login().loggedIn() || ! d->session.user() || newSessionName->text().empty()) return;
     d->addNew(newSessionName->text(), newSessionDate->date());
     d->populateSessions();
     newSessionName->setText("");
   }).setEnabled(false);
   newSessionName->keyWentUp().connect([=](WKeyEvent){ newSessionAdd->setEnabled(!newSessionName->text().empty() );});
-  addWidget(WW<WContainerWidget>().css("form-inline").add(new WLabel{"Add New: "}).add(newSessionName).add(newSessionDate).add(newSessionAdd));
+  addWidget(WW<WContainerWidget>().css("form-inline").add(new WLabel{WString::tr("astrosessionslisttab_add_new_label")}).add(newSessionName).add(newSessionDate).add(newSessionAdd));
   
   vector<pair<Ephemeris::LunarPhase,boost::posix_time::ptime>> newMoons;
   Ephemeris moonPhaseEphemeris{{}};
@@ -71,13 +73,13 @@ AstroSessionsListTab::AstroSessionsListTab(Session &session, Wt::WContainerWidge
     if(phase.illuminated_fraction < 0.15)
       newMoons.push_back({phase, day});
   }
-  addWidget(new WText{"Next nights without moon: "});
+  addWidget(new WText{WString::tr("astrosessionslisttab_next_nights_without_moon")});
   string separator;
   for(uint64_t i=0; i<min(newMoons.size(), static_cast<uint64_t>(5)); i++) {
     if(i>0)
       addWidget(new WText{", "});
     auto date = WDateTime::fromPosixTime(newMoons[i].second).date();
-    addWidget(WW<WAnchor>("#", date.toString("dddd, dd MMMM") ).css("link").setMargin(5, Left).onClick([=](WMouseEvent){
+    addWidget(WW<WAnchor>("#", WLocalDateTime(date, {0,0,0}).toString("dddd, dd MMMM") ).css("link").setMargin(5, Left).onClick([=](WMouseEvent){
       newSessionDate->setDate(date);
     }));
   }
@@ -104,8 +106,8 @@ void AstroSessionsListTab::Private::populateSessions()
 {
     Dbo::Transaction t(session);
     sessionsTable->clear();
-    sessionsTable->elementAt(0,0)->addWidget(new WText{"Name"});
-    sessionsTable->elementAt(0,1)->addWidget(new WText{"Date"});
+    sessionsTable->elementAt(0,0)->addWidget(new WText{WString::tr("astrosessionslisttab_name")});
+    sessionsTable->elementAt(0,1)->addWidget(new WText{WString::tr("astrosessionslisttab_when")});
      if(!session.login().loggedIn() || ! session.user()) return;
      for(auto astroSession: session.find<AstroSession>().where("user_id = ?").bind(session.user().id()).orderBy("\"when\" DESC").resultList() ) {
        WTableRow *row = sessionsTable->insertRow(sessionsTable->rowCount());
@@ -113,8 +115,8 @@ void AstroSessionsListTab::Private::populateSessions()
 	 sessionClicked.emit(astroSession);
       }));
        row->elementAt(1)->addWidget(new WText{astroSession->wDateWhen().date().toString()});
-       row->elementAt(2)->addWidget(WW<WPushButton>("Remove").css("btn btn-danger").onClick([=](WMouseEvent){
-	 WMessageBox *confirm = new WMessageBox("Confirm removal", "Are you sure? This cannot be undone", Wt::Question, Ok | Cancel);
+       row->elementAt(2)->addWidget(WW<WPushButton>(WString::tr("buttons_remove")).css("btn btn-danger btn-mini").onClick([=](WMouseEvent){
+	 WMessageBox *confirm = new WMessageBox(WString::tr("messagebox_confirm_removal_title"), WString::tr("messagebox_confirm_removal_message"), Wt::Question, Ok | Cancel);
 	 confirm->show();
 	 confirm->buttonClicked().connect([=](StandardButton b, _n5) {
 	   if(b != Wt::Ok) {

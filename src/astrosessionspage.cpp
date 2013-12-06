@@ -66,7 +66,7 @@ AstroSessionsPage::AstroSessionsPage(Session &session, WContainerWidget* parent)
     }
     tabs->setCurrentWidget(d->tabs[astroSession]);
   });
-  tabs->addTab(astroSessionsListTab, "Sessions List");
+  tabs->addTab(astroSessionsListTab, WString::tr("astrosessionspage_sessions_list"));
   tabs->tabClosed().connect([=](int tabNumber, _n5){
     for(auto tab: d->tabs) {
       if(tab.second == tabs->widget(tabNumber)) {

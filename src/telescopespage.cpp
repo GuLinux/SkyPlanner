@@ -51,18 +51,18 @@ TelescopesPage::TelescopesPage( Session &session, WContainerWidget *parent )
   WLineEdit *telescopeName = WW<WLineEdit>();
   WSpinBox *telescopeDiameter = WW<WSpinBox>();
   WSpinBox *telescopeFocalLength = WW<WSpinBox>();
-  WLabel *telescopeNameLabel = WW<WLabel>("Telescope Name").css("control-label");
-  WLabel *telescopeDiameterLabel = WW<WLabel>("Diameter (mm)").css("control-label");
-  WLabel *telescopeFocalLengthLabel = WW<WLabel>("Focal Length (mm)").css("control-label");
+  WLabel *telescopeNameLabel = WW<WLabel>(WString::tr("telescopes_telescope_name")).css("control-label");
+  WLabel *telescopeDiameterLabel = WW<WLabel>(WString::tr("telescopes_diameter_mm")).css("control-label");
+  WLabel *telescopeFocalLengthLabel = WW<WLabel>(WString::tr("telescopes_focal_length_mm")).css("control-label");
   
   telescopeNameLabel->setBuddy(telescopeName);
   telescopeDiameterLabel->setBuddy(telescopeDiameter);
   telescopeFocalLengthLabel->setBuddy(telescopeFocalLength);
   
-  telescopeName->setEmptyText("Telescope Name");
-  telescopeDiameter->setEmptyText("Diameter");
-  telescopeFocalLength->setEmptyText("Focal Length");
-  WPushButton *addTelescopeButton = WW<WPushButton>("Add Telescope").css("btn btn-primary").onClick([=](WMouseEvent){
+  telescopeName->setEmptyText(WString::tr("telescopes_telescope_name"));
+  telescopeDiameter->setEmptyText(WString::tr("telescopes_diameter_mm"));
+  telescopeFocalLength->setEmptyText(WString::tr("telescopes_focal_length_mm"));
+  WPushButton *addTelescopeButton = WW<WPushButton>(WString::tr("buttons_add")).css("btn btn-primary btn-small").onClick([=](WMouseEvent){
     Dbo::Transaction t(d->session);
     d->session.user().modify()->telescopes().insert(new Telescope(telescopeName->text().toUTF8(), telescopeDiameter->value(), telescopeFocalLength->value()));
     t.commit();
@@ -96,11 +96,11 @@ void TelescopesPage::Private::populate()
 {
   Dbo::Transaction t(session);
   telescopesTable->clear();
-  telescopesTable->elementAt(0, 0)->addWidget(new WText{"Name"});
-  telescopesTable->elementAt(0, 1)->addWidget(new WText{"Diameter (mm)"});
-  telescopesTable->elementAt(0, 2)->addWidget(new WText{"Focal Length (mm)"});
-  telescopesTable->elementAt(0, 3)->addWidget(new WText{"Magnitude gain"});
-  telescopesTable->elementAt(0, 4)->addWidget(new WText{"Magnitude limit (naked eye=6)"});
+  telescopesTable->elementAt(0, 0)->addWidget(new WText{WString::tr("telescopes_telescope_name")});
+  telescopesTable->elementAt(0, 1)->addWidget(new WText{WString::tr("telescopes_diameter_mm")});
+  telescopesTable->elementAt(0, 2)->addWidget(new WText{WString::tr("telescopes_focal_length_mm")});
+  telescopesTable->elementAt(0, 3)->addWidget(new WText{WString::tr("telescopes_magnitude_gain")});
+  telescopesTable->elementAt(0, 4)->addWidget(new WText{WString::tr("telescopes_magnitude_limit_naked")});
   for(auto telescope: session.user()->telescopes()) {
     WTableRow *row = telescopesTable->insertRow(telescopesTable->rowCount());
     row->elementAt(0)->addWidget(new WText{telescope->name() });
@@ -108,7 +108,7 @@ void TelescopesPage::Private::populate()
     row->elementAt(2)->addWidget(new WText{WString("{1}").arg(telescope->focalLength()) });
     row->elementAt(3)->addWidget(new WText{ format("%.3f") % telescope->limitMagnitudeGain() });
     row->elementAt(4)->addWidget(new WText{ format("%.3f") % (telescope->limitMagnitudeGain() + 6) });
-    row->elementAt(5)->addWidget(WW<WPushButton>("Delete").css("btn btn-danger").onClick([=](WMouseEvent){
+    row->elementAt(5)->addWidget(WW<WPushButton>(WString::tr("buttons_remove")).css("btn btn-danger btn-mini").onClick([=](WMouseEvent){
       Dbo::Transaction t(session);
       session.user().modify()->telescopes().erase(telescope);
       t.commit();

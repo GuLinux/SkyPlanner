@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<messages>
+  <message id="Wt.WDate.Monday">Lunedì</message>
+  <message id="Wt.WDate.Tuesday">Martedì</message>
+  <message id="Wt.WDate.Wednesday">Mercoledì</message>
+  <message id="Wt.WDate.Thursday">Giovedì</message>
+  <message id="Wt.WDate.Friday">Venerdì</message>
+  <message id="Wt.WDate.Saturday">Sabato</message>
+  <message id="Wt.WDate.Sunday">Domenica</message>
+  <message id="Wt.WDate.3.Mon">Lun</message>
+  <message id="Wt.WDate.3.Tue">Mar</message>
+  <message id="Wt.WDate.3.Wed">Mer</message>
+  <message id="Wt.WDate.3.Thu">Gio</message>
+  <message id="Wt.WDate.3.Fri">Ven</message>
+  <message id="Wt.WDate.3.Sat">Sab</message>
+  <message id="Wt.WDate.3.Sun">Dom</message>
+  <message id="Wt.WDate.January">Gennaio</message>
+  <message id="Wt.WDate.February">Febbraio</message>
+  <message id="Wt.WDate.March">Marzo</message>
+  <message id="Wt.WDate.April">Aprile</message>
+  <message id="Wt.WDate.May">Maggio</message>
+  <message id="Wt.WDate.June">Giugno</message>
+  <message id="Wt.WDate.July">Luglio</message>
+  <message id="Wt.WDate.August">Agosto</message>
+  <message id="Wt.WDate.September">Settembre</message>
+  <message id="Wt.WDate.October">Ottobre</message>
+  <message id="Wt.WDate.November">Novembre</message>
+  <message id="Wt.WDate.December">Dicembre</message>
+  <message id="Wt.WDate.3.Jan">Gen</message>
+  <message id="Wt.WDate.3.Feb">Feb</message>
+  <message id="Wt.WDate.3.Mar">Mar</message>
+  <message id="Wt.WDate.3.Apr">Apr</message>
+  <message id="Wt.WDate.3.May">Mag</message>
+  <message id="Wt.WDate.3.Jun">Giu</message>
+  <message id="Wt.WDate.3.Jul">Lug</message>
+  <message id="Wt.WDate.3.Aug">Ago</message>
+  <message id="Wt.WDate.3.Sep">Set</message>
+  <message id="Wt.WDate.3.Oct">Ott</message>
+  <message id="Wt.WDate.3.Nov">Nov</message>
+  <message id="Wt.WDate.3.Dec">Dic</message>
+  <message id="Wt.WMessageBox.Cancel">Annulla</message>
+
+
+
+<message id="mainmenu_my_sessions">Le Mie Osservazioni</message>
+<message id="mainmenu_my_telescopes">I Miei Telescopi</message>
+<message id="mainmenu_logout">Esci</message>
+<message id="telescopes_telescope_name">Nome Telescopio</message>
+<message id="telescopes_diameter_mm">Diametro (mm)</message>
+<message id="telescopes_focal_length_mm">Lunghezza Focale (mm)</message>
+<message id="telescopes_magnitude_gain">Guadagno Magnitudini</message>
+<message id="telescopes_magnitude_limit_naked">Magnitudine Limite (occhio nudo=6)</message>
+<message id="buttons_add">Aggiungi</message>
+<message id="buttons_remove">Cancella</message>
+<message id="astrosessionspage_sessions_list">Elenco Osservazioni</message>
+<message id="astrosessionslisttab_name">Nome</message>
+<message id="astrosessionslisttab_when">Data</message>
+<message id="astrosessionslisttab_next_nights_without_moon">Prossime notti con poca luna: </message>
+<message id="astrosessionslisttab_add_new_label">Aggiungi Osservazione: </message>
+<message id="messagebox_confirm_removal_title">Conferma Cancellazione</message>
+<message id="messagebox_confirm_removal_message">Sei sicuro?</message>
+</messages>

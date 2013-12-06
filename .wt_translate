@@ -1,0 +1,2 @@
+TRANSLATION_FILES="/home/marco/Sviluppo/Gum/Witty/NgcIcCatalog/strings/strings.xml /home/marco/Sviluppo/Gum/Witty/NgcIcCatalog/strings/strings_it.xml "
+TRANSLATION_FUNCTION="WString::tr"

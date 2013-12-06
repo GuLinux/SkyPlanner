@@ -30,6 +30,7 @@
 #include "astrosessionspage.h"
 #include <Wt/Auth/PasswordService>
 #include <Wt/Auth/Login>
+#include <boost/filesystem.hpp>
 #include <Wt/WPushButton>
 #include <Wt/WText>
 #include <Wt/WTimer>
@@ -55,7 +56,10 @@ AstroPlanner *AstroPlanner::instance()
 AstroPlanner::AstroPlanner( const WEnvironment &environment )
   : WApplication( environment ), d( this )
 {
-  setTitle("AstrOrganizer");
+  string stringsDirectory = (boost::filesystem::current_path() / "strings").string();
+  readConfigurationProperty("strings_directory", stringsDirectory);
+  messageResourceBundle().use(stringsDirectory + "/strings");
+  setTitle(WString::tr("application_title"));
   enableUpdates(true);
   setTheme( new WBootstrapTheme( this ) );
   requireJQuery("http://codeorigin.jquery.com/jquery-1.8.3.min.js");
@@ -63,7 +67,7 @@ AstroPlanner::AstroPlanner( const WEnvironment &environment )
   cerr << __PRETTY_FUNCTION__ << endl;
   WNavigationBar *navBar = WW<WNavigationBar>( root() ).addCss( "navbar-inverse" );
   navBar->setResponsive( true );
-  navBar->setTitle( "AstrOrganizer" );
+  navBar->setTitle( WString::tr("application_title") );
   useStyleSheet( "/astrorganizer_style.css" );
   root()->addWidget(d->notifications = new WContainerWidget);
   WStackedWidget *widgets = new WStackedWidget( root() );
@@ -76,15 +80,15 @@ AstroPlanner::AstroPlanner( const WEnvironment &environment )
   authWidget->processEnvironment();
   
   WMenuItem *authMenuItem;
-  d->loggedOutItems.push_back(authMenuItem = navBarMenu->addItem("Login", authWidget));
+  d->loggedOutItems.push_back(authMenuItem = navBarMenu->addItem(WString::tr("mainmenu_login"), authWidget));
   TelescopesPage *telescopesPage = new TelescopesPage(d->session);
   AstroSessionsPage *astrosessionspage = new AstroSessionsPage(d->session);
   
   WMenuItem *mySessionsMenuItem;
   
-  d->loggedInItems.push_back(mySessionsMenuItem = navBarMenu->addItem("My Sessions", astrosessionspage));
-  d->loggedInItems.push_back(navBarMenu->addItem("My Telescopes", telescopesPage));
-  WMenuItem *logout = navBarMenu->addItem("Logout");
+  d->loggedInItems.push_back(mySessionsMenuItem = navBarMenu->addItem(WString::tr("mainmenu_my_sessions"), astrosessionspage));
+  d->loggedInItems.push_back(navBarMenu->addItem(WString::tr("mainmenu_my_telescopes"), telescopesPage));
+  WMenuItem *logout = navBarMenu->addItem(WString::tr("mainmenu_logout"));
   d->loggedInItems.push_back(logout);
   
   
