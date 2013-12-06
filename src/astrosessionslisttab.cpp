@@ -114,7 +114,7 @@ void AstroSessionsListTab::Private::populateSessions()
        row->elementAt(0)->addWidget(WW<WAnchor>("#", astroSession->name()).onClick([=](WMouseEvent){
 	 sessionClicked.emit(astroSession);
       }));
-       row->elementAt(1)->addWidget(new WText{astroSession->wDateWhen().date().toString()});
+       row->elementAt(1)->addWidget(new WText{WLocalDateTime(astroSession->wDateWhen().date(), astroSession->wDateWhen().time()).toString("dddd, dd MMMM yyyy")});
        row->elementAt(2)->addWidget(WW<WPushButton>(WString::tr("buttons_remove")).css("btn btn-danger btn-mini").onClick([=](WMouseEvent){
 	 WMessageBox *confirm = new WMessageBox(WString::tr("messagebox_confirm_removal_title"), WString::tr("messagebox_confirm_removal_message"), Wt::Question, Ok | Cancel);
 	 confirm->show();
