@@ -59,4 +59,22 @@
 <message id="astrosessionslisttab_add_new_label">Aggiungi Osservazione: </message>
 <message id="messagebox_confirm_removal_title">Conferma Cancellazione</message>
 <message id="messagebox_confirm_removal_message">Sei sicuro?</message>
+<message id="position_title">Posizione</message>
+<message id="astrosessiontab_add_observable_object">Aggiungi Oggetto da Osservare</message>
+<message id="astrosessiontab_objects_title">Oggetti</message>
+<message id="astrosessiontab_change_name_or_date">Cambia nome e data</message>
+<message id="astrosessiontab_printable_version">Versione Stampabile</message>
+<message id="astrosessiontab__telescope_label">Telescopio: </message>
+<message id="astrosessiontab_no_telescopes_message">Aggiungi uno o più telescopi nella sezione "I Miei Telescopi" per vedere suggerimenti e dati personalizzati.</message>
+<message id="printable_version_dialog_spacing_between_objects">Aggiungi spaziatura tra le righe</message>
+
+<message id="printable_version_dialog_fonts_size">Dimensione testo (solo PDF)</message>
+<message id="printable_version_dialog_add_telescope_suggestion">Aggiungere uno o più telescopi per vedere suggerimenti</message>
+<message id="printable_version_dialog_using_telescope">Telescopio: {1}</message>
+<message id="printable_version_dialog_telescope_combo_label">Telescopio: </message>
+<message id="astrosessiontab_moon_phase">Fase Lunare: {1}%</message>
+<message id="astrosessiontab_sun_info">Sole: sorge alle {1}, tramonta alle {2}</message>
+<message id="astrosessiontab_moon_info">Luna: sorge alle {1}, tramonta alle {2}</message>
+<message id="astrosessiontab_printable_version_dialog_export_as">Esporta come...</message>
+<message id="astrosessiontab_information_panel">Informazioni</message>
 </messages>

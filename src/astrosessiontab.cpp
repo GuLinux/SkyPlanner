@@ -54,6 +54,7 @@
 #include "constellationfinder.h"
 #include "printableastrosessionresource.h"
 #include <Wt/WSlider>
+#include <Wt/WLocalDateTime>
 #include "astroplanner.h"
 
 
@@ -83,7 +84,8 @@ void AstroSessionTab::Private::reload()
   q->addWidget(actionsContainer);
   
   WContainerWidget *sessionInfo = WW<WContainerWidget>();
-  sessionInfo->addWidget(new WText{astroSession->wDateWhen().date().toString("dddd dd MMMM yyyy")});
+  sessionInfo->addWidget(new WText{WLocalDateTime(astroSession->wDateWhen().date(), astroSession->wDateWhen().time())
+    .toString("dddd dd MMMM yyyy")});
   PlaceWidget *placeWidget = new PlaceWidget(astroSession, session);
   SelectObjectsWidget *addObjectsTabWidget = new SelectObjectsWidget(astroSession, session);
   placeWidget->placeChanged().connect([=](double lat, double lng, _n4) {
@@ -91,15 +93,15 @@ void AstroSessionTab::Private::reload()
     updatePositionDetails();
   });
   sessionInfo->addWidget(positionDetails = WW<WContainerWidget>());
-  auto locationPanel = addPanel("Position", placeWidget ); 
-  addPanel("Information", sessionInfo);
+  auto locationPanel = addPanel(WString::tr("position_title"), placeWidget ); 
+  addPanel(WString::tr("astrosessiontab_information_panel"), sessionInfo);
   if(astroSession->position()) {
     placeWidget->mapReady().connect([=](_n6){ WTimer::singleShot(1500, [=](WMouseEvent){ locationPanel->collapse(); }); });
   }
-  addPanel("Add Observable Object", addObjectsTabWidget, true);
+  addPanel(WString::tr("astrosessiontab_add_observable_object"), addObjectsTabWidget, true);
 
   addObjectsTabWidget->objectsListChanged().connect([=](_n6){populate(); });
-  q->addWidget(new WText{"<h3>Objects</h3>"});
+  q->addWidget(new WText{WString("<h3>{1}</h3>").arg(WString::tr("astrosessiontab_objects_title"))});
 
   q->addWidget(objectsTable = WW<WTable>().addCss("table table-striped table-hover"));
   objectsTable->setHeaderCount(1);
@@ -107,12 +109,12 @@ void AstroSessionTab::Private::reload()
   Dbo::Transaction t(session);
   WToolBar *sessionActions = WW<WToolBar>();
     
-  sessionActions->addButton(WW<WPushButton>("Change name or date").css("btn").onClick([=](WMouseEvent){
-    WDialog *changeNameOrDateDialog = new WDialog("Change name or date");
+  sessionActions->addButton(WW<WPushButton>(WString::tr("astrosessiontab_change_name_or_date")).css("btn btn-small").onClick([=](WMouseEvent){
+    WDialog *changeNameOrDateDialog = new WDialog(WString::tr("astrosessiontab_change_name_or_date"));
     WLineEdit *sessionName = WW<WLineEdit>(astroSession->name()).css("input-block-level");
     WDateEdit *sessionDate = WW<WDateEdit>().css("input-block-level");
     sessionDate->setDate(astroSession->wDateWhen().date());
-    changeNameOrDateDialog->footer()->addWidget(WW<WPushButton>("Ok").css("btn btn-primary").onClick([=](WMouseEvent){
+    changeNameOrDateDialog->footer()->addWidget(WW<WPushButton>(WString::tr("buttons_ok")).css("btn btn-primary").onClick([=](WMouseEvent){
       Dbo::Transaction t(session);
       astroSession.modify()->setName(sessionName->text().toUTF8());
       astroSession.modify()->setDateTime(WDateTime{sessionDate->date()});
@@ -126,13 +128,13 @@ void AstroSessionTab::Private::reload()
     changeNameOrDateDialog->contents()->addWidget(form);
     changeNameOrDateDialog->show();
   }));
-  sessionActions->addButton(WW<WPushButton>("Printable Version").css("btn btn-info").onClick( [=](WMouseEvent){ printableVersion(); } ));
+  sessionActions->addButton(WW<WPushButton>(WString::tr("astrosessiontab_printable_version")).css("btn btn-info btn-small").onClick( [=](WMouseEvent){ printableVersion(); } ));
   actionsContainer->addWidget(sessionActions);
   auto telescopes = session.user()->telescopes();
   if(telescopes.size() > 0) {
     WComboBox *telescopeCombo = new WComboBox;
     telescopeCombo->setWidth(350);
-    WLabel *telescopeComboLabel = WW<WLabel>("Telescope: ").setMargin(10);
+    WLabel *telescopeComboLabel = WW<WLabel>(WString::tr("astrosessiontab__telescope_label")).setMargin(10);
     telescopeComboLabel->setBuddy(telescopeCombo);
 
     actionsContainer->addWidget(WW<WContainerWidget>().css("form-inline pull-right").add(telescopeComboLabel).add(telescopeCombo));
@@ -152,7 +154,7 @@ void AstroSessionTab::Private::reload()
       addObjectsTabWidget->populateFor(selectedTelescope);
     });
   } else {
-    actionsContainer->addWidget(WW<WText>("Add one or more telescopes in the \"My Telescopes\" section to see personalized suggestions and data here.").css("pull-right"));
+    actionsContainer->addWidget(WW<WText>(WString::tr("astrosessiontab_no_telescopes_message")).css("pull-right"));
   }
   
   populate();
@@ -171,15 +173,15 @@ Wt::Signal<std::string> &AstroSessionTab::nameChanged() const
 
 void AstroSessionTab::Private::printableVersion()
 {
-  WDialog *printableDialog = new WDialog("Printable Version");
+  WDialog *printableDialog = new WDialog(WString::tr("astrosessiontab_printable_version"));
   WPushButton *okButton;
-  printableDialog->footer()->addWidget(okButton = WW<WPushButton>("Ok").css("btn btn-primary").onClick([=](WMouseEvent){ printableDialog->accept(); }));
-  printableDialog->footer()->addWidget(WW<WPushButton>("Cancel").css("btn btn-danger").onClick([=](WMouseEvent){ printableDialog->reject(); }));
+  printableDialog->footer()->addWidget(okButton = WW<WPushButton>(WString::tr("Wt.WMessageBox.Ok")).css("btn btn-primary").onClick([=](WMouseEvent){ printableDialog->accept(); }));
+  printableDialog->footer()->addWidget(WW<WPushButton>(WString::tr("Wt.WMessageBox.Cancel")).css("btn btn-danger").onClick([=](WMouseEvent){ printableDialog->reject(); }));
   auto printableResource = new PrintableAstroSessionResource(astroSession, session, q);
   printableResource->setReportType(PrintableAstroSessionResource::PDF);
   okButton->setLink(printableResource);
   okButton->setLinkTarget(TargetNewWindow);
-  printableDialog->contents()->addWidget(new WLabel("Spacing between objects rows"));
+  printableDialog->contents()->addWidget(new WLabel(WString::tr("printable_version_dialog_spacing_between_objects")));
   printableDialog->contents()->addWidget(new WBreak);
   WSlider *emptyRowsSlider = new WSlider();
   emptyRowsSlider->setWidth(500);
@@ -198,7 +200,7 @@ void AstroSessionTab::Private::printableVersion()
     printableResource->setReportType(r==0 ? PrintableAstroSessionResource::PDF : PrintableAstroSessionResource::HTML); 
     fontScalingSlider->setEnabled(r==0);
   });
-  printableDialog->contents()->addWidget(WW<WContainerWidget>().add(new WLabel{"Export as..."}).add(formatCombo).add(new WBreak));
+  printableDialog->contents()->addWidget(WW<WContainerWidget>().add(new WLabel{WString::tr("astrosessiontab_printable_version_dialog_export_as")}).add(formatCombo).add(new WBreak));
   fontScalingSlider->setWidth(500);
   fontScalingSlider->setMaximum(40);
   fontScalingSlider->setValue(20);
@@ -208,7 +210,7 @@ void AstroSessionTab::Private::printableVersion()
     printableResource->setFontScale( value );
     fontScalingValue->setText(format("%d%%") % static_cast<int>(value*100));
   });
-  printableDialog->contents()->addWidget(new WLabel("Fonts size (PDF Only)"));
+  printableDialog->contents()->addWidget(new WLabel(WString::tr("printable_version_dialog_fonts_size")));
   printableDialog->contents()->addWidget(new WBreak);
   printableDialog->contents()->addWidget(WW<WContainerWidget>().add(fontScalingSlider).add(fontScalingValue));
   printableDialog->contents()->addWidget(new WBreak);
@@ -217,15 +219,15 @@ void AstroSessionTab::Private::printableVersion()
   auto telescopes = session.user()->telescopes();
   switch(telescopes.size()) {
     case 0:
-      printableDialog->contents()->addWidget(new WText{"Please add one or more telescope to see suggestions"});
+      printableDialog->contents()->addWidget(new WText{WString::tr("printable_version_dialog_add_telescope_suggestion")});
       break;
     case 1:
       printableResource->setTelescope(telescopes.front());
-      printableDialog->contents()->addWidget(new WText{WString("Using Telescope {1}").arg(telescopes.front()->name()) });
+      printableDialog->contents()->addWidget(new WText{WString(WString::tr("printable_version_dialog_using_telescope")).arg(telescopes.front()->name()) });
       break;
     default:
       printableResource->setTelescope(telescopes.front());
-      printableDialog->contents()->addWidget(new WLabel{"Telescope: "});
+      printableDialog->contents()->addWidget(new WLabel{WString::tr("printable_version_dialog_telescope_combo_label")});
       WComboBox *telescopesCombo = new WComboBox(printableDialog->contents());
       WStandardItemModel *telescopesModel = new WStandardItemModel(printableDialog);
       telescopesCombo->setModel(telescopesModel);
@@ -248,7 +250,7 @@ void AstroSessionTab::Private::updatePositionDetails()
   positionDetails->clear();
   auto addMoonPhaseDetails = [=](const Ephemeris &ephemeris) {
     Ephemeris::LunarPhase lunarPhase = ephemeris.moonPhase(astroSession->when());
-    positionDetails->addWidget(new WText(WString("Moon Phase: {1}%").arg(static_cast<int>(lunarPhase.illuminated_fraction * 100 ))));
+    positionDetails->addWidget(new WText(WString(WString::tr("astrosessiontab_moon_phase")).arg(static_cast<int>(lunarPhase.illuminated_fraction * 100 ))));
     positionDetails->addWidget(new WBreak);
   };
   if(!astroSession->position()) {
@@ -262,12 +264,12 @@ void AstroSessionTab::Private::updatePositionDetails()
   Ephemeris::RiseTransitSet moon = ephemeris.moon(astroSession->when());
 
   auto formatTime = [](const boost::posix_time::ptime &t) { return (format("%02d:%02d") % t.time_of_day().hours() % t.time_of_day().minutes()).str(); };
-  positionDetails->addWidget(new WText(WString("Sun: rising at {1}, setting at {2}")
+  positionDetails->addWidget(new WText(WString(WString::tr("astrosessiontab_sun_info"))
     .arg(formatTime(sun.rise))
     .arg(formatTime(sun.set))
   ));
   positionDetails->addWidget(new WBreak);
-  positionDetails->addWidget(new WText(WString("Moon: rising at {1}, setting at {2}")
+  positionDetails->addWidget(new WText(WString(WString::tr("astrosessiontab_moon_info"))
     .arg(formatTime(moon.rise))
     .arg(formatTime(moon.set))
   ));

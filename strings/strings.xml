@@ -19,4 +19,21 @@
 <message id="astrosessionslisttab_add_new_label">Add New Session: </message>
 <message id="messagebox_confirm_removal_title">Confirm removal</message>
 <message id="messagebox_confirm_removal_message">Are you sure? This cannot be undone</message>
+<message id="position_title">Position</message>
+<message id="astrosessiontab_add_observable_object">Add Observable Object</message>
+<message id="astrosessiontab_objects_title">Objects</message>
+<message id="astrosessiontab_change_name_or_date">Change name and date</message>
+<message id="astrosessiontab_printable_version">Printable Version</message>
+<message id="astrosessiontab__telescope_label">Telescope: </message>
+<message id="astrosessiontab_no_telescopes_message">Add one or more telescopes in the "My Telescopes" section to see personalized suggestions and data here.</message>
+<message id="printable_version_dialog_spacing_between_objects">Spacing between objects rows</message>
+<message id="printable_version_dialog_fonts_size">Fonts size (PDF Only)</message>
+<message id="printable_version_dialog_add_telescope_suggestion">Please add one or more telescope to see suggestions</message>
+<message id="printable_version_dialog_using_telescope">Using Telescope {1}</message>
+<message id="printable_version_dialog_telescope_combo_label">Telescope: </message>
+<message id="astrosessiontab_moon_phase">Moon Phase: {1}%</message>
+<message id="astrosessiontab_sun_info">Sun: rising at {1}, setting at {2}</message>
+<message id="astrosessiontab_moon_info">Moon: rising at {1}, setting at {2}</message>
+<message id="astrosessiontab_printable_version_dialog_export_as">Export as...</message>
+<message id="astrosessiontab_information_panel">Information</message>
 </messages>
