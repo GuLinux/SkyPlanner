@@ -19,15 +19,17 @@
 
 #include "Models"
 
-std::string NebulaDenomination::catalogue() const
+using namespace std;
+
+string NebulaDenomination::catalogue() const
 {
   return _catalogue;
 }
-std::string NebulaDenomination::comment() const
+boost::optional<string> NebulaDenomination::comment() const
 {
   return _comment;
 }
-std::string NebulaDenomination::name() const
+string NebulaDenomination::name() const
 {
   return _name;
 }

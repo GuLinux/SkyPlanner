@@ -32,7 +32,7 @@ public:
   std::string catalogue() const;
   int number() const;
   std::string name() const;
-  std::string comment() const;
+  boost::optional<std::string> comment() const;
   dbo::ptr<NgcObject> ngcObject() const;
   template<class Action>
   void persist(Action& a) {
@@ -46,7 +46,7 @@ private:
   std::string _catalogue;
   int _number;
   std::string _name;
-  std::string _comment;
+  boost::optional<std::string> _comment;
   dbo::ptr<NgcObject> _ngcObject;
 };
 
