@@ -76,13 +76,13 @@ SelectObjectsWidget::SelectObjectsWidget(const Dbo::ptr< AstroSession >& astroSe
 void SelectObjectsWidget::Private::populateHeaders(WTable *table)
 {
   table->clear();
-  table->elementAt(0, 0)->addWidget(new WText{"Object Names"});
-  table->elementAt(0, 1)->addWidget(new WText{"Type"});
-  table->elementAt(0, 2)->addWidget(new WText{"Constellation"});
-  table->elementAt(0, 3)->addWidget(new WText{"Magnitude"});
-  table->elementAt(0, 4)->addWidget(new WText{"Difficulty"});
-  table->elementAt(0, 5)->addWidget(new WText{"Transit Time"});
-  table->elementAt(0, 6)->addWidget(new WText{"Transit Altitude"});
+  table->elementAt(0, 0)->addWidget(new WText{WString::tr("object_column_names")});
+  table->elementAt(0, 1)->addWidget(new WText{WString::tr("object_column_type")});
+  table->elementAt(0, 2)->addWidget(new WText{WString::tr("object_column_constellation")});
+  table->elementAt(0, 3)->addWidget(new WText{WString::tr("object_column_magnitude")});
+  table->elementAt(0, 4)->addWidget(new WText{WString::tr("object_column_difficulty")});
+  table->elementAt(0, 5)->addWidget(new WText{WString::tr("object_column_highest_time")});
+  table->elementAt(0, 6)->addWidget(new WText{WString::tr("object_column_max_altitude")});
 }
 
 void SelectObjectsWidget::Private::append(WTable *table, const Dbo::ptr<NgcObject> &ngcObject, const Ephemeris::BestAltitude &bestAltitude)
@@ -105,11 +105,11 @@ void SelectObjectsWidget::Private::append(WTable *table, const Dbo::ptr<NgcObjec
   row->elementAt(4)->addWidget(new ObjectDifficultyWidget(ngcObject, selectedTelescope, 99 /* TODO: hack, to be replaced */));
   row->elementAt(5)->addWidget(new WText{transit.time().toString()});
   row->elementAt(6)->addWidget(new WText{Utils::htmlEncode(WString::fromUTF8(bestAltitude.coordinates.altitude.printable()))});
-  row->elementAt(7)->addWidget(WW<WPushButton>("Add").css("btn btn-primary btn-mini").onClick([=](WMouseEvent){
+  row->elementAt(7)->addWidget(WW<WPushButton>(WString::tr("buttons_add")).css("btn btn-primary btn-mini").onClick([=](WMouseEvent){
     Dbo::Transaction t(session);
     int existing = session.query<int>("select count(*) from astro_session_object where astro_session_id = ? AND objects_object_id = ? ").bind(astroSession.id() ).bind(ngcObject->objectId() );
     if(existing>0) {
-      AstroPlanner::instance()->notification("Warning", "Object already added to this session, skipping.", AstroPlanner::Alert, 10);
+      AstroPlanner::instance()->notification(WString::tr("notification_warning_title"), WString::tr("notification_object_already_added"), AstroPlanner::Alert, 10);
       return;
     }
     astroSession.modify()->astroSessionObjects().insert(new AstroSessionObject(ngcObject));
@@ -174,7 +174,7 @@ void SelectObjectsWidget::Private::suggestedObjects(Dbo::Transaction& transactio
 {
   WContainerWidget *suggestedObjectsContainer = WW<WContainerWidget>();
   WComboBox *astroTypeCombo = new WComboBox;
-  WLabel *astroTypeLabel = new WLabel("Object Type: ");
+  WLabel *astroTypeLabel = new WLabel(WString::tr("object_column_type"));
   astroTypeLabel->setBuddy(astroTypeCombo);
   for(int i=-1; i<NgcObject::NebulaTypeCount; i++)
     astroTypeCombo->addItem(NgcObject::typeDescription(static_cast<NgcObject::NebulaType>(i)));
@@ -183,14 +183,14 @@ void SelectObjectsWidget::Private::suggestedObjects(Dbo::Transaction& transactio
     q->populateFor(selectedTelescope);
   });
   
-  suggestedObjectsContainer->addWidget(WW<WGroupBox>("Filters").add(WW<WContainerWidget>().css("form-inline").add(astroTypeLabel).add(astroTypeCombo)));
+  suggestedObjectsContainer->addWidget(WW<WGroupBox>(WString::tr("filters")).add(WW<WContainerWidget>().css("form-inline").add(astroTypeLabel).add(astroTypeCombo)));
   suggestedObjectsTable = WW<WTable>().addCss("table table-striped table-hover");
   suggestedObjectsTablePagination = WW<WContainerWidget>();
   suggestedObjectsLoaded.connect(this, &SelectObjectsWidget::Private::populateSuggestedObjectsTable);
 
   suggestedObjectsTable->setHeaderCount(1);
   
-  q->addTab(suggestedObjectsContainer, "Best Visible Objects");
+  q->addTab(suggestedObjectsContainer, WString::tr("select_objects_widget_best_visible_objects"));
   suggestedObjectsContainer->addWidget(suggestedObjectsTable);
   suggestedObjectsContainer->addWidget(suggestedObjectsTablePagination);
 }
@@ -215,7 +215,6 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsList( double magnitud
       ngcObjectsQuery.where("\"type\" = ?").bind(nebulaTypeFilter);
     }
     dbo::collection<NgcObjectPtr> objects = ngcObjectsQuery.resultList();
-    cerr << "objects size after query: " << objects.size() << endl;
     Ephemeris ephemeris(astroSession->position());
     AstroSession::ObservabilityRange range = astroSession->observabilityRange(ephemeris).delta({1,20,0});
     for(auto object: objects) {
@@ -261,7 +260,7 @@ void SelectObjectsWidget::Private::searchByCatalogueTab(Dbo::Transaction& transa
 
   for(auto cat: session.query<string>("select distinct catalogue from denominations WHERE catalogue <> ''").resultList())
     cataloguesCombo->addItem(cat);
-  catalogueNumber->setEmptyText("Catalogue Number");
+  catalogueNumber->setEmptyText(WString::tr("catalogue_number"));
   auto searchByCatalogueNumber = [=] {
     Dbo::Transaction t(session);
     resultsTable->clear();
@@ -277,7 +276,7 @@ void SelectObjectsWidget::Private::searchByCatalogueTab(Dbo::Transaction& transa
   };
   catalogueNumber->changed().connect([=](_n1){ searchByCatalogueNumber(); });
   addObjectByCatalogue->addWidget(WW<WContainerWidget>().css("form-inline").add(cataloguesCombo).add(catalogueNumber)
-    .add(WW<WPushButton>("Search").css("btn btn-primary").onClick([=](WMouseEvent){ searchByCatalogueNumber(); })));
+    .add(WW<WPushButton>(WString::tr("search")).css("btn btn-primary").onClick([=](WMouseEvent){ searchByCatalogueNumber(); })));
   addObjectByCatalogue->addWidget(resultsTable);
-  q->addTab(addObjectByCatalogue, "Add By Catalogue Number");
+  q->addTab(addObjectByCatalogue, WString::tr("select_objects_widget_add_by_catalogue_number"));
 }

@@ -285,16 +285,16 @@ void AstroSessionTab::Private::updatePositionDetails()
 void AstroSessionTab::Private::populate()
 {
   objectsTable->clear();
-  objectsTable->elementAt(0,0)->addWidget(new WText{"Names"});
-  objectsTable->elementAt(0,1)->addWidget(new WText{"Type"});
-  objectsTable->elementAt(0,2)->addWidget(new WText{"AR"});
-  objectsTable->elementAt(0,3)->addWidget(new WText{"DEC"});
-  objectsTable->elementAt(0,4)->addWidget(new WText{"Constellation"});
-  objectsTable->elementAt(0,5)->addWidget(new WText{"Angular Size"});
-  objectsTable->elementAt(0,6)->addWidget(new WText{"Magnitude"});
-  objectsTable->elementAt(0,7)->addWidget(new WText{"Highest Time"});
-  objectsTable->elementAt(0,8)->addWidget(new WText{"Max Altitude"});
-  objectsTable->elementAt(0,9)->addWidget(new WText{"Difficulty"});
+  objectsTable->elementAt(0,0)->addWidget(new WText{WString::tr("object_column_names")});
+  objectsTable->elementAt(0,1)->addWidget(new WText{WString::tr("object_column_type")});
+  objectsTable->elementAt(0,2)->addWidget(new WText{WString::tr("object_column_ar")});
+  objectsTable->elementAt(0,3)->addWidget(new WText{WString::tr("object_column_dec")});
+  objectsTable->elementAt(0,4)->addWidget(new WText{WString::tr("object_column_constellation")});
+  objectsTable->elementAt(0,5)->addWidget(new WText{WString::tr("object_column_angular_size")});
+  objectsTable->elementAt(0,6)->addWidget(new WText{WString::tr("object_column_magnitude")});
+  objectsTable->elementAt(0,7)->addWidget(new WText{WString::tr("object_column_highest_time")});
+  objectsTable->elementAt(0,8)->addWidget(new WText{WString::tr("object_column_max_altitude")});
+  objectsTable->elementAt(0,9)->addWidget(new WText{WString::tr("object_column_difficulty")});
   Ephemeris ephemeris({astroSession->position().latitude, astroSession->position().longitude});
   boost::posix_time::ptime sessionTimeStart = ephemeris.sun(astroSession->when()).set;
   boost::posix_time::ptime sessionTimeEnd = ephemeris.sun(astroSession->when() + boost::posix_time::hours(24)).rise;
@@ -330,21 +330,21 @@ void AstroSessionTab::Private::populate()
     descriptionCell->setColumnSpan(11);
     WTextArea *descriptionTextArea = WW<WTextArea>(sessionObject->description()).css("input-block-level");
     WContainerWidget *descriptionContainer = WW<WContainerWidget>()
-      .add(new WLabel{"Your notes and description"})
+      .add(new WLabel{WString::tr("object_notes")})
       .add(descriptionTextArea)
-      .add(WW<WPushButton>("Save").css("btn btn-mini btn-primary pull-right").onClick([=](WMouseEvent){
+      .add(WW<WPushButton>(WString::tr("buttons_save")).css("btn btn-mini btn-primary pull-right").onClick([=](WMouseEvent){
         Dbo::Transaction t(session);
         sessionObject.modify()->setDescription(descriptionTextArea->text().toUTF8());
-	AstroPlanner::instance()->notification("Success", "Description saved!", AstroPlanner::Success, 5);
+	AstroPlanner::instance()->notification(WString::tr("notification_success_title"), WString::tr("notification_description_saved"), AstroPlanner::Success, 5);
       }));
     descriptionCell->addWidget(descriptionContainer);
     WToolBar *actions = new WToolBar;
     row->elementAt(10)->addWidget(actions);
-    actions->addButton(WW<WPushButton>("Description").css("btn btn-mini").onClick([=](WMouseEvent){
+    actions->addButton(WW<WPushButton>(WString::tr("description")).css("btn btn-mini").onClick([=](WMouseEvent){
       descriptionCell->setHidden(!descriptionCell->isHidden());
     }));
-    actions->addButton(WW<WPushButton>("Remove").css("btn btn-danger btn-mini").onClick([=](WMouseEvent){
-      WMessageBox *confirmation = new WMessageBox("Confirm removal", "Are you sure?", Wt::Question, Wt::Ok | Wt::Cancel);
+    actions->addButton(WW<WPushButton>(WString::tr("buttons_remove")).css("btn btn-danger btn-mini").onClick([=](WMouseEvent){
+      WMessageBox *confirmation = new WMessageBox(WString::tr("messagebox_confirm_removal_title"), WString::tr("messagebox_confirm_removal_message"), Wt::Question, Wt::Ok | Wt::Cancel);
       confirmation->buttonClicked().connect([=](StandardButton b, _n5){
         if(b != Wt::Ok) {
           confirmation->reject();

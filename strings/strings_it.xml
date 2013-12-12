@@ -51,6 +51,7 @@
 <message id="telescopes_magnitude_gain">Guadagno Magnitudini</message>
 <message id="telescopes_magnitude_limit_naked">Magnitudine Limite (occhio nudo=6)</message>
 <message id="buttons_add">Aggiungi</message>
+<message id="buttons_save">Salva</message>
 <message id="buttons_remove">Cancella</message>
 <message id="astrosessionspage_sessions_list">Elenco Osservazioni</message>
 <message id="astrosessionslisttab_name">Nome</message>
@@ -77,4 +78,25 @@
 <message id="astrosessiontab_moon_info">Luna: sorge alle {1}, tramonta alle {2}</message>
 <message id="astrosessiontab_printable_version_dialog_export_as">Esporta come...</message>
 <message id="astrosessiontab_information_panel">Informazioni</message>
+<message id="object_column_names">Nomi</message>
+<message id="object_column_type">Tipo</message>
+<message id="object_column_constellation">Costellazione</message>
+<message id="object_column_magnitude">Magnitudine</message>
+<message id="object_column_difficulty">Difficoltà</message>
+<message id="object_column_highest_time">Orario max. altezza</message>
+<message id="object_column_max_altitude">Max Altezza</message>
+<message id="notification_warning_title">Attenzione</message>
+<message id="notification_object_already_added">Oggetto già aggiunto a questa sessione.</message>
+<message id="filters">Filtri</message>
+<message id="select_objects_widget_best_visible_objects">Migliori Oggetti Visibili</message>
+<message id="catalogue_number">Numero Catalogo</message>
+<message id="search">Cerca</message>
+<message id="select_objects_widget_add_by_catalogue_number">Aggiungi per Numero di Catalogo</message>
+<message id="object_column_ar">AR</message>
+<message id="object_column_dec">DEC</message>
+<message id="object_column_angular_size">Dimensione Angolare</message>
+<message id="object_notes">Le tue annotazioni</message>
+<message id="notification_success_title">Successo</message>
+<message id="notification_description_saved">Descrizione Salvata!</message>
+<message id="description">Descrizione</message>
 </messages>
