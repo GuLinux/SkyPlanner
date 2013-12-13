@@ -89,24 +89,34 @@ NgcObject::NebulaType NgcObject::type() const
             NebUnknown=8 //!< Unknown type, catalog errors, "Unidentified Southern Objects" etc.
     };
 */
-std::string NgcObject::typeDescription() const
+std::string NgcObject::typeDescriptionKey() const
 {
-  return typeDescription(type());
+  return typeDescriptionKey(type());
 }
-std::string NgcObject::typeDescription(NebulaType nebulaType)
+std::string NgcObject::typeDescriptionKey(NebulaType nebulaType)
 {
   static map<NebulaType,string> descriptions {
-    {All, "All"},
-    {NebGx, "Galaxy"},
-    {NebOc, "Open star cluster"},
-    {NebGc, "Globular star cluster"},
-    {NebN, "Bright emission/reflection nebula"},
-    {NebPn, "Planetary nebula"},
-    {NebDn, "Dark nebula"},
-    {NebIg, "Irregular galaxy"},
-    {NebCn, "Cluster with nebulosity"},
-    {NebUnknown, "Unknown"},
+    {All, "ngcobject_type_All"},
+    {NebGx, "ngcobject_type_NebGx"},
+    {NebOc, "ngcobject_type_NebOc"},
+    {NebGc, "ngcobject_type_NebGc"},
+    {NebN, "ngcobject_type_NebN"},
+    {NebPn, "ngcobject_type_NebPn"},
+    {NebDn, "ngcobject_type_NebDn"},
+    {NebIg, "ngcobject_type_NebIg"},
+    {NebCn, "ngcobject_type_NebCn"},
+    {NebUnknown, "ngcobject_type_NebUnknown"},
   };
   return descriptions[nebulaType];
 }
+
+Wt::WString NgcObject::typeDescription(NebulaType nebulaType)
+{
+  return Wt::WString::tr(typeDescriptionKey(nebulaType));
+}
+Wt::WString NgcObject::typeDescription() const
+{
+  return typeDescription(type());
+}
+
 

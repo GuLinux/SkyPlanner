@@ -72,4 +72,15 @@
 <message id="objectdifficulty_difficult">Difficult</message>
 <message id="objectdifficulty_very_difficult">Very Difficult</message>
 <message id="objectdifficulty_out_of_range">Out of range</message>
+
+<message id="ngcobject_type_All">All</message>
+<message id="ngcobject_type_NebGx">Galaxy</message>
+<message id="ngcobject_type_NebOc">Open star cluster</message>
+<message id="ngcobject_type_NebGc">Globular star cluster</message>
+<message id="ngcobject_type_NebN">Bright emission/reflection nebula</message>
+<message id="ngcobject_type_NebPn">Planetary nebula</message>
+<message id="ngcobject_type_NebDn">Dark nebula</message>
+<message id="ngcobject_type_NebIg">Irregular galaxy</message>
+<message id="ngcobject_type_NebCn">Cluster with nebulosity</message>
+<message id="ngcobject_type_NebUnknown">Unknown</message>
 </messages>

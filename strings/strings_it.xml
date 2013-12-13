@@ -113,4 +113,15 @@
 <message id="objectdifficulty_difficult">Difficile</message>
 <message id="objectdifficulty_very_difficult">Molto Difficile</message>
 <message id="objectdifficulty_out_of_range">Fuori Portata</message>
+
+<message id="ngcobject_type_All">Tutti</message>
+<message id="ngcobject_type_NebGx">Galassia</message>
+<message id="ngcobject_type_NebOc">Ammasso aperto</message>
+<message id="ngcobject_type_NebGc">Ammasso globulare</message>
+<message id="ngcobject_type_NebN">Nebulosa emissione/riflessione</message>
+<message id="ngcobject_type_NebPn">Nebulosa planetaria</message>
+<message id="ngcobject_type_NebDn">Nebulosa oscura</message>
+<message id="ngcobject_type_NebIg">Galassia irregolare</message>
+<message id="ngcobject_type_NebCn">Ammasso con nebulosità</message>
+<message id="ngcobject_type_NebUnknown">Sconosciuto</message>
 </messages>

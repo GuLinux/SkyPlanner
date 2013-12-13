@@ -23,6 +23,7 @@
 #include <Wt/Dbo/Dbo>
 #include <Wt/Dbo/Types>
 #include <Wt/Dbo/ptr>
+#include <Wt/WString>
 #include <string>
 #include "types.h"
 
@@ -59,8 +60,10 @@ public:
     float magnitude() const;
     float angularSize() const;
     NebulaType type() const;
-    static std::string typeDescription(NebulaType type);
-    std::string typeDescription() const;
+    static std::string typeDescriptionKey(NebulaType type);
+    static Wt::WString typeDescription(NebulaType type);
+    std::string typeDescriptionKey() const;
+    Wt::WString typeDescription() const;
     int32_t difficulty(const dbo::ptr<Telescope> &telescope) const;
 
     template<class Action>
