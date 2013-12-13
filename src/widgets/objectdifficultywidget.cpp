@@ -71,7 +71,7 @@ ObjectDifficultyWidget::ObjectDifficultyWidget( const Wt::Dbo::ptr< NgcObject > 
     case 4:
       difficultyText = WString::tr("objectdifficulty_very_difficult");
       break;
-    case 5:
+    default:
       difficultyText = WString::tr("objectdifficulty_out_of_range");
       break;
   } 
