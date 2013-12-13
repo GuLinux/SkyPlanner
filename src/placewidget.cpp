@@ -112,13 +112,13 @@ PlaceWidget::~PlaceWidget()
 PlaceWidget::PlaceWidget(const Wt::Dbo::ptr< AstroSession >& astroSession, Session& session, Wt::WContainerWidget* parent)
     : d(astroSession, session, this)
 {
-  addWidget(new WText("Just click a point on the map to set the observation place. Use the search box to find places by name."));
+  addWidget(new WText(WString::tr("placewidget_maps_instructions")));
   WContainerWidget *googleMapsLinkContainer = new WContainerWidget;
   addWidget(googleMapsLinkContainer);
   auto linkToGoogleMaps = [=](double latitude, double longitude) {
     googleMapsLinkContainer->clear();
     string url = format("http://maps.google.com/maps?q=%f,%f1") % latitude % longitude;
-    auto link = new WAnchor(url, "Open in Google Maps");
+    auto link = new WAnchor(url, WString::tr("placewidget_open_google_maps"));
     link->setTarget(TargetNewWindow);
     googleMapsLinkContainer->addWidget(link);
   };

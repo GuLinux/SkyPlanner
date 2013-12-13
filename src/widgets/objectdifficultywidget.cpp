@@ -47,32 +47,32 @@ ObjectDifficultyWidget::ObjectDifficultyWidget( const Wt::Dbo::ptr< NgcObject > 
   setInline(true);
   int difficulty = object->difficulty(telescope);
   if(maxAltitudeInDegrees < 10.) {
-    addWidget(new WText{"Too low"});
+    addWidget(new WText{WString::tr("objectdifficulty_too_low")});
     return;
   }
   string difficultyText;
   difficulty = difficulty > 0 ? difficulty/20 : -1;
   switch(difficulty) {
     case -1:
-      difficultyText = "N/A";
+      difficultyText = WString::tr("objectdifficulty_n_a");
       break;
     case 0:
-      difficultyText = "Very easy";
+      difficultyText = WString::tr("objectdifficulty_very_easy");
       break;
     case 1:
-      difficultyText = "Easy";
+      difficultyText = WString::tr("objectdifficulty_easy");
       break;
     case 2:
-      difficultyText = "Average";
+      difficultyText = WString::tr("objectdifficulty_average");
       break;
     case 3:
-      difficultyText = "Difficult";
+      difficultyText = WString::tr("objectdifficulty_difficult");
       break;
     case 4:
-      difficultyText = "Very Difficult";
+      difficultyText = WString::tr("objectdifficulty_very_difficult");
       break;
     case 5:
-      difficultyText = "Out of range";
+      difficultyText = WString::tr("objectdifficulty_out_of_range");
       break;
   } 
   addWidget(new WText{difficultyText});

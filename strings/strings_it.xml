@@ -99,4 +99,18 @@
 <message id="notification_success_title">Successo</message>
 <message id="notification_description_saved">Descrizione Salvata!</message>
 <message id="description">Descrizione</message>
+<message id="placewidget_maps_instructions">Clicca su un punto della mappa per impostare il luogo di osservazione. Usa il box di ricerca per trovare luoghi dal nome.</message>
+<message id="placewidget_open_google_maps">Apri in Google Maps</message>
+<message id="objectnames_more_info">More Information</message>
+<message id="objectnames_search_menu_title">Ricerca</message>
+<message id="objectnames_google_search">Ricerca Google</message>
+<message id="objectnames_google_images_search">Ricerca Google Immagini</message>
+<message id="objectdifficulty_too_low">Troppo Basso</message>
+<message id="objectdifficulty_n_a">N/A</message>
+<message id="objectdifficulty_very_easy">Molto Facile</message>
+<message id="objectdifficulty_easy">Facile</message>
+<message id="objectdifficulty_average">Media</message>
+<message id="objectdifficulty_difficult">Difficile</message>
+<message id="objectdifficulty_very_difficult">Molto Difficile</message>
+<message id="objectdifficulty_out_of_range">Fuori Portata</message>
 </messages>

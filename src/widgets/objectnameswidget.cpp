@@ -71,7 +71,7 @@ ObjectNamesWidget::ObjectNamesWidget(const Wt::Dbo::ptr<NgcObject> &object, Sess
         menuItem->setLink(url);
 	menuItem->setLinkTarget(TargetNewWindow);
       };
-      popup->addSectionHeader("More Information");
+      popup->addSectionHeader(WString::tr("objectnames_more_info"));
       WMenuItem *ngcIcMenuItem = popup->addItem("NGC-IC Project Page");
       ngcIcMenuItem->setLink(new AutoPostResource{"http://www.ngcicproject.org/ngcicdb.asp", {{"ngcicobject", object->objectId()}}});
       ngcIcMenuItem->setLinkTarget(TargetNewWindow);
@@ -106,9 +106,9 @@ ObjectNamesWidget::ObjectNamesWidget(const Wt::Dbo::ptr<NgcObject> &object, Sess
       }
       addLink("DSO Browser", dsoBrowserLink.str());
       
-      popup->addSectionHeader("Search");
-      addLink("Google Search", (format("http://www.google.com/search?q=%s%%20%s") % catName % catNumber ).str() );
-      addLink("Google Images Search", (format("http://www.google.com/images?q=%s%%20%s") % catName % catNumber ).str() );
+      popup->addSectionHeader(WString::tr("objectnames_search_menu_title"));
+      addLink(WString::tr("objectnames_google_search"), (format("http://www.google.com/search?q=%s%%20%s") % catName % catNumber ).str() );
+      addLink(WString::tr("objectnames_google_images_search"), (format("http://www.google.com/images?q=%s%%20%s") % catName % catNumber ).str() );
       popup->popup(e);
     });
 }

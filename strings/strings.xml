@@ -58,4 +58,18 @@
 <message id="notification_success_title">Success</message>
 <message id="notification_description_saved">Description saved!</message>
 <message id="description">Description</message>
+<message id="placewidget_maps_instructions">Just click a point on the map to set the observation place. Use the search box to find places by name.</message>
+<message id="placewidget_open_google_maps">Open in Google Maps</message>
+<message id="objectnames_more_info">More Information</message>
+<message id="objectnames_search_menu_title">Search</message>
+<message id="objectnames_google_search">Google Search</message>
+<message id="objectnames_google_images_search">Google Images Search</message>
+<message id="objectdifficulty_too_low">Too Low</message>
+<message id="objectdifficulty_n_a">N/A</message>
+<message id="objectdifficulty_very_easy">Very easy</message>
+<message id="objectdifficulty_easy">Easy</message>
+<message id="objectdifficulty_average">Average</message>
+<message id="objectdifficulty_difficult">Difficult</message>
+<message id="objectdifficulty_very_difficult">Very Difficult</message>
+<message id="objectdifficulty_out_of_range">Out of range</message>
 </messages>
