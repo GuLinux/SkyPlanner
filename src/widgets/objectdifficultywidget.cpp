@@ -50,7 +50,7 @@ ObjectDifficultyWidget::ObjectDifficultyWidget( const Wt::Dbo::ptr< NgcObject > 
     addWidget(new WText{WString::tr("objectdifficulty_too_low")});
     return;
   }
-  string difficultyText;
+  WString difficultyText;
   difficulty = difficulty > 0 ? difficulty/20 : -1;
   switch(difficulty) {
     case -1:
