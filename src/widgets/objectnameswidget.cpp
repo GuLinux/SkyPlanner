@@ -72,6 +72,14 @@ ObjectNamesWidget::ObjectNamesWidget(const Wt::Dbo::ptr<NgcObject> &object, Sess
 	menuItem->setLinkTarget(TargetNewWindow);
       };
       popup->addSectionHeader(WString::tr("objectnames_more_info"));
+      WMenuItem *imagesMenuItem = popup->addItem("Images");
+      imagesMenuItem->triggered()->connect([=](WMenuItem*, _n5) {
+	WDialog *imagesDialog = new WDialog();
+	imagesDialog->setTitle("Images for {1}");
+	// http://archive.stsci.edu/cgi-bin/dss_search?v=phase2_gsc2&r=19+59+36.38&d=%2B22+43+15.7&e=J2000&h=15.0&w=15.0&f=gif&c=none&fov=SM97&v3=
+	imagesDialog->content()->addWidget(new WImage(format("")));
+	imagesDialog->footer()->addWidget(WW<WPushButton>("Close").onClick([=](WMouseEvent){ imagesDialog->accept(); });
+      });
       WMenuItem *ngcIcMenuItem = popup->addItem("NGC-IC Project Page");
       ngcIcMenuItem->setLink(new AutoPostResource{"http://www.ngcicproject.org/ngcicdb.asp", {{"ngcicobject", object->objectId()}}});
       ngcIcMenuItem->setLinkTarget(TargetNewWindow);
