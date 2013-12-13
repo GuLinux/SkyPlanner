@@ -144,59 +144,33 @@
 
   <!-- Emails -->
 
-  <message id="Wt.Auth.confirmmail.subject">User account activation Link</message>
+  <message id="Wt.Auth.confirmmail.subject">AstrOrganizer: Link di attivazione utente</message>
 
   <message id="Wt.Auth.confirmmail.body">
-Hello {1},
-
-Thank you for joining!
-
-To complete your registration, please finally confirm your account by
-clicking on the following link or copying the URL into your browser.
- 
-Please click here to confirm your registration or copy and paste the
-following URL into your browser: (Note: be sure to copy the entire
-URL, including any part of it which goes onto a second line.)
-
+Ciao {1},
+Per continuare la tua registrazione, conferma il tuo account cliccando il link seguente  o copiandolo nel tuo browser:
 {3}
 
-This text is resolved from the "Wt.Auth.confirmmail.subject",
-"Wt.Auth.confirmmail.body", and "Wt.Auth.confirmmail.htmlbody"
-resource keys.
-
-Good luck with your Wt application,
-
-The Wt team.
+  Grazie,
+  Il Team di AstrOrganizer
   </message>
 
   <message id="Wt.Auth.confirmmail.htmlbody">
-    <h3>Hello {1},</h3>
+    <h3>Ciao {1},</h3>
 
-    <p>Thank you for joining!</p>
-
-    <p>To complete your registration, please finally confirm your
-    account by clicking on the following link or copying the URL into
-    your browser.</p>
+    <p>Per continuare la tua registrazione, conferma il tuo account cliccando il link seguente  o copiandolo nel tuo browser:</p>
  
-    <p>Please <a href="{3}">click here to confirm</a> your
-    registration or copy and paste the following URL into your
-    browser: <i>(Note: be sure to copy the entire URL, including any
-    part of it which goes onto a second line.)</i></p>
+    <p><a href="{3}">clicca qui per confermare</a></p>
     
     <b>{3}</b>
 
     <p>
       <i>Note to developer:</i>
     </p>
-    <p>
-      This text is resolved from the "Wt.Auth.confirmmail.subject",
-      "Wt.Auth.confirmmail.body", and "Wt.Auth.confirmmail.htmlbody"
-      resource keys.
-    </p>
 
-    <p>Good luck with your Wt application,</p>
+    <p>Grazie,</p>
 
-    <p>The Wt team.</p>
+    <p>Il Team di AstrOrganizer</p>
   </message>
 
   <message id="Wt.Auth.lostpasswordmail.subject">Lost password instructions</message>
@@ -217,14 +191,6 @@ sure to copy the entire URL, including any part of it which goes onto
 a second line.)
  
 {3} 
-
-This text is resolved from the "Wt.Auth.lostpasswordmail.subject",
-"Wt.Auth.lostpasswordmail.body", and "Wt.Auth.lostpasswordmail.htmlbody"
-resource keys.
-
-Good luck with your Wt application,
-
-The Wt team.
   </message>
 
   <message id="Wt.Auth.lostpasswordmail.htmlbody">
@@ -245,20 +211,6 @@ The Wt team.
     onto a second line.)</i></p>
     
     <b>{3}</b>
-
-    <p>
-      <i>Note to developer:</i>
-    </p>
-    <p>
-      This text is resolved from the
-      "Wt.Auth.lostpasswordmail.subject",
-      "Wt.Auth.lostpasswordmail.body", and
-      "Wt.Auth.lostpasswordmail.htmlbody" resource keys.
-    </p>
-
-    <p>Good luck with your Wt application,</p>
-
-    <p>The Wt team.</p>
   </message>
 
 </messages>

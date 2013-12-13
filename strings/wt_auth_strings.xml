@@ -13,14 +13,6 @@ following URL into your browser: (Note: be sure to copy the entire
 URL, including any part of it which goes onto a second line.)
 
 {3}
-
-This text is resolved from the "Wt.Auth.confirmmail.subject",
-"Wt.Auth.confirmmail.body", and "Wt.Auth.confirmmail.htmlbody"
-resource keys.
-
-Good luck with your Wt application,
-
-The Wt team.
   </message>
 
   <message id="Wt.Auth.confirmmail.htmlbody">
@@ -38,19 +30,6 @@ The Wt team.
     part of it which goes onto a second line.)</i></p>
     
     <b>{3}</b>
-
-    <p>
-      <i>Note to developer:</i>
-    </p>
-    <p>
-      This text is resolved from the "Wt.Auth.confirmmail.subject",
-      "Wt.Auth.confirmmail.body", and "Wt.Auth.confirmmail.htmlbody"
-      resource keys.
-    </p>
-
-    <p>Good luck with your Wt application,</p>
-
-    <p>The Wt team.</p>
   </message>
 
   <message id="Wt.Auth.lostpasswordmail.subject">Lost password instructions</message>
@@ -72,13 +51,6 @@ a second line.)
  
 {3} 
 
-This text is resolved from the "Wt.Auth.lostpasswordmail.subject",
-"Wt.Auth.lostpasswordmail.body", and "Wt.Auth.lostpasswordmail.htmlbody"
-resource keys.
-
-Good luck with your Wt application,
-
-The Wt team.
   </message>
 
   <message id="Wt.Auth.lostpasswordmail.htmlbody">
@@ -100,19 +72,6 @@ The Wt team.
     
     <b>{3}</b>
 
-    <p>
-      <i>Note to developer:</i>
-    </p>
-    <p>
-      This text is resolved from the
-      "Wt.Auth.lostpasswordmail.subject",
-      "Wt.Auth.lostpasswordmail.body", and
-      "Wt.Auth.lostpasswordmail.htmlbody" resource keys.
-    </p>
-
-    <p>Good luck with your Wt application,</p>
-
-    <p>The Wt team.</p>
   </message>
 
 </messages>
