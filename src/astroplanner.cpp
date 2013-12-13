@@ -59,6 +59,7 @@ AstroPlanner::AstroPlanner( const WEnvironment &environment )
   string stringsDirectory = (boost::filesystem::current_path() / "strings").string();
   readConfigurationProperty("strings_directory", stringsDirectory);
   messageResourceBundle().use(stringsDirectory + "/strings");
+  messageResourceBundle().use(stringsDirectory + "/wt_auth_strings");
   setTitle(WString::tr("application_title"));
   enableUpdates(true);
   setTheme( new WBootstrapTheme( this ) );

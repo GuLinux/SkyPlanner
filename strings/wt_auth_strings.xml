@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<messages xmlns:if="Wt.WTemplate.conditions">
+  <message id="Wt.Auth.confirmmail.body">
+Hello {1},
+
+Thank you for joining!
+
+To complete your registration, please finally confirm your account by
+clicking on the following link or copying the URL into your browser.
+ 
+Please click here to confirm your registration or copy and paste the
+following URL into your browser: (Note: be sure to copy the entire
+URL, including any part of it which goes onto a second line.)
+
+{3}
+
+This text is resolved from the "Wt.Auth.confirmmail.subject",
+"Wt.Auth.confirmmail.body", and "Wt.Auth.confirmmail.htmlbody"
+resource keys.
+
+Good luck with your Wt application,
+
+The Wt team.
+  </message>
+
+  <message id="Wt.Auth.confirmmail.htmlbody">
+    <h3>Hello {1},</h3>
+
+    <p>Thank you for joining!</p>
+
+    <p>To complete your registration, please finally confirm your
+    account by clicking on the following link or copying the URL into
+    your browser.</p>
+ 
+    <p>Please <a href="{3}">click here to confirm</a> your
+    registration or copy and paste the following URL into your
+    browser: <i>(Note: be sure to copy the entire URL, including any
+    part of it which goes onto a second line.)</i></p>
+    
+    <b>{3}</b>
+
+    <p>
+      <i>Note to developer:</i>
+    </p>
+    <p>
+      This text is resolved from the "Wt.Auth.confirmmail.subject",
+      "Wt.Auth.confirmmail.body", and "Wt.Auth.confirmmail.htmlbody"
+      resource keys.
+    </p>
+
+    <p>Good luck with your Wt application,</p>
+
+    <p>The Wt team.</p>
+  </message>
+
+  <message id="Wt.Auth.lostpasswordmail.subject">Lost password instructions</message>
+
+  <message id="Wt.Auth.lostpasswordmail.body">
+Hello {1},
+
+This mail has been sent to you, because someone (presumably you?)
+indicated that he wishes to choose a new password, because the current
+password escapes his mind.
+
+If you requested this, then choose a new password by clicking on the
+following link or copying the URL into your browser. If you didn't
+request this, you can safely ignore and discard this email.
+ 
+Please copy and paste the following URL into your browser: (Note: be
+sure to copy the entire URL, including any part of it which goes onto
+a second line.)
+ 
+{3} 
+
+This text is resolved from the "Wt.Auth.lostpasswordmail.subject",
+"Wt.Auth.lostpasswordmail.body", and "Wt.Auth.lostpasswordmail.htmlbody"
+resource keys.
+
+Good luck with your Wt application,
+
+The Wt team.
+  </message>
+
+  <message id="Wt.Auth.lostpasswordmail.htmlbody">
+    <h3>Hello {1},</h3>
+
+    <p>This mail has been sent to you, because someone (presumably
+    you?)  indicated that he wishes to choose a new password, because
+    the current password escapes his mind.</p>
+
+    <p>If you requested this, then choose a new password by clicking
+    on the following link or copying the URL into your browser. If you
+    didn't request this, you can safely ignore and discard this
+    email.</p>
+ 
+    <p>Please <a href="{3}">click here to choose a new password</a> or
+    copy and paste the following URL into your browser: <i>(Note: be
+    sure to copy the entire URL, including any part of it which goes
+    onto a second line.)</i></p>
+    
+    <b>{3}</b>
+
+    <p>
+      <i>Note to developer:</i>
+    </p>
+    <p>
+      This text is resolved from the
+      "Wt.Auth.lostpasswordmail.subject",
+      "Wt.Auth.lostpasswordmail.body", and
+      "Wt.Auth.lostpasswordmail.htmlbody" resource keys.
+    </p>
+
+    <p>Good luck with your Wt application,</p>
+
+    <p>The Wt team.</p>
+  </message>
+
+</messages>
