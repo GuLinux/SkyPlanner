@@ -26,9 +26,10 @@
 class DSSImage::Private
 {
   public:
-    Private( const Coordinates::Equatorial &coordinates, const Angle &size, DSSImage *q );
+    Private( const Coordinates::Equatorial &coordinates, const Angle &size, DSSImage::ImageVersion imageVersion, DSSImage *q );
     Coordinates::Equatorial coordinates;
     Angle size;
+    DSSImage::ImageVersion imageVersion;
     boost::filesystem::path cacheFile;
     std::string imageLink() const;
     std::string cacheKey() const;
@@ -36,6 +37,7 @@ class DSSImage::Private
     void setCacheImage();
     Wt::WContainerWidget *content;
     int retry = 0;
+    static std::map<DSSImage::ImageVersion,std::string> imageVersionStrings;
   private:
     class DSSImage *const q;
 };

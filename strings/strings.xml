@@ -85,4 +85,14 @@
 <message id="ngcobject_type_NebIg">Irregular galaxy</message>
 <message id="ngcobject_type_NebCn">Cluster with nebulosity</message>
 <message id="ngcobject_type_NebUnknown">Unknown</message>
+
+<message id="dssimage_version_label">DSS Image Type: </message>
+<message id="dssimage_version_poss2ukstu_red">POSS2/UKSTU Red</message>
+<message id="dssimage_version_poss2ukstu_blue">POSS2/UKSTU Blue</message>
+<message id="dssimage_version_poss2ukstu_ir">POSS2/UKSTU IR</message>
+<message id="dssimage_version_poss1_red">POSS1 Red</message>
+<message id="dssimage_version_poss1_blue">POSS1 Blue</message>
+<message id="dssimage_version_quickv">Quick-V</message>
+<message id="dssimage_version_phase2_gsc2">HST Phase 2 (GSC2)</message>
+<message id="dssimage_version_phase2_gsc1">HST Phase 2 (GSC1)</message>
 </messages>

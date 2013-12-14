@@ -27,8 +27,21 @@
 class DSSImage : public Wt::WCompositeWidget
 {
   public:
+    enum ImageVersion {
+      poss2ukstu_red,
+      poss2ukstu_blue,
+      poss2ukstu_ir,
+      poss1_red,
+      poss1_blue,
+      quickv,
+      phase2_gsc2,
+      phase2_gsc1,
+    };
+    static ImageVersion imageVersion(const std::string &version);
+    static std::string imageVersion(const ImageVersion &version);
+    static std::vector<ImageVersion> versions();
+    DSSImage( const Coordinates::Equatorial &coordinates, const Angle &size, DSSImage::ImageVersion imageVersion = phase2_gsc2, Wt::WContainerWidget *parent = 0 );
     ~DSSImage();
-    DSSImage( const Coordinates::Equatorial &coordinates, const Angle &size, Wt::WContainerWidget *parent = 0 );
 
   private:
     D_PTR;

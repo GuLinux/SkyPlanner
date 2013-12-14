@@ -126,4 +126,7 @@
 <message id="ngcobject_type_NebIg">Galassia irregolare</message>
 <message id="ngcobject_type_NebCn">Ammasso con nebulosità</message>
 <message id="ngcobject_type_NebUnknown">Sconosciuto</message>
+
+<message id="dssimage_version_label">Tipo Immagine DSS: </message>
+
 </messages>

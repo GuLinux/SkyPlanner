@@ -33,6 +33,10 @@
 #include <Wt/WDialog>
 #include <Wt/WPushButton>
 #include <Wt/WImage>
+#include <Wt/WComboBox>
+#include <Wt/WStandardItem>
+#include <Wt/WStandardItemModel>
+#include <Wt/WLabel>
 #include "session.h"
 #include "types.h"
 
@@ -78,9 +82,29 @@ ObjectNamesWidget::ObjectNamesWidget(const Wt::Dbo::ptr<NgcObject> &object, Sess
       popup->addSectionHeader(WString::tr("objectnames_more_info"));
       WMenuItem *imagesMenuItem = popup->addItem(WString::tr("objectnames_digitalized_sky_survey_menu"));
       imagesMenuItem->triggered().connect([=](WMenuItem*, _n5) {
+        WContainerWidget *imageContainer = WW<WContainerWidget>();
 	WDialog *imagesDialog = new WDialog();
 	imagesDialog->setCaption(namesJoined);
-	imagesDialog->contents()->addWidget(new DSSImage(object->coordinates(), Angle::degrees(object->angularSize())));
+        WComboBox *typeCombo = WW<WComboBox>();
+        WStandardItemModel *typeModel = new WStandardItemModel(typeCombo);
+        typeCombo->setModel(typeModel);
+        
+        for(auto type: DSSImage::versions()) {
+          auto item = new WStandardItem(WString::tr(string{"dssimage_version_"} + DSSImage::imageVersion(type)));
+          item->setData(type);
+          typeModel->appendRow(item);
+          if(type == DSSImage::ImageVersion::phase2_gsc1)
+            typeCombo->setCurrentIndex(typeModel->rowCount()-1);
+        }
+        typeCombo->activated().connect([=](int index, _n5){
+          WStandardItem *item = typeModel->item(index);
+          imageContainer->clear();
+          imageContainer->addWidget(new DSSImage(object->coordinates(), Angle::degrees(object->angularSize()), boost::any_cast<DSSImage::ImageVersion>(item->data()) ));
+        });
+        
+	imagesDialog->contents()->addWidget(WW<WContainerWidget>().add(WW<WLabel>(WString::tr("dssimage_version_label")).setMargin(10, Wt::Right)).add(typeCombo));
+        imagesDialog->contents()->addWidget(imageContainer);
+        imageContainer->addWidget(new DSSImage(object->coordinates(), Angle::degrees(object->angularSize()), DSSImage::ImageVersion::phase2_gsc1));
         imagesDialog->setResizable(true);
         imagesDialog->resize(900, 700);
         imagesDialog->footer()->addWidget(WW<WContainerWidget>().css("pull-left")

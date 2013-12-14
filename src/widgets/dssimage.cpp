@@ -37,8 +37,21 @@ using namespace WtCommons;
 using namespace std;
 namespace fs = boost::filesystem;
 
-DSSImage::Private::Private( const Coordinates::Equatorial &coordinates, const Angle &size, DSSImage *q ) 
-  : coordinates(coordinates), size(size), q( q )
+
+std::map<DSSImage::ImageVersion,std::string> DSSImage::Private::imageVersionStrings{
+  { poss2ukstu_red, "poss2ukstu_red" },
+  { poss2ukstu_blue, "poss2ukstu_blue" },
+  { poss2ukstu_ir, "poss2ukstu_ir" },
+  { poss1_red, "poss1_red" },
+  { poss1_blue, "poss1_blue" },
+  { quickv, "quickv" },
+  { phase2_gsc2, "phase2_gsc2" },
+  { phase2_gsc1, "phase2_gsc1" },
+};
+
+
+DSSImage::Private::Private( const Coordinates::Equatorial &coordinates, const Angle &size, DSSImage::ImageVersion imageVersion, DSSImage *q ) 
+  : coordinates(coordinates), size(size), imageVersion(imageVersion), q( q )
 {
   string cacheDir("dss-cache");
   wApp->readConfigurationProperty("dss-cache-dir", cacheDir);
@@ -50,9 +63,34 @@ DSSImage::~DSSImage()
 {
 }
 
+
+DSSImage::ImageVersion DSSImage::imageVersion( const string &version )
+{
+  for(auto v: Private::imageVersionStrings) {
+    if(version == v.second)
+      return v.first;
+  }
+  return phase2_gsc2;
+}
+
+string DSSImage::imageVersion( const DSSImage::ImageVersion &version )
+{
+  return Private::imageVersionStrings[version];
+}
+
+vector< DSSImage::ImageVersion > DSSImage::versions()
+{
+  vector<ImageVersion> v;
+  transform(begin(Private::imageVersionStrings), end(Private::imageVersionStrings), back_inserter(v), [](pair<ImageVersion,string> p) { return p.first; });
+  return v;
+}
+
+
+
 string DSSImage::Private::cacheKey() const
 {
-  return format("ar_%d-%d-%.1f_dec_%d-%d-%.1f_size_%d-%d-%.1f.gif")
+  return format("%s-ar_%d-%d-%.1f_dec_%d-%d-%.1f_size_%d-%d-%.1f.gif")
+  % imageVersionStrings[imageVersion]
   % coordinates.rightAscension.sexagesimalHours().hours
   % coordinates.rightAscension.sexagesimalHours().minutes
   % coordinates.rightAscension.sexagesimalHours().seconds
@@ -78,7 +116,8 @@ string DSSImage::Private::imageLink() const
     multiplyFactor = 5.;
   
   objectRect = min(75.0, objectRect * multiplyFactor);
-  return format("http://archive.stsci.edu/cgi-bin/dss_search?v=phase2_gsc2&r=%d+%d+%.1f&d=%d+%d+%.1f&e=J2000&h=%d&w=%df&f=gif&c=none&fov=SM97&v3=")
+  return format("http://archive.stsci.edu/cgi-bin/dss_search?v=%s&r=%d+%d+%.1f&d=%d+%d+%.1f&e=J2000&h=%d&w=%df&f=gif&c=none&fov=SM97&v3=")
+  % imageVersionStrings[imageVersion]
   % coordinates.rightAscension.sexagesimalHours().hours
   % coordinates.rightAscension.sexagesimalHours().minutes
   % coordinates.rightAscension.sexagesimalHours().seconds
@@ -109,13 +148,15 @@ void DSSImage::Private::startDownload()
   client->done().connect([=](boost::system::error_code err, Http::Message message, _n4){
     Scope triggerUpdate{[=]{app->triggerUpdate();}};
     wApp->log("notice") << __PRETTY_FUNCTION__ << ", download done: err=" << err  << "(" << err.message() << ")" << ", status: " << message.status() << "retry: " << retry;
-    if( err && retry < 3 ) {
+    if( (err  || message.status() != 200 ) && retry < 3 ) {
       client->get(imageLink());
       retry++;
       return;
     }
-    if( err ) {
-      content->addWidget(new WText{WString("Error retrieving DSS Image: {1}<br />Please click the link above to try viewing it in the DSS Archive.").arg(err.message())});
+    if( err || message.status() != 200 ) {
+      content->addWidget(
+        new WText{WString("Error retrieving DSS Image: {1}<br />Please click the link above to try viewing it in the DSS Archive.")
+        .arg(err ? err.message() : WString("HTTP Status {1}").arg(message.status() ))});
       return;
     }
     ofstream s(cacheFile.string());
@@ -125,8 +166,8 @@ void DSSImage::Private::startDownload()
   });
 }
 
-DSSImage::DSSImage( const Coordinates::Equatorial &coordinates, const Angle &size, WContainerWidget *parent )
-  : WCompositeWidget(parent), d( coordinates, size, this )
+DSSImage::DSSImage( const Coordinates::Equatorial &coordinates, const Angle &size, DSSImage::ImageVersion imageVersion, WContainerWidget *parent )
+  : WCompositeWidget(parent), d( coordinates, size, imageVersion, this )
 {
   d->content = new WContainerWidget;
   WAnchor *original = new WAnchor(d->imageLink(), "Original DSS Image Link");
