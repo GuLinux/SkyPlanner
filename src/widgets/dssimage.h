@@ -1,6 +1,6 @@
 /*
  * <one line to give the program's name and a brief idea of what it does.>
- * Copyright (C) 2013  <copyright holder> <email>
+ * Copyright (C) 2013  Marco Gulino <email>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,22 +17,21 @@
  *
  */
 
-#ifndef ASTROPLANNER_H
-#define ASTROPLANNER_H
+#ifndef DSSIMAGE_H
+#define DSSIMAGE_H
 
-#include <Wt/WApplication>
+#include <Wt/WCompositeWidget>
 #include "utils/d_ptr.h"
+#include <types.h>
 
-class AstroPlanner : public Wt::WApplication
+class DSSImage : public Wt::WCompositeWidget
 {
-public:
-    ~AstroPlanner();
-    AstroPlanner(const Wt::WEnvironment& environment);
-    static AstroPlanner *instance();
-    enum NotificationType { Alert, Error, Success, Information };
-    Wt::WContainerWidget * notification( const Wt::WString &title, const Wt::WString &content, AstroPlanner::NotificationType type, int autoHideSeconds = 0 );
-private:
+  public:
+    ~DSSImage();
+    DSSImage( const Coordinates::Equatorial &coordinates, const Angle &size, Wt::WContainerWidget *parent = 0 );
+
+  private:
     D_PTR;
 };
 
-#endif // ASTROPLANNER_H
+#endif // DSSIMAGE_H

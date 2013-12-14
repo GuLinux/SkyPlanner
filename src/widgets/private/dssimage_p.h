@@ -1,6 +1,6 @@
 /*
  * <one line to give the program's name and a brief idea of what it does.>
- * Copyright (C) 2013  <copyright holder> <email>
+ * Copyright (C) 2013  Marco Gulino <email>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,22 +17,26 @@
  *
  */
 
-#ifndef ASTROPLANNER_H
-#define ASTROPLANNER_H
+#ifndef DSSIMAGE_P_H
+#define DSSIMAGE_P_H
+#include "widgets/dssimage.h"
+#include <Wt/WFileResource>
+#include <boost/filesystem/path.hpp>
 
-#include <Wt/WApplication>
-#include "utils/d_ptr.h"
-
-class AstroPlanner : public Wt::WApplication
+class DSSImage::Private
 {
-public:
-    ~AstroPlanner();
-    AstroPlanner(const Wt::WEnvironment& environment);
-    static AstroPlanner *instance();
-    enum NotificationType { Alert, Error, Success, Information };
-    Wt::WContainerWidget * notification( const Wt::WString &title, const Wt::WString &content, AstroPlanner::NotificationType type, int autoHideSeconds = 0 );
-private:
-    D_PTR;
+  public:
+    Private( const Coordinates::Equatorial &coordinates, const Angle &size, DSSImage *q );
+    Coordinates::Equatorial coordinates;
+    Angle size;
+    boost::filesystem::path cacheFile;
+    std::string imageLink() const;
+    std::string cacheKey() const;
+    void startDownload();
+    void setCacheImage();
+    Wt::WContainerWidget *content;
+    int retry = 0;
+  private:
+    class DSSImage *const q;
 };
-
-#endif // ASTROPLANNER_H
+#endif // DSSIMAGE_P_H

@@ -19,6 +19,7 @@
 
 #include "Models"
 #include "objectnameswidget.h"
+#include "dssimage.h"
 #include "Wt-Commons/wt_helpers.h"
 #include "utils/format.h"
 #include <Wt/WText>
@@ -29,6 +30,9 @@
 #include <Wt/WAnchor>
 #include <Wt/WJavaScript>
 #include <Wt/WTemplate>
+#include <Wt/WDialog>
+#include <Wt/WPushButton>
+#include <Wt/WImage>
 #include "session.h"
 #include "types.h"
 
@@ -72,13 +76,20 @@ ObjectNamesWidget::ObjectNamesWidget(const Wt::Dbo::ptr<NgcObject> &object, Sess
 	menuItem->setLinkTarget(TargetNewWindow);
       };
       popup->addSectionHeader(WString::tr("objectnames_more_info"));
-      WMenuItem *imagesMenuItem = popup->addItem("Images");
-      imagesMenuItem->triggered()->connect([=](WMenuItem*, _n5) {
+      WMenuItem *imagesMenuItem = popup->addItem(WString::tr("objectnames_digitalized_sky_survey_menu"));
+      imagesMenuItem->triggered().connect([=](WMenuItem*, _n5) {
 	WDialog *imagesDialog = new WDialog();
-	imagesDialog->setTitle("Images for {1}");
-	// http://archive.stsci.edu/cgi-bin/dss_search?v=phase2_gsc2&r=19+59+36.38&d=%2B22+43+15.7&e=J2000&h=15.0&w=15.0&f=gif&c=none&fov=SM97&v3=
-	imagesDialog->content()->addWidget(new WImage(format("")));
-	imagesDialog->footer()->addWidget(WW<WPushButton>("Close").onClick([=](WMouseEvent){ imagesDialog->accept(); });
+	imagesDialog->setCaption(namesJoined);
+	imagesDialog->contents()->addWidget(new DSSImage(object->coordinates(), Angle::degrees(object->angularSize())));
+        imagesDialog->setResizable(true);
+        imagesDialog->resize(900, 700);
+        imagesDialog->footer()->addWidget(WW<WContainerWidget>().css("pull-left")
+          .add(new WText{"Images Copyright: "})
+          .add(WW<WAnchor>("http://archive.stsci.edu/dss/", "The STScI Digitized Sky Survey").setTarget(Wt::TargetNewWindow))
+          .add(WW<WAnchor>("http://archive.stsci.edu/dss/acknowledging.html", " (Acknowledgment)").setTarget(Wt::TargetNewWindow))
+        );
+	imagesDialog->footer()->addWidget(WW<WPushButton>(WString::tr("buttons_close")).css("pull-right").onClick([=](WMouseEvent){ imagesDialog->accept(); }));
+        imagesDialog->show();
       });
       WMenuItem *ngcIcMenuItem = popup->addItem("NGC-IC Project Page");
       ngcIcMenuItem->setLink(new AutoPostResource{"http://www.ngcicproject.org/ngcicdb.asp", {{"ngcicobject", object->objectId()}}});
@@ -98,7 +109,6 @@ ObjectNamesWidget::ObjectNamesWidget(const Wt::Dbo::ptr<NgcObject> &object, Sess
 	<< "&month=" <<astroSession->when().date().month().as_number() 
 	<< "&day=" << astroSession->when().date().day();
       if(astroSession->position()) {
-	cerr << "Longitude: " << astroSession->position().longitude.degrees() << endl;
 	string longitudeEmisphere = astroSession->position().longitude.degrees() > 0 ? "E" : "W" ;
 	Angle::Sexagesimal longitude = astroSession->position().longitude.degrees() > 0 
 	  ? astroSession->position().longitude.sexagesimal()

@@ -72,12 +72,25 @@ Angle::Sexagesimal Angle::sexagesimal() const
   double angle = degrees();
   int degrees_i = static_cast<int>(angle);
   angle -= degrees_i;
-  angle *= 60.;
+  angle *= angle>0?60.:-60.;
   int minutes_i = static_cast<int>(angle);
   angle -= minutes_i;
   angle *= 60.;
   return {degrees_i, minutes_i, angle};
 }
+
+Angle::Hours Angle::sexagesimalHours() const
+{
+  double angle = hours();
+  int degrees_i = static_cast<int>(angle);
+  angle -= degrees_i;
+  angle *= angle>0?60.:-60.;
+  int minutes_i = static_cast<int>(angle);
+  angle -= minutes_i;
+  angle *= 60.;
+  return {degrees_i, minutes_i, angle};
+}
+
 
 string Angle::printable(Format format, PrintFormat printFormat) const
 {
@@ -85,6 +98,7 @@ string Angle::printable(Format format, PrintFormat printFormat) const
     double time = hours();
     int hours_i = static_cast<int>(time);
     time -= hours_i;
+    time *= time>0?60.:-60.;
     time *= 60.;
     int minutes_i = static_cast<int>(time);
     time -= minutes_i;

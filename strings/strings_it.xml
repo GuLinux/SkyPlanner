@@ -50,6 +50,7 @@
 <message id="telescopes_focal_length_mm">Lunghezza Focale (mm)</message>
 <message id="telescopes_magnitude_gain">Guadagno Magnitudini</message>
 <message id="telescopes_magnitude_limit_naked">Magnitudine Limite (occhio nudo=6)</message>
+<message id="buttons_close">Chiudi</message>
 <message id="buttons_add">Aggiungi</message>
 <message id="buttons_save">Salva</message>
 <message id="buttons_remove">Cancella</message>
@@ -105,6 +106,7 @@
 <message id="objectnames_search_menu_title">Ricerca</message>
 <message id="objectnames_google_search">Ricerca Google</message>
 <message id="objectnames_google_images_search">Ricerca Google Immagini</message>
+<message id="objectnames_digitalized_sky_survey_menu">Immagine Digitalized Sky Survey</message>
 <message id="objectdifficulty_too_low">Troppo Basso</message>
 <message id="objectdifficulty_n_a">N/A</message>
 <message id="objectdifficulty_very_easy">Molto Facile</message>

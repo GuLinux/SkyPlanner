@@ -115,7 +115,7 @@ AstroPlanner::AstroPlanner( const WEnvironment &environment )
   setLoggedInWidget();
 }
 
-void AstroPlanner::notification(const WString &title, const WString &content, NotificationType type, int autoHideSeconds)
+WContainerWidget *AstroPlanner::notification(const WString &title, const WString &content, NotificationType type, int autoHideSeconds)
 {
   static map<NotificationType,string> notificationStyles {
     {Error, "alert-error"},
@@ -140,4 +140,5 @@ void AstroPlanner::notification(const WString &title, const WString &content, No
   notification->addWidget(new WText{content});
   d->notifications->addWidget(notification);
   notification->animateShow({WAnimation::Fade, WAnimation::EaseInOut, 500});
+  return notification;
 }

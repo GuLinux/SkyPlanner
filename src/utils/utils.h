@@ -20,10 +20,20 @@
 #ifndef UTILS_H
 #define UTILS_H
 
+#include <functional>
+
 class Utils
 {
 public:
   static int exponentialPercentage(double value, double limit, double base);
+};
+
+class Scope {
+public:
+  Scope(const std::function<void()> &f) : f(f) {};
+  ~Scope() { f(); }
+private:
+  std::function<void()> f;
 };
 
 #endif // UTILS_H

@@ -22,6 +22,9 @@ std::vector<uint8_t> styleCss() {
       border-style:solid;
       border-width:5px;
     }
+    .modal-body {
+      max-height: inherit!important;
+    }
   );
   return std::vector<uint8_t>(css.begin(), css.end());
 }
