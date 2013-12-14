@@ -33,7 +33,7 @@ class Angle {
     struct Hours {
       int hours;
       int minutes;
-      int seconds;
+      double seconds;
     };
     static Angle degrees(double degrees);
     static Angle radians(double radians);
