@@ -41,6 +41,7 @@
 #include "widgets/objectdifficultywidget.h"
 #include "astroplanner.h"
 #include <Wt/WGroupBox>
+#include <Wt/WSpinBox>
 
 using namespace Wt;
 using namespace WtCommons;
@@ -255,17 +256,17 @@ void SelectObjectsWidget::Private::searchByCatalogueTab(Dbo::Transaction& transa
 {
   WContainerWidget *addObjectByCatalogue = WW<WContainerWidget>();
   WComboBox *cataloguesCombo = new WComboBox();
-  WLineEdit *catalogueNumber = WW<WLineEdit>();
+  WSpinBox *catalogueNumber = WW<WSpinBox>();
+  catalogueNumber->setMaximum(INT32_MAX);
   WTable *resultsTable = WW<WTable>().addCss("table table-striped table-hover");
 
   for(auto cat: session.query<string>("select distinct catalogue from denominations WHERE catalogue <> ''").resultList())
     cataloguesCombo->addItem(cat);
-  catalogueNumber->setEmptyText(WString::tr("catalogue_number"));
   auto searchByCatalogueNumber = [=] {
     Dbo::Transaction t(session);
     resultsTable->clear();
     dbo::collection<dbo::ptr<NebulaDenomination>> denominations = session.find<NebulaDenomination>().where("catalogue = ?").where("number = ?")
-      .bind(cataloguesCombo->currentText()).bind(catalogueNumber->text());
+      .bind(cataloguesCombo->currentText()).bind(catalogueNumber->value());
     populateHeaders(resultsTable);
     Ephemeris ephemeris(astroSession->position());
     AstroSession::ObservabilityRange range = astroSession->observabilityRange(ephemeris).delta({1,20,0});

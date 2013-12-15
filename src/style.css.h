@@ -25,6 +25,9 @@ std::vector<uint8_t> styleCss() {
     .modal-body {
       max-height: inherit!important;
     }
+    .form-inline * {
+      margin-right: 5px;
+    }
   );
   return std::vector<uint8_t>(css.begin(), css.end());
 }
