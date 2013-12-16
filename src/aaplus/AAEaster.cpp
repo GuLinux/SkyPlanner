@@ -26,7 +26,7 @@ to maintain a single distribution point for the source code.
 
 
 /////////////////////////////////// Implementation ////////////////////////////
-
+using namespace AAPlus;
 CAAEasterDetails CAAEaster::Calculate(long nYear, bool GregorianCalendar)
 {
   CAAEasterDetails details;

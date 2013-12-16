@@ -33,6 +33,7 @@ to maintain a single distribution point for the source code.
 
 
 /////////////////////// Classes ///////////////////////////////////////////////
+namespace AAPlus {
 
 class AAPLUS_EXT_CLASS CAAPhysicalMarsDetails
 {
@@ -66,4 +67,5 @@ public:
   static CAAPhysicalMarsDetails Calculate(double JD);
 };
 
+}
 #endif //__AAPHYSICALMARS_H_

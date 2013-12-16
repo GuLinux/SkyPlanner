@@ -33,6 +33,7 @@ to maintain a single distribution point for the source code.
 
 
 /////////////////////// Classes ///////////////////////////////////////////////
+namespace AAPlus {
 
 class AAPLUS_EXT_CLASS CAAMoonIlluminatedFraction
 {
@@ -44,4 +45,5 @@ public:
   static double PositionAngle(double Alpha0, double Delta0, double Alpha, double Delta);
 };
 
+}
 #endif //__AAMOONILLUMINATEDFRACTION_H__

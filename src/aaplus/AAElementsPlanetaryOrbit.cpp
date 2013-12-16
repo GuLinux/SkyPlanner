@@ -33,7 +33,7 @@ to maintain a single distribution point for the source code.
 
 
 /////////////////////////// Implementation ////////////////////////////////////
-
+using namespace AAPlus;
 double CAAElementsPlanetaryOrbit::MercuryMeanLongitude(double JD)
 {
   double T = (JD - 2451545.0) / 36525;

@@ -33,6 +33,7 @@ to maintain a single distribution point for the source code.
 
 
 /////////////////////// Classes ///////////////////////////////////////////////
+namespace AAPlus {
 
 class AAPLUS_EXT_CLASS CAAMoonPerigeeApogee
 {
@@ -47,4 +48,5 @@ public:
   static double ApogeeParallax(double k);
 };
 
+}
 #endif //__AAMOONPERIGEEAPOGEE_H__

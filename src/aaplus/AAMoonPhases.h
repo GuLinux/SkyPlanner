@@ -33,6 +33,7 @@ to maintain a single distribution point for the source code.
 
 
 /////////////////////// Classes ///////////////////////////////////////////////
+namespace AAPlus {
 
 class AAPLUS_EXT_CLASS CAAMoonPhases
 {
@@ -43,4 +44,5 @@ public:
   static double TruePhase(double k);
 };
 
+}
 #endif //__AAMOONPHASES_H__

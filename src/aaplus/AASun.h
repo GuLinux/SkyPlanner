@@ -38,6 +38,7 @@ to maintain a single distribution point for the source code.
 
 
 /////////////////////// Classes ///////////////////////////////////////////////
+namespace AAPlus {
 
 class AAPLUS_EXT_CLASS CAASun
 {
@@ -58,4 +59,5 @@ public:
   static CAA3DCoordinate EquatorialRectangularCoordinatesAnyEquinox(double JD, double JDEquinox);
 };
 
+}
 #endif //__AASUN_H__

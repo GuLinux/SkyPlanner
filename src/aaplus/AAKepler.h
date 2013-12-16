@@ -33,6 +33,7 @@ to maintain a single distribution point for the source code.
 
 
 /////////////////////// Classes ///////////////////////////////////////////////
+namespace AAPlus {
 
 class AAPLUS_EXT_CLASS CAAKepler
 {
@@ -41,4 +42,5 @@ public:
   static double Calculate(double M, double e, int nIterations = 53);
 };
 
+}
 #endif //__AAKEPLER_H_

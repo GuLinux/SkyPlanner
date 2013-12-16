@@ -33,6 +33,7 @@ to maintain a single distribution point for the source code.
 
 
 /////////////////////// Classes ///////////////////////////////////////////////
+namespace AAPlus {
 
 class AAPLUS_EXT_CLASS CAAIlluminatedFraction
 {
@@ -60,4 +61,5 @@ public:
   static double PlutoMagnitudeAA(double r, double Delta);
 };
 
+}
 #endif //__AAILLUMINATEDFRACTION_H__

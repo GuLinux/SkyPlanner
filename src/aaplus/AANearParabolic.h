@@ -38,6 +38,7 @@ to maintain a single distribution point for the source code.
 
 
 /////////////////////// Classes ///////////////////////////////////////////////
+namespace AAPlus {
 
 class AAPLUS_EXT_CLASS CAANearParabolicObjectElements
 {
@@ -108,4 +109,5 @@ public:
   static void CalulateTrueAnnomalyAndRadius(double JD, const CAANearParabolicObjectElements& elements, double& v, double& r);
 };
 
+}
 #endif //__AANEARPARABOLIC_H__

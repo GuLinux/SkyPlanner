@@ -33,6 +33,7 @@ to maintain a single distribution point for the source code.
 
 
 /////////////////////// Classes ///////////////////////////////////////////////
+namespace AAPlus {
 
 class AAPLUS_EXT_CLASS CAAEclipticalElementDetails
 {
@@ -58,4 +59,5 @@ public:
   static CAAEclipticalElementDetails FK4B1950ToFK5J2000(double i0, double w0, double omega0);
 };
 
+}
 #endif //__AAECLIPTICALELEMENTS_H__

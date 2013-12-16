@@ -40,10 +40,11 @@ to maintain a single distribution point for the source code.
 #include "AACoordinateTransformation.h"
 #include <cmath>
 using namespace std;
+using namespace AAPlus;
 
 
 ////////////////////////////////// Macros / Defines ///////////////////////////
-
+namespace AAPlus {
 struct MoonPerigeeApogeeCoefficient
 {
   int D;
@@ -226,7 +227,7 @@ const MoonPerigeeApogeeCoefficient g_MoonPerigeeApogeeCoefficients4[] =
   { 6,  -1, 0,  0.014,      0      },
   { 8,  0,  0,  0.010,      0      }   
 };
-
+}
 
 //////////////////////////////// Implementation ///////////////////////////////
 

@@ -33,6 +33,7 @@ to maintain a single distribution point for the source code.
 
 
 /////////////////////// Classes ///////////////////////////////////////////////
+namespace AAPlus {
 
 class AAPLUS_EXT_CLASS CAASolarEclipseDetails
 {
@@ -102,4 +103,5 @@ protected:
   static CAASolarEclipseDetails Calculate(double k, double& Mdash);
 };
 
+}
 #endif //__AAECLIPSES_H__

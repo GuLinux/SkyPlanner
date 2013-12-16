@@ -33,7 +33,7 @@ to maintain a single distribution point for the source code.
 
 
 ////////////////////// Classes ////////////////////////////////////////////////
-
+namespace AAPlus {
 class AAPLUS_EXT_CLASS CAAAngularSeparation
 {
 public:
@@ -44,4 +44,5 @@ public:
   static double SmallestCircle(double Alpha1, double Delta1, double Alpha2, double Delta2, double Alpha3, double Delta3, bool& bType1);
 };
 
+}
 #endif //__AAANGULARSEPARATION_H__

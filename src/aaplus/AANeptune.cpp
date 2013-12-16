@@ -32,9 +32,11 @@ to maintain a single distribution point for the source code.
 #include "AACoordinateTransformation.h"
 #include <cmath>
 using namespace std;
+using namespace AAPlus;
 
 
 ////////////////////////// Macros / Defines ///////////////////////////////////
+namespace AAPlus {
 
 struct VSOP87Coefficient
 {
@@ -261,7 +263,7 @@ const VSOP87Coefficient g_R3NeptuneCoefficients[] =
   { 166,  4.552,  38.133 }
 };
 
-
+}
 ///////////////////////////// Implementation //////////////////////////////////
 
 double CAANeptune::EclipticLongitude(double JD)

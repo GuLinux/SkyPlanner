@@ -29,6 +29,7 @@ to maintain a single distribution point for the source code.
 #include "AADate.h"
 #include <cmath>
 using namespace std;
+using namespace AAPlus;
 
 
 /////////////////////////////// Implementation ////////////////////////////////

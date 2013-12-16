@@ -33,6 +33,7 @@ to maintain a single distribution point for the source code.
 
 
 /////////////////////// Classes ///////////////////////////////////////////////
+namespace AAPlus {
 
 class AAPLUS_EXT_CLASS CAACalendarDate
 {
@@ -111,4 +112,5 @@ protected:
   bool   m_bGregorianCalendar; //Is this date in the Gregorian calendar
 };
 
+}
 #endif //__AADATE_H__

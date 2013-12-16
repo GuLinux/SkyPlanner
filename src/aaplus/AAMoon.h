@@ -33,6 +33,7 @@ to maintain a single distribution point for the source code.
 
 
 /////////////////////// Classes ///////////////////////////////////////////////
+namespace AAPlus {
 
 class AAPLUS_EXT_CLASS CAAMoon
 {
@@ -54,4 +55,5 @@ public:
   static double HorizontalParallaxToRadiusVector(double Parallax);
 };
 
+}
 #endif //__AAMOON_H__

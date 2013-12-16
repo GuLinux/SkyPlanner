@@ -33,7 +33,7 @@ to maintain a single distribution point for the source code.
 
 
 ////////////////////// Classes ////////////////////////////////////////////////
-
+namespace AAPlus {
 class AAPLUS_EXT_CLASS CAAStellarMagnitudes
 {
 public:
@@ -44,4 +44,5 @@ public:
   static double MagnitudeDifference(double brightnessRatio);
 };
 
+}
 #endif //__AASTELLARMAGNITUDES_H__

@@ -39,10 +39,11 @@ to maintain a single distribution point for the source code.
 #include "AACoordinateTransformation.h"
 #include <cmath>
 using namespace std;
+using namespace AAPlus;
 
 
 //////////////////////////// Macros / Defines /////////////////////////////////
-
+namespace AAPlus {
 struct VSOP87Coefficient
 {
   double A;
@@ -407,6 +408,7 @@ const VSOP87Coefficient g_B4EarthCoefficientsJ2000[] =
   { 6,  2.27, 6283.08 },
   { 1,  0,    0 }
 };
+}
 
 
 //////////////////////////////// Implementation ///////////////////////////////

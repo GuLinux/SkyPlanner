@@ -33,6 +33,7 @@ to maintain a single distribution point for the source code.
 
 
 /////////////////////// Classes ///////////////////////////////////////////////
+namespace AAPlus {
 
 class AAPLUS_EXT_CLASS CAASaturnRingDetails
 {
@@ -63,4 +64,5 @@ public:
   static CAASaturnRingDetails Calculate(double JD);
 };
 
+}
 #endif //__AASATURNRINGS_H_

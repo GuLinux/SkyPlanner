@@ -29,10 +29,11 @@ to maintain a single distribution point for the source code.
 #include "AACoordinateTransformation.h"
 #include <cmath>
 using namespace std;
+using namespace AAPlus;
 
 
 //////////////////////// Macros / Defines /////////////////////////////////////
-
+namespace AAPlus {
 struct PlutoCoefficient1
 {
   int J;
@@ -234,7 +235,7 @@ const PlutoCoefficient2 g_PlutoRadiusCoefficients[] =
   {  10,	       3 },
 };
 
-
+}
 /////////////////////////////////// Implementation ////////////////////////////
 
 double CAAPluto::EclipticLongitude(double JD)

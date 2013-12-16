@@ -39,7 +39,7 @@ to maintain a single distribution point for the source code.
 
 
 //////////////////////// Classes //////////////////////////////////////////////
-
+namespace AAPlus {
 class AAPLUS_EXT_CLASS CAANodeObjectDetails
 {
 public:
@@ -64,4 +64,5 @@ public:
   static CAANodeObjectDetails PassageThroDescendingNode(const CAAParabolicObjectElements& elements);
 };
 
+}
 #endif //__AANODES_H__

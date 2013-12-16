@@ -46,10 +46,11 @@ to maintain a single distribution point for the source code.
 #include <cassert>
 #include <cstddef>
 using namespace std;
+using namespace AAPlus;
 
 
 //////////////////////////////// Macros / Defines /////////////////////////////
-
+namespace AAPlus {
 struct MoonCoefficient1
 {
   int D;
@@ -319,7 +320,7 @@ const double g_MoonCoefficients4[] =
   115,  
   107,  
 };
-
+}
 
 /////////////////////////////// Implementation ////////////////////////////////
 

@@ -33,6 +33,7 @@ to maintain a single distribution point for the source code.
 
 
 /////////////////////// Classes ///////////////////////////////////////////////
+namespace AAPlus {
 
 class AAPLUS_EXT_CLASS CAAElementsPlanetaryOrbit
 {
@@ -134,4 +135,5 @@ public:
   static double NeptuneLongitudePerihelionJ2000(double JD);
 };
 
+}
 #endif //__AAELEMENTSPLANETARYORBIT_H__

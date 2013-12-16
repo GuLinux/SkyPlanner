@@ -23,6 +23,7 @@
 #include <boost/format.hpp>
 
 using namespace std;
+using namespace AAPlus;
 
 Angle Angle::degrees(double degrees)
 {

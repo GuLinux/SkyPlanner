@@ -33,6 +33,7 @@ to maintain a single distribution point for the source code.
 
 
 /////////////////////// Classes ///////////////////////////////////////////////
+namespace AAPlus {
 
 class AAPLUS_EXT_CLASS CAABinaryStarDetails
 {
@@ -58,4 +59,5 @@ public:
   static double ApparentEccentricity(double e, double i, double w);
 };
 
+}
 #endif //__AABINARYSTAR_H_

@@ -33,6 +33,7 @@ to maintain a single distribution point for the source code.
 
 
 /////////////////////// Classes ///////////////////////////////////////////////
+namespace AAPlus {
 
 class AAPLUS_EXT_CLASS CAARiseTransitSetDetails
 {
@@ -75,4 +76,5 @@ protected:
   static void ConstraintM(double& M);
 };
 
+}
 #endif //__AARISETRANSITSET_H__

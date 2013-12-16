@@ -33,6 +33,7 @@ to maintain a single distribution point for the source code.
 
 
 /////////////////////// Classes ///////////////////////////////////////////////
+namespace AAPlus {
 
 class AAPLUS_EXT_CLASS CAAInterpolate
 {
@@ -50,4 +51,5 @@ public:
   static double Zero2(double Y1, double Y2, double Y3, double Y4, double Y5);
 };
 
+}
 #endif //__AAINTERPOLATE_H__

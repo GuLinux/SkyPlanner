@@ -39,6 +39,7 @@ to maintain a single distribution point for the source code.
 
 
 /////////////////////// Classes ///////////////////////////////////////////////
+namespace AAPlus {
 
 class AAPLUS_EXT_CLASS CAAAberration
 {
@@ -49,4 +50,5 @@ public:
   static CAA2DCoordinate EquatorialAberration(double Lambda, double Beta, double JD);
 };
 
+}
 #endif //__AAABERRATION_H__

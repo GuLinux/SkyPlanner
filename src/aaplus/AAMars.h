@@ -33,6 +33,7 @@ to maintain a single distribution point for the source code.
 
 
 /////////////////////// Classes ///////////////////////////////////////////////
+namespace AAPlus {
 
 class AAPLUS_EXT_CLASS CAAMars
 {
@@ -43,4 +44,5 @@ public:
   static double RadiusVector(double JD);
 };
 
+}
 #endif //__AAMARS_H__

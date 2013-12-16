@@ -33,7 +33,7 @@ to maintain a single distribution point for the source code.
 
 
 ////////////////////// Classes ////////////////////////////////////////////////
-
+namespace AAPlus {
 class AAPLUS_EXT_CLASS CAARefraction
 {
 public:
@@ -42,4 +42,5 @@ public:
   static double RefractionFromTrue(double Altitude, double Pressure = 1010, double Temperature = 10);
 };
 
+}
 #endif //__AAREFRACTION_H__

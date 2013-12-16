@@ -36,9 +36,11 @@ to maintain a single distribution point for the source code.
 #include "AACoordinateTransformation.h"
 #include <cmath>
 using namespace std;
+using namespace AAPlus;
 
 
 /////////////////////// Macros / Defines //////////////////////////////////////
+namespace AAPlus {
 
 struct VSOP87Coefficient
 {
@@ -414,7 +416,7 @@ const VSOP87Coefficient g_R4MarsCoefficients[] =
   { 2,  4.84, 13362.45 }
 };
 
-
+}
 ///////////////////////////// Implementation //////////////////////////////////
 
 double CAAMars::EclipticLongitude(double JD)

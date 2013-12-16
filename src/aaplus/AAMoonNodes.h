@@ -33,6 +33,7 @@ to maintain a single distribution point for the source code.
 
 
 /////////////////////// Classes ///////////////////////////////////////////////
+namespace AAPlus {
 
 class AAPLUS_EXT_CLASS CAAMoonNodes
 {
@@ -42,4 +43,5 @@ public:
   static double PassageThroNode(double k);
 };
 
+}
 #endif //__AAMOONNODES_H__

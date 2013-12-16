@@ -38,6 +38,7 @@ to maintain a single distribution point for the source code.
 
 
 /////////////////////// Classes ///////////////////////////////////////////////
+namespace AAPlus {
 
 class AAPLUS_EXT_CLASS CAAPhysicalMoonDetails
 {
@@ -96,4 +97,5 @@ protected:
   static void CalculateOpticalLibration(double JD, double Lambda, double Beta, double& ldash, double& bdash, double& ldash2, double& bdash2, double& epsilon, double& omega, double& DeltaU, double& sigma, double& I, double& rho);
 };
 
+}
 #endif //__AAPHYSICALMOON_H_

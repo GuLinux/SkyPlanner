@@ -5,6 +5,8 @@
 
 using namespace std;
 
+
+
 BOOST_AUTO_TEST_CASE(TestAndromedaEquatorialToAltAz)
 {
   double andromedaArAsRad = 0.186314;

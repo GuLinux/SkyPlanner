@@ -33,7 +33,7 @@ to maintain a single distribution point for the source code.
 
 
 ///////////////////// Classes /////////////////////////////////////////////////
-
+namespace AAPlus {
 class AAPLUS_EXT_CLASS CAAEasterDetails
 {
 public:
@@ -55,4 +55,5 @@ public:
   static CAAEasterDetails Calculate(long nYear, bool GregorianCalendar);
 };
 
+}
 #endif //__AAEASTER_H__

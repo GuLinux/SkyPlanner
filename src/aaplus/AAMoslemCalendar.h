@@ -38,6 +38,7 @@ to maintain a single distribution point for the source code.
 
 
 /////////////////////// Classes ///////////////////////////////////////////////
+namespace AAPlus {
 
 class AAPLUS_EXT_CLASS CAAMoslemCalendar
 {
@@ -48,4 +49,5 @@ public:
   static bool            IsLeap(long Year);
 };
 
+}
 #endif //__AAMOSLEMCALENDAR_H__

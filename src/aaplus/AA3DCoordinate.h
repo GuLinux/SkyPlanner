@@ -33,6 +33,7 @@ to maintain a single distribution point for the source code.
 
 
 /////////////////////// Classes ///////////////////////////////////////////////
+namespace AAPlus {
 
 class AAPLUS_EXT_CLASS CAA3DCoordinate
 {
@@ -50,4 +51,5 @@ public:
   double Z;
 };
 
+}
 #endif //__AA3DCOORDINATE_H__

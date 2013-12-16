@@ -33,6 +33,7 @@ to maintain a single distribution point for the source code.
 #include "AAIlluminatedFraction.h"
 #include <cmath>
 using namespace std;
+using namespace AAPlus;
 
 
 //////////////////////////////// Implementation ///////////////////////////////

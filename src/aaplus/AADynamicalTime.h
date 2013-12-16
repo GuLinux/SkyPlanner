@@ -34,6 +34,7 @@ to maintain a single distribution point for the source code.
 
 
 /////////////////////// Classes ///////////////////////////////////////////////
+namespace AAPlus {
 
 class AAPLUS_EXT_CLASS CAADynamicalTime
 {
@@ -50,4 +51,5 @@ public:
   static double UT1MinusUTC(double JD);
 };
 
+}
 #endif //__AADYNAMICALTIME_H__

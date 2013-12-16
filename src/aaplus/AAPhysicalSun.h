@@ -33,7 +33,7 @@ to maintain a single distribution point for the source code.
 
 
 //////////////////////////// Classes //////////////////////////////////////////
-
+namespace AAPlus {
 class AAPLUS_EXT_CLASS CAAPhysicalSunDetails
 {
 public:
@@ -58,4 +58,5 @@ public:
   static double TimeOfStartOfRotation(long C);
 };
 
+}
 #endif //__AAPHYSICALSUN_H_

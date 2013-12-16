@@ -38,6 +38,7 @@ to maintain a single distribution point for the source code.
 
 
 /////////////////////// Classes ///////////////////////////////////////////////
+namespace AAPlus {
 
 class AAPLUS_EXT_CLASS CAAJewishCalendar
 {
@@ -48,4 +49,5 @@ public:
   static long DaysInYear(long Year);
 };
 
+}
 #endif //__AAJEWISHCALENDAR_H__

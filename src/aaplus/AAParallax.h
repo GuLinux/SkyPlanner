@@ -38,6 +38,7 @@ to maintain a single distribution point for the source code.
 
 
 /////////////////////// Classes ///////////////////////////////////////////////
+namespace AAPlus {
 
 class AAPLUS_EXT_CLASS CAATopocentricEclipticDetails
 {
@@ -67,4 +68,5 @@ public:
   static double DistanceToParallax(double Distance);
 };
 
+}
 #endif //__AAPARALLAX_H__

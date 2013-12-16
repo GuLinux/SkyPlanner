@@ -23,6 +23,7 @@
 #include "aaplus/AA+.h"
 
 using namespace std;
+using namespace AAPlus;
 Ephemeris::Private::Private( const Coordinates::LatLng &geoPosition, Ephemeris *q ) : geoPosition(geoPosition), q( q )
 {
 }

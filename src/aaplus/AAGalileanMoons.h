@@ -38,6 +38,7 @@ to maintain a single distribution point for the source code.
 
 
 /////////////////////// Classes ///////////////////////////////////////////////
+namespace AAPlus {
 
 class AAPLUS_EXT_CLASS CAAGalileanMoonDetail
 {
@@ -91,4 +92,5 @@ protected:
   static void FillInPhenomenaDetails(CAAGalileanMoonDetail& detail);
 };
 
+}
 #endif //__AAGALILEANMOONS_H_

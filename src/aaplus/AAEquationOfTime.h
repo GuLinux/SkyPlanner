@@ -33,6 +33,7 @@ to maintain a single distribution point for the source code.
 
 
 /////////////////////// Classes ///////////////////////////////////////////////
+namespace AAPlus {
 
 class AAPLUS_EXT_CLASS CAAEquationOfTime
 {
@@ -41,4 +42,5 @@ public:
   static double Calculate(double JD);
 };
 
+}
 #endif //__AAEQUATIONOFTIME_H__

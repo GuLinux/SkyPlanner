@@ -38,6 +38,7 @@ to maintain a single distribution point for the source code.
 
 
 /////////////////////// Classes ///////////////////////////////////////////////
+namespace AAPlus {
 
 class AAPLUS_EXT_CLASS CAACoordinateTransformation
 {
@@ -115,4 +116,5 @@ public:
   static double DMSToDegrees(double Degrees, double Minutes, double Seconds, bool bPositive = true);
 };
 
+}
 #endif //__AACOORDINATETRANSFORMATION_H__

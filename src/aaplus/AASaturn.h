@@ -33,6 +33,7 @@ to maintain a single distribution point for the source code.
 
 
 /////////////////////// Classes ///////////////////////////////////////////////
+namespace AAPlus {
 
 class AAPLUS_EXT_CLASS CAASaturn
 {
@@ -46,4 +47,5 @@ public:
   static double EclipticLatitudeJ2000(double JD);
 };
 
+}
 #endif //__AASATURN_H__

@@ -67,10 +67,11 @@ to maintain a single distribution point for the source code.
 #include <cassert>
 #include <cstddef>
 using namespace std;
+using namespace AAPlus;
 
 
 ////////////////////////////////// Macros / Defines ///////////////////////////
-
+namespace AAPlus {
 struct DeltaTValue
 {
   double JD;
@@ -660,7 +661,7 @@ const LeapSecondCoefficient g_LeapSecondCoefficients[] = //Cumulative leap secon
   { 2454832.5, 34.0,      41317, 0.0       }, 
   { 2456109.5, 35.0,      41317, 0.0       } 
 };  
-
+}
 
 ////////////////////////////////// Implementation /////////////////////////////
 

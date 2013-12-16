@@ -31,10 +31,11 @@ to maintain a single distribution point for the source code.
 #include <cassert>
 #include <cstddef>
 using namespace std;
+using namespace AAPlus;
 
 
 //////////////////////////// Macros / Defines /////////////////////////////////
-
+namespace AAPlus {
 struct PlanetaryPhenomenaCoefficient1
 {
   double A;
@@ -61,7 +62,7 @@ const PlanetaryPhenomenaCoefficient1 g_PlanetaryPhenomenaCoefficient1[] =
   { 2451569.379, 367.486703,  21.5569,  2.194998    },
 };
 
-
+}
 /////////////////////////// Implementation ////////////////////////////////////
 
 double CAAPlanetaryPhenomena::K(double Year, PlanetaryObject object, EventType type)

@@ -38,6 +38,7 @@ to maintain a single distribution point for the source code.
 
 
 /////////////////////// Classes ///////////////////////////////////////////////
+namespace AAPlus {
 
 class AAPLUS_EXT_CLASS CAAEllipticalObjectElements
 {
@@ -152,4 +153,5 @@ public:
   static double MinorPlanetMagnitude(double H, double delta, double G, double r, double PhaseAngle);
 };
 
+}
 #endif //__AAELLIPTICAL_H__

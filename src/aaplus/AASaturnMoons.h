@@ -38,7 +38,7 @@ to maintain a single distribution point for the source code.
 
 
 ////////////////////// Classes ////////////////////////////////////////////////
-
+namespace AAPlus {
 class AAPLUS_EXT_CLASS CAASaturnMoonDetail
 {
 public:
@@ -86,4 +86,5 @@ protected:
   static void FillInPhenomenaDetails(CAASaturnMoonDetail& detail);
 };
 
+}
 #endif //__AASATURNMOONS_H_

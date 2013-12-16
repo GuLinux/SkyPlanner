@@ -38,6 +38,7 @@ to maintain a single distribution point for the source code.
 #include "AANutation.h"
 #include <cmath>
 using namespace std;
+using namespace AAPlus;
 
 
 //////////////////////////// Implementation ///////////////////////////////////

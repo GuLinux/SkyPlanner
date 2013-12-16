@@ -5,6 +5,7 @@
 #include <cmath>
 #include <memory.h>
 using namespace std;
+using namespace AAPlus;
 
 #if !defined(UNREFERENCED_PARAMETER)
 #define UNREFERENCED_PARAMETER(x) ((void)(x))

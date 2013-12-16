@@ -29,13 +29,13 @@ class Ephemeris::Private
     Coordinates::LatLng geoPosition;
     void GetSolarRaDecByJulian(double JD, double& RA, double& Dec);
     void GetLunarRaDecByJulian(double JD, double& RA, double& Dec);
-    CAARiseTransitSetDetails GetSunRiseTransitSet(double JD, double longitude, double latitude);
-    CAARiseTransitSetDetails GetMoonRiseTransitSet(double JD, double longitude, double latitude);
+    AAPlus::CAARiseTransitSetDetails GetSunRiseTransitSet(double JD, double longitude, double latitude);
+    AAPlus::CAARiseTransitSetDetails GetMoonRiseTransitSet(double JD, double longitude, double latitude);
     void GetMoonIllumination(double JD, double& illuminated_fraction, double& position_angle, double& phase_angle);
 
-    CAADate date(const boost::posix_time::ptime &when) const;
-    boost::posix_time::ptime date(const CAADate &when) const;
-    Ephemeris::RiseTransitSet convert(const CAARiseTransitSetDetails &details, const boost::posix_time::ptime &when);
+    AAPlus::CAADate date(const boost::posix_time::ptime &when) const;
+    boost::posix_time::ptime date(const AAPlus::CAADate &when) const;
+    Ephemeris::RiseTransitSet convert(const AAPlus::CAARiseTransitSetDetails &details, const boost::posix_time::ptime &when);
   private:
     class Ephemeris *const q;
 };
