@@ -95,7 +95,7 @@ void SelectObjectsWidget::Private::append(WTable *table, const Dbo::ptr<NgcObjec
     names << separator << denomination->name();
     separator = ", ";
   }
-  int existing = session.query<int>("select count(*) from astro_session_object where astro_session_id = ? AND objects_object_id = ? ").bind(astroSession.id() ).bind(ngcObject->objectId() );
+  int existing = session.query<int>("select count(*) from astro_session_object where astro_session_id = ? AND objects_id = ? ").bind(astroSession.id() ).bind(ngcObject.id() );
   if(existing > 0)
     row->addStyleClass("success");
   row->elementAt(0)->addWidget(new ObjectNamesWidget{ngcObject, session, astroSession});
@@ -108,7 +108,7 @@ void SelectObjectsWidget::Private::append(WTable *table, const Dbo::ptr<NgcObjec
   row->elementAt(6)->addWidget(new WText{Utils::htmlEncode(WString::fromUTF8(bestAltitude.coordinates.altitude.printable()))});
   row->elementAt(7)->addWidget(WW<WPushButton>(WString::tr("buttons_add")).css("btn btn-primary btn-mini").onClick([=](WMouseEvent){
     Dbo::Transaction t(session);
-    int existing = session.query<int>("select count(*) from astro_session_object where astro_session_id = ? AND objects_object_id = ? ").bind(astroSession.id() ).bind(ngcObject->objectId() );
+    int existing = session.query<int>("select count(*) from astro_session_object where astro_session_id = ? AND objects_id = ? ").bind(astroSession.id() ).bind(ngcObject.id() );
     if(existing>0) {
       AstroPlanner::instance()->notification(WString::tr("notification_warning_title"), WString::tr("notification_object_already_added"), AstroPlanner::Alert, 10);
       return;
@@ -130,7 +130,7 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsTable()
       Dbo::Transaction transaction(session);
       populateHeaders(suggestedObjectsTable);
       for(int i=startOffset; i<min(startOffset+size, suggestedObjectsList.size()); i++) {
-	NgcObjectPtr ngcObject = session.find<NgcObject>().where("object_id = ?").bind(suggestedObjectsList.at(i).first.id());
+        NgcObjectPtr ngcObject = session.find<NgcObject>().where("id = ?").bind(suggestedObjectsList.at(i).first.id());
 	Ephemeris::BestAltitude &bestAltitude = suggestedObjectsList.at(i).second;
 	append(suggestedObjectsTable, ngcObject, bestAltitude);
       }

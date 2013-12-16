@@ -115,9 +115,11 @@ ObjectNamesWidget::ObjectNamesWidget(const Wt::Dbo::ptr<NgcObject> &object, Sess
 	imagesDialog->footer()->addWidget(WW<WPushButton>(WString::tr("buttons_close")).css("pull-right").onClick([=](WMouseEvent){ imagesDialog->accept(); }));
         imagesDialog->show();
       });
-      WMenuItem *ngcIcMenuItem = popup->addItem("NGC-IC Project Page");
-      ngcIcMenuItem->setLink(new AutoPostResource{"http://www.ngcicproject.org/ngcicdb.asp", {{"ngcicobject", object->objectId()}}});
-      ngcIcMenuItem->setLinkTarget(TargetNewWindow);
+      if(object->objectId()) {
+        WMenuItem *ngcIcMenuItem = popup->addItem("NGC-IC Project Page");
+        ngcIcMenuItem->setLink(new AutoPostResource{"http://www.ngcicproject.org/ngcicdb.asp", {{"ngcicobject", *object->objectId()}}});
+        ngcIcMenuItem->setLinkTarget(TargetNewWindow);
+      }
       string catName;
       int catNumber;
       for(auto nebula: object->nebulae()) {

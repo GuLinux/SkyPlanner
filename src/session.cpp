@@ -67,6 +67,11 @@ Session::Session()
     cerr << "-----------------------------------------------" << endl;
     creationScriptPrinted = true;
   }
+  try {
+    createTables();
+  } catch(Dbo::Exception &) {
+    cerr << "Creation script failed, perhaps schema is already existing?" << endl;
+  }
 }
 
 Session::~Session()

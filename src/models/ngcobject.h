@@ -52,7 +52,7 @@ public:
     NgcObject();
     ~NgcObject();
     // CREATE TABLE objects (object_id TEXT PRIMARY KEY, ra REAL, dec REAL, magnitude REAL, angular_size REAL, type INTEGER);
-    std::string objectId() const;
+    boost::optional<std::string> objectId() const;
     dbo::collection< dbo::ptr<NebulaDenomination> > nebulae() const;
     float rightAscension() const;
     float declination() const;
@@ -68,7 +68,7 @@ public:
 
     template<class Action>
     void persist(Action& a) {
-	dbo::id(a, _objectId, "object_id");
+        dbo::field(a, _objectId, "object_id");
         dbo::field(a, _rightAscension, "ra");
         dbo::field(a, _declination, "dec");
         dbo::field(a, _magnitude, "magnitude");
@@ -78,7 +78,7 @@ public:
 	dbo::hasMany(a, _astroSessionObjects, dbo::ManyToOne);
     }
 private:
-    std::string _objectId;
+    boost::optional<std::string> _objectId;
     float _rightAscension, _declination, _magnitude, _angularSize;
     NebulaType _type;
     dbo::collection< dbo::ptr<NebulaDenomination> > _nebulae;
@@ -91,16 +91,9 @@ namespace Wt {
     namespace Dbo {
         template<>
         struct dbo_traits<NgcObject> : public dbo_default_traits {
-	    typedef std::string IdType;
-            static IdType invalidId() {
-                return std::string();
-            }
             static const char *versionField() {
               return 0;
             }
-            static const char *surrogateIdField() {
-	      return 0;
-	    }
         };
 
     }

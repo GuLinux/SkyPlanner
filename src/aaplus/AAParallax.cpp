@@ -34,9 +34,9 @@ using namespace AAPlus;
 
 
 //////////////////////// Macros / Defines ///////////////////////////////////////////////
-
+namespace AAPlus {
 const double g_AAParallax_C1 = sin(CAACoordinateTransformation::DegreesToRadians(CAACoordinateTransformation::DMSToDegrees(0, 0, 8.794)));
-
+}
 
 
 //////////////////////// Implementation /////////////////////////////////////////////////

@@ -72,11 +72,12 @@ void Forecast::fetch(double latitude, double longitude)
 {
   d->client.get(format("http://www.7timer.com/v4/bin/api.pl?lon=%f&lat=%f&product=astro&output=json") % longitude % latitude );
 }
-
+namespace {
 template<typename T>
 T get(Json::Object &o, string key) {
   Json::Value v = o[key];
   return v;
+}
 }
 void Forecast::Private::parseForecast(const string &forecast)
 {

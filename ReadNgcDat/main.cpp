@@ -14,6 +14,7 @@
 #include <QtSql/QSqlError>
 
 using namespace std;
+namespace {
 
 struct ObjectName;
 struct NgcObject {
@@ -34,7 +35,6 @@ struct NgcObject {
   Catalogue catalogue() const { return isIc ? IC : NGC; }
   Key key() const { return { isIc ? IC : NGC, number }; }
 };
-
 map<NgcObject::Catalogue,QString> CatalogueNames {
     {NgcObject::NGC, "NGC"},
     {NgcObject::IC, "IC"},
@@ -43,6 +43,7 @@ map<NgcObject::Catalogue,QString> CatalogueNames {
     {NgcObject::ProperName, ""},
 };
 
+}
 struct ObjectName {
     QString name;
     QString ngcNumber;
@@ -99,7 +100,7 @@ namespace std
     };
 }
 
-
+namespace {
 ostream &operator <<(ostream &s, const NgcObject &ngc) {
     s << "{ " << (ngc.isIc ? "IC " : "NGC ") << ngc.number << ", ra: " << ngc.ra << ", dec: " << ngc.dec << ", magnitude: " << ngc.mag << ", angularSize: " << ngc.angularSize << ", type: " << ngc.type;
     s << ", otherNames: [";
@@ -110,6 +111,7 @@ ostream &operator <<(ostream &s, const NgcObject &ngc) {
     }
     s << "] }";
   return s;
+}
 }
 
 int main(int argc, char *argv[])

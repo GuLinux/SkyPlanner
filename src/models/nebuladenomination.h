@@ -38,7 +38,7 @@ public:
   void persist(Action& a) {
     dbo::field(a, _catalogue, "catalogue");
     dbo::field(a, _number, "number");
-    dbo::id(a, _name, "name");
+    dbo::field(a, _name, "name");
     dbo::field(a, _comment, "comment");
     dbo::belongsTo(a, _ngcObject);
   }
@@ -56,13 +56,6 @@ namespace Wt {
 
         template<>
         struct dbo_traits<NebulaDenomination> : public dbo_default_traits {
-	    typedef std::string IdType;
-            static IdType invalidId() {
-                return std::string();
-            }
-            static const char *surrogateIdField() {
-	      return 0;
-	    }
             static const char *versionField() {
               return 0;
             }

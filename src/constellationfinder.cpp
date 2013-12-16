@@ -22,6 +22,7 @@
 #include <cmath>
 #include "constellationfinder.h"
 using namespace std;
+namespace {
 struct CoordinatesElement {
   double lAR;
   double uAR;
@@ -528,7 +529,7 @@ pair<double,double> precess(double ra1, double dec1, double epoch1, double epoch
   return {ra2, dec2};
 }
 
-
+}
 ConstellationFinder::Constellation ConstellationFinder::getName(const Coordinates::Equatorial &coordinates, double epoch)
 {
   return getName(coordinates.rightAscension.hours(), coordinates.declination.degrees(), epoch);

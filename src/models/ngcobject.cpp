@@ -48,7 +48,7 @@ Wt::Dbo::collection< Wt::Dbo::ptr< NebulaDenomination > > NgcObject::nebulae() c
 {
   return _nebulae;
 }
-std::string NgcObject::objectId() const
+boost::optional<string> NgcObject::objectId() const
 {
   return _objectId;
 }
