@@ -38,6 +38,9 @@
 <message id="astrosessiontab_moon_info">Moon: rising at {1}, setting at {2}</message>
 <message id="astrosessiontab_printable_version_dialog_export_as">Export as...</message>
 <message id="astrosessiontab_information_panel">Information</message>
+<message id="astrosessiontab_object_observed">✓ Observed</message>
+<message id="astrosessiontab_object_not_observed">✗ Observed</message>
+
 <message id="object_column_names">Names</message>
 <message id="object_column_type">Type</message>
 <message id="object_column_constellation">Constellation</message>

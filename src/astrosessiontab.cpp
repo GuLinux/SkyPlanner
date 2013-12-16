@@ -94,9 +94,12 @@ void AstroSessionTab::Private::reload()
   PlaceWidget *placeWidget = new PlaceWidget(astroSession, session);
 
   auto locationPanel = addPanel(WString::tr("position_title"), placeWidget ); 
-  addPanel(WString::tr("astrosessiontab_information_panel"), sessionInfo);
+  addPanel(WString::tr("astrosessiontab_information_panel"), sessionInfo, true);
   if(astroSession->position()) {
-    placeWidget->mapReady().connect([=](_n6){ WTimer::singleShot(1500, [=](WMouseEvent){ locationPanel->collapse(); }); });
+    placeWidget->mapReady().connect([=](_n6){ WTimer::singleShot(1500, [=](WMouseEvent){
+        locationPanel->collapse();
+      });
+    });
   }
   SelectObjectsWidget *addObjectsTabWidget = 0;
   if(editable) {
@@ -122,7 +125,7 @@ void AstroSessionTab::Private::reload()
     WLineEdit *sessionName = WW<WLineEdit>(astroSession->name()).css("input-block-level");
     WDateEdit *sessionDate = WW<WDateEdit>().css("input-block-level");
     sessionDate->setDate(astroSession->wDateWhen().date());
-    changeNameOrDateDialog->footer()->addWidget(WW<WPushButton>(WString::tr("buttons_ok")).css("btn btn-primary").onClick([=](WMouseEvent){
+    changeNameOrDateDialog->footer()->addWidget(WW<WPushButton>(WString::tr("Wt.WMessageBox.Ok")).css("btn btn-primary").onClick([=](WMouseEvent){
       Dbo::Transaction t(session);
       astroSession.modify()->setName(sessionName->text().toUTF8());
       astroSession.modify()->setDateTime(WDateTime{sessionDate->date()});
@@ -369,6 +372,25 @@ void AstroSessionTab::Private::populate()
         });
         confirmation->show();
       }));
+    }
+
+    if(!editable) {
+      WPushButton *observedToggleButton = WW<WPushButton>().css("btn btn-mini");
+      observedToggleButton->setTextFormat(XHTMLUnsafeText);
+      auto setObservedButtonStyle = [=]( const Dbo::ptr<AstroSessionObject> &o) {
+        observedToggleButton->setText(o->observed() ? WString::tr("astrosessiontab_object_observed") : WString::tr("astrosessiontab_object_not_observed"));
+        observedToggleButton->addStyleClass(o->observed() ? "btn-success" : "btn-inverse");
+        observedToggleButton->removeStyleClass(!o->observed() ? "btn-success" : "btn-inverse");
+      };
+      observedToggleButton->clicked().connect([=](WMouseEvent) {
+        Dbo::Transaction t(session);
+        Dbo::ptr<AstroSessionObject> o = session.find<AstroSessionObject>().where("id = ?").bind(sessionObject.id());
+        o.modify()->setObserved(!sessionObject->observed());
+        t.commit();
+        setObservedButtonStyle(o);
+      });
+      setObservedButtonStyle(sessionObject);
+      actions->addButton(observedToggleButton);
     }
   }
 }
