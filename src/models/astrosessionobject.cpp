@@ -67,3 +67,14 @@ string AstroSessionObject::description() const
 {
   return _description;
 }
+
+bool AstroSessionObject::observed() const
+{
+  return _observed;
+}
+
+void AstroSessionObject::setObserved(bool observed)
+{
+  _observed = observed;
+}
+
