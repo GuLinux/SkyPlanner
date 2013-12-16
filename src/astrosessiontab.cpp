@@ -82,25 +82,33 @@ void AstroSessionTab::Private::reload()
   q->clear();
   WContainerWidget *actionsContainer = WW<WContainerWidget>().setMargin(10);
   q->addWidget(actionsContainer);
+  bool editable = astroSession->wDateWhen() > WDateTime::currentDateTime();
   
   WContainerWidget *sessionInfo = WW<WContainerWidget>();
   sessionInfo->addWidget(new WText{WLocalDateTime(astroSession->wDateWhen().date(), astroSession->wDateWhen().time())
     .toString("dddd dd MMMM yyyy")});
-  PlaceWidget *placeWidget = new PlaceWidget(astroSession, session);
-  SelectObjectsWidget *addObjectsTabWidget = new SelectObjectsWidget(astroSession, session);
-  placeWidget->placeChanged().connect([=](double lat, double lng, _n4) {
-    addObjectsTabWidget->populateFor(selectedTelescope);
-    updatePositionDetails();
-  });
+
+
   sessionInfo->addWidget(positionDetails = WW<WContainerWidget>());
+
+  PlaceWidget *placeWidget = new PlaceWidget(astroSession, session);
+
   auto locationPanel = addPanel(WString::tr("position_title"), placeWidget ); 
   addPanel(WString::tr("astrosessiontab_information_panel"), sessionInfo);
   if(astroSession->position()) {
     placeWidget->mapReady().connect([=](_n6){ WTimer::singleShot(1500, [=](WMouseEvent){ locationPanel->collapse(); }); });
   }
-  addPanel(WString::tr("astrosessiontab_add_observable_object"), addObjectsTabWidget, true);
+  SelectObjectsWidget *addObjectsTabWidget = 0;
+  if(editable) {
+    SelectObjectsWidget *addObjectsTabWidget = new SelectObjectsWidget(astroSession, session);
+    placeWidget->placeChanged().connect([=](double lat, double lng, _n4) {
+      addObjectsTabWidget->populateFor(selectedTelescope);
+      updatePositionDetails();
+    });
+    addPanel(WString::tr("astrosessiontab_add_observable_object"), addObjectsTabWidget, true);
 
-  addObjectsTabWidget->objectsListChanged().connect([=](_n6){populate(); });
+    addObjectsTabWidget->objectsListChanged().connect([=](_n6){populate(); });
+  }
   q->addWidget(new WText{WString("<h3>{1}</h3>").arg(WString::tr("astrosessiontab_objects_title"))});
 
   q->addWidget(objectsTable = WW<WTable>().addCss("table table-striped table-hover"));
@@ -151,7 +159,8 @@ void AstroSessionTab::Private::reload()
     telescopeCombo->activated().connect([=](int index, _n5){
       selectedTelescope = boost::any_cast<Dbo::ptr<Telescope>>(model->item(index)->data());
       populate();
-      addObjectsTabWidget->populateFor(selectedTelescope);
+      if(addObjectsTabWidget)
+        addObjectsTabWidget->populateFor(selectedTelescope);
     });
   } else {
     actionsContainer->addWidget(WW<WText>(WString::tr("astrosessiontab_no_telescopes_message")).css("pull-right"));
@@ -160,7 +169,8 @@ void AstroSessionTab::Private::reload()
   populate();
   updatePositionDetails();
   WTimer::singleShot(200, [=](WMouseEvent) {
-    addObjectsTabWidget->populateFor(selectedTelescope);
+    if(addObjectsTabWidget)
+      addObjectsTabWidget->populateFor(selectedTelescope);
   });
 }
 
