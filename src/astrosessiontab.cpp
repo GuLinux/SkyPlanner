@@ -82,7 +82,7 @@ void AstroSessionTab::Private::reload()
   q->clear();
   WContainerWidget *actionsContainer = WW<WContainerWidget>().setMargin(10);
   q->addWidget(actionsContainer);
-  editable = astroSession->wDateWhen() > WDateTime::currentDateTime();
+  pastObservation = astroSession->wDateWhen() < WDateTime::currentDateTime();
   
   WContainerWidget *sessionInfo = WW<WContainerWidget>();
   sessionInfo->addWidget(new WText{WLocalDateTime(astroSession->wDateWhen().date(), astroSession->wDateWhen().time())
@@ -101,17 +101,13 @@ void AstroSessionTab::Private::reload()
       });
     });
   }
-  SelectObjectsWidget *addObjectsTabWidget = 0;
-  if(editable) {
-    SelectObjectsWidget *addObjectsTabWidget = new SelectObjectsWidget(astroSession, session);
-    placeWidget->placeChanged().connect([=](double lat, double lng, _n4) {
-      addObjectsTabWidget->populateFor(selectedTelescope);
-      updatePositionDetails();
-    });
-    addPanel(WString::tr("astrosessiontab_add_observable_object"), addObjectsTabWidget, true);
-
-    addObjectsTabWidget->objectsListChanged().connect([=](_n6){populate(); });
-  }
+  SelectObjectsWidget *addObjectsTabWidget = new SelectObjectsWidget(astroSession, session);
+  placeWidget->placeChanged().connect([=](double lat, double lng, _n4) {
+    addObjectsTabWidget->populateFor(selectedTelescope);
+    updatePositionDetails();
+  });
+  addPanel(WString::tr("astrosessiontab_add_observable_object"), addObjectsTabWidget, true);
+  addObjectsTabWidget->objectsListChanged().connect([=](_n6){populate(); });
   q->addWidget(new WText{WString("<h3>{1}</h3>").arg(WString::tr("astrosessiontab_objects_title"))});
 
   q->addWidget(objectsTable = WW<WTable>().addCss("table table-striped table-hover"));
@@ -162,8 +158,7 @@ void AstroSessionTab::Private::reload()
     telescopeCombo->activated().connect([=](int index, _n5){
       selectedTelescope = boost::any_cast<Dbo::ptr<Telescope>>(model->item(index)->data());
       populate();
-      if(addObjectsTabWidget)
-        addObjectsTabWidget->populateFor(selectedTelescope);
+      addObjectsTabWidget->populateFor(selectedTelescope);
     });
   } else {
     actionsContainer->addWidget(WW<WText>(WString::tr("astrosessiontab_no_telescopes_message")).css("pull-right"));
@@ -172,8 +167,7 @@ void AstroSessionTab::Private::reload()
   populate();
   updatePositionDetails();
   WTimer::singleShot(200, [=](WMouseEvent) {
-    if(addObjectsTabWidget)
-      addObjectsTabWidget->populateFor(selectedTelescope);
+    addObjectsTabWidget->populateFor(selectedTelescope);
   });
 }
 
@@ -356,25 +350,23 @@ void AstroSessionTab::Private::populate()
     actions->addButton(WW<WPushButton>(WString::tr("description")).css("btn btn-mini").onClick([=](WMouseEvent){
       descriptionCell->setHidden(!descriptionCell->isHidden());
     }));
-    if(editable) {
-      actions->addButton(WW<WPushButton>(WString::tr("buttons_remove")).css("btn btn-danger btn-mini").onClick([=](WMouseEvent){
-        WMessageBox *confirmation = new WMessageBox(WString::tr("messagebox_confirm_removal_title"), WString::tr("messagebox_confirm_removal_message"), Wt::Question, Wt::Ok | Wt::Cancel);
-        confirmation->buttonClicked().connect([=](StandardButton b, _n5){
-          if(b != Wt::Ok) {
-            confirmation->reject();
-            return;
-          }
-          confirmation->accept();
-          Dbo::Transaction t(session);
-          astroSession.modify()->astroSessionObjects().erase(sessionObject);
-          t.commit();
-          populate();
-        });
-        confirmation->show();
-      }));
-    }
+    actions->addButton(WW<WPushButton>(WString::tr("buttons_remove")).css("btn btn-danger btn-mini").onClick([=](WMouseEvent){
+      WMessageBox *confirmation = new WMessageBox(WString::tr("messagebox_confirm_removal_title"), WString::tr("messagebox_confirm_removal_message"), Wt::Question, Wt::Ok | Wt::Cancel);
+      confirmation->buttonClicked().connect([=](StandardButton b, _n5){
+        if(b != Wt::Ok) {
+          confirmation->reject();
+          return;
+        }
+        confirmation->accept();
+        Dbo::Transaction t(session);
+        astroSession.modify()->astroSessionObjects().erase(sessionObject);
+        t.commit();
+        populate();
+      });
+      confirmation->show();
+    }));
 
-    if(!editable) {
+    if(pastObservation) {
       WPushButton *observedToggleButton = WW<WPushButton>().css("btn btn-mini");
       observedToggleButton->setTextFormat(XHTMLUnsafeText);
       auto setObservedButtonStyle = [=]( const Dbo::ptr<AstroSessionObject> &o) {
