@@ -82,7 +82,7 @@ void AstroSessionTab::Private::reload()
   q->clear();
   WContainerWidget *actionsContainer = WW<WContainerWidget>().setMargin(10);
   q->addWidget(actionsContainer);
-  bool editable = astroSession->wDateWhen() > WDateTime::currentDateTime();
+  editable = astroSession->wDateWhen() > WDateTime::currentDateTime();
   
   WContainerWidget *sessionInfo = WW<WContainerWidget>();
   sessionInfo->addWidget(new WText{WLocalDateTime(astroSession->wDateWhen().date(), astroSession->wDateWhen().time())
@@ -353,21 +353,23 @@ void AstroSessionTab::Private::populate()
     actions->addButton(WW<WPushButton>(WString::tr("description")).css("btn btn-mini").onClick([=](WMouseEvent){
       descriptionCell->setHidden(!descriptionCell->isHidden());
     }));
-    actions->addButton(WW<WPushButton>(WString::tr("buttons_remove")).css("btn btn-danger btn-mini").onClick([=](WMouseEvent){
-      WMessageBox *confirmation = new WMessageBox(WString::tr("messagebox_confirm_removal_title"), WString::tr("messagebox_confirm_removal_message"), Wt::Question, Wt::Ok | Wt::Cancel);
-      confirmation->buttonClicked().connect([=](StandardButton b, _n5){
-        if(b != Wt::Ok) {
-          confirmation->reject();
-          return;
-        }
-        confirmation->accept();
-        Dbo::Transaction t(session);
-        astroSession.modify()->astroSessionObjects().erase(sessionObject);
-        t.commit();
-        populate();
-      });
-      confirmation->show();
-    }));
+    if(editable) {
+      actions->addButton(WW<WPushButton>(WString::tr("buttons_remove")).css("btn btn-danger btn-mini").onClick([=](WMouseEvent){
+        WMessageBox *confirmation = new WMessageBox(WString::tr("messagebox_confirm_removal_title"), WString::tr("messagebox_confirm_removal_message"), Wt::Question, Wt::Ok | Wt::Cancel);
+        confirmation->buttonClicked().connect([=](StandardButton b, _n5){
+          if(b != Wt::Ok) {
+            confirmation->reject();
+            return;
+          }
+          confirmation->accept();
+          Dbo::Transaction t(session);
+          astroSession.modify()->astroSessionObjects().erase(sessionObject);
+          t.commit();
+          populate();
+        });
+        confirmation->show();
+      }));
+    }
   }
 }
 

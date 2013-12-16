@@ -40,6 +40,7 @@ public:
     Wt::Dbo::ptr<Telescope> selectedTelescope;
     Wt::Signal<std::string> nameChanged;
     void printableVersion();
+    bool editable;
 private:
     class AstroSessionTab* const q;
 };
