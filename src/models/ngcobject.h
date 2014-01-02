@@ -47,9 +47,10 @@ public:
             NebIg=0x6,     //!< ??? Irregular Galaxy? Does not exist in current catalog
             NebCn=0x7,     //!< Cluster associated with nebulosity
             NebUnknown=0x8, //!< Unknown type, catalog errors, "Unidentified Southern Objects" etc.
-            NebGalCluster=0x9 //!< Galaxy Clusters, mostly abell
+            NebGalCluster=0x9, //!< Galaxy Clusters, mostly abell
+            Asterism=0xA,
     };
-    static const int NebulaTypeCount = 10;
+    static const int NebulaTypeCount = 11;
     NgcObject();
     ~NgcObject();
     // CREATE TABLE objects (object_id TEXT PRIMARY KEY, ra REAL, dec REAL, magnitude REAL, angular_size REAL, type INTEGER);
