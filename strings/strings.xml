@@ -87,6 +87,7 @@
 <message id="ngcobject_type_NebDn">Dark nebula</message>
 <message id="ngcobject_type_NebIg">Irregular galaxy</message>
 <message id="ngcobject_type_NebCn">Cluster with nebulosity</message>
+<message id="ngcobject_type_GalClust">Cluster of galaxies</message>
 <message id="ngcobject_type_NebUnknown">Unknown</message>
 
 <message id="dssimage_version_label">DSS Image Type: </message>

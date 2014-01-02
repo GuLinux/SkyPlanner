@@ -38,15 +38,16 @@ public:
     enum NebulaType
     {
             All=-1,
-            NebGx=0,     //!< Galaxy
-            NebOc=1,     //!< Open star cluster
-            NebGc=2,     //!< Globular star cluster, usually in the Milky Way Galaxy
-            NebN=3,      //!< Bright emission or reflection nebula
-            NebPn=4,     //!< Planetary nebula
-            NebDn=5,     //!< ??? Dark Nebula?      Does not exist in current catalog
-            NebIg=6,     //!< ??? Irregular Galaxy? Does not exist in current catalog
-            NebCn=7,     //!< Cluster associated with nebulosity
-            NebUnknown=8 //!< Unknown type, catalog errors, "Unidentified Southern Objects" etc.
+            NebGx=0x0,     //!< Galaxy
+            NebOc=0x1,     //!< Open star cluster
+            NebGc=0x2,     //!< Globular star cluster, usually in the Milky Way Galaxy
+            NebN=0x3,      //!< Bright emission or reflection nebula
+            NebPn=0x4,     //!< Planetary nebula
+            NebDn=0x5,     //!< ??? Dark Nebula?      Does not exist in current catalog
+            NebIg=0x6,     //!< ??? Irregular Galaxy? Does not exist in current catalog
+            NebCn=0x7,     //!< Cluster associated with nebulosity
+            NebUnknown=0x8, //!< Unknown type, catalog errors, "Unidentified Southern Objects" etc.
+            NebGalCluster=0x9 //!< Galaxy Clusters, mostly abell
     };
     static const int NebulaTypeCount = 9;
     NgcObject();

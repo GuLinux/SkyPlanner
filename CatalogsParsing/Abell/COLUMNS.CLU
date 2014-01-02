@@ -1,0 +1,164 @@
+The contents of the Abell Catalogue data files is identical to the tables 
+published in Ap. J. Suppl. 70, 1, 1989.  However, the data have been 
+rearranged into two lines for each cluster to allow easy use with 80 column 
+computer terminal displays.    There are four files 
+
+nabell.fin:   final northern Abell catalogue
+rich.fin:     final southern Abell catalogue
+poor.fin:     supplementary southern Abell catalogue
+sabell.fin    northern Abell clusters found during the southern survey
+
+and all have exactly the same format.  An example with column headings is 
+given below.  Note that the northern Abell catalogue does not list xcen, ycen, 
+Abell type, m1, m3, m10, previous listings, or number of plates and observers. 
+The northern catalogue has also had all known errors corrected (Struble and 
+Rood 1987a, Leir 1976 as reported by Struble and Rood 1987a, and Corwin 1972 
+unpublished). 
+
+EXPLANATION OF THE TABLES:
+
+Column        Contents
+
+FIRST LINE:
+
+Abell         Running number ("Abell" number) in order of right ascension for 
+              1855 as listed by Abell (1958) for the northern clusters (1 to 
+              2712) and in order of right ascension for 1950 for the southern 
+              clusters (2713 to 4076).  The supplementary southern clusters are 
+              numbered from S1 to S1174. 
+Position      Right Ascension and Declination for 1950 of the apparent cluster 
+  (1950)      center.  When the cluster was found in more than one field, a 
+              mean position is listed.  For the southern clusters, Abell and 
+              Corwin used overlays positioned with respect to SAO stars to 
+              estimate the position, while Olowin calculated positions from his 
+              measured rectangular coordinates.  Thus, Olowin's positions were 
+              given double weight when means were taken.  Abell estimated the 
+              positions of the northern clusters with respect to BD stars on 
+              the BD charts. 
+Field         The Southern Sky Survey Field number in which the cluster is 
+              located.  For clusters found in two or more fields, the field 
+              given is the one in which the cluster is closest to the plate 
+              center. 
+xcen, ycen    Rectangular coordinates in millimeters of the apparent cluster 
+              center, referred to the CENTER of the Southern Sky Survey Field 
+              given in the previous column.  The field centers are defined by 
+              the crosses near the edges of the plates.  The positive x 
+              direction is to the east (left) and the positive y direction is 
+              to the north (top).  These are in the same sense as the 
+              rectangular coordinates given by Lauberts (1983) in the 
+              ESO/Uppsala Catalogue, and are listed to facilitate location of 
+              the cluster on the 5 x 5 degree ESO 1.0-m Schmidt portion of the 
+              Southern Sky Survey.  Abell and Corwin measured rectangular 
+              coordinates from the left and bottom edges of the plates, so the 
+              xcen and ycen from their data are calculated assuming that the 
+              plate center is 164 millimeters from the left and bottom crosses 
+              on the plates (they also measured the crosses).  Olowin referred 
+              his rectangular coordinates directly to the plate center as 
+              defined by the crosses, so no transformation is necessary for his 
+              data. 
+Abell Type    Cluster classification in Abell's system:  I = irregular, R = 
+              regular, IR and RI = intermediate.  ":" indicates a mean type 
+              with differences between estimates of two steps, or an uncertain 
+              type estimate; "?" indicates a mean type with differences between 
+              estimates of three steps, or a questionable type estimate. 
+Bautz-Morgan  Classification in the Bautz-Morgan system (Bautz and Morgan 
+  Type        1970).  ":" indicates a mean type with differences between 
+              estimates of two steps, or an uncertain type estimate; "?" 
+              indicates a mean type with differences between estimates of three 
+              or more steps, or a questionable type estimate.  For the northern 
+              catalogue, these types are primarily from Leir and van den Bergh 
+              (1977).  Other sources for the northern catalogue are Bautz and 
+              Morgan (1970), Bautz (1972), Corwin (1974), Kristian et al. 
+              (1978), Sandage et al. (1976), and White (1978). 
+Count         Number of cluster members between m3 and m3+2, corrected for 
+              background contamination using a) the "universal" luminosity 
+              function from Rainey (1976) for the southern clusters and b) 
+              local background counts for the northern clusters.  The southern 
+              counts are corrected to the system of the northern catalogue (see 
+              text). 
+m1            Weighted mean total V magnitude estimate for the first-ranked 
+              cluster member.  NO GALACTIC EXTINCTION CORRECTION HAS BEEN 
+              APPLIED.  ":" indicates a mean magnitude with a standard 
+              deviation of more than +-0.5 mag, or an uncertain magnitude 
+              estimate.  "?" indicates a mean magnitude with a standard 
+              deviation of more than +-1.0 mag, or a questionable magnitude 
+              estimate.  "*" indicates that the magnitude estimate is for a 
+              known or probable foreground object. 
+m3            Weighted mean total V magnitude estimate for the third-ranked 
+              cluster member, again UNCORRECTED for galactic extinction.  
+              Uncertainty symbols as for m1. 
+m10           Weighted mean total V magnitude estimate for the tenth-ranked 
+              cluster member, again UNCORRECTED for galactic extinction.  
+              Uncertainty symbols as for m1 and m3. 
+
+SECOND LINE:
+
+Position      RA and Dec of the apparent cluster center precessed to the 
+  (2000)      equinox of 2000.
+Previous      Sources of previous listings:  B = Braid and MacGillivray 
+  Listings    (1978), D = Duus and Newell (1977), d = Dressler (1980), K = 
+              Klemola (1969), O = Olowin (1987), Q = Quintana and White (1980 
+              and private communication), Rose (1976), S = Sersic (1974), and 
+              s = Snow (1970).  Even though all questionable cases of cross 
+              identification were checked on the Southern Sky Survey, there 
+              remain a few uncertain cases.  These are given in the Notes to 
+              the Catalogue. 
+xll, yll      Rectangular coordinates of the apparent cluster center, referred 
+              to the south-east (lower left) edge of the Southern Sky Survey 
+              Field given in the first line.  The field edges are defined by 
+              the crosses near the edges of the plates; thus, it is possible 
+              for these coordinates to be negative.  Olowin's data were 
+              transformed assuming that the plate center is 164 millimeters 
+              from the crosses.  For the northern catalogue, the coordinates 
+              in these columns are taken from Sastry and Rood (1971), and are 
+              again referred to the lower left (south east) corner of the 
+              Palomar Sky Survey prints. 
+l and b       Galactic coordinates of the apparent cluster centers, calculated 
+              from the 1950 equatorial coordinates. 
+z             Cluster redshift from the lists by Struble and Rood (1987b, 
+              northern Abell clusters), Huchra's 1986 collection of published 
+              redshifts (Huchra, private communication), Fairall (1985), Corwin 
+              (1981; see also Corwin and Emerson 1982), Couch and Newell (1981 
+              and private communication), Noonan (1981), and Spinrad (private 
+              communication).  The redshift is in parentheses if it is more 
+              than 0.3 dex from the expected redshift for the cluster's m10.  
+              Redshifts from Huchra's list and from Fairall (1985) were 
+              determined by selecting all galaxies with known redshifts within 
+              one Abell radius of the cluster center, rejecting discordant 
+              redshifts, and averaging the remainder. 
+R             Richness class as defined by Abell (1958).  For the northern 
+              catalogue, this is Abell's original richness class. 
+D             Distance class corresponding to Abell's (1958) criteria.  For the 
+              northern clusters, this is Abell's original distance class from 
+              his m10.  For the southern catalogue, these are from the m10A's 
+              listed in the next column. 
+m10A          Magnitude for the tenth-ranked cluster member in Abell's (1958) 
+              system, corrected for galactic extinction following Abell's 
+              formula.  For the northern Abell catalogue, this is Abell's 
+              original magnitude.  For the southern catalogue, these were 
+              transformed from the m10 on the first line (see text).
+Number and    Number of fields in which the cluster was found, and the 
+  Observers   observer's initial (A = Abell, C = Corwin, O = Olowin).
+
+EXAMPLE LISTING:
+
+Abell  RA (1950) Dec  Field xcen ycen Ab Type B-M  Count   m1    m3    m10
+ No.      (2000)      Lists xll  yll     l      b      z    R D m10A  nObs
+ 
+3743  21  3.4 -27 19  F464  -25  147  IR  II-III   ( 65)  16.0  17.3  19.2 
+      21  6.8 -27  6  BDORs 189  311   19.28 -40.46 (.1136) 1 5 17.2  1O    
+3744  21  4.3 -25 41  F530 -142  -35  IR: II-III     70?  13.1: 13.5  14.5:
+      21  7.5 -25 28        306  129   21.41 -40.22         1 2 14.5  2C    
+3745  21  4.3 -47 37  F235   35  130  R   II-III     96:  18.0? 18.2? 18.8:
+      21  8.0 -47 24        129  294  352.22 -42.35         2 5 17.2  1C,1O,1A
+3746  21  5.1 -36 13  F402  -75  -64  R   II         44   15.6  16.7  18.2 
+      21  8.3 -36  0        239  100    7.66 -42.30         0 5 17.1  1O,1C 
+3747  21  5.4 -43 42  F286   50   70  IR  I-II       44:  12.7  13.4  15.0 
+      21  9.1 -43 29        114  234  357.52 -42.74         0 3 15.0  1O    
+3748  21  6.0 -78 26  F026   14   81  IR  III        50   17.1  17.7  18.8 
+      21 12.2 -78 13  KOS   150  245  314.46 -33.44  .1907  1 5 17.0  1O    
+3749  21  6.9 -46  1  F286   62  -55  IR  III        55   15.7  16.4  17.6 
+      21 11.1 -45 48        102  109  354.34 -43.01         1 5 17.0  1O    
+3750  21 10.6 -49 48  F235   87   10  R   II-III:    99   17.7  18.0  18.5 
+      21 14.6 -49 35         77  174  349.11 -43.21         2 5 17.1  1C    
+
