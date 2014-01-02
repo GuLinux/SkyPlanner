@@ -74,8 +74,9 @@ ObjectNamesWidget::ObjectNamesWidget(const Wt::Dbo::ptr<NgcObject> &object, Sess
     namesText->clicked().connect([=](WMouseEvent e) {
       Dbo::Transaction t(d->session);
       WPopupMenu *popup = new WPopupMenu();
-      auto addLink = [=](const WString &label, const WLink &url) {
-	WMenuItem *menuItem = popup->addItem(label);
+      auto addLink = [=](const WString &label, const WLink &url, WMenu *menu = 0) {
+        if(!menu) menu = popup;
+	WMenuItem *menuItem = menu->addItem(label);
         menuItem->setLink(url);
 	menuItem->setLinkTarget(TargetNewWindow);
       };
@@ -151,8 +152,24 @@ ObjectNamesWidget::ObjectNamesWidget(const Wt::Dbo::ptr<NgcObject> &object, Sess
       addLink("DSO Browser", dsoBrowserLink.str());
       
       popup->addSectionHeader(WString::tr("objectnames_search_menu_title"));
-      addLink(WString::tr("objectnames_google_search"), (format("http://www.google.com/search?q=%s%%20%s") % catName % catNumber ).str() );
-      addLink(WString::tr("objectnames_google_images_search"), (format("http://www.google.com/images?q=%s%%20%s") % catName % catNumber ).str() );
+      auto googleSearch = [=] (string type, string catalogue, int number) {
+        return (format("http://www.google.com/%s?q=%s%%20%s") % type % catalogue % number).str();
+      };
+      if(names.size() == 1) {
+        string catName = names.front()->catalogue();
+        int catNumber = names.front()->number();
+        addLink(WString::tr("objectnames_google_search"), googleSearch("search", catName, catNumber ) );
+        addLink(WString::tr("objectnames_google_images_search"), googleSearch("images", catName, catNumber ) );
+      } else {
+        WMenu *googleSearchSubMenu = new WPopupMenu();
+        WMenu *googleImagesSearchSubMenu = new WPopupMenu();
+        popup->addMenu(WString::tr("objectnames_google_search"), googleSearchSubMenu);
+        popup->addMenu(WString::tr("objectnames_google_images_search"), googleImagesSearchSubMenu);
+        for(auto name: names) {
+          addLink(name->name(), googleSearch("search", catName, catNumber), googleSearchSubMenu);
+          addLink(name->name(), googleSearch("images", catName, catNumber), googleImagesSearchSubMenu);
+        }
+      }
       popup->popup(e);
     });
 }
