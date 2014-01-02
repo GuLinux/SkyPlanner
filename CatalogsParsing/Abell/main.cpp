@@ -1,4 +1,4 @@
-#include <QApplication>
+#include <QCoreApplication>
 #include <QFile>
 #include <QTextStream>
 #include <QStringList>
@@ -26,7 +26,7 @@ double deg2rad(const QString &deg)
 }
 
 int main(int argc, char **argv) {
-  QApplication app(argc, argv);
+  QCoreApplication app(argc, argv);
   QFile file (app.arguments()[1]);
   file.open(QIODevice::ReadOnly);
   QTextStream s(&file);
