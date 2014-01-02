@@ -49,7 +49,7 @@ public:
             NebUnknown=0x8, //!< Unknown type, catalog errors, "Unidentified Southern Objects" etc.
             NebGalCluster=0x9 //!< Galaxy Clusters, mostly abell
     };
-    static const int NebulaTypeCount = 9;
+    static const int NebulaTypeCount = 10;
     NgcObject();
     ~NgcObject();
     // CREATE TABLE objects (object_id TEXT PRIMARY KEY, ra REAL, dec REAL, magnitude REAL, angular_size REAL, type INTEGER);
