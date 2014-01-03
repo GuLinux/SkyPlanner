@@ -74,6 +74,7 @@ Angle::Sexagesimal Angle::sexagesimal() const
   int degrees_i = static_cast<int>(angle);
   angle -= degrees_i;
   angle *= angle>0?60.:-60.;
+  angle = round(angle * 1000.) / 1000.;
   int minutes_i = static_cast<int>(angle);
   angle -= minutes_i;
   angle *= 60.;
@@ -86,6 +87,7 @@ Angle::Hours Angle::sexagesimalHours() const
   int degrees_i = static_cast<int>(angle);
   angle -= degrees_i;
   angle *= angle>0?60.:-60.;
+  angle = round(angle * 1000.) / 1000.;
   int minutes_i = static_cast<int>(angle);
   angle -= minutes_i;
   angle *= 60.;
@@ -96,17 +98,9 @@ Angle::Hours Angle::sexagesimalHours() const
 string Angle::printable(Format format, PrintFormat printFormat) const
 {
   if(format == Hourly) {
-    double time = hours();
-    int hours_i = static_cast<int>(time);
+    auto sHours = sexagesimalHours();
+    return (boost::format("%dh %2dm %.1fs") % sHours.hours % sHours.minutes % sHours.seconds ).str();
 
-    time -= hours_i;
-    time *= time>0?60.:-60.;
-
-    int minutes_i = static_cast<int>(time);
-    time -= minutes_i;
-    time *= 60.;
-
-    return (boost::format("%dh %2dm %.1fs") % hours_i % minutes_i % time ).str();
   }
 
   Sexagesimal asSexagesimal = sexagesimal();
