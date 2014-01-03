@@ -127,10 +127,6 @@ ObjectNamesWidget::ObjectNamesWidget(const Wt::Dbo::ptr<NgcObject> &object, Sess
     WMenuItem *ngcIcMenuItem = popup->addItem("NGC-IC Project Page");
     ngcIcMenuItem->setLink(new AutoPostResource{"http://www.ngcicproject.org/ngcicdb.asp", {{"ngcicobject", *object->objectId()}}});
     ngcIcMenuItem->setLinkTarget(TargetNewWindow);
-
-	}
-      }
-      
       stringstream dsoBrowserLink;
       dsoBrowserLink << "http://dso-browser.com/dso/info/" << catName << "/" << catNumber;
       dsoBrowserLink << "?year=" << astroSession->when().date().year() 
@@ -151,7 +147,12 @@ ObjectNamesWidget::ObjectNamesWidget(const Wt::Dbo::ptr<NgcObject> &object, Sess
       // ?lat_deg=45&lat_min=29&lat_sec=31&lat_hem=N&month=12&day=2&year=2013&timezone=0&lon_deg=9&lon_min=17&lon_sec=53&lon_hem=E&min_alt=0&hour=0
       }
       addLink("DSO Browser", dsoBrowserLink.str());
+ 
+
+	}
+      }
       
+     
       popup->addSectionHeader(WString::tr("objectnames_search_menu_title"));
       auto googleSearch = [=] (string type, NebulaDenominationPtr nebulaDenomination) {
         return (format("http://www.google.com/%s?q=%s") % type % Utils::urlDecode(nebulaDenomination->search())).str();
