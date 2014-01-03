@@ -50,6 +50,7 @@ private:
   dbo::ptr<NgcObject> _ngcObject;
 };
 
+typedef dbo::ptr<NebulaDenomination> NebulaDenominationPtr;
 
 namespace Wt {
     namespace Dbo {

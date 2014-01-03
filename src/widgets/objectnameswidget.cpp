@@ -152,22 +152,20 @@ ObjectNamesWidget::ObjectNamesWidget(const Wt::Dbo::ptr<NgcObject> &object, Sess
       addLink("DSO Browser", dsoBrowserLink.str());
       
       popup->addSectionHeader(WString::tr("objectnames_search_menu_title"));
-      auto googleSearch = [=] (string type, string catalogue, int number) {
-        return (format("http://www.google.com/%s?q=%s%%20%s") % type % catalogue % number).str();
+      auto googleSearch = [=] (string type, NebulaDenominationPtr nebulaDenomination) {
+        return (format("http://www.google.com/%s?q=%s") % type % Utils::urlDecode(nebulaDenomination->name())).str();
       };
       if(names.size() == 1) {
-        string catName = names.front()->catalogue();
-        int catNumber = names.front()->number();
-        addLink(WString::tr("objectnames_google_search"), googleSearch("search", catName, catNumber ) );
-        addLink(WString::tr("objectnames_google_images_search"), googleSearch("images", catName, catNumber ) );
+        addLink(WString::tr("objectnames_google_search"), googleSearch("search", names.front() ) );
+        addLink(WString::tr("objectnames_google_images_search"), googleSearch("images", names.front() ) );
       } else {
         WMenu *googleSearchSubMenu = new WPopupMenu();
         WMenu *googleImagesSearchSubMenu = new WPopupMenu();
         popup->addMenu(WString::tr("objectnames_google_search"), googleSearchSubMenu);
         popup->addMenu(WString::tr("objectnames_google_images_search"), googleImagesSearchSubMenu);
         for(auto name: names) {
-          addLink(name->name(), googleSearch("search", catName, catNumber), googleSearchSubMenu);
-          addLink(name->name(), googleSearch("images", catName, catNumber), googleImagesSearchSubMenu);
+          addLink(name->name(), googleSearch("search", name), googleSearchSubMenu);
+          addLink(name->name(), googleSearch("images", name), googleImagesSearchSubMenu);
         }
       }
       popup->popup(e);
