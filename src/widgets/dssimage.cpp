@@ -164,7 +164,7 @@ void DSSImage::Private::startDownload()
     }
     if( err || message.status() != 200 || isNotAnImage() ) {
       content->addWidget(
-        new WText{WString("Error retrieving DSS Image: {1}<br />Please click the link above to try viewing it in the DSS Archive.")
+        new WText{WString("<br />Error retrieving DSS Image: {1}<br />Please try another format, or click the link above to try viewing it in the DSS Archive.")
         .arg(err ? err.message() : WString("HTTP Status {1}").arg(message.status() ))});
       return;
     }
