@@ -98,12 +98,14 @@ string Angle::printable(Format format, PrintFormat printFormat) const
   if(format == Hourly) {
     double time = hours();
     int hours_i = static_cast<int>(time);
+
     time -= hours_i;
     time *= time>0?60.:-60.;
-    time *= 60.;
+
     int minutes_i = static_cast<int>(time);
     time -= minutes_i;
     time *= 60.;
+
     return (boost::format("%dh %2dm %.1fs") % hours_i % minutes_i % time ).str();
   }
 
