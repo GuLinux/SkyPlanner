@@ -149,13 +149,20 @@ void DSSImage::Private::startDownload()
   WApplication *app = wApp;
   client->done().connect([=](boost::system::error_code err, Http::Message message, _n4){
     Scope triggerUpdate{[=]{app->triggerUpdate();}};
-    wApp->log("notice") << __PRETTY_FUNCTION__ << ", download done: err=" << err  << "(" << err.message() << ")" << ", status: " << message.status() << "retry: " << retry;
-    if( (err  || message.status() != 200 ) && retry < 3 ) {
+    wApp->log("notice") << __PRETTY_FUNCTION__ << ", download done: err=" << err  << "(" << err.message() << ")" << ", status: " << message.status() << ", retry: " << retry;
+    for(auto header: message.headers()) {
+      wApp->log("notice") << __PRETTY_FUNCTION__ << " message header: " << header.name() << ", value='" << header.value() << "'";
+    }
+    const string *contentType = message.getHeader("Content-Type");
+    auto isNotAnImage = [=] {
+      return !contentType || contentType->find("image/") == string::npos; 
+    };
+    if( (err  || message.status() != 200 || isNotAnImage() ) && retry < 3 ) {
       client->get(imageLink());
       retry++;
       return;
     }
-    if( err || message.status() != 200 ) {
+    if( err || message.status() != 200 || isNotAnImage() ) {
       content->addWidget(
         new WText{WString("Error retrieving DSS Image: {1}<br />Please click the link above to try viewing it in the DSS Archive.")
         .arg(err ? err.message() : WString("HTTP Status {1}").arg(message.status() ))});
