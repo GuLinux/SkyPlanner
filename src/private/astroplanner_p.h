@@ -36,6 +36,7 @@ public:
     std::vector<Wt::WMenuItem*> loggedInItems;
     std::vector<Wt::WMenuItem*> loggedOutItems;
     Wt::WContainerWidget *notifications;
+    Wt::WStackedWidget *widgets;
 private:
     class AstroPlanner* const q;
 };

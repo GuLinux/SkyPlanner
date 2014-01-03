@@ -53,6 +53,11 @@ AstroPlanner *AstroPlanner::instance()
   return dynamic_cast<AstroPlanner*>(wApp);
 }
 
+WStackedWidget *AstroPlanner::widgetsStack() const
+{
+  return d->widgets;
+}
+
 AstroPlanner::AstroPlanner( const WEnvironment &environment )
   : WApplication( environment ), d( this )
 {
@@ -71,9 +76,10 @@ AstroPlanner::AstroPlanner( const WEnvironment &environment )
   navBar->setTitle( WString::tr("application_title") );
   useStyleSheet( "/astrorganizer_style.css" );
   root()->addWidget(d->notifications = new WContainerWidget);
-  WStackedWidget *widgets = new WStackedWidget( root() );
-  widgets->setTransitionAnimation({WAnimation::AnimationEffect::Fade});
-  WMenu *navBarMenu = new WMenu(widgets);
+  d->widgets = new WStackedWidget( root() );
+  d->widgets->setTransitionAnimation({WAnimation::AnimationEffect::Fade});
+  d->widgets->setMargin(10);
+  WMenu *navBarMenu = new WMenu(d->widgets);
   navBar->addMenu(navBarMenu);
   Auth::AuthWidget *authWidget = new Auth::AuthWidget( Session::auth(), d->session.users(), d->session.login() );
   authWidget->model()->addPasswordAuth( &Session::passwordAuth() );

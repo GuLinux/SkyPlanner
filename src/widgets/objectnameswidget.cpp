@@ -36,9 +36,12 @@
 #include <Wt/WComboBox>
 #include <Wt/WStandardItem>
 #include <Wt/WStandardItemModel>
+#include <Wt/WStackedWidget>
 #include <Wt/WLabel>
+#include <Wt/WTimer>
 #include "session.h"
 #include "types.h"
+#include "astroplanner.h"
 
 using namespace WtCommons;
 using namespace Wt;
@@ -83,9 +86,11 @@ ObjectNamesWidget::ObjectNamesWidget(const Wt::Dbo::ptr<NgcObject> &object, Sess
       popup->addSectionHeader(WString::tr("objectnames_more_info"));
       WMenuItem *imagesMenuItem = popup->addItem(WString::tr("objectnames_digitalized_sky_survey_menu"));
       imagesMenuItem->triggered().connect([=](WMenuItem*, _n5) {
+        WContainerWidget *dssContainer = WW<WContainerWidget>().add(new WText{WString("<h4>{1}</h4>").arg(namesJoined)});
         WContainerWidget *imageContainer = WW<WContainerWidget>();
-	WDialog *imagesDialog = new WDialog();
-	imagesDialog->setCaption(namesJoined);
+        
+        WStackedWidget *stack = AstroPlanner::instance()->widgetsStack();
+        WWidget *currentWidget = stack->currentWidget();
         WComboBox *typeCombo = WW<WComboBox>();
         WStandardItemModel *typeModel = new WStandardItemModel(typeCombo);
         typeCombo->setModel(typeModel);
@@ -103,18 +108,23 @@ ObjectNamesWidget::ObjectNamesWidget(const Wt::Dbo::ptr<NgcObject> &object, Sess
           imageContainer->addWidget(new DSSImage(object->coordinates(), Angle::degrees(object->angularSize()), boost::any_cast<DSSImage::ImageVersion>(item->data()) ));
         });
         
-	imagesDialog->contents()->addWidget(WW<WContainerWidget>().add(WW<WLabel>(WString::tr("dssimage_version_label")).setMargin(10, Wt::Right)).add(typeCombo));
-        imagesDialog->contents()->addWidget(imageContainer);
-        imageContainer->addWidget(new DSSImage(object->coordinates(), Angle::degrees(object->angularSize()), DSSImage::ImageVersion::phase2_gsc1));
-        imagesDialog->setResizable(true);
-        imagesDialog->resize(900, 700);
-        imagesDialog->footer()->addWidget(WW<WContainerWidget>().css("pull-left")
+    dssContainer->addWidget(WW<WContainerWidget>()
+    .add(WW<WLabel>(WString::tr("dssimage_version_label")).setMargin(10, Wt::Right))
+    .add(typeCombo)
+    .add(WW<WPushButton>(WString::tr("buttons_close")).css("btn btn-danger pull-right").onClick([=](WMouseEvent){
+      stack->setCurrentWidget(currentWidget);
+      WTimer::singleShot(2000, [=](WMouseEvent) { delete dssContainer; });
+    })
+    ));
+    dssContainer->addWidget(imageContainer);
+    imageContainer->addWidget(new DSSImage(object->coordinates(), Angle::degrees(object->angularSize()), DSSImage::ImageVersion::phase2_gsc1));
+    dssContainer->addWidget(WW<WContainerWidget>().css("pull-left")
           .add(new WText{"Images Copyright: "})
           .add(WW<WAnchor>("http://archive.stsci.edu/dss/", "The STScI Digitized Sky Survey").setTarget(Wt::TargetNewWindow))
           .add(WW<WAnchor>("http://archive.stsci.edu/dss/acknowledging.html", " (Acknowledgment)").setTarget(Wt::TargetNewWindow))
-        );
-	imagesDialog->footer()->addWidget(WW<WPushButton>(WString::tr("buttons_close")).css("pull-right").onClick([=](WMouseEvent){ imagesDialog->accept(); }));
-        imagesDialog->show();
+    );
+    stack->addWidget(dssContainer);
+    stack->setCurrentWidget(dssContainer);
       });
 
 
