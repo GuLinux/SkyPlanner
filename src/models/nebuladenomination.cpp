@@ -18,10 +18,11 @@
  */
 
 #include "Models"
+#include "utils/format.h"
 
 using namespace std;
 
-string NebulaDenomination::catalogue() const
+boost::optional<string> NebulaDenomination::catalogue() const
 {
   return _catalogue;
 }
@@ -37,8 +38,24 @@ Wt::Dbo::ptr< NgcObject > NebulaDenomination::ngcObject() const
 {
   return _ngcObject;
 }
-int NebulaDenomination::number() const
+boost::optional<int> NebulaDenomination::number() const
 {
   return _number;
 }
 
+
+bool NebulaDenomination::isNgcIc() const
+{
+  return _catalogue && _number && (*_catalogue == "NGC" || *_catalogue == "IC");
+}
+
+string NebulaDenomination::search() const {
+ switch(_searchMode) {
+    case ByName:
+      return name();
+    case ByCatalog:
+      return format("%s %s") % *_catalogue % *_number;
+    case ByNameAndType:
+      return format("%s %s") % _ngcObject->typeDescription().toUTF8() % name();
+ }
+}

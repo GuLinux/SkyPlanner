@@ -116,17 +116,18 @@ ObjectNamesWidget::ObjectNamesWidget(const Wt::Dbo::ptr<NgcObject> &object, Sess
 	imagesDialog->footer()->addWidget(WW<WPushButton>(WString::tr("buttons_close")).css("pull-right").onClick([=](WMouseEvent){ imagesDialog->accept(); }));
         imagesDialog->show();
       });
-      if(object->objectId()) {
-        WMenuItem *ngcIcMenuItem = popup->addItem("NGC-IC Project Page");
-        ngcIcMenuItem->setLink(new AutoPostResource{"http://www.ngcicproject.org/ngcicdb.asp", {{"ngcicobject", *object->objectId()}}});
-        ngcIcMenuItem->setLinkTarget(TargetNewWindow);
-      }
+
+
       string catName;
       int catNumber;
       for(auto nebula: object->nebulae()) {
-	if(nebula->catalogue() == "NGC" || nebula->catalogue() == "IC") {
-	  catName = nebula->catalogue();
-	  catNumber = nebula->number();
+	if(nebula->isNgcIc() ) {
+	  catName = *nebula->catalogue();
+	  catNumber = *nebula->number();
+    WMenuItem *ngcIcMenuItem = popup->addItem("NGC-IC Project Page");
+    ngcIcMenuItem->setLink(new AutoPostResource{"http://www.ngcicproject.org/ngcicdb.asp", {{"ngcicobject", *object->objectId()}}});
+    ngcIcMenuItem->setLinkTarget(TargetNewWindow);
+
 	}
       }
       
@@ -153,7 +154,7 @@ ObjectNamesWidget::ObjectNamesWidget(const Wt::Dbo::ptr<NgcObject> &object, Sess
       
       popup->addSectionHeader(WString::tr("objectnames_search_menu_title"));
       auto googleSearch = [=] (string type, NebulaDenominationPtr nebulaDenomination) {
-        return (format("http://www.google.com/%s?q=%s") % type % Utils::urlDecode(nebulaDenomination->name())).str();
+        return (format("http://www.google.com/%s?q=%s") % type % Utils::urlDecode(nebulaDenomination->search())).str();
       };
       if(names.size() == 1) {
         addLink(WString::tr("objectnames_google_search"), googleSearch("search", names.front() ) );
@@ -164,8 +165,8 @@ ObjectNamesWidget::ObjectNamesWidget(const Wt::Dbo::ptr<NgcObject> &object, Sess
         popup->addMenu(WString::tr("objectnames_google_search"), googleSearchSubMenu);
         popup->addMenu(WString::tr("objectnames_google_images_search"), googleImagesSearchSubMenu);
         for(auto name: names) {
-          addLink(name->name(), googleSearch("search", name), googleSearchSubMenu);
-          addLink(name->name(), googleSearch("images", name), googleImagesSearchSubMenu);
+          addLink(name->search(), googleSearch("search", name), googleSearchSubMenu);
+          addLink(name->search(), googleSearch("images", name), googleImagesSearchSubMenu);
         }
       }
       popup->popup(e);

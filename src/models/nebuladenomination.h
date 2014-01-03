@@ -29,8 +29,9 @@ namespace dbo = Wt::Dbo;
 class NebulaDenomination
 {
 public:
-  std::string catalogue() const;
-  int number() const;
+  enum SearchMode { ByName = 0x0, ByCatalog = 0x1, ByNameAndType = 0x2 };
+  boost::optional<std::string> catalogue() const;
+  boost::optional<int> number() const;
   std::string name() const;
   boost::optional<std::string> comment() const;
   dbo::ptr<NgcObject> ngcObject() const;
@@ -40,14 +41,20 @@ public:
     dbo::field(a, _number, "number");
     dbo::field(a, _name, "name");
     dbo::field(a, _comment, "comment");
+    dbo::field(a, _searchMode, "search_mode");
     dbo::belongsTo(a, _ngcObject);
   }
+
+  bool isNgcIc() const;
+  std::string search() const;
+
 private:
-  std::string _catalogue;
-  int _number;
+  boost::optional<std::string> _catalogue;
+  boost::optional<int> _number;
   std::string _name;
   boost::optional<std::string> _comment;
   dbo::ptr<NgcObject> _ngcObject;
+  SearchMode _searchMode;
 };
 
 typedef dbo::ptr<NebulaDenomination> NebulaDenominationPtr;
