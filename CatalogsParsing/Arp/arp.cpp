@@ -19,7 +19,8 @@ using namespace std;
     string other_names;
     float magnitude;
     float largest_dimension;
-  
+    string object_id;
+    int index;
   
 	struct RightAscension {
         	int hours;
@@ -70,33 +71,20 @@ void ordinaVettore (Arp array[], int dim);
 //PROGRAMMA
 
 int main(int argc, char ** argv){
-  
+    QCoreApplication app(argc, argv);
+  QStringList arguments = app.arguments();
+  arguments.removeFirst();
   
   ifstream upload;
   
-  upload.open("arp.dat");
+  upload.open(arguments.first().toStdString());
   
-  int conta = 0;
-  
-  while (!upload.eof()){
-      string temp;
-      getline(upload, temp);
-      conta++; 
-  }
- 
-  
-  upload.close();
-
-  upload.open("arp.dat");
-	
-	Arp* array;
-	array = new Arp[conta];
-	
-	for(int i=0; i< conta ; i++ ) {
+	int index=0;
+	vector<Arp> array;
+	while(!upload.eof()) {
 	  
 	        string temp;
 		getline(upload, temp);
-		
 			Arp arp;
 			
 			      //PROBLEMI:
@@ -131,33 +119,46 @@ int main(int argc, char ** argv){
 			//NOTES (MORPHOLOGICAL TYPE)
                         string notes_type(temp.begin() + 38, temp.begin() + 52);
 			arp.notes_type = notes_type;
+			arp.index = index++;
 			
-			
-			array[i]= arp;
+			array.push_back(arp);
         		
 			 
 		}
 	
 	
 	 upload.close();
-	 
-	 ordinaVettore (array, conta);
-        CatalogsImporter importer("Arp", argc, argv);
-	for (int i=0;i<conta;i++){
-        long long otherId = importer.findByCatalog(array[i].other_names);
-          stringstream objectId;
-          objectId << "Arp " << array[i].arp_number;
-        if(otherId < 0) {
-          otherId = importer.insertObject(objectId.str(), array[i].ra.radians(), array[i].dec.radians(), array[i].magnitude, array[i].largest_dimension, NgcObject::NebGx);
-          if(otherId<=0)
-            throw std::runtime_error("Error inserting object");
+         map<QString, vector<Arp*>> dupes;
+         
+        for(Arp &obj: array) {
+           QString objectNum = QString::fromStdString(obj.arp_number).toUpper().trimmed();
+           if(dupes.count(objectNum) > 0) continue;
+           vector<Arp*> dupesForThisObject{&obj};
+           for(Arp &d: array) {
+              QString dObjectNum = QString::fromStdString(d.arp_number).toUpper().trimmed();
+              if(d.index != obj.index && dObjectNum == objectNum)
+                dupesForThisObject.push_back(&d);
+           }
+           if(dupesForThisObject.size()>0)
+             dupes[objectNum] = dupesForThisObject;
+         };
+        for(auto d: dupes) {
+          sort(d.second.rbegin(), d.second.rend(), [](Arp *_1, Arp *_2) { return _1->largest_dimension < _2->largest_dimension;});
+          cerr << "dupes for " << d.first.toStdString() << endl;
+          char letter = 'A';
+          for(Arp *o: d.second) {
+            o->object_id = QString("Arp %1%2").arg(d.first).arg(letter++).toStdString();
+            cerr << "index=" << o->index << ", object_id: " << o->object_id << ", number= " << o->arp_number << ", size: " << o->largest_dimension << endl;
+          }
         }
-        stringstream notes;
-        notes << array[i].notes_type << "; other catalogue: " << array[i].other_names;
-        importer.insertDenomination(array[i].arp_number, objectId.str(), notes.str(), otherId, NebulaDenomination::ByCatalog, array[i].other_names);
-        cerr << "Found arp " << array[i].arp_number << " with other_names " << array[i].other_names << " in db: " << otherId << endl;
-	cout << "Arp n. " << array[i].arp_number 
-	     << ", other names: " << array[i].other_names
+        sort(array.begin(), array.end(), [](const Arp &a, const Arp &b) { return a.object_id > b.object_id; });
+        
+        if(arguments.contains("--pretend")) {
+          for(int i=0; i<array.size(); i++) {
+                cout << "Arp n. " << array[i].arp_number 
+             << ", index: " << array[i].index
+             << ", object_id: " << array[i].object_id
+             << ", other names: " << array[i].other_names
              << ", magnitude: " << array[i].magnitude
              << ", right ascension: " << array[i].ra.hours << " " << array[i].ra.minutes << " " << array[i].ra.seconds
              << " - as radians: " <<  array[i].ra.radians() 
@@ -166,6 +167,30 @@ int main(int argc, char ** argv){
              << ", size: " << array[i].largest_dimension
              << ", morphological type: " << array[i].notes_type
              << endl; 
+
+          }
+          return 0;
+        }
+        
+        CatalogsImporter importer("Arp", app);
+	for (int i=0;i<array.size();i++){
+          string catName(array[i].other_names.begin(), array[i].other_names.begin() + 3);
+          long long otherId;
+          if(catName == "MCG")
+            otherId = importer.findByCatalog("MCG", array[i].other_names);
+          else
+            otherId = importer.findByCatalog(array[i].other_names);
+          stringstream objectId;
+          objectId << "Arp " << array[i].arp_number;
+        if(otherId < 0) {
+          otherId = importer.insertObject(array[i].object_id, array[i].ra.radians(), array[i].dec.radians(), array[i].magnitude, array[i].largest_dimension, NgcObject::NebGx);
+          if(otherId<=0)
+            throw std::runtime_error("Error inserting object");
+        }
+        stringstream notes;
+        notes << array[i].notes_type << "; other catalogue: " << array[i].other_names;
+        importer.insertDenomination(array[i].arp_number, objectId.str(), notes.str(), otherId, NebulaDenomination::ByCatalog, array[i].other_names);
+
   
 	 }
   
