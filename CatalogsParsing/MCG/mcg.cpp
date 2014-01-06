@@ -103,7 +103,6 @@ int main(int argc, char ** argv){
           
           //ARP NUMBER
           object.number = string(temp.begin() + 1, temp.begin() + 15);
-          cerr << "object number=" << object.number << endl;
           //COMMON NAMES
           object.other_names = string(temp.begin() + 51, temp.begin() + 59);
         
@@ -155,11 +154,12 @@ int main(int argc, char ** argv){
          };
          
         sort(objects.begin(), objects.end(), [](const MCG &a, const MCG &b) { return a.object_id > b.object_id; });
-        for(MCG &obj: objects) {
-          cout << "object " << obj.number << " [" << obj.object_id << "], magnitude=" << obj.magnitude << endl;
-        }
-        if(arguments.contains("-p"))
+        if(arguments.contains("--pretend")) {
+          for(MCG &obj: objects) {
+            cout << "object " << obj.number << " [" << obj.object_id << "], magnitude=" << obj.magnitude << endl;
+          }
           return 0;
+        }
         CatalogsImporter importer("MCG", argc, argv);
         for(MCG object: objects) {
           long long objectId = importer.findByCatalog(object.other_names);
