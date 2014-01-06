@@ -103,7 +103,7 @@ int main(int argc, char ** argv){
           
           //ARP NUMBER
           object.number = string(temp.begin() + 1, temp.begin() + 15);
-          
+          cerr << "object number=" << object.number << endl;
           //COMMON NAMES
           object.other_names = string(temp.begin() + 51, temp.begin() + 59);
         
@@ -122,7 +122,7 @@ int main(int argc, char ** argv){
             QString number = QString::fromStdString(object.number).trimmed().toUpper();
             float magnitudeFixed = objectsWithMagnitudeOnly.count(number) > 0 ? objectsWithMagnitudeOnly[number] : 99;
             cerr << "WARNING: " << number.toStdString() << " magnitude is 0, fixing from other file: " << magnitudeFixed << endl;
-            object.number = magnitudeFixed;
+            object.magnitude = magnitudeFixed;
           }
 
           //SIZE
@@ -140,17 +140,26 @@ int main(int argc, char ** argv){
 	 for(int i = 0; i< objects.size(); i++) {
            MCG &obj = objects[i];
            if(!obj.object_id.empty()) continue;
+           QString objectNum = QString::fromStdString(obj.number).toUpper().trimmed();
            char nextDupeId = 'B';
            obj.object_id = QString::fromStdString(obj.number).trimmed().toStdString();
            for(int j=i; j<objects.size(); j++) {
-             
             MCG &obj1 = objects[j];
-             if(obj1.object_id.empty() && obj1.index != obj.index && obj1.number == obj.number) {
-               obj.object_id = QString("%1A").arg(QString::fromStdString(obj.number).trimmed()).toStdString();
-               obj1.object_id = QString("%1%2").arg(QString::fromStdString(obj.number).trimmed()).arg(nextDupeId++).toStdString();
+             
+            QString object1Num = QString::fromStdString(obj1.number).toUpper().trimmed();
+             if(obj1.object_id.empty() && obj1.index != obj.index && object1Num == objectNum) {
+               obj.object_id = objectNum.append('A').toStdString();
+               obj1.object_id = QString("%1%2").arg(object1Num).arg(nextDupeId++).toStdString();
              }
            };
          };
+         
+        sort(objects.begin(), objects.end(), [](const MCG &a, const MCG &b) { return a.object_id > b.object_id; });
+        for(MCG &obj: objects) {
+          cout << "object " << obj.number << " [" << obj.object_id << "], magnitude=" << obj.magnitude << endl;
+        }
+        if(arguments.contains("-p"))
+          return 0;
         CatalogsImporter importer("MCG", argc, argv);
         for(MCG object: objects) {
           long long objectId = importer.findByCatalog(object.other_names);

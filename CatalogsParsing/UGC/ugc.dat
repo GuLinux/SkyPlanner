@@ -1,0 +1,1001 @@
+|name     |ra      |dec     |phot_mag|hubble_type|ugc_number|mcg          |class               |
+|UGC 5849 |10 43 56|-04 19.8|    14.1|           |      5849|MCG+01-28-003|              GALAXY|
+|UGC 8512 |13 31 47|-02 43.4|    14.5|S0         |      8512|MCG+00-35-001|   LENTICULAR GALAXY|
+|UGC 7951 |12 47 16|-02 43.4|    12.4|S0         |      7951|MCG+00-33-011|   LENTICULAR GALAXY|
+|UGC 7065 |12 04 46|-02 42.7|    14.9|SBb        |      7065|MCG+00-31-033|SPIRAL GALAXY BARRED|
+|UGC 6907 |11 56 04|-02 42.7|    14.2|S0?        |      6907|MCG+00-31-003|   LENTICULAR GALAXY|
+|UGC 7710 |12 33 40|-02 39.5|    16.5|DWRF IR    |      7710|MCG+00-32-021|        DWARF GALAXY|
+|UGC 6838 |11 51 58|-02 38.7|    15.4|           |      6838|MCG+00-30-000|              GALAXY|
+|UGC 5652 |10 26 21|-02 37.3|    14.0|E-S0       |      5652|MCG+00-27-012|   ELLIPTICAL GALAXY|
+|UGC 8513 |13 31 47|-02 36.4|    14.9|Sa-b       |      8513|MCG+00-35-002|       SPIRAL GALAXY|
+|UGC 4647 |08 52 38|-02 36.4|    14.1|Sa-b       |      4647|MCG+00-23-008|       SPIRAL GALAXY|
+|UGC 9818 |15 20 54|-02 35.8|    14.6|SB         |      9818|MCG+00-39-021|SPIRAL GALAXY BARRED|
+|UGC 6978 |11 59 10|-02 34.7|    17.0|DWARF      |      6978|MCG+00-31-000|        DWARF GALAXY|
+|UGC 5787 |10 38 27|-02 34.6|    14.7|SBb        |      5787|MCG+00-27-034|SPIRAL GALAXY BARRED|
+|UGC 4680 |08 56 14|-02 34.5|    13.8|Sa?        |      4680|MCG+00-23-017|       SPIRAL GALAXY|
+|UGC 9057 |14 10 11|-02 34.1|    14.4|           |      9057|MCG+00-36-023|              GALAXY|
+|UGC 5054 |09 29 08|-02 33.2|    14.3|Sc         |      5054|MCG+00-24-017|       SPIRAL GALAXY|
+|UGC 4481 |08 34 31|-02 32.4|    13.5|SBb        |      4481|MCG+00-22-019|SPIRAL GALAXY BARRED|
+|UGC 9564 |14 52 12|-02 32.3|    14.2|Sc         |      9564|MCG+00-38-009|       SPIRAL GALAXY|
+|UGC 5469 |10 08 20|-02 31.7|    14.2|S          |      5469|MCG+00-26-021|              GALAXY|
+|UGC 5847 |10 43 51|-02 30.8|    15.5|SBb        |      5847|MCG+00-28-001|SPIRAL GALAXY BARRED|
+|UGC 5586 |10 20 33|-02 30.1|    16.0|DBL SYS    |      5586|MCG+00-27-000|              GALAXY|
+|UGC 5465 |10 07 56|-02 29.7|    14.0|Sb-c       |      5465|MCG+00-26-020|       SPIRAL GALAXY|
+|UGC 5098 |09 34 26|-02 29.4|    14.5|S0-a       |      5098|MCG+00-25-002|   LENTICULAR GALAXY|
+|UGC 10578|16 51 24|-02 28.0|    15.7|           |     10578|MCG+00-43-002|              GALAXY|
+|UGC 5483 |10 10 02|-02 27.8|    15.5|S          |      5483|MCG+00-26-024|              GALAXY|
+|UGC 6850 |11 52 40|-02 27.7|    14.1|PECULR     |      6850|MCG+00-30-032|              GALAXY|
+|UGC 4508 |08 37 56|-02 27.5|    14.5|EX CMPT    |      4508|MCG+00-22-025|              GALAXY|
+|UGC 10492|16 39 24|-02 25.8|    15.5|Sa         |     10492|MCG+00-42-008|       SPIRAL GALAXY|
+|UGC 8404 |13 22 23|-02 24.7|    14.2|SB         |      8404|MCG+00-34-032|SPIRAL GALAXY BARRED|
+|UGC 3153 |04 45 49|-02 24.6|    12.9|E          |      3153|MCG+00-13-003|   ELLIPTICAL GALAXY|
+|UGC 5411 |10 03 08|-02 22.5|    14.3|S          |      5411|MCG+00-26-012|              GALAXY|
+|UGC 7067 |12 04 52|-02 21.7|    14.0|Sb         |      7067|MCG+00-31-034|       SPIRAL GALAXY|
+|UGC 4638 |08 51 38|-02 21.3|    14.5|DBL SYS    |      4638|MCG+00-23-005|              GALAXY|
+|UGC 7752 |12 35 28|-02 19.5|    15.4|S          |      7752|MCG+00-32-000|              GALAXY|
+|UGC 2697 |03 21 20|-02 19.3|    14.8|S0?        |      2697|MCG+00-09-069|   LENTICULAR GALAXY|
+|UGC 3105 |04 37 01|-02 19.0|    14.5|S0         |      3105|MCG+00-12-056|   LENTICULAR GALAXY|
+|UGC 3168 |04 47 31|-02 18.7|    15.3|Sc         |      3168|MCG+00-13-010|       SPIRAL GALAXY|
+|UGC 6879 |11 54 28|-02 18.7|    14.4|Sc-IRR     |      6879|MCG+00-30-035|       SPIRAL GALAXY|
+|UGC 7913 |12 44 34|-02 18.4|    15.7|DWARF      |      7913|MCG+00-33-000|        DWARF GALAXY|
+|UGC 3104 |04 36 37|-02 18.0|    15.4|Sa         |      3104|MCG+00-12-055|       SPIRAL GALAXY|
+|UGC 3020 |04 21 01|-02 17.9|    16.5|           |      3020|MCG+00-12-013|              GALAXY|
+|UGC 6510 |11 31 33|-02 17.6|    14.0|Sc         |      6510|MCG+00-30-001|       SPIRAL GALAXY|
+|UGC 4672 |08 55 44|-02 17.5|    14.8|S          |      4672|MCG+00-23-013|              GALAXY|
+|UGC 10350|16 21 54|-02 17.0|    13.2|Sc         |     10350|MCG+00-42-002|       SPIRAL GALAXY|
+|UGC 8381 |13 20 35|-02 16.7|    14.8|S          |      8381|MCG+00-34-029|              GALAXY|
+|UGC 7798 |12 38 04|-02 16.5|    14.1|IRR        |      7798|MCG+00-32-026|    IRREGULAR GALAXY|
+|UGC 9250 |14 27 11|-02 16.4|    14.8|SBc        |      9250|MCG+00-37-005|SPIRAL GALAXY BARRED|
+|UGC 2440 |02 58 14|-02 16.0|    15.7|Sb-c       |      2440|MCG+00-08-000|       SPIRAL GALAXY|
+|UGC 8348 |13 17 05|-02 15.8|    14.4|S          |      8348|MCG+00-34-022|              GALAXY|
+|UGC 6958 |11 58 28|-02 15.7|    14.5|Sb         |      6958|MCG+00-31-007|       SPIRAL GALAXY|
+|UGC 11585|20 32 18|-02 13.8|    14.8|Sb         |     11585|MCG+00-52-032|       SPIRAL GALAXY|
+|UGC 5641 |10 25 33|-02 13.3|    14.4|SBb        |      5641|MCG+00-27-009|SPIRAL GALAXY BARRED|
+|UGC 8768 |13 52 05|-02 12.8|    14.2|SBb        |      8768|MCG+00-35-021|SPIRAL GALAXY BARRED|
+|UGC 532  |00 52 15|-02 11.7|    14.0|S0         |       532|MCG+00-03-19a|   LENTICULAR GALAXY|
+|UGC 11574|20 29 54|-02 10.9|    14.4|Sc         |     11574|MCG+00-52-018|       SPIRAL GALAXY|
+|UGC 2947 |04 04 25|-02 10.8|    13.1|           |      2947|MCG+00-11-009|              GALAXY|
+|UGC 8607 |13 37 17|-02 10.3|    15.3|S0?        |      8607|MCG+00-35-000|   LENTICULAR GALAXY|
+|UGC 4460 |08 32 08|-02 10.2|    15.2|SB+COMP    |      4460|MCG+00-22-015|SPIRAL GALAXY BARRED|
+|UGC 12406|23 11 46|-02 09.7|    14.3|S0         |     12406|MCG+00-59-005|   LENTICULAR GALAXY|
+|UGC 5380 |10 00 33|-02 09.4|    14.3|SBa-b      |      5380|MCG+00-26-006|SPIRAL GALAXY BARRED|
+|UGC 12648|23 31 58|-02 09.4|    15.1|IRR        |     12648|MCG+00-60-000|    IRREGULAR GALAXY|
+|UGC 4640 |08 51 44|-02 09.3|    14.2|Sc         |      4640|MCG+00-23-007|       SPIRAL GALAXY|
+|UGC 1697 |02 12 14|-02 08.9|    15.0|Sb         |      1697|MCG+00-06-052|       SPIRAL GALAXY|
+|UGC 10159|16 04 24|-02 08.2|    15.3|           |     10159|MCG+00-41-003|              GALAXY|
+|UGC 8223 |13 08 40|-02 08.0|    14.7|SBc        |      8223|MCG+00-34-004|SPIRAL GALAXY BARRED|
+|UGC 5956 |10 51 03|-02 07.9|    12.9|PECULR     |      5956|MCG+00-28-020|              GALAXY|
+|UGC 2812 |03 39 56|-02 06.3|    14.9|SB+COMP    |      2812|MCG+00-10-009|SPIRAL GALAXY BARRED|
+|UGC 2683 |03 20 14|-02 06.2|    14.2|E          |      2683|MCG+00-08-062|   ELLIPTICAL GALAXY|
+|UGC 8340 |13 16 34|-02 05.8|    14.5|Sc?        |      8340|MCG+00-34-021|       SPIRAL GALAXY|
+|UGC 1613 |02 07 26|-02 05.8|    14.8|SBa        |      1613|MCG+00-06-034|SPIRAL GALAXY BARRED|
+|UGC 6951 |11 58 10|-02 05.7|    14.2|E          |      6951|MCG+00-31-006|   ELLIPTICAL GALAXY|
+|UGC 3154 |04 45 49|-02 05.6|    14.4|S          |      3154|MCG+00-13-000|              GALAXY|
+|UGC 2284 |02 48 32|-02 05.6|    17.0|           |      2284|MCG+00-08-000|              GALAXY|
+|UGC 6311 |11 17 57|-02 05.4|    14.3|Sc         |      6311|MCG+00-29-011|       SPIRAL GALAXY|
+|UGC 1442 |01 57 32|-02 05.4|    15.7|           |      1442|MCG+00-06-006|              GALAXY|
+|UGC 3156 |04 46 07|-02 04.6|    15.0|Sb/SBb     |      3156|MCG+00-13-004|       SPIRAL GALAXY|
+|UGC 2814 |03 40 08|-02 04.4|    15.0|           |      2814|MCG+00-10-010|              GALAXY|
+|UGC 2687 |03 20 20|-02 04.2|    15.2|SBa        |      2687|MCG+00-09-063|SPIRAL GALAXY BARRED|
+|UGC 3166 |04 47 07|-02 03.7|    14.3|Sb-c       |      3166|MCG+00-13-008|       SPIRAL GALAXY|
+|UGC 3127 |04 40 19|-02 02.2|    15.1|Sc         |      3127|MCG+00-12-064|       SPIRAL GALAXY|
+|UGC 2443 |02 58 20|-02 02.0|    14.6|Sc         |      2443|MCG+00-08-060|       SPIRAL GALAXY|
+|UGC 2632 |03 16 44|-02 02.0|    16.5|           |      2632|MCG+00-09-000|              GALAXY|
+|UGC 5245 |09 47 32|-02 01.9|    15.5|           |      5245|MCG+00-25-017|              GALAXY|
+|UGC 1174 |01 39 51|-02 01.8|    15.1|Sb-c       |      1174|MCG+00-05-025|       SPIRAL GALAXY|
+|UGC 6780 |11 48 52|-02 01.7|    14.7|Sc         |      6780|MCG+00-30-024|       SPIRAL GALAXY|
+|UGC 11691|21 11 35|-02 01.7|    14.5|S          |     11691|MCG+00-54-003|              GALAXY|
+|UGC 1047 |01 27 51|-02 01.5|    15.0|S0-a       |      1047|MCG+00-04-157|   LENTICULAR GALAXY|
+|UGC 11601|20 38 00|-02 01.4|    15.7|S          |     11601|MCG+00-52-041|              GALAXY|
+|UGC 1426 |01 56 57|-02 01.4|    15.0|Sc         |      1426|MCG+00-06-004|       SPIRAL GALAXY|
+|UGC 8783 |13 52 41|-02 00.8|    15.4|Sb         |      8783|MCG+00-35-000|       SPIRAL GALAXY|
+|UGC 11588|20 33 06|-02 00.7|    13.6|IRR        |     11588|MCG+00-52-033|    IRREGULAR GALAXY|
+|UGC 3070 |04 31 02|-02 00.6|    14.9|Sb?        |      3070|MCG+00-12-039|       SPIRAL GALAXY|
+|UGC 6750 |11 46 40|-01 59.7|    15.0|S          |      6750|MCG+00-30-022|              GALAXY|
+|UGC 11867|21 58 53|-01 59.6|    15.4|Sb-c       |     11867|MCG+00-56-005|       SPIRAL GALAXY|
+|UGC 455  |00 42 39|-01 59.6|    15.0|COMPACT    |       455|MCG+00-02-131|              GALAXY|
+|UGC 1080 |01 30 39|-01 59.5|    14.2|SBa        |      1080|MCG+00-04-165|SPIRAL GALAXY BARRED|
+|UGC 12584|23 24 40|-01 59.5|    15.6|DBL SYS    |     12584|MCG+00-59-040|              GALAXY|
+|UGC 5745 |10 34 45|-01 58.5|    13.8|SB0-a      |      5745|MCG+00-27-030|SPIRAL GALAXY BARRED|
+|UGC 1071 |01 29 45|-01 58.5|    15.7|           |      1071|MCG+00-04-000|              GALAXY|
+|UGC 12661|23 33 34|-01 58.4|    15.0|Sa-b       |     12661|MCG+00-60-007|       SPIRAL GALAXY|
+|UGC 2508 |03 03 14|-01 58.3|    16.5|Sc         |      2508|MCG+00-08-074|       SPIRAL GALAXY|
+|UGC 8127 |13 01 04|-01 58.1|    15.3|DWARF      |      8127|MCG+00-33-027|        DWARF GALAXY|
+|UGC 2666 |03 18 50|-01 58.1|    13.8|E-S0       |      2666|MCG+00-09-054|   ELLIPTICAL GALAXY|
+|UGC 830  |01 17 51|-01 57.2|    15.6|Sc         |       830|MCG+00-04-072|       SPIRAL GALAXY|
+|UGC 12838|23 54 28|-01 56.3|    14.9|Sc         |     12838|MCG+00-60-061|       SPIRAL GALAXY|
+|UGC 641  |01 02 33|-01 55.9|    14.7|SBa-b      |       641|MCG+00-03-058|SPIRAL GALAXY BARRED|
+|UGC 7606 |12 28 52|-01 55.6|    13.5|SB0/SBa    |      7606|MCG+00-32-014|SPIRAL GALAXY BARRED|
+|UGC 639  |01 02 03|-01 54.9|    14.3|SB0-a      |       639|MCG+00-03-057|SPIRAL GALAXY BARRED|
+|UGC 11581|20 31 06|-01 54.8|    15.4|SB0/SBa    |     11581|MCG+00-52-027|SPIRAL GALAXY BARRED|
+|UGC 1036 |01 27 27|-01 54.5|    14.0|S0         |      1036|MCG+00-04-151|   LENTICULAR GALAXY|
+|UGC 4488 |08 35 32|-01 54.4|    15.6|           |      4488|MCG+00-22-000|              GALAXY|
+|UGC 2704 |03 22 44|-01 54.3|    14.3|           |      2704|MCG+00-09-000|              GALAXY|
+|UGC 5    |00 03 10|-01 54.3|    14.3|SBb/Sc     |         5|MCG+00-01-021|SPIRAL GALAXY BARRED|
+|UGC 2611 |03 14 26|-01 53.9|    14.8|S0         |      2611|MCG+00-09-032|   LENTICULAR GALAXY|
+|UGC 8786 |13 52 53|-01 53.8|    15.1|Sa-b       |      8786|MCG+00-35-000|       SPIRAL GALAXY|
+|UGC 8537 |13 33 41|-01 53.4|    15.3|S          |      8537|MCG+00-35-000|              GALAXY|
+|UGC 12774|23 46 04|-01 53.3|    14.7|SBa        |     12774|MCG+00-60-045|SPIRAL GALAXY BARRED|
+|UGC 519  |00 50 45|-01 52.7|    13.2|SBb        |       519|MCG+00-03-012|SPIRAL GALAXY BARRED|
+|UGC 1044 |01 27 45|-01 52.5|    13.8|E          |      1044|MCG+00-04-154|   ELLIPTICAL GALAXY|
+|UGC 11657|20 59 47|-01 52.3|    14.4|DBL SYS    |     11657|MCG+00-53-014|              GALAXY|
+|UGC 11658|20 59 47|-01 52.3|    14.4|DBL SYS    |     11658|MCG+00-53-015|              GALAXY|
+|UGC 2680 |03 20 08|-01 52.2|    14.9|PECULR?    |      2680|MCG+00-09-061|              GALAXY|
+|UGC 3106 |04 37 08|-01 52.0|    15.6|Sa-b       |      3106|MCG+00-12-057|       SPIRAL GALAXY|
+|UGC 4735 |09 01 20|-01 51.8|    14.9|S          |      4735|MCG+00-23-019|              GALAXY|
+|UGC 7763 |12 35 52|-01 51.5|    15.6|S          |      7763|MCG+00-32-000|              GALAXY|
+|UGC 2119 |02 37 56|-01 51.0|    14.5|SBb        |      2119|MCG+00-07-061|SPIRAL GALAXY BARRED|
+|UGC 12466|23 16 04|-01 50.6|    14.9|SBb        |     12466|MCG+00-59-015|SPIRAL GALAXY BARRED|
+|UGC 12521|23 20 16|-01 50.6|    14.4|Sc         |     12521|MCG+00-59-026|       SPIRAL GALAXY|
+|UGC 4489 |08 35 32|-01 50.4|    15.2|COMPACT    |      4489|MCG+00-22-021|              GALAXY|
+|UGC 9469 |14 41 41|-01 49.8|    15.7|DWARF      |      9469|MCG+00-37-026|        DWARF GALAXY|
+|UGC 9839 |15 25 17|-01 49.5|    15.4|S          |      9839|MCG+00-39-000|              GALAXY|
+|UGC 3133 |04 41 32|-01 49.3|    13.6|E-S0       |      3133|MCG+00-12-069|   ELLIPTICAL GALAXY|
+|UGC 2649 |03 17 38|-01 49.1|    14.5|S0         |      2649|MCG+00-09-048|   LENTICULAR GALAXY|
+|UGC 2106 |02 37 20|-01 49.0|    15.4|S          |      2106|MCG+00-07-000|              GALAXY|
+|UGC 1060 |01 28 57|-01 48.5|    15.7|S          |      1060|MCG+00-04-000|              GALAXY|
+|UGC 271  |00 27 51|-01 48.4|    13.8|Sc         |       271|MCG+00-02-038|       SPIRAL GALAXY|
+|UGC 11685|21 09 17|-01 47.8|    15.0|S          |     11685|MCG+00-54-001|              GALAXY|
+|UGC 9551 |14 50 41|-01 47.3|    15.6|           |      9551|MCG+00-38-008|              GALAXY|
+|UGC 10394|16 27 54|-01 46.6|    15.3|Sc         |     10394|MCG+00-42-000|       SPIRAL GALAXY|
+|UGC 12659|23 32 52|-01 46.4|    15.6|Sc         |     12659|MCG+00-60-002|       SPIRAL GALAXY|
+|UGC 264  |00 27 15|-01 46.4|    14.9|COMPACT    |       264|MCG+00-02-032|              GALAXY|
+|UGC 259  |00 27 03|-01 46.4|    15.0|SB0        |       259|MCG+00-02-027|SPIRAL GALAXY BARRED|
+|UGC 5289 |09 51 33|-01 46.1|    16.0|DBL SYS    |      5289|MCG+00-25-000|              GALAXY|
+|UGC 584  |00 56 33|-01 45.8|    14.1|E-S0       |       584|MCG+00-03-035|   ELLIPTICAL GALAXY|
+|UGC 4804 |09 08 38|-01 45.2|    15.2|SBb-c      |      4804|MCG+00-24-002|SPIRAL GALAXY BARRED|
+|UGC 736  |01 10 51|-01 45.1|    15.5|Sc         |       736|MCG+00-04-025|       SPIRAL GALAXY|
+|UGC 726  |01 09 57|-01 45.0|    15.1|DISTRBD    |       726|MCG+00-04-018|              GALAXY|
+|UGC 9939 |15 37 53|-01 44.8|    15.5|(S0)       |      9939|MCG+00-40-004|   LENTICULAR GALAXY|
+|UGC 505  |00 49 27|-01 44.7|    15.1|S          |       505|MCG+00-03-008|              GALAXY|
+|UGC 12656|23 32 40|-01 44.4|    15.5|S          |     12656|MCG+00-60-001|              GALAXY|
+|UGC 784  |01 14 09|-01 44.1|    15.0|Sb         |       784|MCG+00-04-047|       SPIRAL GALAXY|
+|UGC 2332 |02 50 44|-01 43.7|    13.7|S          |      2332|MCG+00-08-030|              GALAXY|
+|UGC 1055 |01 28 33|-01 43.5|    15.1|SBa        |      1055|MCG+00-04-160|SPIRAL GALAXY BARRED|
+|UGC 8485 |13 30 04|-01 43.5|    13.6|S          |      8485|MCG+00-34-039|              GALAXY|
+|UGC 767  |01 13 09|-01 43.1|    15.7|S          |       767|MCG+00-04-041|              GALAXY|
+|UGC 11622|20 44 41|-01 43.1|    15.2|SB         |     11622|MCG+00-53-000|SPIRAL GALAXY BARRED|
+|UGC 2412 |02 56 02|-01 42.9|    16.5|Sc         |      2412|MCG+00-08-000|       SPIRAL GALAXY|
+|UGC 476  |00 46 03|-01 42.6|    12.9|S          |       476|MCG+00-03-005|              GALAXY|
+|UGC 9968 |15 41 11|-01 42.6|    15.2|Sb         |      9968|MCG+00-40-006|       SPIRAL GALAXY|
+|UGC 439  |00 41 27|-01 42.6|    14.4|Sa         |       439|MCG+00-02-125|       SPIRAL GALAXY|
+|UGC 856  |01 19 39|-01 42.3|    16.5|           |       856|MCG+00-04-000|              GALAXY|
+|UGC 8067 |12 57 10|-01 42.2|    14.3|S          |      8067|MCG+00-33-022|              GALAXY|
+|UGC 9034 |14 08 11|-01 42.2|    14.7|Sb         |      9034|MCG+00-36-019|       SPIRAL GALAXY|
+|UGC 626  |01 00 39|-01 41.9|    15.0|Sc         |       626|MCG+00-03-052|       SPIRAL GALAXY|
+|UGC 2650 |03 17 38|-01 41.1|    15.6|Sa-b       |      2650|MCG+00-09-046|       SPIRAL GALAXY|
+|UGC 2113 |02 37 50|-01 41.0|    16.5|           |      2113|MCG+00-07-000|              GALAXY|
+|UGC 8487 |13 30 10|-01 40.5|    13.7|Sb         |      8487|MCG+00-34-041|       SPIRAL GALAXY|
+|UGC 12768|23 45 22|-01 40.3|    14.5|S0         |     12768|MCG+00-60-043|   LENTICULAR GALAXY|
+|UGC 11723|21 19 59|-01 40.3|    14.9|Sb         |     11723|MCG+00-54-012|       SPIRAL GALAXY|
+|UGC 4149 |07 59 32|-01 40.2|    16.5|IV-V       |      4149|MCG+00-21-000|              GALAXY|
+|UGC 11814|21 48 23|-01 40.0|    14.3|           |     11814|MCG+00-55-016|              GALAXY|
+|UGC 11747|21 28 05|-01 38.9|    14.8|E-S0       |     11747|MCG+00-54-019|   ELLIPTICAL GALAXY|
+|UGC 1016 |01 26 21|-01 38.4|    14.9|S0-a       |      1016|MCG+00-04-144|   LENTICULAR GALAXY|
+|UGC 7964 |12 47 52|-01 38.4|    14.0|E-S0       |      7964|MCG+00-33-012|   ELLIPTICAL GALAXY|
+|UGC 9888 |15 33 05|-01 38.1|    14.5|S-IRR      |      9888|MCG+00-40-003|              GALAXY|
+|UGC 2607 |03 14 08|-01 37.9|    14.8|SBb        |      2607|MCG+00-09-029|SPIRAL GALAXY BARRED|
+|UGC 6984 |11 59 22|-01 37.7|    14.5|E          |      6984|MCG+00-31-013|   ELLIPTICAL GALAXY|
+|UGC 435  |00 41 03|-01 37.5|    15.6|           |       435|MCG+00-02-124|              GALAXY|
+|UGC 10554|16 48 23|-01 37.2|    15.7|Sc         |     10554|MCG+00-43-000|       SPIRAL GALAXY|
+|UGC 4802 |09 08 27|-01 37.2|    15.3|Sc         |      4802|MCG+00-24-001|       SPIRAL GALAXY|
+|UGC 801  |01 15 21|-01 37.2|    13.2|S0         |       801|MCG+00-04-060|   LENTICULAR GALAXY|
+|UGC 7840 |12 41 10|-01 36.5|    15.7|Sc         |      7840|MCG+00-32-000|       SPIRAL GALAXY|
+|UGC 2825 |03 41 26|-01 36.4|    15.5|S          |      2825|MCG+00-10-013|              GALAXY|
+|UGC 973  |01 24 51|-01 36.4|    14.7|E          |       973|MCG+00-04-122|   ELLIPTICAL GALAXY|
+|UGC 6720 |11 44 52|-01 35.7|    14.7|SBb        |      6720|MCG+00-30-021|SPIRAL GALAXY BARRED|
+|UGC 12479|23 17 28|-01 35.6|    15.3|Sa         |     12479|MCG+00-89-017|       SPIRAL GALAXY|
+|UGC 3964 |07 40 20|-01 35.0|    15.5|           |      3964|MCG+00-20-004|              GALAXY|
+|UGC 965  |01 24 39|-01 34.4|    14.0|Sa         |       965|MCG+00-04-119|       SPIRAL GALAXY|
+|UGC 7945 |12 46 58|-01 33.4|    15.6|DWRF SP    |      7945|MCG+00-33-010|        DWARF GALAXY|
+|UGC 10683|17 04 59|-01 33.1|    16.0|DBL SYS    |     10683|MCG+00-43-000|              GALAXY|
+|UGC 5447 |10 06 15|-01 32.6|    15.2|DBL SYS    |      5447|MCG+00-26-019|              GALAXY|
+|UGC 492  |00 48 03|-01 32.6|    14.6|E          |       492|MCG+00-03-006|   ELLIPTICAL GALAXY|
+|UGC 1905 |02 26 21|-01 32.5|    15.6|S0         |      1905|MCG+00-07-012|   LENTICULAR GALAXY|
+|UGC 991  |01 25 27|-01 32.4|    14.7|Sa         |       991|MCG+00-04-130|       SPIRAL GALAXY|
+|UGC 2635 |03 16 50|-01 32.0|    16.5|Sb-c       |      2635|MCG+00-09-041|       SPIRAL GALAXY|
+|UGC 4430 |08 28 08|-01 32.0|    15.3|S0-a       |      4430|MCG+00-22-011|   LENTICULAR GALAXY|
+|UGC 7053 |12 04 16|-01 31.7|    17.0|DWRF IR    |      7053|MCG+00-31-000|        DWARF GALAXY|
+|UGC 7553 |12 27 04|-01 31.6|    17.0|           |      7553|MCG+00-32-000|              GALAXY|
+|UGC 456  |00 42 39|-01 31.6|    13.4|E          |       456|MCG+00-02-135|   ELLIPTICAL GALAXY|
+|UGC 2883 |03 52 14|-01 31.1|    15.0|           |      2883|MCG+00-10-025|              GALAXY|
+|UGC 12211|22 50 40|-01 31.1|    13.7|E          |     12211|MCG+00-58-006|   ELLIPTICAL GALAXY|
+|UGC 10352|16 22 11|-01 31.0|    13.9|E          |     10352|MCG+00-42-003|   ELLIPTICAL GALAXY|
+|UGC 11850|21 56 05|-01 30.7|    14.5|E          |     11850|MCG+00-56-001|   ELLIPTICAL GALAXY|
+|UGC 5723 |10 32 09|-01 30.5|    15.1|S          |      5723|MCG+00-27-000|              GALAXY|
+|UGC 984  |01 25 15|-01 30.4|    14.8|S0         |       984|MCG+00-04-129|   LENTICULAR GALAXY|
+|UGC 267  |00 27 28|-01 30.4|    14.8|S0         |       267|MCG+00-02-033|   LENTICULAR GALAXY|
+|UGC 1679 |02 11 09|-01 29.9|    14.1|S0-a       |      1679|MCG+00-06-049|   LENTICULAR GALAXY|
+|UGC 647  |01 03 27|-01 29.9|    16.0|Sb         |       647|MCG+00-03-063|       SPIRAL GALAXY|
+|UGC 6359 |11 20 39|-01 29.4|    14.7|S0         |      6359|MCG+00-29-020|   LENTICULAR GALAXY|
+|UGC 996  |01 25 33|-01 29.4|    14.8|S0-a       |       996|MCG+00-04-000|   LENTICULAR GALAXY|
+|UGC 974  |01 24 51|-01 29.4|    15.0|S0-a       |       974|MCG+00-04-121|   LENTICULAR GALAXY|
+|UGC 5896 |10 47 33|-01 28.8|    15.3|Sa-b       |      5896|MCG+00-28-010|       SPIRAL GALAXY|
+|UGC 12339|23 04 40|-01 28.8|    14.0|COMPACT    |     12339|MCG+00-58-000|              GALAXY|
+|UGC 11695|21 12 11|-01 27.6|    14.7|Sb         |     11695|MCG+00-54-004|       SPIRAL GALAXY|
+|UGC 3216 |04 58 32|-01 27.5|    17.0|DWARF      |      3216|MCG+00-13-000|        DWARF GALAXY|
+|UGC 6970 |11 58 46|-01 26.7|    14.6|IRR        |      6970|MCG+00-31-011|    IRREGULAR GALAXY|
+|UGC 1003 |01 25 45|-01 26.4|    15.0|S0         |      1003|MCG+00-04-000|   LENTICULAR GALAXY|
+|UGC 9472 |14 41 59|-01 25.8|    16.5|           |      9472|MCG+00-37-000|              GALAXY|
+|UGC 8820 |13 54 16|-01 25.7|    13.8|Sa         |      8820|MCG+00-35-026|       SPIRAL GALAXY|
+|UGC 4352 |08 20 44|-01 24.5|    15.0|TRP SYS    |      4352|MCG+00-22-002|              GALAXY|
+|UGC 9601 |14 56 05|-01 24.1|    14.6|           |      9601|MCG+00-38-011|              GALAXY|
+|UGC 997  |01 25 33|-01 23.4|    14.9|S0         |       997|MCG+00-04-133|   LENTICULAR GALAXY|
+|UGC 921  |01 22 45|-01 23.3|    14.6|S          |       921|MCG+00-04-105|              GALAXY|
+|UGC 5886 |10 46 57|-01 22.8|    14.4|S          |      5886|MCG+00-28-009|              GALAXY|
+|UGC 1151 |01 36 39|-01 22.7|    15.1|E-S0       |      1151|MCG+00-05-015|   ELLIPTICAL GALAXY|
+|UGC 4349 |08 20 32|-01 22.5|    15.1|SB?b-c     |      4349|MCG+00-22-001|SPIRAL GALAXY BARRED|
+|UGC 2973 |04 09 56|-01 22.2|    15.3|Sa-b       |      2973|MCG+00-11-022|       SPIRAL GALAXY|
+|UGC 10474|16 37 53|-01 21.9|    15.1|S          |     10474|MCG+00-42-007|              GALAXY|
+|UGC 595  |00 57 39|-01 21.8|    14.8|COMPACT    |       595|MCG+00-03-041|              GALAXY|
+|UGC 8939 |14 02 04|-01 21.4|    14.8|Sb         |      8939|MCG+00-36-012|       SPIRAL GALAXY|
+|UGC 7869 |12 42 34|-01 21.4|    14.3|IRR        |      7869|MCG+00-32-037|    IRREGULAR GALAXY|
+|UGC 1004 |01 25 45|-01 21.4|    14.0|E          |      1004|MCG+00-04-137|   ELLIPTICAL GALAXY|
+|UGC 11558|20 26 05|-01 21.1|    16.0|           |     11558|MCG+00-52-000|              GALAXY|
+|UGC 9829 |15 23 05|-01 20.6|    15.3|S          |      9829|MCG+00-39-023|              GALAXY|
+|UGC 1945 |02 28 15|-01 20.6|    14.4|Sc-IRR     |      1945|MCG+00-07-020|       SPIRAL GALAXY|
+|UGC 1009 |01 26 03|-01 20.4|    13.4|E          |      1009|MCG+00-04-143|   ELLIPTICAL GALAXY|
+|UGC 12739|23 41 52|-01 20.4|    14.2|           |     12739|MCG+00-60-000|              GALAXY|
+|UGC 5057 |09 29 27|-01 20.2|    16.5|CHAIN      |      5057|MCG+00-24-000|              GALAXY|
+|UGC 1007 |01 25 57|-01 19.4|    13.7|S0         |      1007|MCG+00-04-142|   LENTICULAR GALAXY|
+|UGC 3134 |04 41 44|-01 18.3|    14.4|SBb/SBc    |      3134|MCG+00-12-070|SPIRAL GALAXY BARRED|
+|UGC 5323 |09 54 33|-01 18.2|    14.2|DBL SYS    |      5323|MCG+00-25-032|              GALAXY|
+|UGC 7531 |12 26 16|-01 17.6|    14.9|MLT SYS    |      7531|MCG+00-32-011|              GALAXY|
+|UGC 1052 |01 28 09|-01 17.5|    14.5|Sa         |      1052|MCG+00-04-158|       SPIRAL GALAXY|
+|UGC 2821 |03 41 14|-01 17.4|    14.7|DBL SYS    |      2821|MCG+00-10-011|              GALAXY|
+|UGC 212  |00 22 22|-01 17.4|    15.0|SB         |       212|MCG+00-02-014|SPIRAL GALAXY BARRED|
+|UGC 7000 |12 01 10|-01 16.7|    14.4|IRR        |      7000|MCG+00-31-017|    IRREGULAR GALAXY|
+|UGC 2576 |03 10 33|-01 16.7|    16.5|Sb-c       |      2576|MCG+00-09-000|       SPIRAL GALAXY|
+|UGC 5943 |10 50 15|-01 15.9|    14.8|Sb/SBc     |      5943|MCG+00-28-018|       SPIRAL GALAXY|
+|UGC 2359 |02 52 51|-01 15.8|    13.9|E          |      2359|MCG+00-08-040|   ELLIPTICAL GALAXY|
+|UGC 8844 |13 55 58|-01 15.7|    15.1|SB:c       |      8844|MCG+00-36-001|SPIRAL GALAXY BARRED|
+|UGC 1030 |01 27 15|-01 15.5|    14.9|E          |      1030|MCG+00-04-150|   ELLIPTICAL GALAXY|
+|UGC 12769|23 45 28|-01 15.3|    16.0|           |     12769|MCG+00-60-042|              GALAXY|
+|UGC 10067|15 52 05|-01 14.9|    15.6|Sc         |     10067|MCG+00-40-000|       SPIRAL GALAXY|
+|UGC 6934 |11 57 34|-01 14.7|    15.2|Sc         |      6934|MCG+00-31-004|       SPIRAL GALAXY|
+|UGC 1072 |01 29 45|-01 14.5|    14.7|S0         |      1072|MCG+00-04-164|   LENTICULAR GALAXY|
+|UGC 666  |01 04 45|-01 13.9|    14.6|S0         |       666|MCG+00-03-069|   LENTICULAR GALAXY|
+|UGC 583  |00 56 27|-01 13.8|    14.9|E          |       583|MCG+00-03-034|   ELLIPTICAL GALAXY|
+|UGC 579  |00 56 15|-01 13.8|    15.0|E          |       579|MCG+00-03-032|   ELLIPTICAL GALAXY|
+|UGC 8360 |13 18 10|-01 13.8|    14.3|Sc         |      8360|MCG+00-34-026|       SPIRAL GALAXY|
+|UGC 11649|20 55 29|-01 13.5|    14.5|SBa        |     11649|MCG+00-53-009|SPIRAL GALAXY BARRED|
+|UGC 7883 |12 42 58|-01 13.4|    14.3|Sc         |      7883|MCG+00-33-002|       SPIRAL GALAXY|
+|UGC 1010 |01 26 03|-01 13.4|    15.1|E-S0       |      1010|MCG+00-04-141|   ELLIPTICAL GALAXY|
+|UGC 9398 |14 36 17|-01 13.0|    15.7|SBb-c      |      9398|MCG+00-37-018|SPIRAL GALAXY BARRED|
+|UGC 8801 |13 53 34|-01 12.7|    15.0|S          |      8801|MCG+00-35-025|              GALAXY|
+|UGC 8009 |12 52 22|-01 12.3|    11.7|           |      8009|MCG+00-33-016|              GALAXY|
+|UGC 837  |01 18 39|-01 12.2|    16.5|E-S        |       837|MCG+00-04-073|   ELLIPTICAL GALAXY|
+|UGC 4455 |08 31 33|-01 12.2|    15.0|SBa        |      4455|MCG+00-22-014|SPIRAL GALAXY BARRED|
+|UGC 587  |00 56 57|-01 11.8|    15.3|           |       587|MCG+00-03-038|              GALAXY|
+|UGC 6608 |11 38 34|-01 11.6|    14.5|S          |      6608|MCG+00-30-017|              GALAXY|
+|UGC 272  |00 27 52|-01 11.4|    15.5|Sc         |       272|MCG+00-02-036|       SPIRAL GALAXY|
+|UGC 7963 |12 47 52|-01 11.4|    15.7|Sc         |      7963|MCG+00-33-000|       SPIRAL GALAXY|
+|UGC 2517 |03 04 09|-01 11.3|    14.9|SB         |      2517|MCG+00-08-080|SPIRAL GALAXY BARRED|
+|UGC 3202 |04 55 14|-01 11.3|    15.1|SBa-b      |      3202|MCG+00-13-034|SPIRAL GALAXY BARRED|
+|UGC 2385 |02 55 03|-01 10.9|    15.5|Sc         |      2385|MCG+00-08-046|       SPIRAL GALAXY|
+|UGC 11853|21 56 23|-01 10.7|    15.4|Sc         |     11853|MCG+00-56-003|       SPIRAL GALAXY|
+|UGC 3283 |05 17 44|-01 09.8|    16.5|Sc         |      3283|MCG+00-14-000|       SPIRAL GALAXY|
+|UGC 2587 |03 11 57|-01 09.8|    16.0|Sb         |      2587|MCG+00-09-021|       SPIRAL GALAXY|
+|UGC 3170 |04 47 38|-01 09.7|    15.5|Sa         |      3170|MCG+00-13-011|       SPIRAL GALAXY|
+|UGC 2345 |02 51 51|-01 09.7|    16.0|DWRF SP    |      2345|MCG+00-08-035|        DWARF GALAXY|
+|UGC 1929 |02 27 39|-01 09.6|    11.3|SB0        |      1929|MCG+00-07-017|SPIRAL GALAXY BARRED|
+|UGC 8526 |13 32 58|-01 09.4|    14.5|           |      8526|MCG+00-35-008|              GALAXY|
+|UGC 9040 |14 08 40|-01 09.2|    14.1|S0-a       |      9040|MCG+00-36-020|   LENTICULAR GALAXY|
+|UGC 9359 |14 33 16|-01 09.2|    15.6|           |      9359|MCG+00-37-000|              GALAXY|
+|UGC 2969 |04 09 02|-01 09.1|    14.8|Sb-c       |      2969|MCG+00-11-018|       SPIRAL GALAXY|
+|UGC 9079 |14 11 34|-01 09.1|    13.4|Sc         |      9079|MCG+00-36-026|       SPIRAL GALAXY|
+|UGC 11527|20 13 53|-01 08.9|    14.4|S          |     11527|MCG+00-51-010|              GALAXY|
+|UGC 1954 |02 28 33|-01 08.6|    13.4|Sc         |      1954|MCG+00-07-022|       SPIRAL GALAXY|
+|UGC 1043 |01 27 39|-01 07.5|    15.1|E          |      1043|MCG+00-04-153|   ELLIPTICAL GALAXY|
+|UGC 9631 |14 58 23|-01 07.0|    13.5|SBb        |      9631|MCG+00-38-012|SPIRAL GALAXY BARRED|
+|UGC 8790 |13 52 58|-01 06.8|    13.7|SBc        |      8790|MCG+00-35-024|SPIRAL GALAXY BARRED|
+|UGC 1986 |02 30 33|-01 06.7|    13.0|Sa-b       |      1986|MCG+00-07-027|       SPIRAL GALAXY|
+|UGC 1525 |02 02 15|-01 06.6|    15.7|E          |      1525|MCG+00-06-025|   ELLIPTICAL GALAXY|
+|UGC 6408 |11 23 40|-01 06.5|    13.8|S+COMP     |      6408|MCG+00-29-025|              GALAXY|
+|UGC 328  |00 33 22|-01 06.5|    16.0|           |       328|MCG+00-02-070|              GALAXY|
+|UGC 2690 |03 20 45|-01 06.2|    14.8|Sb-c       |      2690|MCG+00-09-066|       SPIRAL GALAXY|
+|UGC 1116 |01 33 33|-01 05.6|    15.2|Sc-IRR     |      1116|MCG+00-05-007|       SPIRAL GALAXY|
+|UGC 1040 |01 27 33|-01 05.5|    14.8|S0-a       |      1040|MCG+00-04-152|   LENTICULAR GALAXY|
+|UGC 295  |00 29 28|-01 05.4|    16.0|SBb        |       295|MCG+00-02-056|SPIRAL GALAXY BARRED|
+|UGC 2514 |03 03 45|-01 05.3|    14.7|S0-a       |      2514|MCG+00-08-078|   LENTICULAR GALAXY|
+|UGC 109  |00 11 52|-01 05.3|    17.0|S-IRR      |       109|MCG+00-01-037|              GALAXY|
+|UGC 2505 |03 02 57|-01 05.3|    18.0|DWRF IR    |      2505|MCG+00-08-073|        DWARF GALAXY|
+|UGC 1354 |01 53 03|-01 05.2|    15.7|Sa-b       |      1354|MCG+00-05-043|       SPIRAL GALAXY|
+|UGC 6993 |12 00 22|-01 04.7|    12.4|Sb         |      6993|MCG+00-31-016|       SPIRAL GALAXY|
+|UGC 6796 |11 49 28|-01 04.7|    14.4|S0         |      6796|MCG+00-30-028|   LENTICULAR GALAXY|
+|UGC 6793 |11 49 22|-01 04.7|    14.8|Sb         |      6793|MCG+00-30-026|       SPIRAL GALAXY|
+|UGC 1120 |01 34 03|-01 04.6|    14.9|SB:a       |      1120|MCG+00-05-009|SPIRAL GALAXY BARRED|
+|UGC 7337 |12 18 10|-01 03.7|    14.7|Sb-c       |      7337|MCG+00-31-046|       SPIRAL GALAXY|
+|UGC 12492|23 18 58|-01 03.6|    14.9|S0         |     12492|MCG+00-59-020|   LENTICULAR GALAXY|
+|UGC 2699 |03 22 03|-01 03.3|    16.5|S?         |      2699|MCG+00-09-000|              GALAXY|
+|UGC 11982|22 18 52|-01 02.9|    15.7|Sc         |     11982|MCG+00-56-000|       SPIRAL GALAXY|
+|UGC 661  |01 04 21|-01 02.9|    14.9|S0-a       |       661|MCG+00-03-067|   LENTICULAR GALAXY|
+|UGC 7011 |12 01 58|-01 02.7|    15.3|Sb         |      7011|MCG+00-31-019|       SPIRAL GALAXY|
+|UGC 4370 |08 22 27|-01 02.7|    14.9|Sc         |      4370|MCG+00-22-004|       SPIRAL GALAXY|
+|UGC 4651 |08 53 03|-01 02.4|    17.0|           |      4651|MCG+00-23-000|              GALAXY|
+|UGC 8584 |13 36 16|-01 02.3|    15.4|TRP SYS    |      8584|MCG+00-35-011|              GALAXY|
+|UGC 2691 |03 20 45|-01 02.2|    14.9|DBL SYS    |      2691|MCG+00-09-067|              GALAXY|
+|UGC 1321 |01 51 09|-01 02.2|    16.0|S0         |      1321|MCG+00-05-000|   LENTICULAR GALAXY|
+|UGC 3037 |04 24 51|-01 02.2|    15.7|Sb-c       |      3037|MCG+00-12-000|       SPIRAL GALAXY|
+|UGC 8238 |13 09 40|-01 02.0|    14.9|Sc         |      8238|MCG+00-34-011|       SPIRAL GALAXY|
+|UGC 12262|22 57 16|-01 01.9|    13.8|SBa        |     12262|MCG+00-58-014|SPIRAL GALAXY BARRED|
+|UGC 568  |00 55 15|-01 01.8|    15.7|COMPACT    |       568|MCG+00-03-025|              GALAXY|
+|UGC 1123 |01 34 09|-01 01.6|    14.4|Sa-b       |      1123|MCG+00-05-010|       SPIRAL GALAXY|
+|UGC 2735 |03 25 39|-01 01.5|    15.6|SB         |      2735|MCG+00-09-084|SPIRAL GALAXY BARRED|
+|UGC 12114|22 37 28|-01 01.4|    16.5|           |     12114|MCG+00-57-005|              GALAXY|
+|UGC 8530 |13 33 10|-01 01.4|    13.9|Sb/SBb     |      8530|MCG+00-35-009|       SPIRAL GALAXY|
+|UGC 789  |01 14 39|-01 01.1|    14.5|PECULR     |       789|MCG+00-04-054|              GALAXY|
+|UGC 12208|22 50 10|-01 01.1|    15.2|SBc        |     12208|MCG+00-58-005|SPIRAL GALAXY BARRED|
+|UGC 842  |01 18 57|-01 00.2|    15.4|           |       842|MCG+00-04-077|              GALAXY|
+|UGC 11576|20 30 23|-00 59.9|    15.2|           |     11576|MCG+00-52-021|              GALAXY|
+|UGC 2319 |02 49 57|-00 59.6|    15.6|Sc         |      2319|MCG+00-08-026|       SPIRAL GALAXY|
+|UGC 6457 |11 27 16|-00 59.5|    15.0|IRR        |      6457|MCG+00-29-034|    IRREGULAR GALAXY|
+|UGC 12848|23 56 10|-00 59.3|    14.8|SBb        |     12848|MCG+00-01-004|SPIRAL GALAXY BARRED|
+|UGC 10030|15 47 05|-00 59.2|    15.4|SBa-b      |     10030|MCG+00-40-010|SPIRAL GALAXY BARRED|
+|UGC 2061 |02 34 33|-00 57.9|    16.0|S          |      2061|MCG+00-07-047|              GALAXY|
+|UGC 3113 |04 38 03|-00 57.1|    16.5|Sc         |      3113|MCG+00-12-000|       SPIRAL GALAXY|
+|UGC 1061 |01 28 57|-00 56.5|    14.2|SB0/SBa    |      1061|MCG+00-04-162|SPIRAL GALAXY BARRED|
+|UGC 8202 |13 07 34|-00 56.0|    14.0|Sc         |      8202|MCG+00-34-002|       SPIRAL GALAXY|
+|UGC 5515 |10 13 39|-00 55.9|    14.4|E OR D     |      5515|MCG+00-26-030|   ELLIPTICAL GALAXY|
+|UGC 1092 |01 31 39|-00 55.6|    14.2|Sa         |      1092|MCG+00-05-001|       SPIRAL GALAXY|
+|UGC 6402 |11 23 22|-00 55.5|    14.4|           |      6402|MCG+00-29-024|              GALAXY|
+|UGC 12852|23 56 16|-00 55.3|    14.3|Sb-c       |     12852|MCG+00-01-006|       SPIRAL GALAXY|
+|UGC 570  |00 55 57|-00 53.8|    15.3|E          |       570|MCG+00-03-029|   ELLIPTICAL GALAXY|
+|UGC 3221 |04 58 45|-00 53.5|    15.5|S          |      3221|MCG+00-13-055|              GALAXY|
+|UGC 2177 |02 42 03|-00 53.2|    16.0|Sc         |      2177|MCG+00-07-000|       SPIRAL GALAXY|
+|UGC 2311 |02 49 27|-00 52.6|    13.9|SBb        |      2311|MCG+00-08-024|SPIRAL GALAXY BARRED|
+|UGC 6340 |11 19 58|-00 52.4|    14.1|Sb         |      6340|MCG+00-29-016|       SPIRAL GALAXY|
+|UGC 915  |01 22 21|-00 52.3|    14.1|SBb/SBc    |       915|MCG+00-04-100|SPIRAL GALAXY BARRED|
+|UGC 1603 |02 06 45|-00 51.7|    15.6|           |      1603|MCG+00-06-032|              GALAXY|
+|UGC 4381 |08 23 15|-00 51.7|    14.8|Sb-c       |      4381|MCG+00-22-006|       SPIRAL GALAXY|
+|UGC 9682 |15 04 28|-00 51.6|    15.3|           |      9682|MCG+00-38-021|              GALAXY|
+|UGC 7545 |12 26 52|-00 51.6|    14.2|Sa         |      7545|MCG+00-32-012|       SPIRAL GALAXY|
+|UGC 806  |01 15 33|-00 51.2|        |Sc         |       806|MCG+00-04-062|       SPIRAL GALAXY|
+|UGC 807  |01 15 33|-00 51.2|    13.0|S          |       807|MCG+00-04-064|              GALAXY|
+|UGC 588  |00 57 03|-00 50.8|    15.1|           |       588|MCG+00-03-039|              GALAXY|
+|UGC 3029 |04 23 57|-00 50.1|    15.5|Sb         |      3029|MCG+00-12-024|       SPIRAL GALAXY|
+|UGC 5528 |10 14 39|-00 49.9|    14.8|           |      5528|MCG+00-26-033|              GALAXY|
+|UGC 11712|21 16 28|-00 49.4|    14.3|S          |     11712|MCG+00-54-010|              GALAXY|
+|UGC 3022 |04 21 57|-00 49.0|    16.0|S          |      3022|MCG+00-12-018|              GALAXY|
+|UGC 1698 |02 12 15|-00 49.0|    15.3|SBa        |      1698|MCG+00-06-051|SPIRAL GALAXY BARRED|
+|UGC 2545 |03 06 51|-00 47.5|    13.5|SB0/SBa    |      2545|MCG+00-08-093|SPIRAL GALAXY BARRED|
+|UGC 6435 |11 25 34|-00 46.5|    14.2|S0         |      6435|MCG+00-29-031|   LENTICULAR GALAXY|
+|UGC 1727 |02 14 33|-00 46.0|    14.0|Sa         |      1727|MCG+00-06-056|       SPIRAL GALAXY|
+|UGC 2291 |02 48 51|-00 45.6|    14.5|SB:b       |      2291|MCG+00-08-021|SPIRAL GALAXY BARRED|
+|UGC 1367 |01 54 03|-00 45.3|    17.0|DWARF      |      1367|MCG+00-05-000|        DWARF GALAXY|
+|UGC 1365 |01 53 57|-00 45.3|    14.6|S          |      1365|MCG+00-05-044|              GALAXY|
+|UGC 662  |01 04 21|-00 44.9|    14.8|E-S0       |       662|MCG+00-03-066|   ELLIPTICAL GALAXY|
+|UGC 9447 |14 39 46|-00 44.9|    14.5|SBc        |      9447|MCG+00-37-021|SPIRAL GALAXY BARRED|
+|UGC 2343 |02 51 39|-00 44.7|    15.2|Sa         |      2343|MCG+00-08-034|       SPIRAL GALAXY|
+|UGC 2482 |03 01 03|-00 44.2|    16.5|           |      2482|MCG+00-08-067|              GALAXY|
+|UGC 3031 |04 24 21|-00 44.1|    14.9|           |      3031|MCG+00-12-026|              GALAXY|
+|UGC 3032 |04 24 21|-00 44.1|    14.9|E-S        |      3032|MCG+00-12-027|   ELLIPTICAL GALAXY|
+|UGC 1296 |01 50 03|-00 44.1|    15.5|S          |      1296|MCG+00-05-037|              GALAXY|
+|UGC 1748 |02 15 57|-00 44.1|    15.6|           |      1748|MCG+00-06-000|              GALAXY|
+|UGC 1713 |02 13 33|-00 44.0|    14.4|Sa         |      1713|MCG+00-06-054|       SPIRAL GALAXY|
+|UGC 4996 |09 23 15|-00 43.9|    14.2|Sb-c       |      4996|MCG+00-24-009|       SPIRAL GALAXY|
+|UGC 11863|21 58 28|-00 43.6|    15.7|DWRF SP    |     11863|MCG+00-56-000|        DWARF GALAXY|
+|UGC 9697 |15 05 46|-00 43.6|    16.0|           |      9697|MCG+00-38-000|              GALAXY|
+|UGC 139  |00 14 34|-00 43.3|    14.8|Sc         |       139|MCG+00-01-043|       SPIRAL GALAXY|
+|UGC 72   |00 08 40|-00 43.3|    15.5|Sa         |        72|MCG+00-01-028|       SPIRAL GALAXY|
+|UGC 2925 |04 01 03|-00 42.6|    17.0|           |      2925|MCG+00-11-006|              GALAXY|
+|UGC 2088 |02 36 09|-00 42.0|    16.5|Sc         |      2088|MCG+00-07-000|       SPIRAL GALAXY|
+|UGC 7004 |12 01 28|-00 41.7|    15.0|SBc        |      7004|MCG+00-31-018|SPIRAL GALAXY BARRED|
+|UGC 1588 |02 05 39|-00 41.7|    15.7|Sc         |      1588|MCG+00-06-029|       SPIRAL GALAXY|
+|UGC 1106 |01 32 57|-00 41.6|    14.9|Sc         |      1106|MCG+00-05-003|       SPIRAL GALAXY|
+|UGC 931  |01 23 15|-00 41.4|    15.7|S          |       931|MCG+00-04-109|              GALAXY|
+|UGC 3015 |04 20 15|-00 40.9|    14.4|S0         |      3015|MCG+00-12-007|   LENTICULAR GALAXY|
+|UGC 3263 |05 11 33|-00 40.4|    16.0|SBc        |      3263|MCG+00-14-014|SPIRAL GALAXY BARRED|
+|UGC 5205 |09 44 09|-00 39.8|    15.4|IRR        |      5205|MCG+00-25-011|    IRREGULAR GALAXY|
+|UGC 5472 |10 08 33|-00 39.7|    14.7|SBb-c      |      5472|MCG+00-26-023|SPIRAL GALAXY BARRED|
+|UGC 750  |01 11 45|-00 39.1|    14.2|           |       750|MCG+00-04-031|              GALAXY|
+|UGC 11579|20 30 58|-00 38.8|    16.0|Sc         |     11579|MCG+00-52-026|       SPIRAL GALAXY|
+|UGC 7893 |12 43 16|-00 38.4|    13.8|S          |      7893|MCG+00-33-004|              GALAXY|
+|UGC 928  |01 23 09|-00 38.4|    15.2|S0         |       928|MCG+00-04-108|   LENTICULAR GALAXY|
+|UGC 8993 |14 04 52|-00 38.3|    14.8|SBa        |      8993|MCG+00-36-016|SPIRAL GALAXY BARRED|
+|UGC 4141 |07 59 09|-00 38.2|    14.2|SBa        |      4141|MCG+00-21-001|SPIRAL GALAXY BARRED|
+|UGC 5922 |10 49 04|-00 37.9|    14.7|SB         |      5922|MCG+00-28-012|SPIRAL GALAXY BARRED|
+|UGC 4915 |09 17 27|-00 37.6|    15.0|Sb-c       |      4915|MCG+00-24-005|       SPIRAL GALAXY|
+|UGC 1839 |02 22 33|-00 37.4|    15.6|           |      1839|MCG+00-07-08 |              GALAXY|
+|UGC 9263 |14 27 46|-00 36.4|    15.6|           |      9263|MCG+00-37-007|              GALAXY|
+|UGC 8994 |14 04 52|-00 36.3|    14.7|Sb/SBc     |      8994|MCG+00-36-017|       SPIRAL GALAXY|
+|UGC 3041 |04 25 45|-00 36.2|    16.5|Sc         |      3041|MCG+00-12-000|       SPIRAL GALAXY|
+|UGC 6011 |10 53 28|-00 36.0|    16.5|GROUP      |      6011|MCG+00-28-000|              GALAXY|
+|UGC 4392 |08 25 03|-00 35.8|    14.0|Sb         |      4392|MCG+00-22-010|       SPIRAL GALAXY|
+|UGC 1876 |02 25 03|-00 35.5|    16.5|S          |      1876|MCG+00-07-000|              GALAXY|
+|UGC 1949 |02 28 21|-00 34.6|    18.0|DWARF      |      1949|MCG+00-07-000|        DWARF GALAXY|
+|UGC 3264 |05 11 33|-00 34.4|    14.7|S0-a       |      3264|MCG+00-14-013|   LENTICULAR GALAXY|
+|UGC 3262 |05 11 27|-00 34.4|    15.6|S          |      3262|MCG+00-14-012|              GALAXY|
+|UGC 3126 |04 40 03|-00 34.2|    13.5|SB0/SBa    |      3126|MCG+00-12-063|SPIRAL GALAXY BARRED|
+|UGC 5736 |10 33 52|-00 33.5|    15.6|Sb-c       |      5736|MCG+00-27-029|       SPIRAL GALAXY|
+|UGC 1062 |01 28 57|-00 33.5|    14.0|S          |      1062|MCG+00-04-163|              GALAXY|
+|UGC 5985 |10 52 10|-00 33.0|    14.2|Sa         |      5985|MCG+00-28-022|       SPIRAL GALAXY|
+|UGC 10642|16 59 52|-00 32.4|    15.7|DWF SYS    |     10642|MCG+00-43-006|        DWARF GALAXY|
+|UGC 7900 |12 43 52|-00 32.4|    13.7|Sc         |      7900|MCG+00-33-006|       SPIRAL GALAXY|
+|UGC 892  |01 21 15|-00 32.3|    14.5|SBa        |       892|MCG+00-04-095|SPIRAL GALAXY BARRED|
+|UGC 7819 |12 39 16|-00 31.5|    12.6|Sc-IRR     |      7819|MCG+00-32-032|       SPIRAL GALAXY|
+|UGC 7931 |12 45 34|-00 31.4|    13.5|IRR        |      7931|MCG+00-33-009|    IRREGULAR GALAXY|
+|UGC 9526 |14 47 34|-00 30.5|    17.0|Sc         |      9526|MCG+00-38-000|       SPIRAL GALAXY|
+|UGC 224  |00 23 34|-00 30.4|    15.4|DISRPTD    |       224|MCG+00-02-018|              GALAXY|
+|UGC 4768 |09 05 15|-00 30.0|    16.5|Sb-c       |      4768|MCG+00-23-000|       SPIRAL GALAXY|
+|UGC 4754 |09 03 51|-00 29.9|    16.0|Sb-c       |      4754|MCG+00-23-000|       SPIRAL GALAXY|
+|UGC 6979 |11 59 10|-00 29.7|    14.3|PECULR     |      6979|MCG+00-31-012|              GALAXY|
+|UGC 3222 |04 58 51|-00 29.5|    13.9|E          |      3222|MCG+00-13-056|   ELLIPTICAL GALAXY|
+|UGC 2245 |02 46 27|-00 29.4|    11.4|Sc         |      2245|MCG+00-08-009|       SPIRAL GALAXY|
+|UGC 793  |01 14 51|-00 29.1|    14.5|DBL SYS    |       793|MCG+00-04-055|              GALAXY|
+|UGC 651  |01 03 40|-00 28.9|    16.0|Sc         |       651|MCG+00-03-064|       SPIRAL GALAXY|
+|UGC 1429 |01 57 09|-00 28.4|    15.5|Sc         |      1429|MCG+00-06-005|       SPIRAL GALAXY|
+|UGC 2628 |03 16 33|-00 28.0|    14.9|Sb-c       |      2628|MCG+00-09-040|       SPIRAL GALAXY|
+|UGC 7926 |12 45 10|-00 26.4|    12.0|Sc         |      7926|MCG+00-33-008|       SPIRAL GALAXY|
+|UGC 9420 |14 37 52|-00 25.0|    12.9|S          |      9420|MCG+00-37-020|              GALAXY|
+|UGC 3239 |05 04 15|-00 24.9|    15.7|Sa-b       |      3239|MCG+00-13-000|       SPIRAL GALAXY|
+|UGC 5792 |10 39 10|-00 24.6|    14.8|Sa?        |      5792|MCG+00-27-035|       SPIRAL GALAXY|
+|UGC 4358 |08 21 27|-00 24.6|    16.0|           |      4358|MCG+00-22-000|              GALAXY|
+|UGC 599  |00 57 46|-00 23.8|    14.7|E?+COMP    |       599|MCG+00-03-042|   ELLIPTICAL GALAXY|
+|UGC 2585 |03 11 45|-00 23.7|    14.4|SBb        |      2585|MCG+00-09-018|SPIRAL GALAXY BARRED|
+|UGC 5796 |10 39 22|-00 23.6|    14.5|           |      5796|MCG+00-27-037|              GALAXY|
+|UGC 8473 |13 29 28|-00 23.5|    17.0|DWARF      |      8473|MCG+00-34-000|        DWARF GALAXY|
+|UGC 929  |01 23 10|-00 23.4|    14.9|Sc         |       929|MCG+00-04-107|       SPIRAL GALAXY|
+|UGC 5827 |10 42 16|-00 22.7|    13.6|S          |      5827|MCG+00-27-042|              GALAXY|
+|UGC 9201 |14 22 22|-00 22.6|    12.8|Sc         |      9201|MCG+00-37-001|       SPIRAL GALAXY|
+|UGC 2529 |03 05 27|-00 22.4|    16.0|S          |      2529|MCG+00-08-090|              GALAXY|
+|UGC 4004 |07 44 57|-00 22.3|    15.6|S          |      4004|MCG+00-20-000|              GALAXY|
+|UGC 4253 |08 09 15|-00 21.9|    14.5|Sb-c       |      4253|MCG+00-21-007|       SPIRAL GALAXY|
+|UGC 7720 |12 34 10|-00 21.5|    14.8|SBa-b      |      7720|MCG+00-32-022|SPIRAL GALAXY BARRED|
+|UGC 2692 |03 20 57|-00 21.2|    14.1|Sc         |      2692|MCG+00-09-068|       SPIRAL GALAXY|
+|UGC 8176 |13 05 16|-00 21.1|    18.0|           |      8176|MCG+00-33-000|              GALAXY|
+|UGC 2832 |03 42 21|-00 20.5|    16.5|Sc-IRR     |      2832|MCG+00-10-015|       SPIRAL GALAXY|
+|UGC 867  |01 20 16|-00 20.3|    15.5|Sb-c       |       867|MCG+00-04-088|       SPIRAL GALAXY|
+|UGC 762  |01 12 58|-00 20.1|    14.4|S0         |       762|MCG+00-04-037|   LENTICULAR GALAXY|
+|UGC 9462 |14 40 58|-00 19.8|    13.8|Sb         |      9462|MCG+00-37-024|       SPIRAL GALAXY|
+|UGC 1901 |02 26 09|-00 19.5|    13.9|SBb        |      1901|MCG+00-07-011|SPIRAL GALAXY BARRED|
+|UGC 1401 |01 55 57|-00 19.3|    16.5|Sc         |      1401|MCG+00-05-000|       SPIRAL GALAXY|
+|UGC 2594 |03 12 45|-00 18.8|    14.5|SB:0-a     |      2594|MCG+00-09-024|SPIRAL GALAXY BARRED|
+|UGC 8357 |13 17 58|-00 18.8|    14.5|TRP SYS    |      8357|MCG+00-34-025|              GALAXY|
+|UGC 3062 |04 30 39|-00 18.6|    14.3|Sb         |      3062|MCG+00-12-036|       SPIRAL GALAXY|
+|UGC 432  |00 40 40|-00 18.5|    14.8|Sb         |       432|MCG+00-02-121|       SPIRAL GALAXY|
+|UGC 3109 |04 37 33|-00 18.0|    16.5|           |      3109|MCG+00-12-059|              GALAXY|
+|UGC 9451 |14 40 10|-00 17.8|    11.7|Sc         |      9451|MCG+00-37-022|       SPIRAL GALAXY|
+|UGC 1180 |01 40 22|-00 17.8|    16.0|COMPACT    |      1180|MCG+00-05-027|              GALAXY|
+|UGC 1597 |02 06 15|-00 17.7|    14.6|S0         |      1597|MCG+00-06-030|   LENTICULAR GALAXY|
+|UGC 2262 |02 47 27|-00 17.5|    13.5|Sa/Sb      |      2262|MCG+00-08-015|       SPIRAL GALAXY|
+|UGC 8481 |13 29 52|-00 17.5|    16.5|Sc         |      8481|MCG+00-34-000|       SPIRAL GALAXY|
+|UGC 150  |00 15 58|-00 17.3|    15.4|S          |       150|MCG+00-01-048|              GALAXY|
+|UGC 760  |01 12 52|-00 17.1|    14.4|E          |       760|MCG+00-04-035|   ELLIPTICAL GALAXY|
+|UGC 1225 |01 44 58|-00 17.0|    16.5|DBL SYS    |      1225|MCG+00-05-034|              GALAXY|
+|UGC 4923 |09 17 52|-00 16.6|    14.9|SB:a-b     |      4923|MCG+00-24-006|SPIRAL GALAXY BARRED|
+|UGC 1481 |02 00 03|-00 16.5|    15.6|Sa-b       |      1481|MCG+00-06-000|       SPIRAL GALAXY|
+|UGC 10541|16 47 10|-00 16.3|    15.5|Sa?        |     10541|MCG+00-43-000|       SPIRAL GALAXY|
+|UGC 8048 |12 55 40|-00 16.2|    17.0|DWARF      |      8048|MCG+00-33-000|        DWARF GALAXY|
+|UGC 734  |01 10 40|-00 16.1|    15.6|S          |       734|MCG+00-04-022|              GALAXY|
+|UGC 5223 |09 45 52|-00 15.9|    14.6|S0-a       |      5223|MCG+00-25-013|   LENTICULAR GALAXY|
+|UGC 2287 |02 48 39|-00 15.6|    14.8|SBa        |      2287|MCG+00-08-019|SPIRAL GALAXY BARRED|
+|UGC 3226 |04 59 33|-00 15.6|    14.5|Sa         |      3226|MCG+00-13-060|       SPIRAL GALAXY|
+|UGC 1794 |02 19 45|-00 15.3|    14.6|SBb        |      1794|MCG+00-07-001|SPIRAL GALAXY BARRED|
+|UGC 765  |01 13 04|-00 15.1|    13.6|E          |       765|MCG+00-04-039|   ELLIPTICAL GALAXY|
+|UGC 753  |01 12 04|-00 15.1|    16.5|           |       753|MCG+00-04-000|              GALAXY|
+|UGC 8262 |13 11 22|-00 14.9|    14.3|S          |      8262|MCG+00-34-014|              GALAXY|
+|UGC 1926 |02 27 33|-00 14.6|    14.4|S0         |      1926|MCG+00-07-016|   LENTICULAR GALAXY|
+|UGC 2247 |02 46 33|-00 14.5|    12.8|SBb        |      2247|MCG+00-08-011|SPIRAL GALAXY BARRED|
+|UGC 11516|20 07 52|-00 14.2|    15.5|           |     11516|MCG+00-51-008|              GALAXY|
+|UGC 8625 |13 38 28|-00 14.2|    14.7|Sb         |      8625|MCG+00-35-013|       SPIRAL GALAXY|
+|UGC 9512 |14 46 16|-00 13.6|    13.1|SBa        |      9512|MCG+00-38-006|SPIRAL GALAXY BARRED|
+|UGC 7749 |12 35 10|-00 13.5|    14.0|Sb         |      7749|MCG+00-32-024|       SPIRAL GALAXY|
+|UGC 280  |00 28 22|-00 13.4|    16.0|SBb        |       280|MCG+00-02-043|SPIRAL GALAXY BARRED|
+|UGC 10441|16 33 10|-00 13.3|    15.3|Sc         |     10441|MCG+00-42-000|       SPIRAL GALAXY|
+|UGC 11673|21 04 46|-00 13.0|    15.6|DBL SYS    |     11673|MCG+00-53-000|              GALAXY|
+|UGC 2428 |02 57 09|-00 13.0|    16.5|           |      2428|MCG+00-08-056|              GALAXY|
+|UGC 2600 |03 13 45|-00 12.8|    14.6|Sa         |      2600|MCG+00-09-027|       SPIRAL GALAXY|
+|UGC 5211 |09 44 40|-00 12.8|    15.5|           |      5211|MCG+00-25-012|              GALAXY|
+|UGC 5795 |10 39 16|-00 12.6|    14.0|E          |      5795|MCG+00-27-036|   ELLIPTICAL GALAXY|
+|UGC 6612 |11 39 04|-00 12.6|    14.9|Sb         |      6612|MCG+00-30-018|       SPIRAL GALAXY|
+|UGC 7755 |12 35 34|-00 12.5|    16.5|S          |      7755|MCG+00-32-000|              GALAXY|
+|UGC 10288|16 14 22|-00 12.5|    14.7|Sc         |     10288|MCG+00-41-009|       SPIRAL GALAXY|
+|UGC 866  |01 20 10|-00 12.3|    15.6|           |       866|MCG+00-04-087|              GALAXY|
+|UGC 5299 |09 52 40|-00 12.1|    17.0|           |      5299|MCG+00-25-000|              GALAXY|
+|UGC 7018 |12 02 28|-00 11.7|    14.6|E-S0       |      7018|MCG+00-31-020|   ELLIPTICAL GALAXY|
+|UGC 11663|21 01 10|-00 11.2|    14.0|Sb         |     11663|MCG+00-53-016|       SPIRAL GALAXY|
+|UGC 11631|20 48 04|-00 10.9|    15.0|IRR        |     11631|MCG+00-53-007|    IRREGULAR GALAXY|
+|UGC 2388 |02 55 09|-00 10.9|    13.2|E          |      2388|MCG+00-08-047|   ELLIPTICAL GALAXY|
+|UGC 2389 |02 55 09|-00 10.9|    13.2|E          |      2389|MCG+00-08-048|   ELLIPTICAL GALAXY|
+|UGC 663  |01 04 34|-00 09.9|    16.0|E          |       663|MCG+00-03-000|   ELLIPTICAL GALAXY|
+|UGC 3018 |04 20 57|-00 09.9|    15.3|S          |      3018|MCG+00-12-012|              GALAXY|
+|UGC 1382 |01 54 40|-00 09.3|    14.7|E?         |      1382|MCG+00-05-048|   ELLIPTICAL GALAXY|
+|UGC 847  |01 19 10|-00 09.3|    16.5|           |       847|MCG+00-04-078|              GALAXY|
+|UGC 2652 |03 17 58|-00 09.1|    13.9|SB         |      2652|MCG+00-09-050|SPIRAL GALAXY BARRED|
+|UGC 3103 |04 36 34|-00 09.0|    13.6|Sc         |      3103|MCG+00-12-052|       SPIRAL GALAXY|
+|UGC 3271 |05 16 10|-00 08.7|    14.6|           |      3271|MCG+00-14-018|              GALAXY|
+|UGC 11537|20 18 40|-00 08.6|    14.8|Sc         |     11537|MCG+00-51-013|       SPIRAL GALAXY|
+|UGC 3301 |05 22 58|-00 08.2|    15.5|SB0-a      |      3301|MCG+00-14-021|SPIRAL GALAXY BARRED|
+|UGC 9792 |15 16 04|-00 08.0|    15.1|DWARF      |      9792|MCG+00-39-016|        DWARF GALAXY|
+|UGC 10229|16 09 52|-00 07.8|    17.0|DWRF IR    |     10229|MCG+00-41-000|        DWARF GALAXY|
+|UGC 10505|16 41 34|-00 07.7|    15.7|S          |     10505|MCG+00-42-000|              GALAXY|
+|UGC 461  |00 43 28|-00 07.6|    13.6|Sb-c       |       461|MCG+00-02-136|       SPIRAL GALAXY|
+|UGC 1526 |02 02 16|-00 07.6|    14.7|Sc         |      1526|MCG+00-06-024|       SPIRAL GALAXY|
+|UGC 3214 |04 57 58|-00 07.4|    14.4|Sb         |      3214|MCG+00-13-048|       SPIRAL GALAXY|
+|UGC 12174|22 44 28|-00 07.2|    13.8|Sa         |     12174|MCG+00-58-001|       SPIRAL GALAXY|
+|UGC 10264|16 12 52|-00 06.6|    14.9|S          |     10264|MCG+00-41-006|              GALAXY|
+|UGC 12578|23 24 22|-00 06.5|    15.1|S          |     12578|MCG+00-59-038|              GALAXY|
+|UGC 7870 |12 42 34|-00 06.4|    12.6|Sc         |      7870|MCG+00-32-038|       SPIRAL GALAXY|
+|UGC 2713 |03 23 40|-00 06.4|    15.3|TRP SYS    |      2713|MCG+00-09-077|              GALAXY|
+|UGC 6200 |11 09 22|-00 06.3|    14.5|Sa         |      6200|MCG+00-29-003|       SPIRAL GALAXY|
+|UGC 1527 |02 02 16|-00 05.6|    14.2|SBa        |      1527|MCG+00-06-023|SPIRAL GALAXY BARRED|
+|UGC 771  |01 13 40|-00 05.1|    15.0|Sa-b       |       771|MCG+00-04-044|       SPIRAL GALAXY|
+|UGC 9006 |14 05 10|-00 04.3|    15.3|S          |      9006|MCG+00-36-000|              GALAXY|
+|UGC 2645 |03 17 28|-00 04.1|    15.7|Sb         |      2645|MCG+00-09-045|       SPIRAL GALAXY|
+|UGC 7800 |12 38 10|-00 02.5|    14.9|S          |      7800|MCG+00-32-027|              GALAXY|
+|UGC 961  |01 24 34|-00 02.4|    16.0|S          |       961|MCG+00-04-000|              GALAXY|
+|UGC 9299 |14 29 34|-00 02.3|    14.7|Sc         |      9299|MCG+00-37-012|       SPIRAL GALAXY|
+|UGC 12183|22 47 04|-00 02.2|    15.5|S          |     12183|MCG+00-58-003|              GALAXY|
+|UGC 8121 |13 00 58|-00 02.1|    13.2|SBc        |      8121|MCG+00-33-026|SPIRAL GALAXY BARRED|
+|UGC 6150 |11 05 52|-00 01.2|    10.1|Sb         |      6150|MCG+00-28-030|       SPIRAL GALAXY|
+|UGC 821  |01 16 10|-00 01.2|    16.0|S          |       821|MCG+00-04-066|              GALAXY|
+|UGC 6998 |12 00 52|-00 00.7|    17.0|DWRF SP    |      6998|MCG+00-31-000|        DWARF GALAXY|
+|UGC 2188 |02 42 40|-00 00.3|     9.7|Sb         |      2188|MCG+00-07-083|       SPIRAL GALAXY|
+|UGC 12589|23 25 04|+00 00.5|    15.6|S-IRR      |     12589|MCG+00-59-042|              GALAXY|
+|UGC 4431 |08 28 10|+00 01.0|    15.1|Sb-c       |      4431|MCG+00-22-013|       SPIRAL GALAXY|
+|UGC 2479 |03 00 46|+00 01.8|    16.0|           |      2479|MCG+00-08-065|              GALAXY|
+|UGC 12068|22 32 10|+00 02.5|    15.6|Sb         |     12068|MCG+00-57-003|       SPIRAL GALAXY|
+|UGC 3895 |07 31 16|+00 02.6|    17.0|DWARF      |      3895|MCG+00-19-000|        DWARF GALAXY|
+|UGC 1159 |01 37 40|+00 03.2|    15.5|S          |      1159|MCG+00-05-016|              GALAXY|
+|UGC 12685|23 35 16|+00 03.6|    16.0|Sc         |     12685|MCG+00-60-012|       SPIRAL GALAXY|
+|UGC 8041 |12 55 10|+00 03.8|    13.6|Sc         |      8041|MCG+00-33-021|       SPIRAL GALAXY|
+|UGC 3164 |04 47 04|+00 04.3|    15.6|S IV-V     |      3164|MCG+00-13-007|              GALAXY|
+|UGC 5439 |10 05 34|+00 04.4|    15.5|DWARF      |      5439|MCG+00-26-017|        DWARF GALAXY|
+|UGC 12637|23 30 28|+00 04.6|    14.8|Sa         |     12637|MCG+00-59-050|       SPIRAL GALAXY|
+|UGC 5099 |09 34 34|+00 05.6|    14.7|S          |      5099|MCG+00-25-003|              GALAXY|
+|UGC 894  |01 21 22|+00 05.7|    14.8|S          |       894|MCG+00-04-097|              GALAXY|
+|UGC 2324 |02 50 16|+00 06.4|    14.9|SBb        |      2324|MCG+00-08-029|SPIRAL GALAXY BARRED|
+|UGC 2721 |03 24 22|+00 06.6|    17.0|           |      2721|MCG+00-09-080|              GALAXY|
+|UGC 3331 |05 37 52|+00 06.7|    16.0|Sb         |      3331|MCG+00-15-001|       SPIRAL GALAXY|
+|UGC 5867 |10 45 10|+00 07.2|    15.0|SBb        |      5867|MCG+00-28-004|SPIRAL GALAXY BARRED|
+|UGC 7694 |12 32 46|+00 07.5|    12.4|Sc         |      7694|MCG+00-32-020|       SPIRAL GALAXY|
+|UGC 998  |01 25 34|+00 07.6|    16.5|IRR        |       998|MCG+00-04-134|    IRREGULAR GALAXY|
+|UGC 3116 |04 38 46|+00 07.9|    15.7|S          |      3116|MCG+00-12-062|              GALAXY|
+|UGC 6877 |11 54 16|+00 08.3|    13.7|           |      6877|MCG+00-30-034|              GALAXY|
+|UGC 6568 |11 35 40|+00 08.4|    14.4|S          |      6568|MCG+00-30-014|              GALAXY|
+|UGC 12363|23 06 28|+00 09.2|    14.6|S          |     12363|MCG+00-58-032|              GALAXY|
+|UGC 12635|23 30 22|+00 09.6|    15.6|Sc         |     12635|MCG+00-59-049|       SPIRAL GALAXY|
+|UGC 2705 |03 22 46|+00 09.7|    15.0|Sc         |      2705|MCG+00-09-072|       SPIRAL GALAXY|
+|UGC 10045|15 49 21|+00 09.9|    15.5|S          |     10045|MCG+00-40-000|              GALAXY|
+|UGC 7487 |12 24 28|+00 10.4|    14.9|SB         |      7487|MCG+00-32-006|SPIRAL GALAXY BARRED|
+|UGC 6329 |11 18 58|+00 10.6|    15.4|Sc         |      6329|MCG+00-29-014|       SPIRAL GALAXY|
+|UGC 12348|23 05 16|+00 11.2|    15.5|Sa         |     12348|MCG+00-58-028|       SPIRAL GALAXY|
+|UGC 1107 |01 33 04|+00 11.4|    17.0|DWARF      |      1107|MCG+00-05-000|        DWARF GALAXY|
+|UGC 737  |01 10 52|+00 11.9|    15.7|S          |       737|MCG+00-04-024|              GALAXY|
+|UGC 3433 |06 15 10|+00 12.0|    16.0|S          |      3433|MCG+00-16-001|              GALAXY|
+|UGC 2522 |03 04 52|+00 12.6|    16.0|Sb         |      2522|MCG+00-08-083|       SPIRAL GALAXY|
+|UGC 10948|17 42 33|+00 12.6|    15.5|S          |     10948|MCG+00-45-001|              GALAXY|
+|UGC 10046|15 49 27|+00 12.9|    15.1|DBL SYS    |     10046|MCG+00-40-011|              GALAXY|
+|UGC 5772 |10 36 58|+00 13.4|    14.7|S          |      5772|MCG+00-27-031|              GALAXY|
+|UGC 5388 |10 01 10|+00 13.5|    15.0|S?         |      5388|MCG+00-26-010|              GALAXY|
+|UGC 10306|16 16 45|+00 13.6|    14.8|Sb         |     10306|MCG+00-41-011|       SPIRAL GALAXY|
+|UGC 4467 |08 32 46|+00 13.7|    15.5|S          |      4467|MCG+00-22-000|              GALAXY|
+|UGC 11626|20 46 34|+00 14.0|    16.0|Sc-IRR     |     11626|MCG+00-53-000|       SPIRAL GALAXY|
+|UGC 3231 |05 02 34|+00 14.2|    14.9|Sc         |      3231|MCG+00-13-063|       SPIRAL GALAXY|
+|UGC 12446|23 14 40|+00 14.4|    14.4|           |     12446|MCG+00-59-011|              GALAXY|
+|UGC 9326 |14 30 45|+00 14.7|    15.5|           |      9326|MCG+00-37-000|              GALAXY|
+|UGC 9327 |14 30 45|+00 14.7|    15.5|S          |      9327|MCG+00-37-000|              GALAXY|
+|UGC 3178 |04 49 34|+00 15.1|    13.9|S0         |      3178|MCG+00-13-015|   LENTICULAR GALAXY|
+|UGC 3233 |05 03 04|+00 15.2|    15.3|Sc         |      3233|MCG+00-13-064|       SPIRAL GALAXY|
+|UGC 3174 |04 48 34|+00 15.2|    17.0|DWRF IR    |      3174|MCG+00-13-014|        DWARF GALAXY|
+|UGC 12493|23 18 58|+00 15.4|    14.4|S          |     12493|MCG+00-59-021|              GALAXY|
+|UGC 5097 |09 34 10|+00 15.6|    13.9|PECULR     |      5097|MCG+00-25-001|              GALAXY|
+|UGC 1824 |02 21 40|+00 15.7|    15.6|S0-a       |      1824|MCG+00-07-006|   LENTICULAR GALAXY|
+|UGC 1333 |01 51 46|+00 15.8|    15.7|S          |      1333|MCG+00-05-041|              GALAXY|
+|UGC 5973 |10 51 34|+00 16.1|    16.0|SB?a-b     |      5973|MCG+00-28-000|SPIRAL GALAXY BARRED|
+|UGC 4251 |08 09 10|+00 16.2|    14.7|E-S0       |      4251|MCG+00-21-006|   ELLIPTICAL GALAXY|
+|UGC 2018 |02 32 40|+00 16.2|    14.3|S          |      2018|MCG+00-07-040|              GALAXY|
+|UGC 9348 |14 32 27|+00 16.8|    14.6|S          |      9348|MCG+00-37-016|              GALAXY|
+|UGC 757  |01 12 34|+00 16.9|    16.0|SB         |       757|MCG+00-04-034|SPIRAL GALAXY BARRED|
+|UGC 11566|20 28 16|+00 17.0|    14.2|           |     11566|MCG+00-52-015|              GALAXY|
+|UGC 11541|20 22 22|+00 17.6|    16.5|SBc        |     11541|MCG+00-52-003|SPIRAL GALAXY BARRED|
+|UGC 2208 |02 43 34|+00 17.7|    14.3|Sa-b       |      2208|MCG+00-07-088|       SPIRAL GALAXY|
+|UGC 11629|20 47 28|+00 18.1|    14.2|E          |     11629|MCG+00-53-005|   ELLIPTICAL GALAXY|
+|UGC 4248 |08 08 52|+00 18.2|    14.9|Sa/SBa     |      4248|MCG+00-21-005|       SPIRAL GALAXY|
+|UGC 1998 |02 31 40|+00 18.2|    16.0|Sc         |      1998|MCG+00-07-032|       SPIRAL GALAXY|
+|UGC 12702|23 36 34|+00 18.6|    12.9|SBb        |     12702|MCG+00-60-019|SPIRAL GALAXY BARRED|
+|UGC 11628|20 47 22|+00 19.1|    13.5|Sa         |     11628|MCG+00-53-003|       SPIRAL GALAXY|
+|UGC 1011 |01 26 04|+00 19.6|    16.5|S-IRR      |      1011|MCG+00-04-000|              GALAXY|
+|UGC 5083 |09 32 22|+00 19.7|    15.3|S          |      5083|MCG+00-25-000|              GALAXY|
+|UGC 5180 |09 42 04|+00 20.3|    12.2|Sc         |      5180|MCG+00-25-007|       SPIRAL GALAXY|
+|UGC 8391 |13 21 22|+00 20.3|    14.5|Sa         |      8391|MCG+00-34-031|       SPIRAL GALAXY|
+|UGC 6665 |11 42 16|+00 20.4|    13.7|PECULR     |      6665|MCG+00-30-019|              GALAXY|
+|UGC 6432 |11 25 16|+00 20.5|    15.2|S          |      6432|MCG+00-29-030|              GALAXY|
+|UGC 3145 |04 44 16|+00 20.5|    15.4|SBb-c      |      3145|MCG+00-13-001|SPIRAL GALAXY BARRED|
+|UGC 2779 |03 32 10|+00 21.1|    15.0|Sa-b       |      2779|MCG+00-10-002|       SPIRAL GALAXY|
+|UGC 4684 |08 56 40|+00 21.4|    14.7|Sc         |      4684|MCG+00-23-018|       SPIRAL GALAXY|
+|UGC 7813 |12 39 04|+00 21.5|    14.4|COMPACT    |      7813|MCG+00-32-031|              GALAXY|
+|UGC 1962 |02 28 58|+00 22.4|    14.6|Sc         |      1962|MCG+00-07-024|       SPIRAL GALAXY|
+|UGC 3457 |06 21 46|+00 22.5|    15.0|S0-a       |      3457|MCG+00-17-001|   LENTICULAR GALAXY|
+|UGC 12837|23 54 10|+00 22.7|    14.1|DBL SYS    |     12837|MCG+00-60-058|              GALAXY|
+|UGC 7280 |12 15 52|+00 23.3|    14.8|S          |      7280|MCG+00-31-043|              GALAXY|
+|UGC 7685 |12 32 28|+00 23.5|    14.1|           |      7685|MCG+00-32-019|              GALAXY|
+|UGC 12151|22 41 34|+00 23.7|    16.0|DWARF      |     12151|MCG+00-57-007|        DWARF GALAXY|
+|UGC 11630|20 47 33|+00 24.1|    14.3|S?         |     11630|MCG+00-53-006|              GALAXY|
+|UGC 12709|23 37 28|+00 24.6|    15.7|DWRF SP    |     12709|MCG+00-60-022|        DWARF GALAXY|
+|UGC 3306 |05 25 16|+00 24.6|    15.0|E-S0       |      3306|MCG+00-14-022|   ELLIPTICAL GALAXY|
+|UGC 3258 |05 10 40|+00 24.7|    13.9|SB         |      3258|MCG+00-14-000|SPIRAL GALAXY BARRED|
+|UGC 2081 |02 35 58|+00 25.0|    15.1|Sc         |      2081|MCG+00-07-048|       SPIRAL GALAXY|
+|UGC 2024 |02 32 58|+00 25.2|    14.5|Sa-b       |      2024|MCG+00-07-041|       SPIRAL GALAXY|
+|UGC 5195 |09 43 10|+00 25.2|    15.4|Sb-c       |      5195|MCG+00-25-000|       SPIRAL GALAXY|
+|UGC 2271 |02 47 40|+00 25.5|    15.6|SBb        |      2271|MCG+00-08-016|SPIRAL GALAXY BARRED|
+|UGC 976  |01 25 04|+00 25.6|    14.9|           |       976|MCG+00-04-125|              GALAXY|
+|UGC 2173 |02 41 40|+00 25.8|    12.5|Sb         |      2173|MCG+00-07-081|       SPIRAL GALAXY|
+|UGC 797  |01 14 58|+00 25.8|    15.5|E          |       797|MCG+00-04-057|   ELLIPTICAL GALAXY|
+|UGC 5493 |10 11 22|+00 26.2|    14.0|Sb/SBc     |      5493|MCG+00-26-026|       SPIRAL GALAXY|
+|UGC 7332 |12 17 58|+00 26.3|    15.4|DWRF IR    |      7332|MCG+00-31-045|        DWARF GALAXY|
+|UGC 11780|21 37 03|+00 26.5|    15.6|S          |     11780|MCG+00-55-008|              GALAXY|
+|UGC 11816|21 49 04|+00 27.0|    14.8|SBb-c      |     11816|MCG+00-55-018|SPIRAL GALAXY BARRED|
+|UGC 514  |00 50 34|+00 27.3|    16.0|           |       514|MCG+00-03-000|              GALAXY|
+|UGC 9979 |15 42 21|+00 27.5|    15.7|DWRF IR    |      9979|MCG+00-40-008|        DWARF GALAXY|
+|UGC 6361 |11 20 52|+00 27.6|    14.3|TRP SYS    |      6361|MCG+00-29-022|              GALAXY|
+|UGC 5715 |10 31 34|+00 27.6|    14.3|Sb-c       |      5715|MCG+00-27-026|       SPIRAL GALAXY|
+|UGC 1001 |01 25 40|+00 27.6|    16.5|S          |      1001|MCG+00-04-136|              GALAXY|
+|UGC 9742 |15 09 51|+00 27.6|    13.5|S0         |      9742|MCG+00-39-006|   LENTICULAR GALAXY|
+|UGC 11567|20 28 15|+00 28.0|    15.5|           |     11567|MCG+00-52-014|              GALAXY|
+|UGC 7911 |12 44 28|+00 28.6|    14.9|DWRF SP    |      7911|MCG+00-33-007|        DWARF GALAXY|
+|UGC 6890 |11 55 16|+00 29.3|    17.0|DWRF IR    |      6890|MCG+00-31-000|        DWARF GALAXY|
+|UGC 1934 |02 27 52|+00 29.4|    15.5|Sb-c       |      1934|MCG+00-07-018|       SPIRAL GALAXY|
+|UGC 2995 |04 15 34|+00 29.4|    17.0|Sc         |      2995|MCG+00-11-000|       SPIRAL GALAXY|
+|UGC 5238 |09 46 52|+00 30.1|    15.3|Sc         |      5238|MCG+00-25-015|       SPIRAL GALAXY|
+|UGC 12757|23 44 04|+00 30.7|    14.4|SBb        |     12757|MCG+00-60-038|SPIRAL GALAXY BARRED|
+|UGC 10081|15 54 21|+00 31.2|    13.3|Sa         |     10081|MCG+00-40-013|       SPIRAL GALAXY|
+|UGC 1457 |01 58 40|+00 31.6|    14.3|Sb         |      1457|MCG+00-06-016|       SPIRAL GALAXY|
+|UGC 9743 |15 09 51|+00 31.6|    15.2|S0         |      9743|MCG+00-39-007|   LENTICULAR GALAXY|
+|UGC 8628 |13 38 33|+00 31.8|    15.1|Sa?        |      8628|MCG+00-35-014|       SPIRAL GALAXY|
+|UGC 5521 |10 13 58|+00 32.1|    15.0|Sc         |      5521|MCG+00-26-032|       SPIRAL GALAXY|
+|UGC 3086 |04 32 52|+00 32.3|    18.0|DWRF SP    |      3086|MCG+00-12-000|        DWARF GALAXY|
+|UGC 8631 |13 38 45|+00 32.8|    15.6|           |      8631|MCG+00-35-000|              GALAXY|
+|UGC 3246 |05 05 58|+00 33.0|    15.0|S          |      3246|MCG+00-13-070|              GALAXY|
+|UGC 3082 |04 32 04|+00 33.3|    14.8|S0         |      3082|MCG+00-12-044|   LENTICULAR GALAXY|
+|UGC 1018 |01 26 34|+00 33.6|    18.0|DWARF      |      1018|MCG+00-04-000|        DWARF GALAXY|
+|UGC 5370 |09 59 34|+00 33.6|    16.0|Sb         |      5370|MCG+00-26-000|       SPIRAL GALAXY|
+|UGC 12847|23 55 58|+00 33.7|    15.7|VY CMPT    |     12847|MCG+00-01-001|              GALAXY|
+|UGC 12849|23 56 10|+00 33.7|    15.7|S          |     12849|MCG+00-01-005|              GALAXY|
+|UGC 1809 |02 20 52|+00 33.7|    15.1|S0-a       |      1809|MCG+00-07-005|   LENTICULAR GALAXY|
+|UGC 9889 |15 33 09|+00 33.9|    15.4|S          |      9889|MCG+00-40-000|              GALAXY|
+|UGC 11882|22 03 15|+00 34.5|    14.4|SBb        |     11882|MCG+00-56-007|SPIRAL GALAXY BARRED|
+|UGC 2346 |02 51 52|+00 35.3|    15.7|Sb-c       |      2346|MCG+00-08-036|       SPIRAL GALAXY|
+|UGC 7515 |12 25 46|+00 35.4|    12.4|SB0        |      7515|MCG+00-32-009|SPIRAL GALAXY BARRED|
+|UGC 3140 |04 42 52|+00 35.6|    13.6|Sc         |      3140|MCG+00-12-072|       SPIRAL GALAXY|
+|UGC 4254 |08 09 22|+00 36.1|    14.4|S-IRR      |      4254|MCG+00-21-008|              GALAXY|
+|UGC 611  |00 58 52|+00 36.2|    14.5|PECULR     |       611|MCG+00-03-047|              GALAXY|
+|UGC 11533|20 16 57|+00 36.3|    17.0|DWRF IR    |     11533|MCG+00-51-011|        DWARF GALAXY|
+|UGC 3161 |04 46 34|+00 36.3|    16.5|Sc         |      3161|MCG+00-13-000|       SPIRAL GALAXY|
+|UGC 2842 |03 43 52|+00 36.4|    15.3|Sc         |      2842|MCG+00-10-016|       SPIRAL GALAXY|
+|UGC 4493 |08 36 04|+00 36.6|    15.7|S          |      4493|MCG+00-22-000|              GALAXY|
+|UGC 83   |00 09 22|+00 36.7|    16.5|Sb         |        83|MCG+00-01-000|       SPIRAL GALAXY|
+|UGC 12865|23 57 46|+00 36.7|    15.7|Sa-b       |     12865|MCG+00-01-010|       SPIRAL GALAXY|
+|UGC 5269 |09 49 52|+00 37.0|    13.5|S          |      5269|MCG+00-25-022|              GALAXY|
+|UGC 5265 |09 49 40|+00 37.0|    14.2|S          |      5265|MCG+00-25-021|              GALAXY|
+|UGC 2019 |02 32 40|+00 37.2|    14.4|PECULR     |      2019|MCG+00-07-039|              GALAXY|
+|UGC 5443 |10 05 52|+00 38.4|    14.2|DBL SYS    |      5443|MCG+00-26-018|              GALAXY|
+|UGC 10513|16 42 51|+00 38.4|    16.0|Sc         |     10513|MCG+00-43-000|       SPIRAL GALAXY|
+|UGC 11645|20 53 27|+00 38.4|    15.5|Sb-c       |     11645|MCG+00-53-000|       SPIRAL GALAXY|
+|UGC 1911 |02 26 34|+00 38.5|    16.5|Sc         |      1911|MCG+00-07-014|       SPIRAL GALAXY|
+|UGC 4285 |08 13 46|+00 38.9|    15.2|Sc         |      4285|MCG+00-21-010|       SPIRAL GALAXY|
+|UGC 3237 |05 03 28|+00 39.2|    15.2|Sc         |      3237|MCG+00-13-065|       SPIRAL GALAXY|
+|UGC 9470 |14 41 45|+00 39.2|    14.9|           |      9470|MCG+00-37-027|              GALAXY|
+|UGC 3064 |04 30 46|+00 39.4|    14.1|COMPACT    |      3064|MCG+00-12-037|              GALAXY|
+|UGC 3063 |04 30 40|+00 39.4|    13.3|E          |      3063|MCG+00-12-035|   ELLIPTICAL GALAXY|
+|UGC 11546|20 23 15|+00 39.7|    14.5|COMPACT    |     11546|MCG+00-52-004|              GALAXY|
+|UGC 11612|20 40 51|+00 39.7|    15.7|Sb-c       |     11612|MCG+00-52-046|       SPIRAL GALAXY|
+|UGC 8265 |13 11 33|+00 40.1|    14.4|SB         |      8265|MCG+00-34-015|SPIRAL GALAXY BARRED|
+|UGC 9482 |14 42 51|+00 40.3|    15.4|Sc         |      9482|MCG+00-38-000|       SPIRAL GALAXY|
+|UGC 1143 |01 35 58|+00 40.3|    14.1|SBb        |      1143|MCG+00-05-014|SPIRAL GALAXY BARRED|
+|UGC 2216 |02 44 28|+00 40.6|    16.0|IRR        |      2216|MCG+00-08-003|    IRREGULAR GALAXY|
+|UGC 2403 |02 55 52|+00 41.1|    14.9|SB         |      2403|MCG+00-08-050|SPIRAL GALAXY BARRED|
+|UGC 4492 |08 35 52|+00 41.6|    13.9|Sa         |      4492|MCG+00-22-023|       SPIRAL GALAXY|
+|UGC 5307 |09 53 22|+00 41.8|    13.8|S0         |      5307|MCG+00-25-030|   LENTICULAR GALAXY|
+|UGC 10230|16 09 57|+00 42.2|    13.0|Sc         |     10230|MCG+00-41-004|       SPIRAL GALAXY|
+|UGC 9977 |15 42 03|+00 42.5|    14.7|Sc         |      9977|MCG+00-40-007|       SPIRAL GALAXY|
+|UGC 7820 |12 39 16|+00 42.5|    14.6|Sc         |      7820|MCG+00-32-033|       SPIRAL GALAXY|
+|UGC 2091 |02 36 22|+00 43.0|    15.1|Sc         |      2091|MCG+00-07-050|       SPIRAL GALAXY|
+|UGC 6959 |11 58 28|+00 43.3|    15.4|CHAIN      |      6959|MCG+00-31-008|              GALAXY|
+|UGC 3141 |04 43 04|+00 43.6|    15.3|S          |      3141|MCG+00-12-073|              GALAXY|
+|UGC 7250 |12 14 46|+00 44.3|    15.3|S          |      7250|MCG+00-31-000|              GALAXY|
+|UGC 3215 |04 58 17|+00 44.5|    14.8|S0         |      3215|MCG+00-13-050|   LENTICULAR GALAXY|
+|UGC 4319 |08 17 59|+00 44.6|    13.5|SBa        |      4319|MCG+00-21-012|SPIRAL GALAXY BARRED|
+|UGC 12393|23 09 22|+00 45.3|    15.2|SBb        |     12393|MCG+00-59-003|SPIRAL GALAXY BARRED|
+|UGC 2921 |04 00 10|+00 45.4|    17.0|           |      2921|MCG+00-11-005|              GALAXY|
+|UGC 3058 |04 29 34|+00 45.5|    15.6|SB         |      3058|MCG+00-12-032|SPIRAL GALAXY BARRED|
+|UGC 10005|15 45 15|+00 45.7|    15.7|Sc?        |     10005|MCG+00-40-009|       SPIRAL GALAXY|
+|UGC 3769 |07 14 59|+00 45.7|    15.7|S          |      3769|MCG+00-19-000|              GALAXY|
+|UGC 11646|20 54 09|+00 46.4|    15.2|S          |     11646|MCG+00-53-000|              GALAXY|
+|UGC 6180 |11 07 34|+00 46.8|    14.8|Sa         |      6180|MCG+00-28-031|       SPIRAL GALAXY|
+|UGC 675  |01 06 10|+00 47.0|    17.0|DWARF      |       675|MCG+00-03-071|        DWARF GALAXY|
+|UGC 5823 |10 41 52|+00 47.3|    14.9|IRR        |      5823|MCG+00-27-041|    IRREGULAR GALAXY|
+|UGC 8784 |13 52 39|+00 48.2|    14.2|E-S0       |      8784|MCG+00-35-023|   ELLIPTICAL GALAXY|
+|UGC 7396 |12 20 34|+00 48.4|    15.0|Sc-IRR     |      7396|MCG+00-32-002|       SPIRAL GALAXY|
+|UGC 6523 |11 32 22|+00 48.4|    13.7|           |      6523|MCG+00-30-006|              GALAXY|
+|UGC 10290|16 14 33|+00 48.5|    15.0|DWRF SP    |     10290|MCG+00-41-010|        DWARF GALAXY|
+|UGC 4179 |08 02 05|+00 48.6|    15.5|SBb        |      4179|MCG+00-21-002|SPIRAL GALAXY BARRED|
+|UGC 10307|16 16 57|+00 48.7|    14.7|S0         |     10307|MCG+00-41-012|   LENTICULAR GALAXY|
+|UGC 12346|23 05 10|+00 49.2|    15.7|Sc         |     12346|MCG+00-58-026|       SPIRAL GALAXY|
+|UGC 3001 |04 16 59|+00 49.3|    14.9|S0-a       |      3001|MCG+00-11-040|   LENTICULAR GALAXY|
+|UGC 6578 |11 36 34|+00 49.4|    15.1|DBL SYS    |      6578|MCG+00-30-000|              GALAXY|
+|UGC 466  |00 43 52|+00 49.4|    15.4|S          |       466|MCG+00-03-002|              GALAXY|
+|UGC 6521 |11 32 16|+00 49.4|    13.8|Sb         |      6521|MCG+00-30-005|       SPIRAL GALAXY|
+|UGC 193  |00 20 22|+00 49.6|    14.5|SB0-a      |       193|MCG+00-02-004|SPIRAL GALAXY BARRED|
+|UGC 194  |00 20 22|+00 49.6|    14.5|S0         |       194|MCG+00-02-005|   LENTICULAR GALAXY|
+|UGC 8641 |13 39 57|+00 49.8|    13.7|S          |      8641|MCG+00-35-015|              GALAXY|
+|UGC 8645 |13 40 03|+00 49.8|    13.8|S          |      8645|MCG+00-35-016|              GALAXY|
+|UGC 4561 |08 43 53|+00 50.1|    15.0|S          |      4561|MCG+00-23-001|              GALAXY|
+|UGC 3072 |04 31 11|+00 50.4|    18.0|DWARF      |      3072|MCG+00-12-000|        DWARF GALAXY|
+|UGC 7625 |12 29 34|+00 50.4|    17.0|           |      7625|MCG+00-32-000|              GALAXY|
+|UGC 450  |00 42 22|+00 50.4|    14.5|PECULR     |       450|MCG+00-02-129|              GALAXY|
+|UGC 5913 |10 48 22|+00 51.1|    14.3|           |      5913|MCG+00-28-011|              GALAXY|
+|UGC 3065 |04 30 47|+00 51.4|    13.8|Sb         |      3065|MCG+00-12-038|       SPIRAL GALAXY|
+|UGC 419  |00 39 40|+00 51.5|    14.7|Sc/SBc     |       419|MCG+00-02-115|       SPIRAL GALAXY|
+|UGC 401  |00 39 16|+00 51.5|    13.9|SBa        |       401|MCG+00-02-104|SPIRAL GALAXY BARRED|
+|UGC 6284 |11 15 46|+00 51.6|    15.4|DBL SYS    |      6284|MCG+00-29-000|              GALAXY|
+|UGC 8235 |13 09 33|+00 52.0|    14.4|SB0/SBa    |      8235|MCG+00-34-009|SPIRAL GALAXY BARRED|
+|UGC 2418 |02 56 28|+00 52.1|    15.2|SBb/Sc     |      2418|MCG+00-08-051|SPIRAL GALAXY BARRED|
+|UGC 772  |01 13 40|+00 52.9|    17.0|DWRF IR    |       772|MCG+00-04-043|        DWARF GALAXY|
+|UGC 9147 |14 18 15|+00 53.2|    14.9|Sb-c       |      9147|MCG+00-36-033|       SPIRAL GALAXY|
+|UGC 3256 |05 10 11|+00 53.7|    14.6|Sb/SBb     |      3256|MCG+00-14-007|       SPIRAL GALAXY|
+|UGC 11790|21 41 33|+00 53.7|    15.3|Sc         |     11790|MCG+00-55-011|       SPIRAL GALAXY|
+|UGC 405  |00 39 22|+00 54.5|        |SB0        |       405|MCG+00-02-110|SPIRAL GALAXY BARRED|
+|UGC 406  |00 39 22|+00 54.5|    14.2|S?         |       406|MCG+00-02-107|              GALAXY|
+|UGC 8474 |13 29 27|+00 54.5|    18.0|DWARF      |      8474|MCG+00-34-000|        DWARF GALAXY|
+|UGC 11825|21 50 39|+00 55.1|    15.4|Sa?        |     11825|MCG+00-55-019|       SPIRAL GALAXY|
+|UGC 2044 |02 33 52|+00 55.1|    15.7|SBc        |      2044|MCG+00-07-043|SPIRAL GALAXY BARRED|
+|UGC 2004 |02 31 58|+00 55.2|    14.8|SBc        |      2004|MCG+00-07-036|SPIRAL GALAXY BARRED|
+|UGC 317  |00 31 40|+00 55.6|    17.0|           |       317|MCG+00-02-000|              GALAXY|
+|UGC 2229 |02 45 28|+00 55.6|    14.8|E-S        |      2229|MCG+00-08-006|   ELLIPTICAL GALAXY|
+|UGC 693  |01 07 28|+00 56.0|    14.6|E          |       693|MCG+00-03-075|   ELLIPTICAL GALAXY|
+|UGC 618  |00 59 46|+00 56.2|    15.4|Sc         |       618|MCG+00-03-049|       SPIRAL GALAXY|
+|UGC 7148 |12 09 58|+00 56.3|    15.4|SB         |      7148|MCG+00-31-000|SPIRAL GALAXY BARRED|
+|UGC 12503|23 19 22|+00 56.4|    15.7|S          |     12503|MCG+00-59-023|              GALAXY|
+|UGC 914  |01 22 10|+00 56.7|    13.0|Sc         |       914|MCG+00-04-099|       SPIRAL GALAXY|
+|UGC 10825|17 22 33|+00 57.2|    15.4|S          |     10825|MCG+00-44-000|              GALAXY|
+|UGC 1981 |02 30 16|+00 57.3|    17.0|DWARF      |      1981|MCG+00-07-026|        DWARF GALAXY|
+|UGC 5664 |10 27 10|+00 57.7|    15.4|S          |      5664|MCG+00-27-000|              GALAXY|
+|UGC 5242 |09 47 10|+00 58.1|    16.0|DWARF      |      5242|MCG+00-25-016|        DWARF GALAXY|
+|UGC 7177 |12 11 04|+00 58.3|    15.1|VY CMPT    |      7177|MCG+00-31-000|              GALAXY|
+|UGC 2502 |03 02 34|+00 58.7|    16.0|S          |      2502|MCG+00-08-071|              GALAXY|
+|UGC 763  |01 12 58|+00 58.9|    11.9|           |       763|MCG+00-04-036|              GALAXY|
+|UGC 2292 |02 48 52|+00 59.4|    15.4|Sa         |      2292|MCG+00-08-020|       SPIRAL GALAXY|
+|UGC 5660 |10 26 40|+00 59.7|    15.3|S          |      5660|MCG+00-27-000|              GALAXY|
+|UGC 4432 |08 28 11|+01 00.0|    15.2|Sb-c       |      4432|MCG+00-22-012|       SPIRAL GALAXY|
+|UGC 1163 |01 37 58|+01 00.2|    15.5|COMPACT    |      1163|MCG+00-05-017|              GALAXY|
+|UGC 11859|21 58 09|+01 00.4|    15.6|Sb         |     11859|MCG+00-56-004|       SPIRAL GALAXY|
+|UGC 9254 |14 27 21|+01 01.6|    14.8|SBb        |      9254|MCG+00-37-006|SPIRAL GALAXY BARRED|
+|UGC 252  |00 26 22|+01 01.6|    16.5|Sc         |       252|MCG+00-02-026|       SPIRAL GALAXY|
+|UGC 971  |01 24 46|+01 01.6|    18.0|DWARF      |       971|MCG+00-04-000|        DWARF GALAXY|
+|UGC 8066 |12 57 03|+01 01.8|    17.0|DWRF SP    |      8066|MCG+00-33-000|        DWARF GALAXY|
+|UGC 4613 |08 48 41|+01 01.9|    14.9|SBb        |      4613|MCG+00-23-003|SPIRAL GALAXY BARRED|
+|UGC 4956 |09 20 05|+01 02.3|    14.1|E          |      4956|MCG+00-24-007|   ELLIPTICAL GALAXY|
+|UGC 4224 |08 06 23|+01 02.3|    14.3|S0         |      4224|MCG+00-21-004|   LENTICULAR GALAXY|
+|UGC 3054 |04 28 11|+01 02.6|    17.0|           |      3054|MCG+00-12-000|              GALAXY|
+|UGC 951  |01 24 10|+01 02.6|    15.7|DISTRBD    |       951|MCG+00-04-115|              GALAXY|
+|UGC 12810|23 51 10|+01 02.7|    14.4|Sb         |     12810|MCG+00-60-055|       SPIRAL GALAXY|
+|UGC 11724|21 20 39|+01 02.8|    15.3|Sc         |     11724|MCG+00-54-014|       SPIRAL GALAXY|
+|UGC 5355 |09 58 28|+01 03.6|    16.0|Sc         |      5355|MCG+00-26-000|       SPIRAL GALAXY|
+|UGC 3136 |04 41 53|+01 03.7|    15.3|Sb         |      3136|MCG+00-12-000|       SPIRAL GALAXY|
+|UGC 4610 |08 48 23|+01 03.9|    15.7|Sb-c       |      4610|MCG+00-23-000|       SPIRAL GALAXY|
+|UGC 695  |01 07 52|+01 04.0|    15.4|PECULR     |       695|MCG+00-04-003|              GALAXY|
+|UGC 2584 |03 11 41|+01 04.3|    18.0|DWARF?     |      2584|MCG+00-09-000|        DWARF GALAXY|
+|UGC 11606|20 39 45|+01 04.7|    15.3|Sc         |     11606|MCG+00-52-045|       SPIRAL GALAXY|
+|UGC 1169 |01 38 52|+01 05.2|    14.2|S0         |      1169|MCG+00-05-021|   LENTICULAR GALAXY|
+|UGC 2523 |03 05 05|+01 05.6|    15.3|Sc         |      2523|MCG+00-08-085|       SPIRAL GALAXY|
+|UGC 2147 |02 39 22|+01 05.9|    13.2|Sa         |      2147|MCG+00-07-073|       SPIRAL GALAXY|
+|UGC 12220|22 52 27|+01 06.0|    14.1|Sa         |     12220|MCG+00-58-007|       SPIRAL GALAXY|
+|UGC 2404 |02 55 53|+01 06.1|    16.5|Sc         |      2404|MCG+00-08-000|       SPIRAL GALAXY|
+|UGC 3091 |04 33 53|+01 06.2|    15.4|Sc         |      3091|MCG+00-12-045|       SPIRAL GALAXY|
+|UGC 9140 |14 17 33|+01 07.2|    16.5|Sc         |      9140|MCG+00-36-000|       SPIRAL GALAXY|
+|UGC 507  |00 49 40|+01 07.3|    15.2|Sc         |       507|MCG+00-03-009|       SPIRAL GALAXY|
+|UGC 5261 |09 49 23|+01 08.0|    14.2|           |      5261|MCG+00-25-020|              GALAXY|
+|UGC 9779 |15 14 45|+01 08.9|    15.2|S0-a       |      9779|MCG+00-39-012|   LENTICULAR GALAXY|
+|UGC 5032 |09 26 41|+01 09.0|    15.7|Sa-b       |      5032|MCG+00-24-000|       SPIRAL GALAXY|
+|UGC 4571 |08 44 53|+01 09.1|    15.7|Sc         |      4571|MCG+00-23-000|       SPIRAL GALAXY|
+|UGC 2996 |04 15 35|+01 09.4|    15.3|S0-a       |      2996|MCG+00-11-034|   LENTICULAR GALAXY|
+|UGC 1907 |02 26 28|+01 09.5|    14.7|E          |      1907|MCG+00-07-013|   ELLIPTICAL GALAXY|
+|UGC 11559|20 26 09|+01 09.9|    14.5|S0         |     11559|MCG+00-52-007|   LENTICULAR GALAXY|
+|UGC 1978 |02 29 58|+01 10.3|    15.0|(S0)       |      1978|MCG+00-07-025|   LENTICULAR GALAXY|
+|UGC 9229 |14 24 39|+01 10.5|    14.9|Sb         |      9229|MCG+00-37-004|       SPIRAL GALAXY|
+|UGC 7833 |12 40 27|+01 10.5|    13.7|Sa         |      7833|MCG+00-32-034|       SPIRAL GALAXY|
+|UGC 790  |01 14 40|+01 10.9|    15.0|Sc         |       790|MCG+00-04-053|       SPIRAL GALAXY|
+|UGC 2872 |03 49 05|+01 11.1|    17.0|           |      2872|MCG+00-10-019|              GALAXY|
+|UGC 3080 |04 31 53|+01 11.4|    14.9|Sc         |      3080|MCG+00-12-042|       SPIRAL GALAXY|
+|UGC 5606 |10 22 22|+01 11.8|    14.5|S          |      5606|MCG+00-27-003|              GALAXY|
+|UGC 9782 |15 14 57|+01 11.9|    16.5|Sc         |      9782|MCG+00-39-000|       SPIRAL GALAXY|
+|UGC 1665 |02 10 22|+01 12.1|    18.0|DWARF      |      1665|MCG+00-06-000|        DWARF GALAXY|
+|UGC 9678 |15 04 09|+01 12.3|    13.1|E          |      9678|MCG+00-38-020|   ELLIPTICAL GALAXY|
+|UGC 12513|23 19 52|+01 12.4|    16.0|S          |     12513|MCG+00-59-000|              GALAXY|
+|UGC 4310 |08 17 17|+01 12.7|    15.3|S IV       |      4310|MCG+00-21-011|              GALAXY|
+|UGC 823  |01 16 34|+01 12.8|    18.0|DWRF SP    |       823|MCG+00-04-000|        DWARF GALAXY|
+|UGC 12225|22 52 51|+01 13.0|    14.9|Sa         |     12225|MCG+00-58-009|       SPIRAL GALAXY|
+|UGC 6519 |11 32 10|+01 13.4|    15.6|Sc         |      6519|MCG+00-30-000|       SPIRAL GALAXY|
+|UGC 12690|23 35 40|+01 13.6|    17.0|DWARF      |     12690|MCG+00-60-015|        DWARF GALAXY|
+|UGC 2162 |02 40 23|+01 13.8|    18.0|DWRF IR    |      2162|MCG+00-07-077|        DWARF GALAXY|
+|UGC 1760 |02 17 04|+01 13.9|    14.2|S0-a       |      1760|MCG+00-06-060|   LENTICULAR GALAXY|
+|UGC 676  |01 06 16|+01 14.0|    15.6|S          |       676|MCG+00-03-000|              GALAXY|
+|UGC 2005 |02 31 59|+01 14.2|    14.8|(E)        |      2005|MCG+00-07-035|   ELLIPTICAL GALAXY|
+|UGC 9732 |15 08 15|+01 14.6|    14.7|SBb        |      9732|MCG+00-93-005|SPIRAL GALAXY BARRED|
+|UGC 12729|23 40 28|+01 14.6|    15.2|S0-a       |     12729|MCG+00-60-029|   LENTICULAR GALAXY|
+|UGC 3192 |04 52 47|+01 14.9|    14.6|E-S0       |      3192|MCG+00-13-020|   ELLIPTICAL GALAXY|
+|UGC 1994 |02 31 11|+01 15.3|    14.2|S0         |      1994|MCG+00-07-028|   LENTICULAR GALAXY|
+|UGC 6903 |11 55 40|+01 15.3|    14.1|SBc        |      6903|MCG+00-31-002|SPIRAL GALAXY BARRED|
+|UGC 5667 |10 27 28|+01 15.7|    14.9|DBL SYS    |      5667|MCG+00-27-018|              GALAXY|
+|UGC 8020 |12 53 21|+01 15.7|    13.3|Sc         |      8020|MCG+00-33-017|       SPIRAL GALAXY|
+|UGC 2638 |03 17 05|+01 16.0|    16.0|Sa-b       |      2638|MCG+00-09-042|       SPIRAL GALAXY|
+|UGC 9514 |14 46 33|+01 16.5|    15.2|S0         |      9514|MCG+00-38-000|   LENTICULAR GALAXY|
+|UGC 1402 |01 55 58|+01 16.7|    14.9|SBb        |      1402|MCG+00-06-001|SPIRAL GALAXY BARRED|
+|UGC 747  |01 11 22|+01 16.9|    15.7|           |       747|MCG+00-04-028|              GALAXY|
+|UGC 874  |01 20 46|+01 17.7|    15.5|S0?        |       874|MCG+00-04-089|   LENTICULAR GALAXY|
+|UGC 7214 |12 12 52|+01 18.3|    12.8|S0         |      7214|MCG+00-31-038|   LENTICULAR GALAXY|
+|UGC 8534 |13 33 33|+01 18.6|    15.2|SBc        |      8534|MCG+00-35-000|SPIRAL GALAXY BARRED|
+|UGC 3287 |05 19 17|+01 19.0|    14.7|S          |      3287|MCG+00-14-000|              GALAXY|
+|UGC 2711 |03 23 29|+01 19.6|    15.7|SB:b       |      2711|MCG+00-09-075|SPIRAL GALAXY BARRED|
+|UGC 11789|21 41 03|+01 19.7|    14.9|Sb         |     11789|MCG+00-55-010|       SPIRAL GALAXY|
+|UGC 3194 |04 52 59|+01 19.9|    15.4|SBb        |      3194|MCG+00-13-022|SPIRAL GALAXY BARRED|
+|UGC 749  |01 11 34|+01 19.9|    14.2|S-IRR      |       749|MCG+00-04-030|              GALAXY|
+|UGC 1995 |02 31 23|+01 20.2|    14.6|Sc         |      1995|MCG+00-07-030|       SPIRAL GALAXY|
+|UGC 1130 |01 34 58|+01 20.3|    15.6|S          |      1130|MCG+00-05-011|              GALAXY|
+|UGC 709  |01 08 34|+01 21.0|    16.0|           |       709|MCG+00-04-009|              GALAXY|
+|UGC 2429 |02 57 11|+01 21.0|    16.0|IRR        |      2429|MCG+00-08-055|    IRREGULAR GALAXY|
+|UGC 2062 |02 34 35|+01 21.1|    15.0|Sb-c       |      2062|MCG+00-07-046|       SPIRAL GALAXY|
+|UGC 2051 |02 34 05|+01 21.1|    14.4|S0         |      2051|MCG+00-07-044|   LENTICULAR GALAXY|
+|UGC 496  |00 48 28|+01 21.4|    14.6|DBL SYS    |       496|MCG+00-03-007|              GALAXY|
+|UGC 7873 |12 42 39|+01 21.6|    15.3|Sc         |      7873|MCG+00-33-001|       SPIRAL GALAXY|
+|UGC 890  |01 21 10|+01 21.7|    14.3|Sb         |       890|MCG+00-04-093|       SPIRAL GALAXY|
+|UGC 12857|23 56 52|+01 21.7|    14.7|S          |     12857|MCG+00-01-009|              GALAXY|
+|UGC 2679 |03 20 05|+01 21.8|    15.4|Sb-c       |      2679|MCG+00-09-060|       SPIRAL GALAXY|
+|UGC 2913 |03 58 59|+01 22.5|    16.0|SBa        |      2913|MCG+00-11-003|SPIRAL GALAXY BARRED|
+|UGC 7806 |12 38 39|+01 22.5|    15.2|Sc         |      7806|MCG+00-32-030|       SPIRAL GALAXY|
+|UGC 2210 |02 43 41|+01 22.7|    12.5|SBc        |      2210|MCG+00-08-001|SPIRAL GALAXY BARRED|
+|UGC 2120 |02 38 05|+01 22.9|    15.1|SB:b-c     |      2120|MCG+00-07-064|SPIRAL GALAXY BARRED|
+|UGC 12232|22 53 51|+01 23.0|    14.9|SBa        |     12232|MCG+00-58-011|SPIRAL GALAXY BARRED|
+|UGC 11577|20 30 39|+01 23.1|    14.6|S          |     11577|MCG+00-52-025|              GALAXY|
+|UGC 563  |00 55 04|+01 23.2|    15.1|S          |       563|MCG+00-03-024|              GALAXY|
+|UGC 11596|20 35 51|+01 23.4|    16.0|S          |     11596|MCG+00-52-039|              GALAXY|
+|UGC 7841 |12 41 15|+01 23.5|    14.3|           |      7841|MCG+00-32-035|              GALAXY|
+|UGC 8566 |13 35 21|+01 24.7|    14.6|SBb        |      8566|MCG+00-35-010|SPIRAL GALAXY BARRED|
+|UGC 9751 |15 10 56|+01 25.7|    15.6|Sc         |      9751|MCG+00-39-000|       SPIRAL GALAXY|
+|UGC 875  |01 20 46|+01 25.7|    15.2|Sc         |       875|MCG+00-04-090|       SPIRAL GALAXY|
+|UGC 11553|20 24 50|+01 25.8|    16.0|Sc         |     11553|MCG+00-52-005|       SPIRAL GALAXY|
+|UGC 9787 |15 15 44|+01 26.0|    15.4|           |      9787|MCG+00-39-015|              GALAXY|
+|UGC 12452|23 15 03|+01 26.4|    15.7|Sc         |     12452|MCG+00-59-012|       SPIRAL GALAXY|
+|UGC 12560|23 22 51|+01 26.5|    14.5|S          |     12560|MCG+00-59-035|              GALAXY|
+|UGC 11770|21 35 03|+01 27.4|    15.6|S          |     11770|MCG+00-55-006|              GALAXY|
+|UGC 7801 |12 38 09|+01 27.5|    13.4|E          |      7801|MCG+00-32-028|   ELLIPTICAL GALAXY|
+|UGC 7807 |12 38 39|+01 27.5|    15.3|S          |      7807|MCG+00-32-000|              GALAXY|
+|UGC 7991 |12 50 39|+01 27.7|    14.8|Sc         |      7991|MCG+00-33-014|       SPIRAL GALAXY|
+|UGC 12508|23 19 39|+01 28.4|    14.5|S          |     12508|MCG+00-59-024|              GALAXY|
+|UGC 257  |00 26 52|+01 28.6|    16.0|           |       257|MCG+00-02-000|              GALAXY|
+|UGC 1725 |02 14 29|+01 29.0|    16.5|Sc-IRR     |      1725|MCG+00-06-055|       SPIRAL GALAXY|
+|UGC 7184 |12 11 22|+01 29.3|    14.9|SBc        |      7184|MCG+00-31-037|SPIRAL GALAXY BARRED|
+|UGC 7394 |12 20 28|+01 29.4|    15.2|Sc         |      7394|MCG+00-32-000|       SPIRAL GALAXY|
+|UGC 322  |00 32 34|+01 29.5|    16.5|Sc         |       322|MCG+00-02-067|       SPIRAL GALAXY|
+|UGC 1006 |01 25 52|+01 29.6|    15.3|S0-a       |      1006|MCG+00-04-000|   LENTICULAR GALAXY|
+|UGC 2158 |02 40 05|+01 30.9|    14.4|Sa         |      2158|MCG+00-07-076|       SPIRAL GALAXY|
+|UGC 1600 |02 06 35|+01 31.3|    17.0|Sc         |      1600|MCG+00-06-031|       SPIRAL GALAXY|
+|UGC 11584|20 31 50|+01 32.2|    15.7|Sc         |     11584|MCG+00-52-031|       SPIRAL GALAXY|
+|UGC 9715 |15 07 14|+01 32.5|    13.6|SBb        |      9715|MCG+00-39-002|SPIRAL GALAXY BARRED|
+|UGC 4291 |08 14 47|+01 32.8|    15.6|Sb-c       |      4291|MCG+00-21-000|       SPIRAL GALAXY|
+|UGC 2152 |02 39 41|+01 32.9|    14.5|Sa         |      2152|MCG+00-07-075|       SPIRAL GALAXY|
+|UGC 2085 |02 36 05|+01 33.0|    15.7|Sc         |      2085|MCG+00-07-049|       SPIRAL GALAXY|
+|UGC 12525|23 20 27|+01 33.4|    15.1|TRP SYS    |     12525|MCG+00-59-027|              GALAXY|
+|UGC 8078 |12 58 03|+01 33.8|    12.9|Sb         |      8078|MCG+00-33-025|       SPIRAL GALAXY|
+|UGC 5311 |09 53 41|+01 33.8|    12.4|Sc         |      5311|MCG+00-25-031|       SPIRAL GALAXY|
+|UGC 817  |01 16 04|+01 33.8|    15.0|Sb/SBb     |       817|MCG+00-04-065|       SPIRAL GALAXY|
+|UGC 3238 |05 03 35|+01 34.2|    13.5|Sc         |      3238|MCG+00-13-067|       SPIRAL GALAXY|
+|UGC 7057 |12 04 22|+01 34.3|    14.6|S          |      7057|MCG+00-31-027|              GALAXY|
+|UGC 9706 |15 06 32|+01 34.5|    11.9|E          |      9706|MCG+00-38-025|   ELLIPTICAL GALAXY|
+|UGC 11131|18 10 20|+01 34.7|    15.7|           |     11131|MCG+00-46-003|              GALAXY|
+|UGC 3208 |04 56 17|+01 35.7|    15.6|Sc         |      3208|MCG+00-13-038|       SPIRAL GALAXY|
+|UGC 9693 |15 05 26|+01 36.4|    13.9|S0         |      9693|MCG+00-38-023|   LENTICULAR GALAXY|
+|UGC 9700 |15 06 02|+01 36.4|    13.8|E          |      9700|MCG+00-38-024|   ELLIPTICAL GALAXY|
+|UGC 2535 |03 06 05|+01 36.6|    18.0|DWRF IR    |      2535|MCG+00-08-000|        DWARF GALAXY|
+|UGC 3198 |04 54 18|+01 37.8|    15.0|E          |      3198|MCG+00-13-027|   ELLIPTICAL GALAXY|
+|UGC 6057 |10 58 16|+01 37.9|    14.9|TRP SYS    |      6057|MCG+00-28-024|              GALAXY|
+|UGC 12295|23 00 21|+01 38.1|    15.5|Sc         |     12295|MCG+00-58-019|       SPIRAL GALAXY|
+|UGC 11505|20 02 26|+01 38.4|    15.2|S          |     11505|MCG+00-51-005|              GALAXY|
+|UGC 10465|16 36 44|+01 39.0|    14.7|Sb-c       |     10465|MCG+00-42-006|       SPIRAL GALAXY|
+|UGC 711  |01 08 40|+01 39.0|    14.8|Sc         |       711|MCG+00-04-008|       SPIRAL GALAXY|
+|UGC 7824 |12 39 51|+01 39.5|    15.5|           |      7824|MCG+00-32-000|              GALAXY|
+|UGC 4480 |08 34 29|+01 39.6|    14.7|SBb+CMP    |      4480|MCG+00-22-017|SPIRAL GALAXY BARRED|
+|UGC 3199 |04 54 18|+01 39.8|    15.5|SBb        |      3199|MCG+00-13-026|SPIRAL GALAXY BARRED|
+|UGC 5228 |09 46 05|+01 40.1|    14.1|SB         |      5228|MCG+00-25-014|SPIRAL GALAXY BARRED|
+|UGC 341  |00 34 28|+01 40.5|    16.0|S          |       341|MCG+00-02-076|              GALAXY|
+|UGC 9760 |15 12 02|+01 40.8|    14.9|Sc         |      9760|MCG+00-39-011|       SPIRAL GALAXY|
+|UGC 2121 |02 37 59|+01 40.9|    15.0|Sc         |      2121|MCG+00-07-062|       SPIRAL GALAXY|
+|UGC 8236 |13 09 33|+01 41.0|    13.5|SBb        |      8236|MCG+00-34-010|SPIRAL GALAXY BARRED|
+|UGC 9655 |15 01 08|+01 41.2|    12.5|E          |      9655|MCG+00-38-016|   ELLIPTICAL GALAXY|
+|UGC 9493 |14 44 26|+01 41.4|    13.2|Sb         |      9493|MCG+00-38-003|       SPIRAL GALAXY|
+|UGC 12770|23 45 34|+01 41.7|    14.8|S0-a       |     12770|MCG+00-60-044|   LENTICULAR GALAXY|
+|UGC 3049 |04 26 53|+01 41.7|    15.4|Sb-c       |      3049|MCG+00-12-000|       SPIRAL GALAXY|
+|UGC 11810|21 46 57|+01 41.9|    14.7|Sb         |     11810|MCG+00-55-015|       SPIRAL GALAXY|
+|UGC 1741 |02 15 35|+01 41.9|    15.1|SBb-c      |      1741|MCG+00-06-057|SPIRAL GALAXY BARRED|
+|UGC 5797 |10 39 22|+01 42.4|    14.7|IRR        |      5797|MCG+00-27-038|    IRREGULAR GALAXY|
+|UGC 358  |00 36 10|+01 42.5|    15.3|S          |       358|MCG+00-02-088|              GALAXY|
+|UGC 10133|16 01 32|+01 42.7|    14.4|Sc/SBc     |     10133|MCG+00-41-002|       SPIRAL GALAXY|
+|UGC 3083 |04 32 18|+01 43.3|    16.5|Sc         |      3083|MCG+00-12-000|       SPIRAL GALAXY|
+|UGC 9215 |14 23 26|+01 43.4|    13.6|SBc        |      9215|MCG+00-37-002|SPIRAL GALAXY BARRED|
+|UGC 4491 |08 35 47|+01 43.6|    13.9|Sa-b       |      4491|MCG+00-22-022|       SPIRAL GALAXY|
+|UGC 962  |01 24 34|+01 43.6|    12.9|SBb        |       962|MCG+00-04-118|SPIRAL GALAXY BARRED|
+|UGC 6854 |11 52 46|+01 44.3|    14.4|SB         |      6854|MCG+00-30-033|SPIRAL GALAXY BARRED|
+|UGC 5783 |10 38 04|+01 44.4|    15.0|SBb        |      5783|MCG+00-27-033|SPIRAL GALAXY BARRED|
+|UGC 992  |01 25 28|+01 44.6|    13.1|E          |       992|MCG+00-04-131|   ELLIPTICAL GALAXY|
+|UGC 8581 |13 35 57|+01 44.7|    16.0|DBL SYS    |      8581|MCG+00-35-000|              GALAXY|
+|UGC 2124 |02 38 11|+01 44.9|    13.5|SBa        |      2124|MCG+00-07-066|SPIRAL GALAXY BARRED|
+|UGC 12309|23 01 27|+01 45.1|    13.9|E          |     12309|MCG+00-58-020|   ELLIPTICAL GALAXY|
+|UGC 11591|20 33 14|+01 45.3|    15.3|S          |     11591|MCG+00-52-034|              GALAXY|
+|UGC 2992 |04 13 41|+01 45.6|    15.4|DBL SYS    |      2992|MCG+00-11-000|              GALAXY|
+|UGC 2518 |03 04 17|+01 45.7|    15.6|Sc         |      2518|MCG+00-08-081|       SPIRAL GALAXY|
+|UGC 2199 |02 43 17|+01 45.7|    14.8|S0-a       |      2199|MCG+00-07-086|   LENTICULAR GALAXY|
+|UGC 1746 |02 15 53|+01 45.9|    15.2|Sc         |      1746|MCG+00-06-058|       SPIRAL GALAXY|
+|UGC 3079 |04 31 48|+01 46.4|    15.7|S          |      3079|MCG+00-12-040|              GALAXY|
+|UGC 9744 |15 09 56|+01 46.6|    15.3|SBa-b      |      9744|MCG+00-39-000|SPIRAL GALAXY BARRED|
+|UGC 7063 |12 04 40|+01 47.3|    14.5|E-S0       |      7063|MCG+00-31-031|   ELLIPTICAL GALAXY|
+|UGC 2010 |02 32 11|+01 48.2|    14.3|SBb        |      2010|MCG+00-07-037|SPIRAL GALAXY BARRED|
+|UGC 5878 |10 46 16|+01 49.2|    13.6|Sc         |      5878|MCG+00-28-006|       SPIRAL GALAXY|
+|UGC 2009 |02 32 11|+01 49.2|    16.0|S          |      2009|MCG+00-07-038|              GALAXY|
+|UGC 9661 |15 02 02|+01 49.2|    15.0|           |      9661|MCG+00-38-018|              GALAXY|
+|UGC 3171 |04 47 42|+01 49.3|    15.2|SB:c       |      3171|MCG+00-13-012|SPIRAL GALAXY BARRED|
+|UGC 6769 |11 47 46|+01 49.3|    15.0|SB:a-b     |      6769|MCG+00-30-023|SPIRAL GALAXY BARRED|
+|UGC 791  |01 14 40|+01 49.9|    15.0|SBa-b      |       791|MCG+00-04-052|SPIRAL GALAXY BARRED|
+|UGC 721  |01 09 34|+01 50.0|    15.6|S          |       721|MCG+00-04-014|              GALAXY|
+|UGC 3023 |04 22 00|+01 50.0|    14.9|SB0        |      3023|MCG+00-12-016|SPIRAL GALAXY BARRED|
+|UGC 1863 |02 24 29|+01 50.5|    15.3|Sc         |      1863|MCG+00-07-010|       SPIRAL GALAXY|
+|UGC 8521 |13 32 33|+01 50.6|    14.5|SBa-b      |      8521|MCG+00-35-006|SPIRAL GALAXY BARRED|
+|UGC 4421 |08 27 24|+01 51.1|    15.3|Sb/SBb     |      4421|MCG+00-22-000|       SPIRAL GALAXY|
+|UGC 468  |00 43 58|+01 51.4|    14.5|Sc         |       468|MCG+00-03-003|       SPIRAL GALAXY|
+|UGC 648  |01 03 34|+01 53.1|    15.6|S          |       648|MCG+00-03-062|              GALAXY|
+|UGC 9645 |14 59 56|+01 53.1|    12.9|Sb         |      9645|MCG+00-38-014|       SPIRAL GALAXY|
+|UGC 1627 |02 08 05|+01 53.2|    14.9|S          |      1627|MCG+00-06-041|              GALAXY|
+|UGC 4494 |08 36 06|+01 53.6|    15.2|Sa-b       |      4494|MCG+00-22-000|       SPIRAL GALAXY|
+|UGC 3211 |04 57 18|+01 53.6|    15.3|Sc         |      3211|MCG+00-13-044|       SPIRAL GALAXY|
+|UGC 6067 |10 59 10|+01 53.9|    15.2|TRP SYS    |      6067|MCG+00-28-025|              GALAXY|
+|UGC 12336|23 04 09|+01 54.2|    15.2|E-S0       |     12336|MCG+00-58-025|   ELLIPTICAL GALAXY|
+|UGC 7042 |12 03 58|+01 54.3|    15.4|S          |      7042|MCG+00-31-026|              GALAXY|
+|UGC 7060 |12 04 28|+01 54.3|    13.8|E          |      7060|MCG+00-31-029|   ELLIPTICAL GALAXY|
+|UGC 1573 |02 04 47|+01 54.3|    16.5|Sc         |      1573|MCG+00-06-028|       SPIRAL GALAXY|
+|UGC 10386|16 27 20|+01 54.3|    15.2|Sc         |     10386|MCG+00-42-000|       SPIRAL GALAXY|
+|UGC 1464 |01 59 05|+01 54.5|    17.0|DWRF IR    |      1464|MCG+00-06-000|        DWARF GALAXY|
+|UGC 5694 |10 29 41|+01 54.6|    15.3|DBL SYS    |      5694|MCG+00-27-000|              GALAXY|
+|UGC 3630 |07 01 00|+01 54.7|    15.5|S          |      3630|MCG+00-18-001|              GALAXY|
+|UGC 2132 |02 38 23|+01 54.9|    14.6|SBb        |      2132|MCG+00-07-068|SPIRAL GALAXY BARRED|
+|UGC 9960 |15 40 08|+01 55.4|    15.5|Sa         |      9960|MCG+00-40-000|       SPIRAL GALAXY|
+|UGC 9746 |15 10 20|+01 55.7|    15.0|Sb-c       |      9746|MCG+00-39-008|       SPIRAL GALAXY|
+|UGC 2804 |03 38 05|+01 55.8|    16.5|Sc         |      2804|MCG+00-10-000|       SPIRAL GALAXY|
+|UGC 11595|20 35 02|+01 56.4|    15.6|Sb-c       |     11595|MCG+00-52-036|       SPIRAL GALAXY|
+|UGC 369  |00 37 10|+01 56.5|    14.5|Sb/Sc      |       369|MCG+00-02-092|       SPIRAL GALAXY|
+|UGC 2513 |03 03 35|+01 56.7|    15.0|Sa:        |      2513|MCG+00-08-000|       SPIRAL GALAXY|
+|UGC 1797 |02 19 59|+01 56.7|    15.2|S0-a       |      1797|MCG+00-07-003|   LENTICULAR GALAXY|
+|UGC 11525|20 12 20|+01 57.0|    15.4|Sa-b       |     11525|MCG+00-51-009|       SPIRAL GALAXY|
+|UGC 2936 |04 02 48|+01 57.3|    15.7|Sc         |      2936|MCG+00-11-007|       SPIRAL GALAXY|
+|UGC 9499 |14 45 02|+01 57.4|    12.3|Sb         |      9499|MCG+00-38-005|       SPIRAL GALAXY|
+|UGC 2112 |02 37 35|+01 58.0|    14.3|E          |      2112|MCG+00-07-057|   ELLIPTICAL GALAXY|
+|UGC 389  |00 38 28|+01 58.5|    15.4|           |       389|MCG+00-02-099|              GALAXY|
+|UGC 6440 |11 26 04|+01 58.5|    14.7|Sb         |      6440|MCG+00-29-032|       SPIRAL GALAXY|
+|UGC 2355 |02 52 23|+01 59.3|    18.0|DWARF      |      2355|MCG+00-08-000|        DWARF GALAXY|
+|UGC 7021 |12 02 46|+01 59.3|    13.5|Sa         |      7021|MCG+00-31-022|       SPIRAL GALAXY|
+|UGC 7895 |12 43 21|+01 59.6|    11.9|SB0        |      7895|MCG+00-33-005|SPIRAL GALAXY BARRED|
+|UGC 10824|17 22 19|+02 00.2|    15.1|S          |     10824|MCG+00-44-003|              GALAXY|
+|UGC 9980 |15 42 32|+02 00.5|    15.2|SB0        |      9980|MCG+00-40-000|SPIRAL GALAXY BARRED|
+|UGC 1021 |01 26 41|+02 00.6|    13.6|S          |      1021|MCG+00-04-146|              GALAXY|
+|UGC 10339|16 20 08|+02 00.9|    14.3|           |     10339|MCG+00-42-001|              GALAXY|
+|UGC 11826|21 50 51|+02 01.1|    15.0|SBa-b      |     11826|MCG+00-55-020|SPIRAL GALAXY BARRED|
+|UGC 7178 |12 11 04|+02 01.3|    17.0|DWRF IR    |      7178|MCG+00-31-036|        DWARF GALAXY|
+|UGC 8924 |14 00 44|+02 01.5|    14.7|Sc         |      8924|MCG+00-36-009|       SPIRAL GALAXY|
+|UGC 963  |01 24 35|+02 01.6|    15.3|E-S0       |       963|MCG+00-04-117|   ELLIPTICAL GALAXY|
+|UGC 8105 |12 59 57|+02 01.8|    15.5|DBL SYS    |      8105|MCG+00-33-000|              GALAXY|
+|UGC 11607|20 39 44|+02 02.7|    14.8|S?         |     11607|MCG+00-52-044|              GALAXY|
+|UGC 11965|22 15 45|+02 03.0|    14.9|S0-a       |     11965|MCG+00-56-016|   LENTICULAR GALAXY|
+|UGC 2095 |02 36 41|+02 03.0|    14.9|E?         |      2095|MCG+00-07-052|   ELLIPTICAL GALAXY|
+|UGC 11742|21 26 26|+02 03.0|    16.5|S          |     11742|MCG+00-54-000|              GALAXY|
+|UGC 7034 |12 03 40|+02 03.3|    14.8|PECULR?    |      7034|MCG+00-31-024|              GALAXY|
+|UGC 980  |01 25 11|+02 03.6|    14.9|SB0        |       980|MCG+00-04-128|SPIRAL GALAXY BARRED|
+|UGC 779  |01 13 58|+02 03.9|    15.0|S-IRR      |       779|MCG+00-04-046|              GALAXY|
+|UGC 8666 |13 41 57|+02 03.9|    15.5|CHAIN      |      8666|MCG+00-35-017|              GALAXY|
+|UGC 9692 |15 05 20|+02 04.4|    12.1|S0         |      9692|MCG+00-38-022|   LENTICULAR GALAXY|
+|UGC 1448 |01 58 11|+02 04.6|    15.1|Sc         |      1448|MCG+00-06-011|       SPIRAL GALAXY|
+|UGC 1293 |01 49 59|+02 04.9|    15.0|Sa-b       |      1293|MCG+00-05-036|       SPIRAL GALAXY|
+|UGC 2114 |02 37 53|+02 05.0|    14.9|E          |      2114|MCG+00-07-060|   ELLIPTICAL GALAXY|
+|UGC 5022 |09 25 47|+02 05.0|    14.9|Sa-b       |      5022|MCG+00-24-014|       SPIRAL GALAXY|
+|UGC 1208 |01 43 35|+02 05.1|    15.7|Sa-b       |      1208|MCG+00-05-032|       SPIRAL GALAXY|
+|UGC 8774 |13 52 21|+02 05.2|    14.3|DBL SYS    |      8774|MCG+00-35-022|              GALAXY|
+|UGC 7370 |12 19 46|+02 05.4|    14.6|Sb-c       |      7370|MCG+00-32-001|       SPIRAL GALAXY|
