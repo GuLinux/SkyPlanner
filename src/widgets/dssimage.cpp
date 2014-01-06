@@ -116,7 +116,7 @@ string DSSImage::Private::imageLink() const
     multiplyFactor = 5.;
   
   objectRect = min(75.0, objectRect * multiplyFactor);
-  objectRect = objectRect < 0 ? 75.0:objectRect; // objects without angular size (-1), showing max possible field...
+  objectRect = objectRect <= 0 ? 75.0:objectRect; // objects without angular size (-1), showing max possible field...
 
   return format("http://archive.stsci.edu/cgi-bin/dss_search?v=%s&r=%d+%d+%.1f&d=%d+%d+%.1f&e=J2000&h=%d&w=%df&f=gif&c=none&fov=SM97&v3=")
   % imageVersionStrings[imageVersion]
