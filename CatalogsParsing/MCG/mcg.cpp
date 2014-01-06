@@ -102,10 +102,9 @@ int main(int argc, char ** argv){
           
           
           //ARP NUMBER
-          object.number = string(temp.begin() + 1, temp.begin() + 16);
+          object.number = string(temp.begin() + 1, temp.begin() + 15);
           //COMMON NAMES
           object.other_names = string(temp.begin() + 51, temp.begin() + 60);
-        
             //RIGHT ASCENSION
            string right_ascension(temp.begin() + 16, temp.begin() + 24);
            object.ra = stringToRightAscension(right_ascension);
@@ -127,7 +126,12 @@ int main(int argc, char ** argv){
           //SIZE
           string largest_dimension(temp.begin() + 34, temp.begin() + 42);
           object.largest_dimension = stringToFloat(largest_dimension);
-          
+        cerr << "object number: '" << object.number << "'" << endl;
+        cerr << "object other names: '" << object.other_names<< "'" << endl;
+        cerr << "object ra: '" << right_ascension << "'" << endl;
+        cerr << "object dec: '" << declination << "'" << endl;
+        cerr << "object mag: '" << magnitude<< "'" << endl;
+        cerr << "object largest_dimension: '" << largest_dimension<< "'" << endl;
           //NOTES (MORPHOLOGICAL TYPE)
 //           string notes_type(temp.begin() + 38, temp.begin() + 52);
 //           arp.notes_type = notes_type;
@@ -156,14 +160,17 @@ int main(int argc, char ** argv){
         sort(objects.begin(), objects.end(), [](const MCG &a, const MCG &b) { return a.object_id > b.object_id; });
         if(arguments.contains("--pretend")) {
           for(MCG &obj: objects) {
-            cout << "object " << obj.number << " [" << obj.object_id << "/" << objects.size() << "], magnitude=" << obj.magnitude << endl;
+            cout << "object " << obj.number << " [" << obj.object_id 
+              << ", magnitude=" << obj.magnitude 
+              << endl;
           }
           return 0;
         }
         CatalogsImporter importer("MCG", argc, argv);
+        index = 0;
         for(MCG object: objects) {
           long long objectId = importer.findByCatalog(object.other_names);
-          cerr << "inserting " << object.number << "[" << object.index << "/" << objects.size() << "], ngcic id=" << objectId;
+          cerr << "inserting " << object.number << "[" << index++ << "/" << objects.size() << "], ngcic id=" << objectId;
           if(objectId < 0) {
             objectId = importer.insertObject(object.object_id, object.ra.radians(), object.dec.radians(), object.magnitude, object.largest_dimension, NgcObject::NebGx);
             if(objectId <= 0)

@@ -20,6 +20,7 @@ public:
   long long findByName(const std::string &name);
   long long findByCatalog(const std::string &catalog,  const std::string &number);
   long long findByCatalog(const std::string &catalogAndNumber);
+  long long findBy(const std::string &query, const std::map<std::string,QVariant> &bindValues);
 private:
   QString catalogue;
   void init(QStringList arguments);
@@ -120,16 +121,10 @@ void CatalogsImporter::init( QStringList arguments )
 
 long long CatalogsImporter::findByName( const std::string &name )
 {
-//   qDebug() << __PRETTY_FUNCTION__ << ": name=" << QString::fromStdString(name);
-  QSqlQuery query(db);
-  query.prepare("SELECT \"objects\".id, * FROM \"objects\" \
-    INNER JOIN denominations ON \"objects\".id = denominations.objects_id WHERE lower(denominations.name) LIKE '%'||:name||'%'  ");
-  query.bindValue(":name", QString::fromStdString(name).trimmed().toLower());
-  if(!query.exec() || ! query.next()) {
-    dumpQuery(query);
-    return -1;
-  }
-  return query.value(0).toLongLong();
+  return findBy("SELECT \"objects\".id, * FROM \"objects\" \
+    INNER JOIN denominations ON \"objects\".id = denominations.objects_id WHERE lower(denominations.name) LIKE '%'||:name||'%'  ",
+                {{":name", QString::fromStdString(name).trimmed().toLower()}}
+               );
 }
 
 long long int CatalogsImporter::findByCatalog( const std::string &catalogAndNumber )
@@ -143,22 +138,30 @@ long long int CatalogsImporter::findByCatalog( const std::string &catalogAndNumb
 
 long long CatalogsImporter::findByCatalog( const std::string &catalog, const std::string &number )
 {
-//   std::cerr << __PRETTY_FUNCTION__ << ": catalog='" << catalog << "', number: '" << number << "'\n";
-  QSqlQuery query(db);
-  query.prepare("SELECT objects_id from denominations WHERE \
+  return findBy("SELECT objects_id from denominations WHERE \
     lower(denominations.catalogue)  = :catalogue AND \
     lower(denominations.\"number\" ) = :number \
-    ");
-  query.bindValue(":catalogue", QString::fromStdString(catalog).trimmed().toLower());
-  query.bindValue(":number",  QString::fromStdString(number).trimmed().toLower());
-  if(!query.exec()) {
-    dumpQuery(query);
+    ", {
+      {":catalogue", QString::fromStdString(catalog).trimmed().toLower()},
+      {":number",  QString::fromStdString(number).trimmed().toLower()},
+    });
+}
+
+long long CatalogsImporter::findBy(const std::string &query, const std::map<std::string,QVariant> &bindValues)
+{
+  QSqlQuery sqlQuery(db);
+  sqlQuery.prepare( QString::fromStdString(query) );
+  for(auto k: bindValues)
+    sqlQuery.bindValue(QString::fromStdString(k.first), k.second);
+  if(!sqlQuery.exec()) {
+    dumpQuery( sqlQuery );
     return -1;
   }
-  if(!query.next())
+  if(!sqlQuery.next())
     return -1;
-  return query.value(0).toLongLong();
+  return sqlQuery.value(0).toLongLong();
 }
+
 
 long long CatalogsImporter::insertDenomination(std::string catalogueNumber, const std::string &name, const std::string &comment, long long objectId, int searchMode, const std::string &other_catalogues )
 {

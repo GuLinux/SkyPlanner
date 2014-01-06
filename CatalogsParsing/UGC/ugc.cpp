@@ -135,7 +135,13 @@ int main(int argc, char ** argv){
         }
         CatalogsImporter importer("UGC", argc, argv);
         for(UGC object: objects) {
-          long long objectId = importer.findByCatalog("MCG", object.mcgName);
+          long long objectId = importer.findBy("SELECT objects_id from denominations WHERE \
+            lower(denominations.catalogue)  = :catalogue AND \
+            lower(denominations.\"number\" ) like '%'||:number||'%' \
+            ", {
+              {":catalogue", "mcg"},
+              {":number",  QString::fromStdString(object.mcgName).trimmed().toLower()},
+            });
           cerr << "inserting " << object.number << ", MCG id=" << objectId;
           if(objectId < 0) {
             objectId = importer.insertObject(object.ugcName, object.ra.radians(), object.dec.radians(), object.magnitude, 
