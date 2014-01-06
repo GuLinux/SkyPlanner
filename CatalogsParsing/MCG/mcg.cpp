@@ -122,7 +122,7 @@ int main(int argc, char ** argv){
             QString number = QString::fromStdString(object.number).trimmed();
             cerr << "WARNING: " << number.toStdString() << " magnitude is 0, fixing from other file: "
             << objectsWithMagnitudeOnly[number] << endl;
-            object.number = objectsWithMagnitudeOnly[number];
+            object.number = objectsWithMagnitudeOnly.count(number) > 0 ? objectsWithMagnitudeOnly[number] : 99;
           }
 
           //SIZE
