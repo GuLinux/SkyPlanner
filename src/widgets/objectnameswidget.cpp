@@ -129,7 +129,7 @@ ObjectNamesWidget::ObjectNamesWidget(const Wt::Dbo::ptr<NgcObject> &object, Sess
 
 
       string catName;
-      int catNumber;
+      string catNumber;
       for(auto nebula: object->nebulae()) {
 	if(nebula->isNgcIc() ) {
 	  catName = *nebula->catalogue();

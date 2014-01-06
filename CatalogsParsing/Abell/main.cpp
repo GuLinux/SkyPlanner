@@ -33,7 +33,6 @@ int main(int argc, char **argv) {
   QTextStream s(&file);
   QTextStream o(stdout);
 
-  CatalogsImporter importer(app);
   o << "BEGIN TRANSACTION;" << endl;
   const QString objQuery = "INSERT INTO objects (object_id, \"ra\", \"dec\", magnitude, angular_size, type) VALUES('Abell %1', %2, %3, %4, %5, %6);";
   const QString nameQuery = "INSERT INTO denominations(\"catalogue\", \"number\", \"name\", \"comment\", objects_id) VALUES('%1', %2, '%3','%4', %5);";

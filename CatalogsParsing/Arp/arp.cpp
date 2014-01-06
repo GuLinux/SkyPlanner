@@ -7,6 +7,7 @@
 #include <cmath>
 #include "models/ngcobject.h"
 #include "../dbhelper.h"
+#include "models/nebuladenomination.h"
 
 using namespace std;
 
@@ -141,17 +142,19 @@ int main(int argc, char ** argv){
 	 upload.close();
 	 
 	 ordinaVettore (array, conta);
-        CatalogsImporter importer(argc, argv);
+        CatalogsImporter importer("Arp", argc, argv);
 	for (int i=0;i<conta;i++){
         long long otherId = importer.findByCatalog(array[i].other_names);
-          stringstream objectId("Arp ");
-          objectId << array[i].arp_number;
+          stringstream objectId;
+          objectId << "Arp " << array[i].arp_number;
         if(otherId < 0) {
           otherId = importer.insertObject(objectId.str(), array[i].ra.radians(), array[i].dec.radians(), array[i].magnitude, array[i].largest_dimension, NgcObject::NebGx);
-          if(otherId<0)
+          if(otherId<=0)
             throw std::runtime_error("Error inserting object");
         }
-        importer.insertDenomination("Arp", array[i].arp_number, objectId.str(), array[i].notes_type, otherId);
+        stringstream notes;
+        notes << array[i].notes_type << "; other catalogue: " << array[i].other_names;
+        importer.insertDenomination(array[i].arp_number, objectId.str(), notes.str(), otherId, NebulaDenomination::ByCatalog, array[i].other_names);
         cerr << "Found arp " << array[i].arp_number << " with other_names " << array[i].other_names << " in db: " << otherId << endl;
 	cout << "Arp n. " << array[i].arp_number 
 	     << ", other names: " << array[i].other_names

@@ -38,7 +38,7 @@ Wt::Dbo::ptr< NgcObject > NebulaDenomination::ngcObject() const
 {
   return _ngcObject;
 }
-boost::optional<int> NebulaDenomination::number() const
+boost::optional<std::string> NebulaDenomination::number() const
 {
   return _number;
 }

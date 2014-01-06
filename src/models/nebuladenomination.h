@@ -31,7 +31,7 @@ class NebulaDenomination
 public:
   enum SearchMode { ByName = 0x0, ByCatalog = 0x1, ByNameAndType = 0x2 };
   boost::optional<std::string> catalogue() const;
-  boost::optional<int> number() const;
+  boost::optional<std::string> number() const;
   std::string name() const;
   boost::optional<std::string> comment() const;
   dbo::ptr<NgcObject> ngcObject() const;
@@ -50,7 +50,7 @@ public:
 
 private:
   boost::optional<std::string> _catalogue;
-  boost::optional<int> _number;
+  boost::optional<std::string> _number;
   std::string _name;
   boost::optional<std::string> _comment;
   dbo::ptr<NgcObject> _ngcObject;
