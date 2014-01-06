@@ -265,7 +265,7 @@ void SelectObjectsWidget::Private::searchByCatalogueTab(Dbo::Transaction& transa
   auto searchByCatalogueNumber = [=] {
     Dbo::Transaction t(session);
     resultsTable->clear();
-    dbo::collection<dbo::ptr<NebulaDenomination>> denominations = session.find<NebulaDenomination>().where("catalogue = ?").where("number like '%' || ? || '%'")
+    dbo::collection<dbo::ptr<NebulaDenomination>> denominations = session.find<NebulaDenomination>().where("catalogue = ?").where("number like ? || '%'")
       .bind(cataloguesCombo->currentText()).bind(catalogueNumber->text());
     populateHeaders(resultsTable);
     Ephemeris ephemeris(astroSession->position());
