@@ -18,7 +18,7 @@ public:
   long long insertObject(const std::string &objectId, double rightAscension, double declination, double magnitude, double angularSize, int type);
   long long insertDenomination(std::string catalogueNumber, const std::string &name, const std::string &comment, long long objectId, int searchMode, const std::string &other_catalogues = std::string());
   long long findByName(const std::string &name);
-  long long findByCatalog(const std::string &catalog, int number);
+  long long findByCatalog(const std::string &catalog,  const std::string &number);
   long long findByCatalog(const std::string &catalogAndNumber);
 private:
   QString catalogue;
@@ -34,6 +34,15 @@ CatalogsImporter::CatalogsImporter( const std::string &catalogue, int argc, char
   init(app.arguments());
 }
 
+void __dumpQuery(const QString &where, const QSqlQuery &query) {
+  qDebug() << where << ": Error running query " << query.lastQuery();
+  for(auto v: query.boundValues().keys())
+    qDebug() << "bound value: " << v << "=" << query.boundValues()[v];
+  qDebug() << ": Last error: " << query.lastError().text();
+}
+
+#define dumpQuery(q) __dumpQuery(__PRETTY_FUNCTION__, q)
+
 
 CatalogsImporter::CatalogsImporter( const std::string &catalogue, QCoreApplication &app )
   : catalogue(QString::fromStdString(catalogue).trimmed())
@@ -46,7 +55,7 @@ CatalogsImporter::~CatalogsImporter()
   bool committed = db.commit();
   qDebug() << __PRETTY_FUNCTION__ << ": Commit: " << committed;
   if(!committed) {
-    qDebug() << "Last error: " << db.lastError().text();
+    qDebug() << __PRETTY_FUNCTION__ << ": Last error: " << db.lastError().text();
   }
 }
 
@@ -94,7 +103,7 @@ void CatalogsImporter::init( QStringList arguments )
 //   bool queryOk = removeDenominations.exec();
 //   int affectedRows = removeDenominations.numRowsAffected();
 //   if(!queryOk) {
-//     qDebug() << "Last error: " << removeDenominations.lastError().text();
+//     qDebug() << __PRETTY_FUNCTION__ << ": Last error: " << removeDenominations.lastError().text();
 //     throw std::runtime_error("Error removing denominations");
 //   }
 //   qDebug() << "denominations removal: " << queryOk << ", rowsAffected=" << affectedRows;
@@ -102,7 +111,7 @@ void CatalogsImporter::init( QStringList arguments )
 //   queryOk = removeOrphanObjects.exec();
 //   affectedRows = removeOrphanObjects.numRowsAffected();
 //   if(!queryOk) {
-//     qDebug() << "Last error: " << removeOrphanObjects.lastError().text();
+//     qDebug() << __PRETTY_FUNCTION__ << ": Last error: " << removeOrphanObjects.lastError().text();
 //     throw std::runtime_error("Error removing denominations");
 //   }
 //   qDebug() << "orphan objects removal: " << queryOk << ", rowsAffected=" << affectedRows;
@@ -116,7 +125,10 @@ long long CatalogsImporter::findByName( const std::string &name )
   query.prepare("SELECT \"objects\".id, * FROM \"objects\" \
     INNER JOIN denominations ON \"objects\".id = denominations.objects_id WHERE lower(denominations.name) LIKE '%'||:name||'%'  ");
   query.bindValue(":name", QString::fromStdString(name).trimmed().toLower());
-  if(!query.exec() || ! query.next()) return -1;
+  if(!query.exec() || ! query.next()) {
+    dumpQuery(query);
+    return -1;
+  }
   return query.value(0).toLongLong();
 }
 
@@ -125,27 +137,26 @@ long long int CatalogsImporter::findByCatalog( const std::string &catalogAndNumb
 //   qDebug() << __PRETTY_FUNCTION__ << ": catalogAndNumber=" << QString::fromStdString(catalogAndNumber);
   QStringList c = QString::fromStdString(catalogAndNumber).trimmed().split(" ");
   QString cat = c.first();
-  bool ok = false;
-  int number = c.last().toInt(&ok);
-  if(!ok) return -1;
-  return findByCatalog(cat.toStdString(), number);
+  return findByCatalog(cat.toStdString(), c.last().toStdString());
 }
 
 
-long long CatalogsImporter::findByCatalog( const std::string &catalog, int number )
+long long CatalogsImporter::findByCatalog( const std::string &catalog, const std::string &number )
 {
-//   qDebug() << __PRETTY_FUNCTION__ << ": catalog=" << QString::fromStdString(catalog) << ", number=" << number;
+//   std::cerr << __PRETTY_FUNCTION__ << ": catalog='" << catalog << "', number: '" << number << "'\n";
   QSqlQuery query(db);
-  query.prepare("SELECT \"objects\".id, * FROM \"objects\" \
-    INNER JOIN denominations ON \"objects\".id = denominations.objects_id WHERE lower(denominations.catalogue)  = :catalogue \
-    AND denominations.\"number\" = :number \
+  query.prepare("SELECT objects_id from denominations WHERE \
+    lower(denominations.catalogue)  = :catalogue AND \
+    lower(denominations.\"number\" ) = :number \
     ");
   query.bindValue(":catalogue", QString::fromStdString(catalog).trimmed().toLower());
-  query.bindValue(":number", number);
-  if(!query.exec() || ! query.next()) {
-    qDebug() << "Last error: " << query.lastError().text();
+  query.bindValue(":number",  QString::fromStdString(number).trimmed().toLower());
+  if(!query.exec()) {
+    dumpQuery(query);
     return -1;
   }
+  if(!query.next())
+    return -1;
   return query.value(0).toLongLong();
 }
 
@@ -169,10 +180,7 @@ long long CatalogsImporter::insertDenomination(std::string catalogueNumber, cons
   query.bindValue(":objectid", objectId);
   query.bindValue(":search_mode", searchMode);
   if(!query.exec()) {
-    qDebug() << "Error running query " << query.lastQuery();
-    for(auto v: query.boundValues().keys())
-      qDebug() << "bound value: " << v << "=" << query.boundValues()[v];
-    qDebug() << "Last error: " << query.lastError().text();
+    dumpQuery(query);
     return -1;
   }
   return lastInsertId(query, "SELECT id from denominations WHERE catalogue = :catalogue AND number = :number", {{":catalogue", catalogue}, {":number", qCatNum}});
@@ -192,7 +200,7 @@ long long CatalogsImporter::insertObject( const std::string &objectId, double ri
   query.bindValue(":angular_size", angularSize);
   query.bindValue(":type", type);
   if(!query.exec()) {
-    qDebug() << "Last error: " << query.lastError().text();
+    dumpQuery(query);
     return -1;
   }
   return lastInsertId(query, "SELECT id from \"objects\" WHERE object_id = :objectid", {{":objectid", qObjectId}});
@@ -209,10 +217,7 @@ long long int CatalogsImporter::lastInsertId( QSqlQuery &query, const QString &s
   for(auto v: bindValues)
     getValue.bindValue(v.first, v.second);
   if(! getValue.exec() || ! getValue.next() ) {
-    qDebug() << "Error running query " << getValue.lastQuery();
-    for(auto v: getValue.boundValues().keys())
-      qDebug() << "bound value: " << v << "=" << getValue.boundValues()[v];
-    qDebug() << "Last error: " << getValue.lastError().text();
+    dumpQuery(query);
     return -1;
   }
   return getValue.value(0).toLongLong();

@@ -102,20 +102,20 @@ int main(int argc, char ** argv){
           
           
           //ARP NUMBER
-          object.number = string(temp.begin() + 1, temp.begin() + 15);
+          object.number = string(temp.begin() + 1, temp.begin() + 16);
           //COMMON NAMES
-          object.other_names = string(temp.begin() + 51, temp.begin() + 59);
+          object.other_names = string(temp.begin() + 51, temp.begin() + 60);
         
             //RIGHT ASCENSION
-           string right_ascension(temp.begin() + 16, temp.begin() + 23);
+           string right_ascension(temp.begin() + 16, temp.begin() + 24);
            object.ra = stringToRightAscension(right_ascension);
                                   
           //DECLINATION
-          string declination(temp.begin() + 25, temp.begin() + 32);
+          string declination(temp.begin() + 25, temp.begin() + 33);
           object.dec = stringToDeclination(declination);
           
           //MAGNITUDE
-          string magnitude(temp.begin() + 43, temp.begin() + 49);
+          string magnitude(temp.begin() + 43, temp.begin() + 50);
           object.magnitude = stringToFloat(magnitude, 99);
           if(object.magnitude == 0.0) {
             QString number = QString::fromStdString(object.number).trimmed().toUpper();
@@ -125,7 +125,7 @@ int main(int argc, char ** argv){
           }
 
           //SIZE
-          string largest_dimension(temp.begin() + 34, temp.begin() + 41);
+          string largest_dimension(temp.begin() + 34, temp.begin() + 42);
           object.largest_dimension = stringToFloat(largest_dimension);
           
           //NOTES (MORPHOLOGICAL TYPE)
@@ -163,7 +163,7 @@ int main(int argc, char ** argv){
         CatalogsImporter importer("MCG", argc, argv);
         for(MCG object: objects) {
           long long objectId = importer.findByCatalog(object.other_names);
-          cerr << "inserting " << object.number << ", ngcic id=" << objectId;
+          cerr << "inserting " << object.number << "[" << object.index << " << /" << objects.size() << "], ngcic id=" << objectId;
           if(objectId < 0) {
             objectId = importer.insertObject(object.object_id, object.ra.radians(), object.dec.radians(), object.magnitude, object.largest_dimension, NgcObject::NebGx);
             if(objectId <= 0)

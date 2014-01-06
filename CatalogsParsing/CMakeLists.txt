@@ -5,4 +5,5 @@ add_subdirectory(SAC)
 
 
 add_subdirectory(MCG)
+add_subdirectory(UGC)
 add_subdirectory(Arp)
