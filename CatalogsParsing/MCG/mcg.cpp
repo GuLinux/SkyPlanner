@@ -63,6 +63,7 @@ float MCG::Declination::radians(){
 	float rad = degreesTot/180.*M_PI;
 	return rad;
 }
+
   
 int stringToInt(string);
 float stringToFloat(string, float defaultValue = 0);
@@ -76,8 +77,18 @@ int main(int argc, char ** argv){
   QStringList arguments = app.arguments();
   arguments.removeFirst();
   ifstream mgcInput(arguments.first().toStdString());
+  ifstream mgcFixMagInput(arguments[1].toStdString());
   vector<MCG> objects;
+  map<QString, float> objectsWithMagnitudeOnly;
   string temp;
+  
+  while(mgcFixMagInput) {
+    getline(mgcFixMagInput, temp);
+    QString name = QString::fromStdString(string(temp.begin(), temp.begin() + 13)).trimmed();
+    string magnitude(temp.begin() + 38, temp.begin() + 42);
+    objectsWithMagnitudeOnly[name] = stringToFloat(magnitude, 99);
+  }
+  
   getline(mgcInput, temp);
   int index = 0;
 	
@@ -107,7 +118,12 @@ int main(int argc, char ** argv){
           //MAGNITUDE
           string magnitude(temp.begin() + 43, temp.begin() + 49);
           object.magnitude = stringToFloat(magnitude, 99);
-          
+          if(object.magnitude == 0.0) {
+            QString number = QString::fromStdString(object.number).trimmed();
+            cerr << "WARNING: " << number.toStdString() << " magnitude is 0, fixing from other file: "
+            << objectsWithMagnitudeOnly[number] << endl;
+            object.number = objectsWithMagnitudeOnly[number];
+          }
 
           //SIZE
           string largest_dimension(temp.begin() + 34, temp.begin() + 41);

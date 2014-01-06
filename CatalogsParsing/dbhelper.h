@@ -87,6 +87,25 @@ void CatalogsImporter::init( QStringList arguments )
     throw std::runtime_error(error.str());
   }
   qDebug() << "Opening transaction: " << QSqlDatabase::database().transaction();
+//   qDebug() << "Cleanup database";
+//   QSqlQuery removeDenominations;
+//   removeDenominations.prepare("delete from denominations  where catalogue = :catalogue");
+//   removeDenominations.bindValue(":catalogue", catalogue);
+//   bool queryOk = removeDenominations.exec();
+//   int affectedRows = removeDenominations.numRowsAffected();
+//   if(!queryOk) {
+//     qDebug() << "Last error: " << removeDenominations.lastError().text();
+//     throw std::runtime_error("Error removing denominations");
+//   }
+//   qDebug() << "denominations removal: " << queryOk << ", rowsAffected=" << affectedRows;
+//   QSqlQuery removeOrphanObjects("delete from \"objects\" where id in (select \"objects\".id from \"objects\" left join denominations on \"objects\".id = denominations.objects_id where denominations.id is null)");
+//   queryOk = removeOrphanObjects.exec();
+//   affectedRows = removeOrphanObjects.numRowsAffected();
+//   if(!queryOk) {
+//     qDebug() << "Last error: " << removeOrphanObjects.lastError().text();
+//     throw std::runtime_error("Error removing denominations");
+//   }
+//   qDebug() << "orphan objects removal: " << queryOk << ", rowsAffected=" << affectedRows;
 }
 
 
