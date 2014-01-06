@@ -123,7 +123,17 @@ int main(int argc, char ** argv){
           object.hubbleType = string(temp.begin() + 40, temp.begin() + 51);
           string possField = string(temp.begin() + 77, temp.begin() + 87);
           object.possField = stringToInt(possField);
-
+        cerr << "object number: '" << object.number << "'" << endl;
+        cerr << "object name: '" << object.ugcName<< "'" << endl;
+        cerr << "object mgc: '" << object.mcgName<< "'" << endl;
+        cerr << "object ra: '" << right_ascension << "'" << endl;
+        cerr << "object dec: '" << declination << "'" << endl;
+        cerr << "object mag: '" << magnitude<< "'" << endl;
+        cerr << "object red_major_axis: '" << redMajorAxis<< "'" << endl;
+        cerr << "object blue_major_axis: '" << blueMajorAxis<< "'" << endl;
+        cerr << "object poss: '" << possField<< "'" << endl;
+        cerr << "object galaxyClass: '" << object.galaxyClass<< "'" << endl;
+        cerr << "object hubble_type: '" << object.hubbleType<< "'" << endl;
           objects.push_back(object);
           }
           
