@@ -15,7 +15,7 @@ using namespace std;
 
   struct Arp {
     
-    int arp_number;
+    string arp_number;
     string other_names;
     float magnitude;
     float largest_dimension;
@@ -106,7 +106,7 @@ int main(int argc, char ** argv){
 			
 			//ARP NUMBER
                         string arp_number(temp.begin() + 0, temp.begin() + 3);
-			arp.arp_number = stringToInt(arp_number);
+			arp.arp_number = arp_number;
 			
 			//COMMON NAMES
 			string other_names(temp.begin() + 4, temp.begin() + 19);

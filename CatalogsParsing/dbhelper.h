@@ -16,7 +16,7 @@ public:
   CatalogsImporter(const std::string &catalogue, QCoreApplication &app);
   ~CatalogsImporter();
   long long insertObject(const std::string &objectId, double rightAscension, double declination, double magnitude, double angularSize, int type);
-  long long insertDenomination(int catalogueNumber, const std::string &name, const std::string &comment, long long objectId, int searchMode, const std::string &other_catalogues = std::string());
+  long long insertDenomination(std::string catalogueNumber, const std::string &name, const std::string &comment, long long objectId, int searchMode, const std::string &other_catalogues = std::string());
   long long findByName(const std::string &name);
   long long findByCatalog(const std::string &catalog, int number);
   long long findByCatalog(const std::string &catalogAndNumber);
@@ -43,7 +43,11 @@ CatalogsImporter::CatalogsImporter( const std::string &catalogue, QCoreApplicati
 
 CatalogsImporter::~CatalogsImporter()
 {
-  qDebug() << __PRETTY_FUNCTION__ << ": Commit: " << QSqlDatabase::database().commit();
+  bool committed = db.commit();
+  qDebug() << __PRETTY_FUNCTION__ << ": Commit: " << committed;
+  if(!committed) {
+    qDebug() << "Last error: " << db.lastError().text();
+  }
 }
 
 void CatalogsImporter::init( QStringList arguments )
@@ -88,7 +92,7 @@ void CatalogsImporter::init( QStringList arguments )
 
 long long CatalogsImporter::findByName( const std::string &name )
 {
-  qDebug() << __PRETTY_FUNCTION__ << ": name=" << QString::fromStdString(name);
+//   qDebug() << __PRETTY_FUNCTION__ << ": name=" << QString::fromStdString(name);
   QSqlQuery query(db);
   query.prepare("SELECT \"objects\".id, * FROM \"objects\" \
     INNER JOIN denominations ON \"objects\".id = denominations.objects_id WHERE lower(denominations.name) LIKE '%'||:name||'%'  ");
@@ -99,7 +103,7 @@ long long CatalogsImporter::findByName( const std::string &name )
 
 long long int CatalogsImporter::findByCatalog( const std::string &catalogAndNumber )
 {
-  qDebug() << __PRETTY_FUNCTION__ << ": catalogAndNumber=" << QString::fromStdString(catalogAndNumber);
+//   qDebug() << __PRETTY_FUNCTION__ << ": catalogAndNumber=" << QString::fromStdString(catalogAndNumber);
   QStringList c = QString::fromStdString(catalogAndNumber).trimmed().split(" ");
   QString cat = c.first();
   bool ok = false;
@@ -111,7 +115,7 @@ long long int CatalogsImporter::findByCatalog( const std::string &catalogAndNumb
 
 long long CatalogsImporter::findByCatalog( const std::string &catalog, int number )
 {
-  qDebug() << __PRETTY_FUNCTION__ << ": catalog=" << QString::fromStdString(catalog) << ", number=" << number;
+//   qDebug() << __PRETTY_FUNCTION__ << ": catalog=" << QString::fromStdString(catalog) << ", number=" << number;
   QSqlQuery query(db);
   query.prepare("SELECT \"objects\".id, * FROM \"objects\" \
     INNER JOIN denominations ON \"objects\".id = denominations.objects_id WHERE lower(denominations.catalogue)  = :catalogue \
@@ -126,10 +130,11 @@ long long CatalogsImporter::findByCatalog( const std::string &catalog, int numbe
   return query.value(0).toLongLong();
 }
 
-long long CatalogsImporter::insertDenomination(int catalogueNumber, const std::string &name, const std::string &comment, long long objectId, int searchMode, const std::string &other_catalogues )
+long long CatalogsImporter::insertDenomination(std::string catalogueNumber, const std::string &name, const std::string &comment, long long objectId, int searchMode, const std::string &other_catalogues )
 {
-  std::cerr << __PRETTY_FUNCTION__  << ", number= " << catalogueNumber << ", name=" << name << ", comment=" << comment << ", object_id= " << objectId << ", other_catalogues=" << other_catalogues << std::endl;
+//   std::cerr << __PRETTY_FUNCTION__  << ", number= " << catalogueNumber << ", name=" << name << ", comment=" << comment << ", object_id= " << objectId << ", other_catalogues=" << other_catalogues << std::endl;
   QSqlQuery query(db);
+  QString qCatNum = QString::fromStdString(catalogueNumber).trimmed();
   if(!other_catalogues.empty()) {
     query.prepare("INSERT INTO denominations(\"catalogue\", \"number\", \"name\", \"comment\", objects_id, search_mode, other_catalogues) \
     VALUES( :catalogue , :number , :name , :comment , :objectid, :search_mode , :othercatalogues )");
@@ -139,7 +144,7 @@ long long CatalogsImporter::insertDenomination(int catalogueNumber, const std::s
     VALUES(:catalogue , :number , :name , :comment , :objectid , :search_mode)");
   }
   query.bindValue(":catalogue", catalogue);
-  query.bindValue(":number", catalogueNumber);
+  query.bindValue(":number", qCatNum);
   query.bindValue(":name", QString::fromStdString(name).trimmed());
   query.bindValue(":comment", QString::fromStdString(comment).trimmed());
   query.bindValue(":objectid", objectId);
@@ -151,12 +156,12 @@ long long CatalogsImporter::insertDenomination(int catalogueNumber, const std::s
     qDebug() << "Last error: " << query.lastError().text();
     return -1;
   }
-  return lastInsertId(query, "SELECT id from denominations WHERE catalogue = :catalogue AND number = :number", {{":catalogue", catalogue}, {":number", catalogueNumber}});
+  return lastInsertId(query, "SELECT id from denominations WHERE catalogue = :catalogue AND number = :number", {{":catalogue", catalogue}, {":number", qCatNum}});
 }
 
 long long CatalogsImporter::insertObject( const std::string &objectId, double rightAscension, double declination, double magnitude, double angularSize, int type )
 {
-  std::cerr << __PRETTY_FUNCTION__ << ": object_id=" << objectId << ", ra= " << rightAscension<< ", dec=" << dec << ", magnitude=" << magnitude << ", angular_size= " << type<< ", type=" << type << std::endl;
+//   std::cerr << __PRETTY_FUNCTION__ << ": object_id=" << objectId << ", ra= " << rightAscension<< ", dec=" << dec << ", magnitude=" << magnitude << ", angular_size= " << type<< ", type=" << type << std::endl;
   QSqlQuery query(db);
   QString qObjectId = QString::fromStdString(objectId).trimmed();
   query.prepare("INSERT INTO objects(object_id, \"ra\", \"dec\", magnitude, angular_size, type) \
@@ -176,7 +181,7 @@ long long CatalogsImporter::insertObject( const std::string &objectId, double ri
 
 long long int CatalogsImporter::lastInsertId( QSqlQuery &query, const QString &selectQuery, std::map<QString,QVariant> bindValues )
 {
-  qDebug() << __PRETTY_FUNCTION__;
+//   qDebug() << __PRETTY_FUNCTION__;
   auto qLastInsertId = query.lastInsertId();
   if(qLastInsertId.toLongLong() > 0)
     return qLastInsertId.toLongLong();

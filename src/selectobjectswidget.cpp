@@ -256,8 +256,8 @@ void SelectObjectsWidget::Private::searchByCatalogueTab(Dbo::Transaction& transa
 {
   WContainerWidget *addObjectByCatalogue = WW<WContainerWidget>();
   WComboBox *cataloguesCombo = new WComboBox();
-  WSpinBox *catalogueNumber = WW<WSpinBox>();
-  catalogueNumber->setMaximum(INT32_MAX);
+  WLineEdit *catalogueNumber = WW<WLineEdit>();
+  catalogueNumber->setEmptyText(WString::tr("catalogue_number"));
   WTable *resultsTable = WW<WTable>().addCss("table table-striped table-hover");
 
   for(auto cat: session.query<string>("select distinct catalogue from denominations WHERE catalogue <> ''").resultList())
@@ -266,7 +266,7 @@ void SelectObjectsWidget::Private::searchByCatalogueTab(Dbo::Transaction& transa
     Dbo::Transaction t(session);
     resultsTable->clear();
     dbo::collection<dbo::ptr<NebulaDenomination>> denominations = session.find<NebulaDenomination>().where("catalogue = ?").where("number = ?")
-      .bind(cataloguesCombo->currentText()).bind(catalogueNumber->value());
+      .bind(cataloguesCombo->currentText()).bind(catalogueNumber->text());
     populateHeaders(resultsTable);
     Ephemeris ephemeris(astroSession->position());
     AstroSession::ObservabilityRange range = astroSession->observabilityRange(ephemeris).delta({1,20,0});

@@ -4,4 +4,5 @@ add_subdirectory(SAC)
 #add_subdirectory(Stellarium_NGCIC)
 
 
+add_subdirectory(MCG)
 add_subdirectory(Arp)
