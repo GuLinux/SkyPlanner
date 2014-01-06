@@ -84,7 +84,7 @@ int main(int argc, char ** argv){
   
   while(mgcFixMagInput) {
     getline(mgcFixMagInput, temp);
-    QString name = QString::fromStdString(string(temp.begin(), temp.begin() + 13)).trimmed();
+    QString name = QString::fromStdString(string(temp.begin(), temp.begin() + 13)).trimmed().toUpper();
     string magnitude(temp.begin() + 38, temp.begin() + 42);
     objectsWithMagnitudeOnly[name] = stringToFloat(magnitude, 99);
   }
@@ -119,10 +119,10 @@ int main(int argc, char ** argv){
           string magnitude(temp.begin() + 43, temp.begin() + 49);
           object.magnitude = stringToFloat(magnitude, 99);
           if(object.magnitude == 0.0) {
-            QString number = QString::fromStdString(object.number).trimmed();
-            cerr << "WARNING: " << number.toStdString() << " magnitude is 0, fixing from other file: "
-            << objectsWithMagnitudeOnly[number] << endl;
-            object.number = objectsWithMagnitudeOnly.count(number) > 0 ? objectsWithMagnitudeOnly[number] : 99;
+            QString number = QString::fromStdString(object.number).trimmed().toUpper();
+            float magnitudeFixed = objectsWithMagnitudeOnly.count(number) > 0 ? objectsWithMagnitudeOnly[number] : 99;
+            cerr << "WARNING: " << number.toStdString() << " magnitude is 0, fixing from other file: " << magnitudeFixed << endl;
+            object.number = magnitudeFixed;
           }
 
           //SIZE
