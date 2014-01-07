@@ -73,6 +73,10 @@ ObjectNamesWidget::ObjectNamesWidget(const Wt::Dbo::ptr<NgcObject> &object, Sess
       {"MCG", 92},
     };
     sort(denominations.rbegin(), denominations.rend(), [](const NebulaDenominationPtr &a, const NebulaDenominationPtr &b) {
+      if(!a->catalogue())
+        return false;
+      if(!b->catalogue())
+        return true;
       return a->catalogue() || !b->catalogue() || catalogRatings[*a->catalogue()] < catalogRatings[*b->catalogue()];
     });
     for(auto denomination: denominations) {
