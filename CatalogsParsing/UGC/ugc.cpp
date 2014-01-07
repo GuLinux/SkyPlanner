@@ -146,6 +146,7 @@ int main(int argc, char ** argv){
           return 0;
         }
         CatalogsImporter importer("UGC", argc, argv);
+        index = 0;
         for(UGC object: objects) {
           long long objectId = importer.findBy("SELECT objects_id from denominations WHERE \
             lower(denominations.catalogue)  = :catalogue AND \
@@ -154,8 +155,9 @@ int main(int argc, char ** argv){
               {":catalogue", "mcg"},
               {":number",  QString::fromStdString(object.mcgName).trimmed().toLower()},
             });
-          cerr << "inserting " << object.number << ", MCG id=" << objectId;
+          cerr << "inserting " << object.number << "[" << index++ << "/" << objects.size() << "], MCG id=" << objectId;
           if(objectId < 0) {
+            object.mcgName = string("NOT FOUND: ") + object.mcgName;
             objectId = importer.insertObject(object.ugcName, object.ra.radians(), object.dec.radians(), object.magnitude, 
                                              max(object.redMajorAxis, object.blueMajorAxis) / 60., NgcObject::NebGx);
             if(objectId <= 0)
@@ -168,7 +170,6 @@ int main(int argc, char ** argv){
               .arg(object.possField);
           //   long long insertDenomination(std::string catalogueNumber, const std::string &name, const std::string &comment, long long objectId, int searchMode, const std::string &other_catalogues = std::string());
           auto denId = importer.insertDenomination(object.number, object.ugcName, notes.toStdString(), objectId, NebulaDenomination::ByCatalog, object.mcgName);
-          cerr << ": id=" << denId << endl;
         }
 // 	for (int i=0;i<conta;i++){
 //         long long otherId = importer.findByCatalog(array[i].other_names);
