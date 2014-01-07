@@ -58,11 +58,14 @@ private:
 ObjectNamesWidget::ObjectNamesWidget(const Wt::Dbo::ptr<NgcObject> &object, Session &session, const Wt::Dbo::ptr<AstroSession> &astroSession, RenderType renderType, WContainerWidget *parent)
   : WContainerWidget(parent), d(session, this)
 {
-    auto names = object->nebulae();
+    auto denominations = object->nebulae();
+    set<string> names;
+    for(auto denomination: denominations)
+      names.insert(denomination->name());
     stringstream namesStream;
     string separator;
     for(auto name: names) {
-      namesStream << separator << name->name();
+      namesStream << separator << name;
       separator = ", ";
     }
     WString namesJoined = Utils::htmlEncode(WString::fromUTF8(namesStream.str()));
@@ -167,15 +170,15 @@ ObjectNamesWidget::ObjectNamesWidget(const Wt::Dbo::ptr<NgcObject> &object, Sess
       auto googleSearch = [=] (string type, NebulaDenominationPtr nebulaDenomination) {
         return (format("http://www.google.com/%s?q=%s") % type % Utils::urlDecode(nebulaDenomination->search())).str();
       };
-      if(names.size() == 1) {
-        addLink(WString::tr("objectnames_google_search"), googleSearch("search", names.front() ) );
-        addLink(WString::tr("objectnames_google_images_search"), googleSearch("images", names.front() ) );
+      if(denominations.size() == 1) {
+        addLink(WString::tr("objectnames_google_search"), googleSearch("search", denominations.front() ) );
+        addLink(WString::tr("objectnames_google_images_search"), googleSearch("images", denominations.front() ) );
       } else {
         WMenu *googleSearchSubMenu = new WPopupMenu();
         WMenu *googleImagesSearchSubMenu = new WPopupMenu();
         popup->addMenu(WString::tr("objectnames_google_search"), googleSearchSubMenu);
         popup->addMenu(WString::tr("objectnames_google_images_search"), googleImagesSearchSubMenu);
-        for(auto name: names) {
+        for(auto name: denominations) {
           addLink(name->search(), googleSearch("search", name), googleSearchSubMenu);
           addLink(name->search(), googleSearch("images", name), googleImagesSearchSubMenu);
         }
