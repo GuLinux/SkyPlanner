@@ -4,7 +4,7 @@ include(aaplus/source_files.cmake)
 include(widgets/source_files.cmake)
 set(LIBHARU_PREFIX /usr CACHE PATH "LibHaru path prefix")
 include_directories(${LIBHARU_PREFIX}/include/)
-set(NgcIcCatalog_SRCS
+set(SkyPlanner_SRCS
   forecast.cpp
   placewidget.cpp
   astrosessiontab.cpp
@@ -24,7 +24,7 @@ set(NgcIcCatalog_SRCS
   printableastrosessionresource.cpp
 )
 
-set(NgcIcCatalog_MODELS_SRCS
+set(SkyPlanner_MODELS_SRCS
   models/astrosessionobject.cpp
   models/astrosession.cpp
   models/telescope.cpp
@@ -34,7 +34,7 @@ set(NgcIcCatalog_MODELS_SRCS
 )
 
 
-add_executable(NgcIcCatalog ${NgcIcCatalog_SRCS} ${NgcIcCatalog_MODELS_SRCS} ${AAPLUS_SRCS} ${Widgets_SRCS} )
-target_link_libraries(NgcIcCatalog ${Wt_LIBRARIES} ${Boost_LIBRARIES} ${LIBHARU_PREFIX}/lib/libhpdf.so )
-install(TARGETS NgcIcCatalog RUNTIME DESTINATION bin)
+add_executable(SkyPlanner ${SkyPlanner_SRCS} ${SkyPlanner_MODELS_SRCS} ${AAPLUS_SRCS} ${Widgets_SRCS} )
+target_link_libraries(SkyPlanner ${Wt_LIBRARIES} ${Boost_LIBRARIES} ${LIBHARU_PREFIX}/lib/libhpdf.so )
+install(TARGETS SkyPlanner RUNTIME DESTINATION bin)
 

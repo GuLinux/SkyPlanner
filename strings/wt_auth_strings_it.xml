@@ -144,7 +144,7 @@
 
   <!-- Emails -->
 
-  <message id="Wt.Auth.confirmmail.subject">AstrOrganizer: Link di attivazione utente</message>
+  <message id="Wt.Auth.confirmmail.subject">SkyPlanner: Link di attivazione utente</message>
 
   <message id="Wt.Auth.confirmmail.body">
 Ciao {1},
@@ -152,7 +152,7 @@ Per continuare la tua registrazione, conferma il tuo account cliccando il link s
 {3}
 
   Grazie,
-  Il Team di AstrOrganizer
+  Il Team di SkyPlanner
   </message>
 
   <message id="Wt.Auth.confirmmail.htmlbody">
@@ -170,7 +170,7 @@ Per continuare la tua registrazione, conferma il tuo account cliccando il link s
 
     <p>Grazie,</p>
 
-    <p>Il Team di AstrOrganizer</p>
+    <p>Il Team di SkyPlanner</p>
   </message>
 
   <message id="Wt.Auth.lostpasswordmail.subject">Lost password instructions</message>

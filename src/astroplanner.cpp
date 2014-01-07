@@ -74,7 +74,7 @@ AstroPlanner::AstroPlanner( const WEnvironment &environment )
   WNavigationBar *navBar = WW<WNavigationBar>( root() ).addCss( "navbar-inverse" );
   navBar->setResponsive( true );
   navBar->setTitle( WString::tr("application_title") );
-  useStyleSheet( "/astrorganizer_style.css" );
+  useStyleSheet( "/skyplanner_style.css" );
   root()->addWidget(d->notifications = new WContainerWidget);
   d->widgets = new WStackedWidget( root() );
   d->widgets->setTransitionAnimation({WAnimation::AnimationEffect::Fade});
