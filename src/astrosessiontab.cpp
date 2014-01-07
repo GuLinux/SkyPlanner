@@ -360,6 +360,7 @@ void AstroSessionTab::Private::populate()
         confirmation->accept();
         Dbo::Transaction t(session);
         astroSession.modify()->astroSessionObjects().erase(sessionObject);
+        sessionObject.remove();
         t.commit();
         populate();
       });
