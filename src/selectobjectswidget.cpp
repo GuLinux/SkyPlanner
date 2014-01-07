@@ -265,8 +265,16 @@ void SelectObjectsWidget::Private::searchByCatalogueTab(Dbo::Transaction& transa
   auto searchByCatalogueNumber = [=] {
     Dbo::Transaction t(session);
     resultsTable->clear();
-    dbo::collection<dbo::ptr<NebulaDenomination>> denominations = session.find<NebulaDenomination>().where("catalogue = ?").where("number = ? ")
-      .bind(cataloguesCombo->currentText()).bind(catalogueNumber->text());
+    dbo::collection<dbo::ptr<NebulaDenomination>> dboDenominations = session.find<NebulaDenomination>().where("catalogue = ?").where("number = ? ")
+     .bind(cataloguesCombo->currentText()).bind(catalogueNumber->text());
+    vector<NebulaDenominationPtr> denominations;
+    copy_if(begin(dboDenominations), end(dboDenominations), back_inserter(denominations), [&denominations](const NebulaDenominationPtr &a){
+      return count_if(begin(denominations), end(denominations), [&a](const NebulaDenominationPtr &b){ return a->ngcObject().id() == b->ngcObject().id(); }) == 0;
+    });
+    std::sort(denominations.rbegin(), denominations.rend(), [&t](const NebulaDenominationPtr &a, const NebulaDenominationPtr &b) {
+       string query("select count(distinct catalogue) from denominations where objects_id = ?");
+       return t.session().query<int>(query).bind(a->ngcObject().id()).resultValue() <  t.session().query<int>(query).bind(b->ngcObject().id()).resultValue();
+    }); 
     populateHeaders(resultsTable);
     Ephemeris ephemeris(astroSession->position());
     AstroSession::ObservabilityRange range = astroSession->observabilityRange(ephemeris).delta({1,20,0});
