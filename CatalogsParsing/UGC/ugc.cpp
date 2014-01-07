@@ -58,8 +58,10 @@ using namespace std;
 }
 
 float UGC::Declination::radians(){
-	float degreesTot;
-	degreesTot = static_cast<float>(degrees) + (minutes+(seconds/60.)/60.);
+	float degreesTot = static_cast<float>(degrees);
+  float minutesTot = static_cast<float>(minutes);
+  minutesTot += seconds / 60.;
+  degreesTot += minutesTot / 60.;
 	float rad = degreesTot/180.*M_PI;
 	return rad;
 }
@@ -155,7 +157,7 @@ int main(int argc, char ** argv){
           cerr << "inserting " << object.number << ", MCG id=" << objectId;
           if(objectId < 0) {
             objectId = importer.insertObject(object.ugcName, object.ra.radians(), object.dec.radians(), object.magnitude, 
-                                             max(object.redMajorAxis, object.blueMajorAxis), NgcObject::NebGx);
+                                             max(object.redMajorAxis, object.blueMajorAxis) / 60., NgcObject::NebGx);
             if(objectId <= 0)
               throw runtime_error("Error inserting object");
             cerr << ", added new objectId: " << objectId;

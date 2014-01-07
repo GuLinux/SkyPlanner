@@ -58,8 +58,10 @@ using namespace std;
 }
 
 float MCG::Declination::radians(){
-	float degreesTot;
-	degreesTot = static_cast<float>(degrees) + (minutes+(seconds/60.)/60.);
+	float degreesTot = static_cast<float>(degrees);
+  float minutesTot = static_cast<float>(minutes);
+  minutesTot += seconds / 60.;
+  degreesTot += minutesTot / 60.;
 	float rad = degreesTot/180.*M_PI;
 	return rad;
 }
@@ -172,7 +174,7 @@ int main(int argc, char ** argv){
           long long objectId = importer.findByCatalog(object.other_names);
           cerr << "inserting " << object.number << "[" << index++ << "/" << objects.size() << "], ngcic id=" << objectId;
           if(objectId < 0) {
-            objectId = importer.insertObject(object.object_id, object.ra.radians(), object.dec.radians(), object.magnitude, object.largest_dimension, NgcObject::NebGx);
+            objectId = importer.insertObject(object.object_id, object.ra.radians(), object.dec.radians(), object.magnitude, object.largest_dimension / 60., NgcObject::NebGx);
             if(objectId <= 0)
               throw runtime_error("Error inserting object");
             cerr << ", added new objectId: " << objectId;

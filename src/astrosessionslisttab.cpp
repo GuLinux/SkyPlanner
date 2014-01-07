@@ -127,7 +127,8 @@ void AstroSessionsListTab::Private::populateSessions()
 	   deletingSession.emit(astroSession);
            Dbo::Transaction t(session);
 	   session.user().modify()->astroSessions().erase(astroSession);
-     astroSession.remove();
+     Dbo::ptr<AstroSession> s = astroSession;
+     s.remove();
 	   t.commit();
 	   populateSessions();
 	});

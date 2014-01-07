@@ -352,7 +352,7 @@ void AstroSessionTab::Private::populate()
     }));
     actions->addButton(WW<WPushButton>(WString::tr("buttons_remove")).css("btn btn-danger btn-mini").onClick([=](WMouseEvent){
       WMessageBox *confirmation = new WMessageBox(WString::tr("messagebox_confirm_removal_title"), WString::tr("messagebox_confirm_removal_message"), Wt::Question, Wt::Ok | Wt::Cancel);
-      confirmation->buttonClicked().connect([=](StandardButton b, _n5){
+      confirmation->buttonClicked().connect([=](StandardButton b, _n5) {
         if(b != Wt::Ok) {
           confirmation->reject();
           return;
@@ -360,7 +360,8 @@ void AstroSessionTab::Private::populate()
         confirmation->accept();
         Dbo::Transaction t(session);
         astroSession.modify()->astroSessionObjects().erase(sessionObject);
-        sessionObject.remove();
+        Dbo::ptr<AstroSessionObject> o = sessionObject;
+        o.remove();
         t.commit();
         populate();
       });

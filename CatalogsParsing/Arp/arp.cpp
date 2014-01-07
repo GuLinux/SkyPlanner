@@ -144,12 +144,17 @@ int main(int argc, char ** argv){
              dupes[objectNum] = dupesForThisObject;
          };
         for(auto d: dupes) {
+          sort(d.second.begin(), d.second.end(), [](Arp *_1, Arp *_2) { return _1->magnitude < _2->magnitude;});
+          float highestMagnitude = d.second.front()->magnitude;
           sort(d.second.rbegin(), d.second.rend(), [](Arp *_1, Arp *_2) { return _1->largest_dimension < _2->largest_dimension;});
-          cerr << "dupes for " << d.first.toStdString() << endl;
+          float highestDimension = d.second.front()->largest_dimension;
+          cerr << "dupes for " << d.first.toStdString() << ", highest magnitude=" << highestMagnitude << ", largest dimension = " << highestDimension << endl;
           char letter = 'A';
           for(Arp *o: d.second) {
             o->object_id = QString("Arp %1%2").arg(d.first).arg(letter++).toStdString();
-            cerr << "index=" << o->index << ", object_id: " << o->object_id << ", number= " << o->arp_number << ", size: " << o->largest_dimension << endl;
+            if(o->largest_dimension == 0) o->largest_dimension = highestDimension;
+            if(o->magnitude == 99) o->magnitude = highestMagnitude;
+            cerr << "index=" << o->index << ", object_id: " << o->object_id << ", number= " << o->arp_number << ", size: " << o->largest_dimension  << ", magnitude: " << o->magnitude << endl;
           }
         }
         sort(array.begin(), array.end(), [](const Arp &a, const Arp &b) { return a.object_id > b.object_id; });
@@ -184,7 +189,7 @@ int main(int argc, char ** argv){
           stringstream objectId;
           objectId << "Arp " << array[i].arp_number;
         if(otherId < 0) {
-          otherId = importer.insertObject(array[i].object_id, array[i].ra.radians(), array[i].dec.radians(), array[i].magnitude, array[i].largest_dimension, NgcObject::NebGx);
+          otherId = importer.insertObject(array[i].object_id, array[i].ra.radians(), array[i].dec.radians(), array[i].magnitude, array[i].largest_dimension / 60., NgcObject::NebGx);
           if(otherId<=0)
             throw std::runtime_error("Error inserting object");
         }

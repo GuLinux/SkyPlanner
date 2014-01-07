@@ -111,7 +111,8 @@ void TelescopesPage::Private::populate()
     row->elementAt(5)->addWidget(WW<WPushButton>(WString::tr("buttons_remove")).css("btn btn-danger btn-mini").onClick([=](WMouseEvent){
       Dbo::Transaction t(session);
       session.user().modify()->telescopes().erase(telescope);
-      telescope.remove();
+      Dbo::ptr<Telescope> tel = telescope;
+      tel.remove();
       t.commit();
       populate();
     }) );
