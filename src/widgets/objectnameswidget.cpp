@@ -74,7 +74,7 @@ ObjectNamesWidget::ObjectNamesWidget(const Wt::Dbo::ptr<NgcObject> &object, Sess
     };
     sort(denominations.rbegin(), denominations.rend(), [](const NebulaDenominationPtr &a, const NebulaDenominationPtr &b) {
       if(!a->catalogue() && ! b->catalogue())
-        return a->name() < b->name();
+        return a->name() > b->name();
       if(!a->catalogue())
         return false;
       if(!b->catalogue())
