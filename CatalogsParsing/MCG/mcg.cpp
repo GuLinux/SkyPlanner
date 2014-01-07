@@ -35,7 +35,7 @@ using namespace std;
 
 	struct  Declination { 
 		int degrees;
-		int minutes;
+		float minutes;
                 float radians();
 	};
 
