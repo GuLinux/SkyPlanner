@@ -36,7 +36,6 @@ using namespace std;
 	struct  Declination { 
 		int degrees;
 		int minutes;
-		int seconds;
                 float radians();
 	};
 
@@ -60,7 +59,6 @@ using namespace std;
 float MCG::Declination::radians(){
 	float degreesTot = static_cast<float>(degrees);
   float minutesTot = static_cast<float>(minutes);
-  minutesTot += seconds / 60.;
   degreesTot += minutesTot / 60.;
 	float rad = degreesTot/180.*M_PI;
 	return rad;
@@ -221,7 +219,7 @@ MCG::Declination stringToDeclination(string declination){
 
 	stringstream ingresso(declination);
 	MCG::Declination temp;
-	ingresso >> temp.degrees >> temp.minutes >> temp.seconds;
+	ingresso >> temp.degrees >> temp.minutes ;
 	
 	return temp;
 }
