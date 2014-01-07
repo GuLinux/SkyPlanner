@@ -49,15 +49,16 @@ using namespace std;
   
   float Arp::RightAscension::radians(){
 	float hTot;
-	hTot= static_cast<float>(hours) + ((minutes+(seconds/60.))/60.);
+	hTot= static_cast<float>(hours) + ( (minutes+(seconds/60.))/60.);
 	float deg = 360.*hTot/24.;
 	float rad = deg/180.*M_PI;
 	return rad; 
 }
 
 float Arp::Declination::radians(){
-	float degreesTot;
-	degreesTot = static_cast<float>(degrees) + (minutes+(seconds/60.)/60.);
+	float degreesTot = static_cast<float>(degrees);
+  float minutesTot = static_cast<float>(minutes) + (seconds/60.);
+  degreesTot += minutesTot/60.;
 	float rad = degreesTot/180.*M_PI;
 	return rad;
 }
