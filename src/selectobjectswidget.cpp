@@ -100,7 +100,7 @@ void SelectObjectsWidget::Private::append(WTable *table, const Dbo::ptr<NgcObjec
     row->addStyleClass("success");
   row->elementAt(0)->addWidget(new ObjectNamesWidget{ngcObject, session, astroSession});
   row->elementAt(1)->addWidget(new WText{ ngcObject->typeDescription() });
-  row->elementAt(2)->addWidget(new WText{ ConstellationFinder::getName(ngcObject->coordinates()).name });
+  row->elementAt(2)->addWidget(new WText{ WString::fromUTF8(ConstellationFinder::getName(ngcObject->coordinates()).name) });
   row->elementAt(3)->addWidget(new WText{format("%.1f") % ngcObject->magnitude()});
   WDateTime transit = WDateTime::fromPosixTime(bestAltitude.when);
   row->elementAt(4)->addWidget(new ObjectDifficultyWidget(ngcObject, selectedTelescope, 99 /* TODO: hack, to be replaced */));
