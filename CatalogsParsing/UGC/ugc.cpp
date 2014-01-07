@@ -166,6 +166,7 @@ int main(int argc, char ** argv){
               throw runtime_error("Error inserting object");
             cerr << ", added new objectId: " << objectId;
           }
+          cerr << endl;
             QString notes = QString("Galaxy Class: %1; Hubble Type: %2; poss field: %3")
               .arg(QString::fromStdString(object.galaxyClass).toLower().trimmed())
               .arg(QString::fromStdString(object.hubbleType).trimmed())
