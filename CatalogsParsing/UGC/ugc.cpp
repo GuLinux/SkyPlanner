@@ -39,8 +39,7 @@ using namespace std;
 
 	struct  Declination { 
 		int degrees;
-		int minutes;
-		int seconds;
+		float minutes;
                 float radians();
 	};
 
@@ -60,7 +59,6 @@ using namespace std;
 float UGC::Declination::radians(){
 	float degreesTot = static_cast<float>(degrees);
   float minutesTot = static_cast<float>(minutes);
-  minutesTot += seconds / 60.;
   degreesTot += minutesTot / 60.;
 	float rad = degreesTot/180.*M_PI;
 	return rad;
@@ -141,7 +139,11 @@ int main(int argc, char ** argv){
           
         if(arguments.contains("--pretend")) {
           for(UGC &obj: objects) {
-            cout << "object " << obj.number << " [" << obj.ugcName << "], magnitude=" << obj.magnitude << ", mcg=" << obj.mcgName << endl;
+            cout << "object " << obj.number << " [" << obj.ugcName << "], magnitude=" << obj.magnitude << ", mcg=" << obj.mcgName 
+            << ", ra=" << obj.ra.hours << " " << obj.ra.minutes << " " << obj.ra.seconds << ", rad=" << obj.ra.radians()
+            << ", dec=" << obj.dec.degrees << " " << obj.dec.minutes << ", rad=" << obj.dec.radians()
+            << ", size=" << max(obj.blueMajorAxis, obj.redMajorAxis) / 60.
+            << endl;
           }
           return 0;
         }
@@ -209,7 +211,7 @@ UGC::Declination stringToDeclination(string declination){
 
 	stringstream ingresso(declination);
 	UGC::Declination temp;
-	ingresso >> temp.degrees >> temp.minutes >> temp.seconds;
+	ingresso >> temp.degrees >> temp.minutes ;
 	
 	return temp;
 }
