@@ -51,7 +51,8 @@ float Asterism::RightAscension::radians() const {
 
 float Asterism::Declination::radians() const {
 	float degreesTot;
-	degreesTot = static_cast<float>(degrees) + (minutes/60.);
+        int sign = degrees>0?+1:-1;
+	degreesTot = static_cast<float>(degrees) + (minutes/60.*sign);
 	float rad = degreesTot/180.*M_PI;
 	return rad;
 }

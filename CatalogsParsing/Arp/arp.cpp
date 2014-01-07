@@ -56,11 +56,12 @@ using namespace std;
 }
 
 float Arp::Declination::radians(){
-	float degreesTot = static_cast<float>(degrees);
+  float degreesTot = static_cast<float>(degrees);
+  int sign = degreesTot>0?1:-1;
   float minutesTot = static_cast<float>(minutes) + (seconds/60.);
-  degreesTot += minutesTot/60.;
-	float rad = degreesTot/180.*M_PI;
-	return rad;
+  degreesTot += ( minutesTot/60. * sign);
+  float rad = degreesTot/180.*M_PI;
+  return rad;
 }
   
 int stringToInt(string);

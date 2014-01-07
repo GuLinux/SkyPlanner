@@ -21,8 +21,9 @@ double h2rad(const QString &h)
 double deg2rad(const QString &deg)
 {
   int degrees = deg.split(" ").first().trimmed().toInt();
+  int sign = degrees>0?+1:-1;
   double minutes = deg.split(" ").last().trimmed().toDouble();
-  double d = static_cast<double>(degrees) + (minutes/60.);
+  double d = static_cast<double>(degrees) + (minutes/60.*sign);
   return d * M_PI / 180.;
 }
 
@@ -35,8 +36,8 @@ int main(int argc, char **argv) {
 
   o << "BEGIN TRANSACTION;" << endl;
   const QString objQuery = "INSERT INTO objects (object_id, \"ra\", \"dec\", magnitude, angular_size, type) VALUES('Abell %1', %2, %3, %4, %5, %6);";
-  const QString nameQuery = "INSERT INTO denominations(\"catalogue\", \"number\", \"name\", \"comment\", objects_id) VALUES('%1', %2, '%3','%4', %5);";
-
+  const QString nameQuery = "INSERT INTO denominations(\"catalogue\", \"number\", \"name\", \"comment\", objects_id) VALUES('%1', '%2', '%3','%4', %5);";
+  QString prefix = file.fileName().contains("POOR.CLU") ? "S" : "";
   while(!s.atEnd()) {
     QString first = s.readLine();
     QString second = s.readLine();
@@ -49,7 +50,7 @@ int main(int argc, char **argv) {
     double radRA = h2rad(ar);
     double radDec = deg2rad(dec);
     o << objQuery.arg(catNumber).arg(radRA).arg(radDec).arg(magnitude).arg(-1).arg(NgcObject::NebGalCluster) << endl;
-    o << nameQuery.arg("Abell").arg(catNumber).arg(QString("Abell %1").arg(catNumber)).arg("").arg(QString("(SELECT id from objects WHERE object_id = 'Abell %1')").arg(catNumber)) << endl;
+    o << nameQuery.arg("Abell").arg(catNumber).arg(QString("Abell %1").arg(catNumber.replace(" ", ""))).arg("").arg(QString("(SELECT id from objects WHERE object_id = 'Abell %1')").arg(catNumber)) << endl;
   }
   o << "END TRANSACTION;" << endl;
 }

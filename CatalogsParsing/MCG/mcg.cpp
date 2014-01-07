@@ -57,11 +57,11 @@ using namespace std;
 }
 
 float MCG::Declination::radians(){
-	float degreesTot = static_cast<float>(degrees);
-  float minutesTot = static_cast<float>(minutes);
-  degreesTot += minutesTot / 60.;
-	float rad = degreesTot/180.*M_PI;
-	return rad;
+  float degreesTot = static_cast<float>(degrees);
+  int sign = degrees>0?1:-1;
+  degreesTot += (minutes / 60. * sign);
+  float rad = degreesTot/180.*M_PI;
+  return rad;
 }
 
   
@@ -161,7 +161,9 @@ int main(int argc, char ** argv){
         if(arguments.contains("--pretend")) {
           for(MCG &obj: objects) {
             cout << "object " << obj.number << " [" << obj.object_id 
-              << ", magnitude=" << obj.magnitude 
+              << "], magnitude=" << obj.magnitude 
+              << ", ra=" << obj.ra.hours << "h " << obj.ra.minutes << "m " << obj.ra.seconds << "s, rad=" << obj.ra.radians()
+              << ", dec=" << obj.dec.degrees << "deg " << obj.dec.minutes << "m , rad=" << obj.dec.radians()
               << endl;
           }
           return 0;

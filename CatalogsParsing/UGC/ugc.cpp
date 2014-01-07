@@ -57,11 +57,11 @@ using namespace std;
 }
 
 float UGC::Declination::radians(){
-	float degreesTot = static_cast<float>(degrees);
-  float minutesTot = static_cast<float>(minutes);
-  degreesTot += minutesTot / 60.;
-	float rad = degreesTot/180.*M_PI;
-	return rad;
+  float degreesTot = static_cast<float>(degrees);
+  int sign = degrees>0?1:-1;
+  degreesTot += (minutes / 60. * sign);
+  float rad = degreesTot/180.*M_PI;
+  return rad;
 }
 
   
