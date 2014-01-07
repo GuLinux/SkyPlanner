@@ -105,15 +105,15 @@ string DSSImage::Private::imageLink() const
 {
   Angle::Sexagesimal objectSize = size.sexagesimal();
   double objectRect = static_cast<double>(objectSize.degrees * 60) + static_cast<double>(objectSize.minutes) + (objectSize.seconds/60);
-  double multiplyFactor = 1.8;
+  double multiplyFactor = 2.5;
   if(objectRect < 20)
-    multiplyFactor = 2.;
+    multiplyFactor = 3.5;
   if(objectRect < 10)
-    multiplyFactor = 2.5;
+    multiplyFactor = 4.5;
   if(objectRect < 5 )
-    multiplyFactor = 3.;
+    multiplyFactor = 6.;
   if(objectRect < 1 )
-    multiplyFactor = 5.;
+    multiplyFactor = 10.;
   
   objectRect = min(75.0, objectRect * multiplyFactor);
   objectRect = objectRect <= 0 ? 75.0:objectRect; // objects without angular size (-1), showing max possible field...
