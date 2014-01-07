@@ -58,8 +58,27 @@ private:
 ObjectNamesWidget::ObjectNamesWidget(const Wt::Dbo::ptr<NgcObject> &object, Session &session, const Wt::Dbo::ptr<AstroSession> &astroSession, RenderType renderType, WContainerWidget *parent)
   : WContainerWidget(parent), d(session, this)
 {
-    auto denominations = object->nebulae();
+    auto dboDenominations = object->nebulae();
+    vector<NebulaDenominationPtr> denominations{dboDenominations.begin(), dboDenominations.end()};
     set<string> names;
+    static map<string,int> catalogRatings {
+      {"Messier", 99},
+      {"NGC", 98},
+      {"IC", 97},
+      {"Arp", 96},
+      {"Caldwell", 95},
+      {"Caldwell", 95},
+      {"Abell", 94},
+      {"UGC", 93},
+      {"MCG", 92},
+    };
+    sort(denominations.rbegin(), denominations.rend(), [](const NebulaDenominationPtr &a, const NebulaDenominationPtr &b) {
+      if(!a->catalogue())
+        return false;
+      if(!b->catalogue())
+        return false;
+      return catalogRatings[*a->catalogue()] < catalogRatings[*b->catalogue()];
+    });
     for(auto denomination: denominations)
       names.insert(denomination->name());
     stringstream namesStream;
