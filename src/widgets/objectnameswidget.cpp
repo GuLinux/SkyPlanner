@@ -76,7 +76,7 @@ ObjectNamesWidget::ObjectNamesWidget(const Wt::Dbo::ptr<NgcObject> &object, Sess
       if(!a->catalogue())
         return false;
       if(!b->catalogue())
-        return false;
+        return true;
       return catalogRatings[*a->catalogue()] < catalogRatings[*b->catalogue()];
     });
     for(auto denomination: denominations) {
