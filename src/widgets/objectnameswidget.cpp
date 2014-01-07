@@ -60,7 +60,7 @@ ObjectNamesWidget::ObjectNamesWidget(const Wt::Dbo::ptr<NgcObject> &object, Sess
 {
     auto dboDenominations = object->nebulae();
     vector<NebulaDenominationPtr> denominations{dboDenominations.begin(), dboDenominations.end()};
-    set<string> names;
+    vector<string> names;
     static map<string,int> catalogRatings {
       {"Messier", 99},
       {"NGC", 98},
@@ -79,8 +79,10 @@ ObjectNamesWidget::ObjectNamesWidget(const Wt::Dbo::ptr<NgcObject> &object, Sess
         return false;
       return catalogRatings[*a->catalogue()] < catalogRatings[*b->catalogue()];
     });
-    for(auto denomination: denominations)
-      names.insert(denomination->name());
+    for(auto denomination: denominations) {
+      if(std::count(names.begin(), names.end(), denomination->name()) == 0)
+        names.push_back(denomination->name());
+    }
     stringstream namesStream;
     string separator;
     for(auto name: names) {
