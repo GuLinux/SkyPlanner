@@ -42,6 +42,7 @@
 #include "session.h"
 #include "types.h"
 #include "astroplanner.h"
+#include <boost/regex.hpp>
 
 using namespace WtCommons;
 using namespace Wt;
@@ -171,7 +172,9 @@ ObjectNamesWidget::ObjectNamesWidget(const Wt::Dbo::ptr<NgcObject> &object, Sess
           .add(WW<WAnchor>("http://archive.stsci.edu/dss/acknowledging.html", " (Acknowledgment)").setTarget(Wt::TargetNewWindow))
     );
     stack->addWidget(dssContainer);
-    wApp->setInternalPath(string("/dss-") + namesJoined.toUTF8(), true);
+
+    string namesForMenu = boost::regex_replace(namesJoined.toUTF8(), boost::regex{"[^a-zA-Z0-9]+"}, "-");
+    wApp->setInternalPath(string("/dss-") + namesForMenu, true);
     stack->setCurrentWidget(dssContainer);
       });
 
