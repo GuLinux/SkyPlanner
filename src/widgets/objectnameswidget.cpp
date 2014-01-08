@@ -189,20 +189,28 @@ ObjectNamesWidget::ObjectNamesWidget(const Wt::Dbo::ptr<NgcObject> &object, Sess
       
      
       popup->addSectionHeader(WString::tr("objectnames_search_menu_title"));
-      auto googleSearch = [=] (string type, NebulaDenominationPtr nebulaDenomination) {
-        return (format("http://www.google.com/%s?q=%s") % type % Utils::urlDecode(nebulaDenomination->search())).str();
+      auto searchURL = [=] (string url, NebulaDenominationPtr nebulaDenomination) {
+        return (format(url) % Utils::urlDecode(nebulaDenomination->search())).str();
       };
       if(denominations.size() == 1) {
-        addLink(WString::tr("objectnames_google_search"), googleSearch("search", denominations.front() ) );
-        addLink(WString::tr("objectnames_google_images_search"), googleSearch("images", denominations.front() ) );
+        addLink(WString::tr("objectnames_google_search"), searchURL("http://www.google.com/search?q=%s", denominations.front() ) );
+        addLink(WString::tr("objectnames_google_images_search"), searchURL("http://www.google.com/images?q=%s", denominations.front() ) );
+        addLink("SIMBAD", searchURL("http://simbad.u-strasbg.fr/simbad/sim-basic?Ident=%s&submit=SIMBAD+search", denominations.front() ) );
+        addLink("NED", searchURL("http://ned.ipac.caltech.edu/cgi-bin/objsearch?objname=%s", denominations.front() ) );
       } else {
         WMenu *googleSearchSubMenu = new WPopupMenu();
         WMenu *googleImagesSearchSubMenu = new WPopupMenu();
+        WMenu *simbadSearchSubMenu = new WPopupMenu;
+        WMenu *nedSearchSubMenu = new WPopupMenu;
         popup->addMenu(WString::tr("objectnames_google_search"), googleSearchSubMenu);
         popup->addMenu(WString::tr("objectnames_google_images_search"), googleImagesSearchSubMenu);
+        popup->addMenu("SIMBAD", simbadSearchSubMenu);
+        popup->addMenu("NED", nedSearchSubMenu);
         for(auto name: denominations) {
-          addLink(name->search(), googleSearch("search", name), googleSearchSubMenu);
-          addLink(name->search(), googleSearch("images", name), googleImagesSearchSubMenu);
+          addLink(name->search(), searchURL("http://www.google.com/search?q=%s", denominations.front() ), googleSearchSubMenu );
+          addLink(name->search(), searchURL("http://www.google.com/images?q=%s", denominations.front() ), googleImagesSearchSubMenu );
+          addLink(name->search(), searchURL("http://simbad.u-strasbg.fr/simbad/sim-basic?Ident=%s&submit=SIMBAD+search", denominations.front() ), simbadSearchSubMenu );
+          addLink(name->search(), searchURL("http://ned.ipac.caltech.edu/cgi-bin/objsearch?objname=%s", denominations.front() ), nedSearchSubMenu );
         }
       }
       popup->popup(e);
