@@ -42,6 +42,7 @@ public:
     dbo::field(a, _name, "name");
     dbo::field(a, _comment, "comment");
     dbo::field(a, _searchMode, "search_mode");
+    dbo::field(a, _otherCatalogues, "other_catalogues");
     dbo::belongsTo(a, _ngcObject);
   }
 
@@ -55,6 +56,7 @@ private:
   boost::optional<std::string> _comment;
   dbo::ptr<NgcObject> _ngcObject;
   SearchMode _searchMode;
+  boost::optional<std::string> _otherCatalogues;
 };
 
 typedef dbo::ptr<NebulaDenomination> NebulaDenominationPtr;
