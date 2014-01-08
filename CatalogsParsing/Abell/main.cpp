@@ -5,6 +5,7 @@
 #include <QDebug>
 #include <iostream>
 #include "models/ngcobject.h"
+#include "models/nebuladenomination.h"
 #include "dbhelper.h"
 using namespace std;
 
@@ -33,6 +34,7 @@ int main(int argc, char **argv) {
   file.open(QIODevice::ReadOnly);
   QTextStream s(&file);
   QTextStream o(stdout);
+  CatalogsImporter importer("Abell", app);
 
   o << "BEGIN TRANSACTION;" << endl;
   const QString objQuery = "INSERT INTO objects (object_id, \"ra\", \"dec\", magnitude, angular_size, type) VALUES('Abell %1', %2, %3, %4, %5, %6);";
@@ -49,8 +51,14 @@ int main(int argc, char **argv) {
     double magnitude = second.mid(64, 4).toDouble();
     double radRA = h2rad(ar);
     double radDec = deg2rad(dec);
+    qDebug() << "Adding " << catNumber;
+    auto objectId = importer.insertObject(catNumber, radRA, radDec, magnitude, -1, NgcObject::NebGalCluster);
+    if(objectId <= 0 )
+      throw std::runtime_error("Error adding object to database");
     o << objQuery.arg(catNumber).arg(radRA).arg(radDec).arg(magnitude).arg(-1).arg(NgcObject::NebGalCluster) << endl;
-    o << nameQuery.arg("Abell").arg(catNumber).arg(QString("Abell %1").arg(catNumber.replace(" ", ""))).arg("").arg(QString("(SELECT id from objects WHERE object_id = 'Abell %1')").arg(catNumber)) << endl;
+    QString objectName = QString("Abell %1").arg(catNumber.replace(" ", ""));
+    importer.insertDenomination(catNumber, objectName, "", objectId, NebulaDenomination::ByName );
+    o << nameQuery.arg("Abell").arg(catNumber).arg(objectName).arg("").arg(QString("(SELECT id from objects WHERE object_id = 'Abell %1')").arg(catNumber)) << endl;
   }
   o << "END TRANSACTION;" << endl;
 }

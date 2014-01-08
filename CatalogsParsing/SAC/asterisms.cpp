@@ -5,9 +5,13 @@
 #include <string>
 #include <sstream>
 #include <cmath>
+#include <QCoreApplication>
+#include <QStringList>
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/algorithm/string/replace.hpp>
-
+#include "dbhelper.h"
+#include "models/ngcobject.h"
+#include "models/nebuladenomination.h"
 using namespace std;
 
 
@@ -60,12 +64,14 @@ float Asterism::Declination::radians() const {
 float stringToFloat(string);
 Asterism::RightAscension stringToRightAscension(string);
 Asterism::Declination stringToDeclination(string);
-string insert(const Asterism &asterism, int index);
+string insert(const Asterism &asterism, int index, CatalogsImporter &importer);
 
-int main(){
-
+int main(int argc, char **argv){
+	QCoreApplication app(argc, argv);
+	QStringList arguments = app.arguments();
+	arguments.removeFirst();
 	fstream input;
-	input.open("SAC_Asterisms_Ver32_Fence.txt");
+	input.open(arguments.first().toStdString());
   if(!input) {
     cerr << "Error! Input file SAC_Asterisms_Ver32_Fence.txt missing" << endl;
     return 1;
@@ -81,7 +87,7 @@ int main(){
 
 	input.close();
 
-	input.open("SAC_Asterisms_Ver32_Fence.txt");
+	input.open(arguments.first().toStdString());
 	
 	Asterism * array;
 	array = new Asterism[conta];
@@ -114,7 +120,7 @@ int main(){
 			 
 		}
 	}
-	
+	CatalogsImporter importer("Saguaro Astronomy Club Asterisms", app);
 cout << "BEGIN TRANSACTION;" << endl;
         
 	for(int i=0;i<conta;i++){
@@ -127,7 +133,7 @@ cout << "BEGIN TRANSACTION;" << endl;
              << ", size = " << parseSize(array[i].size)
              << ", comments = " << array[i].notes
              << endl; 
-             cout << insert(array[i], i+1) << endl;
+             cout << insert(array[i], i+1, importer) << endl;
 	}
 
 cout << "END TRANSACTION;" << endl;
@@ -141,16 +147,23 @@ string sql(string s) {
   return s;
 }
 
-string insert(const Asterism &asterism, int index) {
+string insert(const Asterism &asterism, int index, CatalogsImporter &importer) {
            stringstream objectName;
            objectName << "SAC_ASTERISM_" << index;
            stringstream o;
+           auto objectId = importer.insertObject(objectName.str(), asterism.ra.radians(), asterism.dec.radians(), asterism.magnitude, parseSize(asterism.size), NgcObject::Asterism);
 
            o << "INSERT INTO objects(\"object_id\", ra, \"dec\", magnitude, angular_size, type ) VALUES('" << objectName.str() << "', " << asterism.ra.radians()
             << ", " << asterism.dec.radians()
             << ", " << asterism.magnitude
             << ", " << parseSize(asterism.size)
             << ", 10);" << endl;
+
+           if(objectId <= 0 )
+             throw runtime_error("Error adding object to database");
+           stringstream indexStr;
+           indexStr << index;
+           importer.insertDenomination(indexStr.str(), asterism.name, asterism.notes, objectId, NebulaDenomination::ByNameAndType);
            o << "INSERT INTO denominations(catalogue, \"number\", name, comment, objects_id) VALUES("
             << "'Saguaro Astronomy Club Asterisms', " << index << ", '" << sql(asterism.name) << "', '" << sql(asterism.notes) << "', (select id from objects where object_id = '" << objectName.str() << "'));" << endl;
            return o.str();

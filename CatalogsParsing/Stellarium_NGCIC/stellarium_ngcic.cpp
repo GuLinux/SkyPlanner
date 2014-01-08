@@ -12,21 +12,29 @@
 #include <unordered_map>
 #include <QtSql/QSqlDatabase>
 #include <QtSql/QSqlError>
+#include "dbhelper.h"
 
 using namespace std;
 namespace {
 
-struct ObjectName;
+enum Catalogue {NGC, IC, Messier, Caldwell, ProperName};
+struct Key {
+    Catalogue catalogue;
+    int32_t number;
+    QString toString() const { return QString("%1%2").arg(catalogue == NGC ? "NGC": "IC").arg(number); }
+    bool operator==(const Key &other) const { return catalogue == other.catalogue && number == other.number; }
+};
+struct ObjectName {
+    QString name;
+    QString ngcNumber;
+    QString comment;
+    Key key() const;
+    QString parsedName() const;
+    Catalogue catalogue() const;
+    int catalogueNumber() const;
+};
+
 struct NgcObject {
-    enum Catalogue {NGC, IC, Messier, Caldwell, ProperName};
-
-    struct Key {
-        Catalogue catalogue;
-        int32_t number;
-        QString toString() const { return QString("%1%2").arg(catalogue == NGC ? "NGC": "IC").arg(number); }
-        bool operator==(const Key &other) const { return catalogue == other.catalogue && number == other.number; }
-    };
-
   bool isIc;
   int32_t number;
   float ra, dec, mag, angularSize;
@@ -35,47 +43,38 @@ struct NgcObject {
   Catalogue catalogue() const { return isIc ? IC : NGC; }
   Key key() const { return { isIc ? IC : NGC, number }; }
 };
-map<NgcObject::Catalogue,QString> CatalogueNames {
-    {NgcObject::NGC, "NGC"},
-    {NgcObject::IC, "IC"},
-    {NgcObject::Messier, "Messier"},
-    {NgcObject::Caldwell, "Caldwell"},
-    {NgcObject::ProperName, ""},
+map<Catalogue,QString> CatalogueNames {
+    {NGC, "NGC"},
+    {IC, "IC"},
+    {Messier, "Messier"},
+    {Caldwell, "Caldwell"},
+    {ProperName, ""},
 };
 
 }
-struct ObjectName {
-    QString name;
-    QString ngcNumber;
-    QString comment;
-    NgcObject::Key key() const;
-    QString parsedName() const;
-    NgcObject::Catalogue catalogue() const;
-    int catalogueNumber() const;
-};
 
-NgcObject::Key ObjectName::key() const {
-    NgcObject::Catalogue catalogue = NgcObject::NGC;
+Key ObjectName::key() const {
+    Catalogue catalogue = NGC;
     QString number = ngcNumber;
     if(ngcNumber.startsWith("I")) {
-        catalogue = NgcObject::IC;
+        catalogue = IC;
         number = ngcNumber.mid(1);
     }
     return { catalogue, number.toInt() };
 }
 
 int ObjectName::catalogueNumber() const {
-    if(catalogue() == NgcObject::Messier || catalogue() == NgcObject::Caldwell)
+    if(catalogue() == Messier || catalogue() == Caldwell)
       return name.mid(1).toInt();
     return -1;
 }
 
-NgcObject::Catalogue ObjectName::catalogue() const {
+Catalogue ObjectName::catalogue() const {
     if(name.startsWith("C"))
-        return NgcObject::Caldwell;
+        return Caldwell;
     if(name.startsWith("M"))
-        return NgcObject::Messier;
-    return NgcObject::ProperName;
+        return Messier;
+    return ProperName;
 }
 
 QString ObjectName::parsedName() const {
@@ -88,10 +87,10 @@ QString ObjectName::parsedName() const {
 namespace std
 {
     template<>
-    struct hash<NgcObject::Key>
+    struct hash<Key>
     {
     public:
-        std::size_t operator()(NgcObject::Key const& k) const
+        std::size_t operator()(Key const& k) const
         {
             std::size_t h1 = std::hash<int>()(k.catalogue);
             std::size_t h2 = std::hash<int>()(k.number);
@@ -123,7 +122,7 @@ int main(int argc, char *argv[])
         return -1;
     }
     QDataStream ins(&file);
-    unordered_map<NgcObject::Key,NgcObject> ngcObjects;
+    unordered_map<Key,NgcObject> ngcObjects;
 
     ins.setVersion(QDataStream::Qt_4_5);
 
@@ -156,55 +155,29 @@ int main(int argc, char *argv[])
 
 
     namesFile.close();
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName("ngc.sqlite");
-    if(!db.open()) {
-        cerr << "Unable to open database file!" << endl;
-        return -1;
-    }
-    QSqlQuery createTables;
-    if(!createTables.exec("CREATE TABLE objects (object_id TEXT PRIMARY KEY, ra REAL, dec REAL, magnitude REAL, angular_size REAL, type INTEGER);"))
-        cerr << "Error creating table objects: " << createTables.lastError().text().toStdString() << endl;
-    createTables.exec("TRUNCATE TABLE objects;");
-
-    if(!createTables.exec("CREATE TABLE denominations (objects_object_id TEXT references objects(object_id), catalogue TEXT, number INTEGER, name TEXT, comment TEXT);"))
-        cerr << "Error creating table denominations: " << createTables.lastError().text().toStdString() << endl;
-    createTables.exec("TRUNCATE TABLE denominations;");
+    CatalogsImporter importer("", a);
 
     int current = 0;
-    QSqlDatabase::database().transaction();
     for(auto obj: ngcObjects ) {
 
         NgcObject ngc = obj.second;
-        QSqlQuery addObject;
-        addObject.prepare("INSERT INTO objects(object_id, ra, dec, magnitude, angular_size, type) VALUES(?, ?, ?, ?, ?, ?);");
         QString key = ngc.key().toString();
-        auto addDenomination = [=] (const QString &catalogue, int catalogueNumber, const QString &name, const QString &comment) {
-            QSqlQuery addDenomination;
-            addDenomination.prepare("INSERT INTO denominations(objects_object_id, catalogue, number, name, comment) VALUES(?, ?, ?, ?, ?);");
-            addDenomination.addBindValue(key);
-            addDenomination.addBindValue(catalogue);
-            addDenomination.addBindValue(catalogueNumber);
-            addDenomination.addBindValue(name);
-            addDenomination.addBindValue(comment);
-            if(!addDenomination.exec())
-              cerr << "Error adding denomination for " << catalogue.toStdString() << catalogueNumber << ": " << addDenomination.lastError().text().toStdString() << endl;
+        auto objectId = importer.insertObject(key, ngc.ra, ngc.dec, ngc.mag, ngc.angularSize, ngc.type);
+        if(objectId <= 0)
+          throw std::runtime_error("Error inserting ngc object");
+
+        auto addDenomination = [=,&importer] (const QString &catalogue, int catalogueNumber, const QString &name, const QString &comment) {
+            importer.setCatalogue(catalogue);
+            qDebug() << "Adding object: catalogue=" << catalogue << "number=" << catalogueNumber << "name=" << name << "comment=" << comment;
+            importer.insertDenomination(catalogueNumber <= 0 ? QString() : QString::number(catalogueNumber), name, comment, objectId, 0);
         };
 
         qDebug() << QString("%1").arg(current++, 5, 10, QChar('0')) << "/" << ngcObjects.size() << ": " << key ;
-        addObject.addBindValue(key);
-        addObject.addBindValue(ngc.ra);
-        addObject.addBindValue(ngc.dec);
-        addObject.addBindValue(ngc.mag);
-        addObject.addBindValue(ngc.angularSize);
-        addObject.addBindValue(ngc.type);
-        addObject.exec();
         QString catalogueName = CatalogueNames[ngc.catalogue()];
         addDenomination(catalogueName, ngc.number, QString("%1 %2").arg(catalogueName).arg(ngc.number), "");
         for(ObjectName objectName: ngc.otherNames) {
             addDenomination(CatalogueNames[objectName.catalogue()], objectName.catalogueNumber(), objectName.parsedName(), objectName.comment);
         }
     }
-    QSqlDatabase::database().commit();
     return 0;
 }
