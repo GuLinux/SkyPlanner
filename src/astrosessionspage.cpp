@@ -27,6 +27,7 @@
 #include <Wt/WTabWidget>
 #include <Wt/WMenuItem>
 #include <Wt/WMenu>
+#include <boost/regex.hpp>
 
 using namespace Wt;
 using namespace WtCommons;
@@ -57,8 +58,9 @@ AstroSessionsPage::AstroSessionsPage(Session &session, WContainerWidget* parent)
   astroSessionsListTab->sessionClicked().connect([=](const Dbo::ptr<AstroSession> &astroSession, _n5){
     if(d->tabs.count(astroSession) == 0) {
       auto astroSessionTab = new AstroSessionTab(astroSession, d->session);
+      string nameForMenu = boost::regex_replace(astroSession->name(), boost::regex{"[^a-zA-Z0-9]+"}, "-");
       WMenuItem *newTab = tabs->addTab(astroSessionTab, astroSession->name());
-      newTab->setPathComponent(astroSession->name() + string("-") + newTab->id() );
+      newTab->setPathComponent(nameForMenu + string("-") + newTab->id() );
       astroSessionTab->nameChanged().connect([=](const string &newName,_n5){
         newTab->setText(WString::fromUTF8(newName));
         astroSessionsListTab->reload();
@@ -77,5 +79,6 @@ AstroSessionsPage::AstroSessionsPage(Session &session, WContainerWidget* parent)
       }
     }
     tabs->setCurrentWidget(astroSessionsListTab);
+    wApp->setInternalPath("/sessions/list/", true);
   });
 }

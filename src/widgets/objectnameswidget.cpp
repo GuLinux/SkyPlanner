@@ -153,12 +153,14 @@ ObjectNamesWidget::ObjectNamesWidget(const Wt::Dbo::ptr<NgcObject> &object, Sess
           d->setImageType(boost::any_cast<DSSImage::ImageVersion>(typeModel->item(index)->data()));
         });
 
+    string currentInternalPath = wApp->internalPath();
     dssContainer->addWidget(WW<WContainerWidget>()
     .add(WW<WLabel>(WString::tr("dssimage_version_label")).setMargin(10, Wt::Right))
     .add(typeCombo)
     .add(WW<WPushButton>(WString::tr("buttons_close")).css("btn btn-danger pull-right").onClick([=](WMouseEvent){
       stack->setCurrentWidget(currentWidget);
       WTimer::singleShot(2000, [=](WMouseEvent) { delete dssContainer; });
+      wApp->setInternalPath(currentInternalPath, true);
     })
     ));
     dssContainer->addWidget(imageContainer);
@@ -169,6 +171,7 @@ ObjectNamesWidget::ObjectNamesWidget(const Wt::Dbo::ptr<NgcObject> &object, Sess
           .add(WW<WAnchor>("http://archive.stsci.edu/dss/acknowledging.html", " (Acknowledgment)").setTarget(Wt::TargetNewWindow))
     );
     stack->addWidget(dssContainer);
+    wApp->setInternalPath(string("/dss-") + namesJoined.toUTF8(), true);
     stack->setCurrentWidget(dssContainer);
       });
 
