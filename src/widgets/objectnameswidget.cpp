@@ -51,6 +51,9 @@ class ObjectNamesWidget::Private {
 public:
   Private(Session &session, ObjectNamesWidget *q) : session(session), q(q) {}
   Session &session;
+  // TODO: ugly hacks, we should probably extract a Dialog-like class for DSS Images
+  int nextDSSTypeIndex;
+  function<void(DSSImage::ImageVersion)> setImageType;
 private:
   ObjectNamesWidget * const q;
 };
@@ -119,20 +122,37 @@ ObjectNamesWidget::ObjectNamesWidget(const Wt::Dbo::ptr<NgcObject> &object, Sess
         WComboBox *typeCombo = WW<WComboBox>();
         WStandardItemModel *typeModel = new WStandardItemModel(typeCombo);
         typeCombo->setModel(typeModel);
-        
+
+
+
+        vector<DSSImage::ImageVersion> imageVersions{DSSImage::poss2ukstu_ir, DSSImage::poss2ukstu_red, DSSImage::poss1_red, DSSImage::phase2_gsc2};
+        if(object->type() == NgcObject::NebGx || object->type() == NgcObject::NebGx)
+          imageVersions = {DSSImage::poss2ukstu_blue, DSSImage::poss1_blue, DSSImage::phase2_gsc2};
+        d->nextDSSTypeIndex = 1;
+
+        d->setImageType = [=](DSSImage::ImageVersion version) {
+          imageContainer->clear();
+          DSSImage *image = new DSSImage(object->coordinates(), Angle::degrees(object->angularSize()), version );
+          image->failed().connect([=](_n6) mutable {
+            if(d->nextDSSTypeIndex+1 > imageVersions.size())
+              return;
+            d->setImageType(imageVersions[d->nextDSSTypeIndex++]);
+          });
+          imageContainer->addWidget(image);
+          for(int index=0; index<typeModel->rowCount(); index++)
+            if(boost::any_cast<DSSImage::ImageVersion>(typeModel->item(index)->data()) == version)
+              typeCombo->setCurrentIndex(index);
+        };
+
         for(auto type: DSSImage::versions()) {
           auto item = new WStandardItem(WString::tr(string{"dssimage_version_"} + DSSImage::imageVersion(type)));
           item->setData(type);
           typeModel->appendRow(item);
-          if(type == DSSImage::ImageVersion::phase2_gsc1)
-            typeCombo->setCurrentIndex(typeModel->rowCount()-1);
         }
         typeCombo->activated().connect([=](int index, _n5){
-          WStandardItem *item = typeModel->item(index);
-          imageContainer->clear();
-          imageContainer->addWidget(new DSSImage(object->coordinates(), Angle::degrees(object->angularSize()), boost::any_cast<DSSImage::ImageVersion>(item->data()) ));
+          d->setImageType(boost::any_cast<DSSImage::ImageVersion>(typeModel->item(index)->data()));
         });
-        
+
     dssContainer->addWidget(WW<WContainerWidget>()
     .add(WW<WLabel>(WString::tr("dssimage_version_label")).setMargin(10, Wt::Right))
     .add(typeCombo)
@@ -142,7 +162,7 @@ ObjectNamesWidget::ObjectNamesWidget(const Wt::Dbo::ptr<NgcObject> &object, Sess
     })
     ));
     dssContainer->addWidget(imageContainer);
-    imageContainer->addWidget(new DSSImage(object->coordinates(), Angle::degrees(object->angularSize()), DSSImage::ImageVersion::phase2_gsc1));
+    d->setImageType(imageVersions[0]);
     dssContainer->addWidget(WW<WContainerWidget>().css("pull-left")
           .add(new WText{"Images Copyright: "})
           .add(WW<WAnchor>("http://archive.stsci.edu/dss/", "The STScI Digitized Sky Survey").setTarget(Wt::TargetNewWindow))

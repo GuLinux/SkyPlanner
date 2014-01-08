@@ -38,6 +38,7 @@ class DSSImage::Private
     Wt::WContainerWidget *content;
     int retry = 0;
     static std::map<DSSImage::ImageVersion,std::string> imageVersionStrings;
+    Wt::Signal<> failed;
   private:
     class DSSImage *const q;
 };

@@ -40,6 +40,7 @@ class DSSImage : public Wt::WCompositeWidget
     static ImageVersion imageVersion(const std::string &version);
     static std::string imageVersion(const ImageVersion &version);
     static std::vector<ImageVersion> versions();
+    Wt::Signal<> &failed() const;
     DSSImage( const Coordinates::Equatorial &coordinates, const Angle &size, DSSImage::ImageVersion imageVersion = phase2_gsc2, Wt::WContainerWidget *parent = 0 );
     ~DSSImage();
 

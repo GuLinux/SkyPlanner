@@ -166,6 +166,7 @@ void DSSImage::Private::startDownload()
       content->addWidget(
         new WText{WString("<br />Error retrieving DSS Image: {1}<br />Please try another format, or click the link above to try viewing it in the DSS Archive.")
         .arg(err ? err.message() : WString("HTTP Status {1}").arg(message.status() ))});
+      failed.emit();
       return;
     }
     ofstream s(cacheFile.string());
@@ -175,6 +176,9 @@ void DSSImage::Private::startDownload()
   });
 }
 
+Signal<> &DSSImage::failed() const {
+  return d->failed;
+}
 DSSImage::DSSImage( const Coordinates::Equatorial &coordinates, const Angle &size, DSSImage::ImageVersion imageVersion, WContainerWidget *parent )
   : WCompositeWidget(parent), d( coordinates, size, imageVersion, this )
 {
