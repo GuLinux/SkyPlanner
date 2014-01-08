@@ -1,4 +1,5 @@
 #include <QCoreApplication>
+#include <stdexcept>
 #include <QFile>
 #include <QDataStream>
 #include <vector>

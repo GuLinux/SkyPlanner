@@ -1,6 +1,6 @@
 #ifndef CATALOGS_PARSING_DB_HELPER
 #define CATALOGS_PARSING_DB_HELPER
-
+#include <stdexcept>
 #include <QCoreApplication>
 #include <QStringList>
 #include <QtSql/QSqlDatabase>

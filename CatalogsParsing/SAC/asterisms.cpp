@@ -4,6 +4,7 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <stdexcept>
 #include <cmath>
 #include <QCoreApplication>
 #include <QStringList>

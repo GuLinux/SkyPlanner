@@ -79,7 +79,7 @@ AstroSessionsListTab::AstroSessionsListTab(Session &session, Wt::WContainerWidge
     if(i>0)
       addWidget(new WText{", "});
     auto date = WDateTime::fromPosixTime(newMoons[i].second).date();
-    addWidget(WW<WAnchor>("#", WLocalDateTime(date, {0,0,0}).toString("dddd, dd MMMM") ).css("link").setMargin(5, Left).onClick([=](WMouseEvent){
+    addWidget(WW<WAnchor>("", WLocalDateTime(date, {0,0,0}).toString("dddd, dd MMMM") ).css("link").setMargin(5, Left).onClick([=](WMouseEvent){
       newSessionDate->setDate(date);
     }));
   }
@@ -111,7 +111,7 @@ void AstroSessionsListTab::Private::populateSessions()
      if(!session.login().loggedIn() || ! session.user()) return;
      for(auto astroSession: session.find<AstroSession>().where("user_id = ?").bind(session.user().id()).orderBy("\"when\" DESC").resultList() ) {
        WTableRow *row = sessionsTable->insertRow(sessionsTable->rowCount());
-       row->elementAt(0)->addWidget(WW<WAnchor>("#", astroSession->name()).onClick([=](WMouseEvent){
+       row->elementAt(0)->addWidget(WW<WAnchor>("", astroSession->name()).css("link").onClick([=](WMouseEvent){
 	 sessionClicked.emit(astroSession);
       }));
        row->elementAt(1)->addWidget(new WText{WLocalDateTime(astroSession->wDateWhen().date(), astroSession->wDateWhen().time()).toString("dddd, dd MMMM yyyy")});

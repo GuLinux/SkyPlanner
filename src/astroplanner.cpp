@@ -86,16 +86,23 @@ AstroPlanner::AstroPlanner( const WEnvironment &environment )
   authWidget->setRegistrationEnabled( true );
   authWidget->processEnvironment();
   
+  navBarMenu->setInternalPathEnabled("/");
   WMenuItem *authMenuItem;
   d->loggedOutItems.push_back(authMenuItem = navBarMenu->addItem(WString::tr("mainmenu_login"), authWidget));
+  authMenuItem->setPathComponent("login/");
   TelescopesPage *telescopesPage = new TelescopesPage(d->session);
   AstroSessionsPage *astrosessionspage = new AstroSessionsPage(d->session);
   
   WMenuItem *mySessionsMenuItem;
   
   d->loggedInItems.push_back(mySessionsMenuItem = navBarMenu->addItem(WString::tr("mainmenu_my_sessions"), astrosessionspage));
-  d->loggedInItems.push_back(navBarMenu->addItem(WString::tr("mainmenu_my_telescopes"), telescopesPage));
+  mySessionsMenuItem->setPathComponent("sessions/");
+  WMenuItem *telescopesMenuItem;
+  d->loggedInItems.push_back(telescopesMenuItem = navBarMenu->addItem(WString::tr("mainmenu_my_telescopes"), telescopesPage));
+  telescopesMenuItem->setPathComponent("telescopes/");
+  
   WMenuItem *logout = navBarMenu->addItem(WString::tr("mainmenu_logout"));
+  logout->setPathComponent("logout/");
   d->loggedInItems.push_back(logout);
   
   
