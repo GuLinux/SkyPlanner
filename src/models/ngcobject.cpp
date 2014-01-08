@@ -96,6 +96,7 @@ std::string NgcObject::typeDescriptionKey() const
 std::string NgcObject::typeDescriptionKey(NebulaType nebulaType)
 {
   static map<NebulaType,string> descriptions {
+    {AllButStars, "ngcobject_type_AllButStars"},
     {All, "ngcobject_type_All"},
     {NebGx, "ngcobject_type_NebGx"},
     {NebOc, "ngcobject_type_NebOc"},

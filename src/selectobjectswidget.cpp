@@ -177,10 +177,10 @@ void SelectObjectsWidget::Private::suggestedObjects(Dbo::Transaction& transactio
   WComboBox *astroTypeCombo = new WComboBox;
   WLabel *astroTypeLabel = new WLabel(WString::tr("object_column_type"));
   astroTypeLabel->setBuddy(astroTypeCombo);
-  for(int i=-1; i<NgcObject::NebulaTypeCount; i++)
+  for(int i=NgcObject::AllButStars; i<NgcObject::NebulaTypeCount; i++)
     astroTypeCombo->addItem(NgcObject::typeDescription(static_cast<NgcObject::NebulaType>(i)));
   astroTypeCombo->activated().connect([=](int i, _n5) {
-    nebulaTypeFilter = static_cast<NgcObject::NebulaType>(i-1);
+    nebulaTypeFilter = static_cast<NgcObject::NebulaType>(i-2);
     q->populateFor(selectedTelescope);
   });
   
@@ -212,9 +212,11 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsList( double magnitud
     Session threadSession;
     Dbo::Transaction t(threadSession);
     auto ngcObjectsQuery = threadSession.find<NgcObject>().where("magnitude < ?").bind(magnitudeLimit);
-    if(nebulaTypeFilter != NgcObject::All) {
+    if(nebulaTypeFilter != NgcObject::All && nebulaTypeFilter != NgcObject::AllButStars) 
       ngcObjectsQuery.where("\"type\" = ?").bind(nebulaTypeFilter);
-    }
+    if(nebulaTypeFilter == NgcObject::AllButStars)
+      ngcObjectsQuery.where("\"type\" <> ?").bind(NgcObject::Asterism);
+ 
     dbo::collection<NgcObjectPtr> objects = ngcObjectsQuery.resultList();
     Ephemeris ephemeris(astroSession->position());
     AstroSession::ObservabilityRange range = astroSession->observabilityRange(ephemeris).delta({1,20,0});

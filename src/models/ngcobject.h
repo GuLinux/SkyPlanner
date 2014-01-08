@@ -37,6 +37,7 @@ class NgcObject
 public:
     enum NebulaType
     {
+            AllButStars=-2,
             All=-1,
             NebGx=0x0,     //!< Galaxy
             NebOc=0x1,     //!< Open star cluster
@@ -50,7 +51,7 @@ public:
             NebGalCluster=0x9, //!< Galaxy Clusters, mostly abell
             Asterism=0xA,
     };
-    static const int NebulaTypeCount = 11;
+    static const int NebulaTypeCount = 12;
     NgcObject();
     ~NgcObject();
     // CREATE TABLE objects (object_id TEXT PRIMARY KEY, ra REAL, dec REAL, magnitude REAL, angular_size REAL, type INTEGER);
