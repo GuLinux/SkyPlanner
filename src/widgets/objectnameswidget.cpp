@@ -62,24 +62,23 @@ ObjectNamesWidget::ObjectNamesWidget(const Wt::Dbo::ptr<NgcObject> &object, Sess
     vector<NebulaDenominationPtr> denominations{dboDenominations.begin(), dboDenominations.end()};
     vector<string> names;
     static map<string,int> catalogRatings {
-      {"Messier", 99},
-      {"NGC", 98},
-      {"IC", 97},
-      {"Arp", 96},
-      {"Caldwell", 95},
-      {"Caldwell", 95},
-      {"Abell", 94},
-      {"UGC", 93},
-      {"MCG", 92},
+      {"Messier", -99},
+      {"NGC", -98},
+      {"IC", -97},
+      {"Arp", -96},
+      {"Caldwell", -95},
+      {"Abell", -94},
+      {"UGC", -93},
+      {"MCG", -92},
     };
-    sort(denominations.rbegin(), denominations.rend(), [](const NebulaDenominationPtr &a, const NebulaDenominationPtr &b) {
+    sort(denominations.begin(), denominations.end(), [](const NebulaDenominationPtr &a, const NebulaDenominationPtr &b) {
       if(!a->catalogue() && ! b->catalogue())
-        return a->name() > b->name();
+        return a->name() < b->name();
       if(!a->catalogue())
-        return false;
-      if(!b->catalogue())
         return true;
-      return a->catalogue() || !b->catalogue() || catalogRatings[*a->catalogue()] < catalogRatings[*b->catalogue()];
+      if(!b->catalogue())
+        return false;
+      return catalogRatings[*a->catalogue()] < catalogRatings[*b->catalogue()];
     });
     for(auto denomination: denominations) {
       if(std::count(names.begin(), names.end(), denomination->name()) == 0)
