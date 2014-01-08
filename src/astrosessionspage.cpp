@@ -43,6 +43,7 @@ AstroSessionsPage::AstroSessionsPage(Session &session, WContainerWidget* parent)
     : d(session, this)
 {
   WTabWidget *tabs = new WTabWidget(this);
+  tabs->setInternalPathEnabled("sessions/");
   auto astroSessionsListTab = new AstroSessionsListTab(session);
   astroSessionsListTab->deletingSession().connect([=](const Dbo::ptr<AstroSession> &astroSession, _n5){
     for(auto tab: d->tabs) {
@@ -57,16 +58,18 @@ AstroSessionsPage::AstroSessionsPage(Session &session, WContainerWidget* parent)
     if(d->tabs.count(astroSession) == 0) {
       auto astroSessionTab = new AstroSessionTab(astroSession, d->session);
       WMenuItem *newTab = tabs->addTab(astroSessionTab, astroSession->name());
+      newTab->setPathComponent(astroSession->name() + string("-") + newTab->id() );
       astroSessionTab->nameChanged().connect([=](const string &newName,_n5){
-	newTab->setText(WString::fromUTF8(newName));
-	astroSessionsListTab->reload();
+        newTab->setText(WString::fromUTF8(newName));
+        astroSessionsListTab->reload();
       });
       newTab->setCloseable(true);
       d->tabs[astroSession] = astroSessionTab;
     }
     tabs->setCurrentWidget(d->tabs[astroSession]);
   });
-  tabs->addTab(astroSessionsListTab, WString::tr("astrosessionspage_sessions_list"));
+  WMenuItem *listMenuItem = tabs->addTab(astroSessionsListTab, WString::tr("astrosessionspage_sessions_list"));
+  listMenuItem->setPathComponent("list/");
   tabs->tabClosed().connect([=](int tabNumber, _n5){
     for(auto tab: d->tabs) {
       if(tab.second == tabs->widget(tabNumber)) {
