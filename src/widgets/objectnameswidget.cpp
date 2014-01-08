@@ -125,9 +125,9 @@ ObjectNamesWidget::ObjectNamesWidget(const Wt::Dbo::ptr<NgcObject> &object, Sess
 
 
 
-        vector<DSSImage::ImageVersion> imageVersions{DSSImage::poss2ukstu_ir, DSSImage::poss2ukstu_red, DSSImage::poss1_red, DSSImage::phase2_gsc2};
+        vector<DSSImage::ImageVersion> imageVersions{DSSImage::poss2ukstu_red, DSSImage::poss2ukstu_blue, DSSImage::poss1_red, DSSImage::poss1_blue, DSSImage::phase2_gsc2};
         if(object->type() == NgcObject::NebGx || object->type() == NgcObject::NebGx)
-          imageVersions = {DSSImage::poss2ukstu_blue, DSSImage::poss1_blue, DSSImage::phase2_gsc2};
+          imageVersions = {DSSImage::poss2ukstu_blue, DSSImage::poss1_blue, DSSImage::poss2ukstu_red, DSSImage::poss1_red, DSSImage::phase2_gsc2};
         d->nextDSSTypeIndex = 1;
 
         d->setImageType = [=](DSSImage::ImageVersion version) {
