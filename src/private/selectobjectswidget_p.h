@@ -20,7 +20,6 @@
 #ifndef SELECTOBJECTSWIDGET_P_H
 #define SELECTOBJECTSWIDGET_P_H
 #include "selectobjectswidget.h"
-#include <mutex>
 #include <boost/thread.hpp>
 
 class NgcObject;
@@ -40,8 +39,8 @@ public:
     Wt::Signal<> suggestedObjectsLoaded;
     typedef std::vector<std::pair<NgcObjectPtr,Ephemeris::BestAltitude>> NgcObjectsList; 
     NgcObjectsList suggestedObjectsList; 
-    std::mutex sessionLockMutex;
-    std::mutex suggestedObjectsListMutex;
+    boost::mutex sessionLockMutex;
+    boost::mutex suggestedObjectsListMutex;
     int pagesCurrentIndex = 0;
     Wt::Dbo::ptr< Telescope > selectedTelescope;
     void populateHeaders(Wt::WTable *table);

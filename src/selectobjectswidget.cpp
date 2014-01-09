@@ -68,7 +68,7 @@ SelectObjectsWidget::SelectObjectsWidget(const Dbo::ptr< AstroSession >& astroSe
     : d(astroSession, session, this)
 {
     WTabWidget *addObjectsTabWidget = this;
-    unique_lock<mutex> lockSession(d->sessionLockMutex);
+    boost::unique_lock<boost::mutex> lockSession(d->sessionLockMutex);
     Dbo::Transaction t(session);
     d->searchByCatalogueTab(t);
     d->suggestedObjects(t);
@@ -123,13 +123,13 @@ void SelectObjectsWidget::Private::append(WTable *table, const Dbo::ptr<NgcObjec
 
 void SelectObjectsWidget::Private::populateSuggestedObjectsTable()
 {
-    unique_lock<mutex>(suggestedObjectsListMutex);
+    boost::unique_lock<boost::mutex>(suggestedObjectsListMutex);
     if(suggestedObjectsList.empty() || aborted)
       return;
-    auto populateRange = [=] (int startOffset, uint64_t size) {
+    auto populateRange = [=] (size_t startOffset, size_t size) {
       Dbo::Transaction transaction(session);
       populateHeaders(suggestedObjectsTable);
-      for(int i=startOffset; i<min(startOffset+size, suggestedObjectsList.size()); i++) {
+      for(size_t i=startOffset; i<min(startOffset+size, suggestedObjectsList.size()); i++) {
         NgcObjectPtr ngcObject = session.find<NgcObject>().where("id = ?").bind(suggestedObjectsList.at(i).first.id());
 	Ephemeris::BestAltitude &bestAltitude = suggestedObjectsList.at(i).second;
 	append(suggestedObjectsTable, ngcObject, bestAltitude);
@@ -198,7 +198,7 @@ void SelectObjectsWidget::Private::suggestedObjects(Dbo::Transaction& transactio
 
 void SelectObjectsWidget::Private::populateSuggestedObjectsList( double magnitudeLimit )
 {
-  unique_lock<mutex> l1(suggestedObjectsListMutex);
+  boost::unique_lock<boost::mutex> l1(suggestedObjectsListMutex);
   suggestedObjectsTable->clear();
   suggestedObjectsList.clear();
   suggestedObjectsTablePagination->clear();
@@ -207,8 +207,8 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsList( double magnitud
   bgThread.join();
   aborted = false;
   bgThread = boost::thread([=]{
-    unique_lock<mutex> l2(suggestedObjectsListMutex);
-    unique_lock<mutex> lockSession(sessionLockMutex);
+    boost::unique_lock<boost::mutex> l2(suggestedObjectsListMutex);
+    boost::unique_lock<boost::mutex> lockSession(sessionLockMutex);
     Session threadSession;
     Dbo::Transaction t(threadSession);
     auto ngcObjectsQuery = threadSession.find<NgcObject>().where("magnitude < ?").bind(magnitudeLimit);

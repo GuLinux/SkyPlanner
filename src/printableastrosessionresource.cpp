@@ -31,10 +31,11 @@
 #include "widgets/objectnameswidget.h"
 #include "constellationfinder.h"
 #include "widgets/objectdifficultywidget.h"
-#include <hpdf.h>
 #include <Wt/Render/WPdfRenderer>
 #include <Wt/WServer>
 
+#ifndef DISABLE_LIBHARU
+#include <hpdf.h>
 #if HPDF_MAJOR_VERSION >= 2
 #if HPDF_MINOR_VERSION >= 3
 #define HAVE_LIBHARU_UTF8
@@ -43,6 +44,7 @@
 
 #ifndef HAVE_LIBHARU_UTF8
 #warning "Using libharu < 2.3, without UTF-8 support, this might lead to undefined results"
+#endif
 #endif
 
 using namespace Wt;
@@ -81,12 +83,13 @@ void PrintableAstroSessionResource::setFontScale(double fontScale)
   d->fontScale = fontScale;
 }
 
+#ifndef DISABLE_LIBHARU
 namespace {
     void error_handler(HPDF_STATUS error_no, HPDF_STATUS detail_no, void *user_data) {
       WServer::instance()->log("error") << (format("libharu error: error_no=%04X, detail_no=%d\n") % (unsigned int) error_no % (int) detail_no).str();
     }
 }
-
+#endif
 void PrintableAstroSessionResource::handleRequest(const Wt::Http::Request &request, Wt::Http::Response &response) {
   WTemplate printable;
   Dbo::Transaction t(d->session);
@@ -231,6 +234,7 @@ void PrintableAstroSessionResource::handleRequest(const Wt::Http::Request &reque
     printable.renderTemplate(response.out());
     return;
   }
+#ifndef DISABLE_LIBHARU
   suggestFileName(format("%s.pdf") % d->astroSession->name());
   response.setMimeType("application/pdf");
   HPDF_Doc pdf = HPDF_New(error_handler, 0);
@@ -259,4 +263,5 @@ void PrintableAstroSessionResource::handleRequest(const Wt::Http::Request &reque
   HPDF_Free(pdf);
   response.out().write((char*)buf, size);
   delete[] buf;
+#endif
 }

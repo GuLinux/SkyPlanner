@@ -35,6 +35,6 @@ set(SkyPlanner_MODELS_SRCS
 
 
 add_executable(SkyPlanner ${SkyPlanner_SRCS} ${SkyPlanner_MODELS_SRCS} ${AAPLUS_SRCS} ${Widgets_SRCS} )
-target_link_libraries(SkyPlanner ${Wt_LIBRARIES} ${Boost_LIBRARIES} ${LIBHARU_PREFIX}/lib/libhpdf.so )
+target_link_libraries(SkyPlanner ${Wt_LIBRARIES} ${Boost_LIBRARIES} ${HARU_LIBRARY} )
 install(TARGETS SkyPlanner RUNTIME DESTINATION bin)
 
