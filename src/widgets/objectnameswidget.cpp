@@ -19,7 +19,6 @@
 
 #include "Models"
 #include "objectnameswidget.h"
-#include "dssimage.h"
 #include "Wt-Commons/wt_helpers.h"
 #include "utils/format.h"
 #include <Wt/WText>
@@ -32,10 +31,6 @@
 #include <Wt/WTemplate>
 #include <Wt/WDialog>
 #include <Wt/WPushButton>
-#include <Wt/WImage>
-#include <Wt/WComboBox>
-#include <Wt/WStandardItem>
-#include <Wt/WStandardItemModel>
 #include <Wt/WStackedWidget>
 #include <Wt/WLabel>
 #include <Wt/WTimer>
@@ -43,6 +38,7 @@
 #include "types.h"
 #include "astroplanner.h"
 #include <boost/regex.hpp>
+#include "widgets/dsspage.h"
 
 using namespace WtCommons;
 using namespace Wt;
@@ -52,9 +48,6 @@ class ObjectNamesWidget::Private {
 public:
   Private(Session &session, ObjectNamesWidget *q) : session(session), q(q) {}
   Session &session;
-  // TODO: ugly hacks, we should probably extract a Dialog-like class for DSS Images
-  int nextDSSTypeIndex;
-  function<void(DSSImage::ImageVersion)> setImageType;
 private:
   ObjectNamesWidget * const q;
 };
@@ -115,67 +108,15 @@ ObjectNamesWidget::ObjectNamesWidget(const Wt::Dbo::ptr<NgcObject> &object, Sess
       popup->addSectionHeader(WString::tr("objectnames_more_info"));
       WMenuItem *imagesMenuItem = popup->addItem(WString::tr("objectnames_digitalized_sky_survey_menu"));
       imagesMenuItem->triggered().connect([=](WMenuItem*, _n5) {
-        WContainerWidget *dssContainer = WW<WContainerWidget>().add(new WText{WString("<h4>{1}</h4>").arg(namesJoined)});
-        WContainerWidget *imageContainer = WW<WContainerWidget>();
-        
         WStackedWidget *stack = AstroPlanner::instance()->widgetsStack();
         WWidget *currentWidget = stack->currentWidget();
-        WComboBox *typeCombo = WW<WComboBox>();
-        WStandardItemModel *typeModel = new WStandardItemModel(typeCombo);
-        typeCombo->setModel(typeModel);
-
-
-
-        vector<DSSImage::ImageVersion> imageVersions{DSSImage::poss2ukstu_red, DSSImage::poss2ukstu_blue, DSSImage::poss1_red, DSSImage::poss1_blue, DSSImage::phase2_gsc2};
-        if(object->type() == NgcObject::NebGx || object->type() == NgcObject::NebGx)
-          imageVersions = {DSSImage::poss2ukstu_blue, DSSImage::poss1_blue, DSSImage::poss2ukstu_red, DSSImage::poss1_red, DSSImage::phase2_gsc2};
-        d->nextDSSTypeIndex = 1;
-
-        d->setImageType = [=](DSSImage::ImageVersion version) {
-          imageContainer->clear();
-          DSSImage *image = new DSSImage(object->coordinates(), Angle::degrees(object->angularSize()), version );
-          image->failed().connect([=](_n6) mutable {
-            if(d->nextDSSTypeIndex+1 > imageVersions.size())
-              return;
-            d->setImageType(imageVersions[d->nextDSSTypeIndex++]);
-          });
-          imageContainer->addWidget(image);
-          for(int index=0; index<typeModel->rowCount(); index++)
-            if(boost::any_cast<DSSImage::ImageVersion>(typeModel->item(index)->data()) == version)
-              typeCombo->setCurrentIndex(index);
-        };
-
-        for(auto type: DSSImage::versions()) {
-          auto item = new WStandardItem(WString::tr(string{"dssimage_version_"} + DSSImage::imageVersion(type)));
-          item->setData(type);
-          typeModel->appendRow(item);
-        }
-        typeCombo->activated().connect([=](int index, _n5){
-          d->setImageType(boost::any_cast<DSSImage::ImageVersion>(typeModel->item(index)->data()));
+        string currentInternalPath = wApp->internalPath();
+        WContainerWidget *dssContainer = new DSSPage(object, d->session, [=]{
+          stack->setCurrentWidget(currentWidget);
+          wApp->setInternalPath(currentInternalPath, true);
         });
-
-    string currentInternalPath = wApp->internalPath();
-    dssContainer->addWidget(WW<WContainerWidget>()
-    .add(WW<WLabel>(WString::tr("dssimage_version_label")).setMargin(10, Wt::Right))
-    .add(typeCombo)
-    .add(WW<WPushButton>(WString::tr("buttons_close")).css("btn btn-danger pull-right").onClick([=](WMouseEvent){
-      stack->setCurrentWidget(currentWidget);
-      WTimer::singleShot(2000, [=](WMouseEvent) { delete dssContainer; });
-      wApp->setInternalPath(currentInternalPath, true);
-    })
-    ));
-    dssContainer->addWidget(imageContainer);
-    d->setImageType(imageVersions[0]);
-    dssContainer->addWidget(WW<WContainerWidget>().css("pull-left")
-          .add(new WText{"Images Copyright: "})
-          .add(WW<WAnchor>("http://archive.stsci.edu/dss/", "The STScI Digitized Sky Survey").setTarget(Wt::TargetNewWindow))
-          .add(WW<WAnchor>("http://archive.stsci.edu/dss/acknowledging.html", " (Acknowledgment)").setTarget(Wt::TargetNewWindow))
-    );
-    stack->addWidget(dssContainer);
-
-    string namesForMenu = boost::regex_replace(namesJoined.toUTF8(), boost::regex{"[^a-zA-Z0-9]+"}, "-");
-    wApp->setInternalPath(string("/dss-") + namesForMenu, true);
-    stack->setCurrentWidget(dssContainer);
+        stack->addWidget(dssContainer);
+        stack->setCurrentWidget(dssContainer);
       });
 
 

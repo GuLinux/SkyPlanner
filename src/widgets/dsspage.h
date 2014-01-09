@@ -22,7 +22,7 @@
 
 #include <Wt/WContainerWidget>
 #include "utils/d_ptr.h"
-
+#include <functional>
 class NgcObject;
 namespace Wt {
 namespace Dbo {
@@ -30,11 +30,12 @@ namespace Dbo {
   class ptr;
  }
 }
+class Session;
 
 class DSSPage : public Wt::WContainerWidget
 {
   public:
-    DSSPage( const Wt::Dbo::ptr<NgcObject> &object, Wt::WContainerWidget *parent = 0 );
+    DSSPage(const Wt::Dbo::ptr<NgcObject> &object, Session &session, std::function<void()> runOnClose, Wt::WContainerWidget *parent = 0 );
     ~DSSPage();
 
   private:

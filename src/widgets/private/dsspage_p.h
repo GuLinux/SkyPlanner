@@ -22,12 +22,19 @@
 #include "widgets/dsspage.h"
 #include "models/Models"
 #include "widgets/dssimage.h"
-
+#include "session.h"
 class DSSPage::Private
 {
   public:
-    Private( const Wt::Dbo::ptr<NgcObject> &object, DSSPage *q );
+    Private(const Wt::Dbo::ptr<NgcObject> &object, Session &session, DSSPage *q );
     Wt::Dbo::ptr<NgcObject> object;
+    Session &session;
+    std::vector<DSSImage::ImageVersion> imageVersions;
+    int nextDSSTypeIndex = 1;
+    void setImageType(DSSImage::ImageVersion);
+    Wt::WContainerWidget *imageContainer;
+    Wt::WComboBox *typeCombo;
+    Wt::WStandardItemModel *typeModel;
   private:
     class DSSPage *const q;
 };
