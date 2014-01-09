@@ -28,6 +28,7 @@
 #include <Wt/WMenuItem>
 #include <Wt/WMenu>
 #include <boost/regex.hpp>
+#include "utils/format.h"
 
 using namespace Wt;
 using namespace WtCommons;
@@ -60,7 +61,7 @@ AstroSessionsPage::AstroSessionsPage(Session &session, WContainerWidget* parent)
       auto astroSessionTab = new AstroSessionTab(astroSession, d->session);
       string nameForMenu = boost::regex_replace(astroSession->name(), boost::regex{"[^a-zA-Z0-9]+"}, "-");
       WMenuItem *newTab = tabs->addTab(astroSessionTab, astroSession->name());
-      newTab->setPathComponent(nameForMenu + string("-") + newTab->id() );
+      newTab->setPathComponent( format("%x-%s-%s") % astroSession.id() % nameForMenu % newTab->id() ); // TODO: internal path management should be improved
       astroSessionTab->nameChanged().connect([=](const string &newName,_n5){
         newTab->setText(WString::fromUTF8(newName));
         astroSessionsListTab->reload();
@@ -79,6 +80,5 @@ AstroSessionsPage::AstroSessionsPage(Session &session, WContainerWidget* parent)
       }
     }
     tabs->setCurrentWidget(astroSessionsListTab);
-    wApp->setInternalPath("/sessions/list/", true);
   });
 }
