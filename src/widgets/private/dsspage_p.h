@@ -21,7 +21,7 @@
 #define DSSPAGE_P_H
 #include "widgets/dsspage.h"
 #include "models/Models"
-#include "dssimage.h"
+#include "widgets/dssimage.h"
 
 class DSSPage::Private
 {
