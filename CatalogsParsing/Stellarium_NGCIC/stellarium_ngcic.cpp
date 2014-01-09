@@ -117,7 +117,7 @@ ostream &operator <<(ostream &s, const NgcObject &ngc) {
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
-    QFile file("/usr/share/stellarium/nebulae/default/ngc2000.dat");
+    QFile file(a.arguments()[1]);
     if(!file.open(QIODevice::ReadOnly)) {
         cerr << "Unable to open input file " << file.fileName().toStdString() << endl;
         return -1;
@@ -133,7 +133,7 @@ int main(int argc, char *argv[])
         ngcObjects[ngc.key()] = ngc;
     }
     file.close();
-    QFile namesFile("/usr/share/stellarium/nebulae/default/ngc2000names.dat");
+    QFile namesFile(a.arguments()[2]);
     if(!namesFile.open(QIODevice::ReadOnly)) {
         cerr << "Unable to open input file " << namesFile.fileName().toStdString() << endl;
         return -1;
