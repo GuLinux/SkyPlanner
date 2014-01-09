@@ -20,6 +20,7 @@
 #include "dsspage.h"
 #include "private/dsspage_p.h"
 #include "utils/d_ptr_implementation.h"
+#include <utils/format.h>
 #include <Wt/WApplication>
 #include <Wt-Commons/wt_helpers.h>
 #include "models/Models"
@@ -31,13 +32,17 @@
 #include <Wt/WLabel>
 #include <Wt/WPushButton>
 #include <Wt/WAnchor>
+#include <Wt/Utils>
+#include <boost/algorithm/string/join.hpp>
+#include <boost/regex.hpp>
+#include <Wt/WApplication>
 using namespace Wt;
 using namespace WtCommons;
 using namespace std;
 
 
 
-DSSPage::Private::Private(const Dbo::ptr<NgcObject> &object, Session &session, DSSPage *q )
+DSSPage::Private::Private(const NgcObjectPtr &object, Session &session, DSSPage *q )
   : object(object), session(session), q( q )
 {
 }
@@ -61,16 +66,18 @@ void DSSPage::Private::setImageType(DSSImage::ImageVersion version)
       typeCombo->setCurrentIndex(index);
 }
 
-DSSPage::DSSPage(const Dbo::ptr<NgcObject> &object, Session &session, std::function<void()> runOnClose, WContainerWidget *parent )
+DSSPage::DSSPage(const NgcObjectPtr &object, Session &session, std::function<void()> runOnClose, WContainerWidget *parent )
   : WContainerWidget(parent), d( object, session, this )
 {
   Dbo::Transaction t(session);
+  wApp->setInternalPath(DSSPage::internalPath(object, t));
+  wApp->setInternalPathValid(true);
   d->imageVersions = {DSSImage::poss2ukstu_red, DSSImage::poss2ukstu_blue, DSSImage::poss1_red, DSSImage::poss1_blue, DSSImage::phase2_gsc2};
   if(object->type() == NgcObject::NebGx || object->type() == NgcObject::NebGx)
     d->imageVersions = {DSSImage::poss2ukstu_blue, DSSImage::poss1_blue, DSSImage::poss2ukstu_red, DSSImage::poss1_red, DSSImage::phase2_gsc2};
   d->imageContainer = WW<WContainerWidget>();
-  // TODO: names joined method on ngcObject
-  addWidget(new WText{WString("<h4>{1}</h4>").arg(*object->objectId())});
+  WString namesJoined = Utils::htmlEncode(WString::fromUTF8( boost::algorithm::join(object->namesByCatalogueImportance(), ", ") ));
+  addWidget(new WText{WString("<h4>{1}</h4>").arg(namesJoined)});
   d->typeCombo = WW<WComboBox>();
   d->typeModel = new WStandardItemModel(d->typeCombo);
   d->typeCombo->setModel(d->typeModel);
@@ -100,3 +107,11 @@ DSSPage::DSSPage(const Dbo::ptr<NgcObject> &object, Session &session, std::funct
         .add(WW<WAnchor>("http://archive.stsci.edu/dss/acknowledging.html", " (Acknowledgment)").setTarget(Wt::TargetNewWindow))
   );
 }
+
+string DSSPage::internalPath( const Dbo::ptr< NgcObject > &object, Dbo::Transaction &transaction )
+{
+  return format("/dss/%x/%s")
+    % object.id()
+    % boost::regex_replace(boost::algorithm::join(object->namesByCatalogueImportance(), "-"), boost::regex("[^a-zA-Z0-9]+"), "-" );
+}
+

@@ -59,15 +59,16 @@ float NgcObject::rightAscension() const
 
 Coordinates::Equatorial NgcObject::coordinates() const
 {
-  return { Angle::radians(rightAscension()), Angle::radians(declination()) };
+  return { Angle::radians( rightAscension() ), Angle::radians( declination() ) };
 }
 
 int32_t NgcObject::difficulty( const Wt::Dbo::ptr< Telescope > &telescope ) const
 {
-  if(! telescope || magnitude() > 90)
+  if( ! telescope || magnitude() > 90 )
     return -1;
+
   double magnitudeLimit = telescope->limitMagnitudeGain() + 6.5 ; // TODO: find proper value
-  return Utils::exponentialPercentage(magnitude(), magnitudeLimit, 1.2);
+  return Utils::exponentialPercentage( magnitude(), magnitudeLimit, 1.2 );
 }
 
 
@@ -91,11 +92,12 @@ NgcObject::NebulaType NgcObject::type() const
 */
 std::string NgcObject::typeDescriptionKey() const
 {
-  return typeDescriptionKey(type());
+  return typeDescriptionKey( type() );
 }
-std::string NgcObject::typeDescriptionKey(NebulaType nebulaType)
+std::string NgcObject::typeDescriptionKey( NebulaType nebulaType )
 {
-  static map<NebulaType,string> descriptions {
+  static map<NebulaType, string> descriptions
+  {
     {AllButStars, "ngcobject_type_AllButStars"},
     {All, "ngcobject_type_All"},
     {NebGx, "ngcobject_type_NebGx"},
@@ -113,13 +115,55 @@ std::string NgcObject::typeDescriptionKey(NebulaType nebulaType)
   return descriptions[nebulaType];
 }
 
-Wt::WString NgcObject::typeDescription(NebulaType nebulaType)
+Wt::WString NgcObject::typeDescription( NebulaType nebulaType )
 {
-  return Wt::WString::tr(typeDescriptionKey(nebulaType));
+  return Wt::WString::tr( typeDescriptionKey( nebulaType ) );
 }
 Wt::WString NgcObject::typeDescription() const
 {
-  return typeDescription(type());
+  return typeDescription( type() );
 }
+
+vector<NebulaDenominationPtr> NgcObject::denominationsByCatalogueImportance() const
+{
+  vector<NebulaDenominationPtr> denominations {_nebulae.begin(), _nebulae.end()};
+  static map<string, int> catalogRatings
+  {
+    {"Messier", -99},
+    {"NGC", -98},
+    {"IC", -97},
+    {"Arp", -96},
+    {"Caldwell", -95},
+    {"Abell", -94},
+    {"UGC", -93},
+    {"MCG", -92},
+  };
+  sort( denominations.begin(), denominations.end(), []( const NebulaDenominationPtr & a, const NebulaDenominationPtr & b )
+  {
+    if( !a->catalogue() && ! b->catalogue() )
+      return a->name() < b->name();
+
+    if( !a->catalogue() )
+      return true;
+
+    if( !b->catalogue() )
+      return false;
+
+    return catalogRatings[*a->catalogue()] < catalogRatings[*b->catalogue()];
+  } );
+  return denominations;
+}
+
+vector< string > NgcObject::namesByCatalogueImportance() const
+{
+  vector<string> names;
+  auto denominations = denominationsByCatalogueImportance();
+  for(auto denomination: denominations) {
+      if(std::count(names.begin(), names.end(), denomination->name()) == 0)
+        names.push_back(denomination->name());
+  }
+  return names;
+}
+
 
 

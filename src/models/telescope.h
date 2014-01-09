@@ -46,4 +46,6 @@ private:
   dbo::ptr<User> _user;
 };
 
+typedef dbo::ptr<Telescope> TelescopePtr;
+
 #endif // TELESCOPE_H

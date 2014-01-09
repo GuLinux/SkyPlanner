@@ -80,6 +80,8 @@ public:
 	dbo::hasMany(a, _nebulae, dbo::ManyToOne);
 	dbo::hasMany(a, _astroSessionObjects, dbo::ManyToOne);
     }
+    std::vector<dbo::ptr<NebulaDenomination>> denominationsByCatalogueImportance() const;
+    std::vector<std::string> namesByCatalogueImportance() const;
 private:
     boost::optional<std::string> _objectId;
     float _rightAscension, _declination, _magnitude, _angularSize;

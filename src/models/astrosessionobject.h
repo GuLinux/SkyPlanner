@@ -61,4 +61,5 @@ private:
   bool _observed = false;
 };
 
+typedef dbo::ptr<AstroSessionObject> AstroSessionObjectPtr;
 #endif // ASTROSESSIONOBJECT_H

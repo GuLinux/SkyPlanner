@@ -34,6 +34,8 @@
 #include <Wt/WPushButton>
 #include <Wt/WText>
 #include <Wt/WTimer>
+#include "models/Models"
+#include "widgets/dsspage.h"
 
 using namespace std;
 using namespace Wt;
@@ -126,7 +128,35 @@ AstroPlanner::AstroPlanner( const WEnvironment &environment )
   });
   setMenuItemsVisibility();
   setLoggedInWidget();
+  
+  internalPathChanged().connect([=](const string &newPath, _n5){
+    log("notice") << "first folder: " << internalPathNextPart("/");
+    if(internalPathMatches("/dss")) {
+      d->loadDSSPage(internalPathNextPart("/dss/"));
+    }
+    d->previousInternalPath = newPath;
+  });
 }
+
+void AstroPlanner::Private::loadDSSPage( const std::string &hexId )
+{
+  WWidget *currentWidget = widgets->currentWidget();
+  string currentInternalPath = wApp->internalPath();
+  stringstream s;
+  s << hex << hexId;
+  Dbo::dbo_traits<NgcObject>::IdType objectId;
+  s >> objectId;
+  Dbo::Transaction t(session);
+  NgcObjectPtr ngcObject = session.find<NgcObject>().where("id = ?").bind(objectId);
+  string previousPath = previousInternalPath;
+  DSSPage *dssPage = new DSSPage(ngcObject, session, [=]{
+    widgets->setCurrentWidget( currentWidget );
+    wApp->setInternalPath( previousPath, true );
+  });
+  widgets->addWidget( dssPage );
+  widgets->setCurrentWidget( dssPage );
+}
+
 
 WContainerWidget *AstroPlanner::notification(const WString &title, const WString &content, NotificationType type, int autoHideSeconds)
 {
@@ -155,3 +185,4 @@ WContainerWidget *AstroPlanner::notification(const WString &title, const WString
   notification->animateShow({WAnimation::Fade, WAnimation::EaseInOut, 500});
   return notification;
 }
+

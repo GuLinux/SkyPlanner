@@ -37,7 +37,7 @@ class DSSPage : public Wt::WContainerWidget
   public:
     DSSPage(const Wt::Dbo::ptr<NgcObject> &object, Session &session, std::function<void()> runOnClose, Wt::WContainerWidget *parent = 0 );
     ~DSSPage();
-
+    static std::string internalPath(const Wt::Dbo::ptr<NgcObject> &object, Wt::Dbo::Transaction &transaction);
   private:
     D_PTR;
 };

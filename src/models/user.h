@@ -48,4 +48,5 @@ private:
   dbo::collection<dbo::ptr<AstroSession>> _astroSessions;
 };
 
+typedef dbo::ptr<User> UserPtr;
 #endif // USER_H

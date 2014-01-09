@@ -71,4 +71,5 @@ private:
   boost::optional<double> _longitude;
 };
 
+typedef dbo::ptr<AstroSession> AstroSessionPtr;
 #endif // ASTROSESSION_H

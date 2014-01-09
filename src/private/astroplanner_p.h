@@ -37,7 +37,10 @@ public:
     std::vector<Wt::WMenuItem*> loggedOutItems;
     Wt::WContainerWidget *notifications;
     Wt::WStackedWidget *widgets;
+    void loadDSSPage(const std::string &hexId);
+    std::string previousInternalPath = "/";
 private:
     class AstroPlanner* const q;
 };
+
 #endif // ASTROPLANNER_P_H
