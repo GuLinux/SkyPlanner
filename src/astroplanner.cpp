@@ -20,6 +20,7 @@
 #include "astroplanner.h"
 #include "private/astroplanner_p.h"
 #include "utils/d_ptr_implementation.h"
+#include "utils/utils.h"
 #include <Wt/WNavigationBar>
 #include <Wt/WBootstrapTheme>
 #include <Wt/WStackedWidget>
@@ -142,10 +143,7 @@ void AstroPlanner::Private::loadDSSPage( const std::string &hexId )
 {
   WWidget *currentWidget = widgets->currentWidget();
   string currentInternalPath = wApp->internalPath();
-  stringstream s;
-  s << hex << hexId;
-  Dbo::dbo_traits<NgcObject>::IdType objectId;
-  s >> objectId;
+  auto objectId = Utils::fromHexString<Dbo::dbo_traits<NgcObject>::IdType>(hexId);
   Dbo::Transaction t(session);
   NgcObjectPtr ngcObject = session.find<NgcObject>().where("id = ?").bind(objectId);
   string previousPath = previousInternalPath;

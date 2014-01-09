@@ -21,11 +21,21 @@
 #define UTILS_H
 
 #include <functional>
+#include <ios>
+#include <sstream>
 
 class Utils
 {
 public:
   static int exponentialPercentage(double value, double limit, double base);
+  template<typename T>
+  static T fromHexString(const std::string &s) {
+    std::stringstream ss;
+    ss << std::hex << s;
+    T t;
+    ss >> t;
+    return t;
+  }
 };
 
 class Scope {
