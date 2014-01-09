@@ -67,7 +67,7 @@ void DSSPage::Private::setImageType(DSSImage::ImageVersion version)
       typeCombo->setCurrentIndex(index);
 }
 
-DSSPage::DSSPage(const NgcObjectPtr &object, Session &session, WContainerWidget *parent )
+DSSPage::DSSPage(const NgcObjectPtr &object, Session &session, std::function<void()> runOnClose, WContainerWidget *parent )
   : WContainerWidget(parent), d( object, session, this )
 {
   Dbo::Transaction t(session);
@@ -96,7 +96,7 @@ DSSPage::DSSPage(const NgcObjectPtr &object, Session &session, WContainerWidget 
       .add(WW<WLabel>(WString::tr("dssimage_version_label")).setMargin(10, Wt::Right))
       .add(d->typeCombo)
       .add(WW<WPushButton>(WString::tr("buttons_close")).css("btn btn-danger pull-right").onClick([=](WMouseEvent){
-        d->runOnClose();
+        runOnClose();
       })
       ));
   addWidget(d->imageContainer);
@@ -107,12 +107,6 @@ DSSPage::DSSPage(const NgcObjectPtr &object, Session &session, WContainerWidget 
         .add(WW<WAnchor>("http://archive.stsci.edu/dss/acknowledging.html", " (Acknowledgment)").setTarget(Wt::TargetNewWindow))
   );
 }
-
-void DSSPage::onClose( function<void()> runOnClose )
-{
-  d->runOnClose = runOnClose;
-}
-
 
 string DSSPage::internalPath( const Dbo::ptr< NgcObject > &object, Dbo::Transaction &transaction )
 {

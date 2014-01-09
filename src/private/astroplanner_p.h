@@ -39,6 +39,7 @@ public:
     Wt::WStackedWidget *widgets;
     void loadDSSPage(const std::string &hexId);
     std::string previousInternalPath = "/";
+    Wt::WContainerWidget *dssContainer;
 private:
     class AstroPlanner* const q;
 };

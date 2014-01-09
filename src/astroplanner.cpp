@@ -56,11 +56,6 @@ AstroPlanner *AstroPlanner::instance()
   return dynamic_cast<AstroPlanner*>(wApp);
 }
 
-WStackedWidget *AstroPlanner::widgetsStack() const
-{
-  return d->widgets;
-}
-
 AstroPlanner::AstroPlanner( const WEnvironment &environment )
   : WApplication( environment ), d( this )
 {
@@ -137,24 +132,24 @@ AstroPlanner::AstroPlanner( const WEnvironment &environment )
     }
     d->previousInternalPath = newPath;
   });
+  d->widgets->addWidget(d->dssContainer = new WContainerWidget);
 }
 
 void AstroPlanner::Private::loadDSSPage( const std::string &hexId )
 {
   WWidget *currentWidget = widgets->currentWidget();
-  string currentInternalPath = wApp->internalPath();
+  dssContainer->clear();
   auto objectId = Utils::fromHexString<Dbo::dbo_traits<NgcObject>::IdType>(hexId);
   Dbo::Transaction t(session);
   NgcObjectPtr ngcObject = session.find<NgcObject>().where("id = ?").bind(objectId);
   string previousPath = previousInternalPath;
-  DSSPage *dssPage = new DSSPage(ngcObject, session);
-  dssPage->onClose([=]{
+  DSSPage *dssPage = new DSSPage(ngcObject, session, [=]{
     widgets->setCurrentWidget( currentWidget );
     wApp->setInternalPath( previousPath, true );
-    WTimer::singleShot(2000, [=](WMouseEvent){ delete dssPage; });
+    dssContainer->clear();
   });
-  widgets->addWidget( dssPage );
-  widgets->setCurrentWidget( dssPage );
+  dssContainer->addWidget( dssPage );
+  widgets->setCurrentWidget( dssContainer );
 }
 
 
