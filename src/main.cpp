@@ -27,8 +27,10 @@ int main(int argc, char **argv) {
             int sig = WServer::waitForShutdown(argv[0]);
             std::cerr << "Shutdown (signal = " << sig << ")" << std::endl;
             server.stop();
+#ifndef WIN32
             if (sig == SIGHUP)
                 WServer::restart(argc, argv, environ);
+#endif
         }
     } catch (WServer::Exception& e) {
         std::cerr << e.what() << "\n";

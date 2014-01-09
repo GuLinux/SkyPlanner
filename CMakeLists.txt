@@ -4,15 +4,30 @@ project(SkyPlanner)
 enable_testing()
 find_package(Wt 3.3.1 REQUIRED)
 find_package(Qt4 REQUIRED)
+
 include(${QT_USE_FILE})
 add_definitions(${QT_DEFINITIONS} -DWT_NO_SLOT_MACROS)
 find_package(Boost REQUIRED COMPONENTS signals system filesystem chrono thread regex program_options random date_time OPTIONAL_COMPONENTS unit_test_framework )
+if(Wt_DBOPOSTGRES_LIBRARY)
+    add_definitions(-DHAVE_WT_POSTGRES)
+endif(Wt_DBOPOSTGRES_LIBRARY)
+set(DISABLE_HARU OFF CACHE BOOL "Disable LibHaru PDF Export")
+if(DISABLE_HARU)
+    add_definitions(-DDISABLE_LIBHARU)
+else(DISABLE_HARU)
+    set(HARU_LIBRARY ${LIBHARU_PREFIX}/lib/libhpdf.so)
+endif(DISABLE_HARU)
+
+if(WIN32)
+    set(WIN32_LIBS ws2_32 wsock32)
+endif(WIN32)
+
+include_directories(${Wt_INCLUDE_DIR} ${Boost_INCLUDE_DIR})
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11 -fstack-protector-all")
 
 #add_subdirectory(lib)
 include_directories(src)
 add_subdirectory(src)
-#deprecated: fix or delete
 add_subdirectory(CatalogsParsing)
 
 add_subdirectory(tests)

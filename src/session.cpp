@@ -20,7 +20,11 @@
 #include "session.h"
 #include "private/session_p.h"
 #include <Wt/Dbo/backend/Sqlite3>
+#ifdef HAVE_WT_POSTGRES
 #include <Wt/Dbo/backend/Postgres>
+#else
+#warning "Wt Dbo Postgres backend missing!"
+#endif
 #include <Wt/Auth/AbstractUserDatabase>
 #include <Wt/Auth/PasswordService>
 #include <Wt/Auth/AuthService>
@@ -41,12 +45,16 @@ Session::Private::Private() {
 
 Session::Session()
 {
+#ifdef HAVE_WT_POSTGRES
   string connectionString;
   if(WServer::instance()->readConfigurationProperty("psql-connection", connectionString)) {
     d->connection = make_shared<Dbo::backend::Postgres>(connectionString);
   } else {
     d->connection = make_shared<Dbo::backend::Sqlite3>("SkyPlanner.sqlite");
   }
+#else
+  d->connection = make_shared<Dbo::backend::Sqlite3>("ngc.sqlite");
+#endif
   setConnection(*d->connection);
   d->connection->setProperty("show-queries", "false");
   mapClass<NgcObject>("objects");

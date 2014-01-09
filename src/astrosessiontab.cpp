@@ -73,6 +73,7 @@ AstroSessionTab::~AstroSessionTab()
 AstroSessionTab::AstroSessionTab(const Dbo::ptr<AstroSession>& astroSession, Session& session, WContainerWidget* parent)
     : WContainerWidget(parent), d(astroSession, session, this)
 {
+  wApp->log("notice") << __PRETTY_FUNCTION__ << ", astroSession: " << astroSession.id() << ", id=" << id();
   d->reload();
 }
 
@@ -185,7 +186,13 @@ void AstroSessionTab::Private::printableVersion()
   printableDialog->footer()->addWidget(okButton = WW<WPushButton>(WString::tr("Wt.WMessageBox.Ok")).css("btn btn-primary").onClick([=](WMouseEvent){ printableDialog->accept(); }));
   printableDialog->footer()->addWidget(WW<WPushButton>(WString::tr("Wt.WMessageBox.Cancel")).css("btn btn-danger").onClick([=](WMouseEvent){ printableDialog->reject(); }));
   auto printableResource = new PrintableAstroSessionResource(astroSession, session, q);
+#ifdef DISABLE_LIBHARU
+#define PDF_INDEX -1
+  printableResource->setReportType(PrintableAstroSessionResource::HTML);
+#else
+#define PDF_INDEX 0
   printableResource->setReportType(PrintableAstroSessionResource::PDF);
+#endif
   okButton->setLink(printableResource);
   okButton->setLinkTarget(TargetNewWindow);
   printableDialog->contents()->addWidget(new WLabel(WString::tr("printable_version_dialog_spacing_between_objects")));
@@ -201,11 +208,13 @@ void AstroSessionTab::Private::printableVersion()
   
   WSlider *fontScalingSlider = new WSlider();
   WComboBox *formatCombo = new WComboBox();
+#ifdef DISABLE_LIBHARU
   formatCombo->addItem("PDF");
+#endif
   formatCombo->addItem("HTML");
   formatCombo->activated().connect([=](int r, _n5){
-    printableResource->setReportType(r==0 ? PrintableAstroSessionResource::PDF : PrintableAstroSessionResource::HTML); 
-    fontScalingSlider->setEnabled(r==0);
+    printableResource->setReportType(r==PDF_INDEX ? PrintableAstroSessionResource::PDF : PrintableAstroSessionResource::HTML);
+    fontScalingSlider->setEnabled(r==PDF_INDEX);
   });
   printableDialog->contents()->addWidget(WW<WContainerWidget>().add(new WLabel{WString::tr("astrosessiontab_printable_version_dialog_export_as")}).add(formatCombo).add(new WBreak));
   fontScalingSlider->setWidth(500);

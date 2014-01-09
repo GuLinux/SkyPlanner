@@ -75,7 +75,7 @@ AstroSessionsListTab::AstroSessionsListTab(Session &session, Wt::WContainerWidge
   }
   addWidget(new WText{WString::tr("astrosessionslisttab_next_nights_without_moon")});
   string separator;
-  for(uint64_t i=0; i<min(newMoons.size(), static_cast<uint64_t>(5)); i++) {
+  for(uint64_t i=0; i<min(newMoons.size(), static_cast<std::size_t>(5)); i++) {
     if(i>0)
       addWidget(new WText{", "});
     auto date = WDateTime::fromPosixTime(newMoons[i].second).date();
