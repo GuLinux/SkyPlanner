@@ -35,6 +35,7 @@ class DSSPage::Private
     Wt::WContainerWidget *imageContainer;
     Wt::WComboBox *typeCombo;
     Wt::WStandardItemModel *typeModel;
+    std::function<void()> runOnClose = []{};
   private:
     class DSSPage *const q;
 };

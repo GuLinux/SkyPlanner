@@ -147,9 +147,11 @@ void AstroPlanner::Private::loadDSSPage( const std::string &hexId )
   Dbo::Transaction t(session);
   NgcObjectPtr ngcObject = session.find<NgcObject>().where("id = ?").bind(objectId);
   string previousPath = previousInternalPath;
-  DSSPage *dssPage = new DSSPage(ngcObject, session, [=]{
+  DSSPage *dssPage = new DSSPage(ngcObject, session);
+  dssPage->onClose([=]{
     widgets->setCurrentWidget( currentWidget );
     wApp->setInternalPath( previousPath, true );
+    WTimer::singleShot(2000, [=](WMouseEvent){ delete dssPage; });
   });
   widgets->addWidget( dssPage );
   widgets->setCurrentWidget( dssPage );
