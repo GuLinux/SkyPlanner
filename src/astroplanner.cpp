@@ -68,7 +68,8 @@ AstroPlanner::AstroPlanner( const WEnvironment &environment )
   setTheme( new WBootstrapTheme( this ) );
   requireJQuery("http://codeorigin.jquery.com/jquery-1.8.3.min.js");
 
-  cerr << __PRETTY_FUNCTION__ << endl;
+  string startPath = internalPath();
+  cerr << __PRETTY_FUNCTION__ << ": current start path: " << startPath << endl;
   WNavigationBar *navBar = WW<WNavigationBar>( root() ).addCss( "navbar-inverse" );
   navBar->setResponsive( true );
   navBar->setTitle( WString::tr("application_title") );
@@ -124,19 +125,20 @@ AstroPlanner::AstroPlanner( const WEnvironment &environment )
   });
   setMenuItemsVisibility();
   setLoggedInWidget();
-  
-  internalPathChanged().connect([=](const string &newPath, _n5){
+  auto handlePath = [=](const string &newPath){
+    log("notice") << __PRETTY_FUNCTION__ << ": newPath=" << newPath;
     log("notice") << "first folder: " << internalPathNextPart("/");
     if(internalPathMatches("/dss")) {
       d->loadDSSPage(internalPathNextPart("/dss/"));
     }
     if(internalPathMatches("/sessions")) {
-//      d->widgets->setCurrentWidget(astrosessionspage);
       astrosessionspage->open(internalPathNextPart("/sessions/"));
     }
     d->previousInternalPath = newPath;
-  });
+  };
+  internalPathChanged().connect([=](string p, ...) {handlePath(p); });
   d->widgets->addWidget(d->dssContainer = new WContainerWidget);
+  setInternalPath(startPath, true);
 }
 
 void AstroPlanner::Private::loadDSSPage( const std::string &hexId )
