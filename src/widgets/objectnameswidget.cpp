@@ -154,10 +154,10 @@ ObjectNamesWidget::ObjectNamesWidget( const Wt::Dbo::ptr<NgcObject> &object, Ses
 
       for( auto name : denominations )
       {
-        addLink( name->search(), searchURL( "http://www.google.com/search?q=%s", denominations.front() ), googleSearchSubMenu );
-        addLink( name->search(), searchURL( "http://www.google.com/images?q=%s", denominations.front() ), googleImagesSearchSubMenu );
-        addLink( name->search(), searchURL( "http://simbad.u-strasbg.fr/simbad/sim-basic?Ident=%s&submit=SIMBAD+search", denominations.front() ), simbadSearchSubMenu );
-        addLink( name->search(), searchURL( "http://ned.ipac.caltech.edu/cgi-bin/objsearch?objname=%s", denominations.front() ), nedSearchSubMenu );
+        addLink( name->search(), searchURL( "http://www.google.com/search?q=%s", name->search()), googleSearchSubMenu );
+        addLink( name->search(), searchURL( "http://www.google.com/images?q=%s", name->search() ), googleImagesSearchSubMenu );
+        addLink( name->search(), searchURL( "http://simbad.u-strasbg.fr/simbad/sim-basic?Ident=%s&submit=SIMBAD+search", name->search() ), simbadSearchSubMenu );
+        addLink( name->search(), searchURL( "http://ned.ipac.caltech.edu/cgi-bin/objsearch?objname=%s", name->search() ), nedSearchSubMenu );
       }
     }
 
