@@ -42,6 +42,7 @@
 #include "astroplanner.h"
 #include <Wt/WGroupBox>
 #include <Wt/WSpinBox>
+#include <boost/regex.hpp>
 
 using namespace Wt;
 using namespace WtCommons;
@@ -264,6 +265,8 @@ void SelectObjectsWidget::Private::searchByNameTab(Dbo::Transaction& transaction
   auto searchByName = [=] {
     Dbo::Transaction t(session);
     string nameToSearch = name->text().toUTF8();
+    boost::replace_all(nameToSearch, "*", "%");
+    wApp->log("notice") << "wildcard names search: original=" << name->text() << ", new search pattern: '" << nameToSearch << "'";
     if(lastSearch == nameToSearch)
       return;
     lastSearch = nameToSearch;
