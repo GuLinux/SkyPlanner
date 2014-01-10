@@ -132,10 +132,16 @@ string DSSImage::Private::imageLink() const
 void DSSImage::Private::setCacheImage()
 {
   content->clear();
-  auto *resource = new WFileResource(cacheFile.string(), q);
-  auto anchor = new WAnchor(resource);
+  WLink imageLink;
+  string deployPath;
+  if(wApp->readConfigurationProperty("dsscache_deploy_path", deployPath )) {
+    imageLink.setUrl(format("%s/%s") % deployPath % boost::filesystem::path(cacheFile).filename().string());
+  } else
+    imageLink.setResource(new WFileResource(cacheFile.string(), q));
+  auto anchor = new WAnchor();
+  anchor->setLink(imageLink);
   anchor->setTarget(Wt::TargetNewWindow);
-  anchor->addWidget(new WImage(resource));
+  anchor->addWidget(new WImage(imageLink));
   content->addWidget(anchor);
 }
 void DSSImage::Private::startDownload()
