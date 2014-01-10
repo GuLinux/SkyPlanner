@@ -263,9 +263,20 @@ void SelectObjectsWidget::Private::searchByNameTab(Dbo::Transaction& transaction
   WTable *resultsTable = WW<WTable>().addCss("table table-striped table-hover");
   auto searchByName = [=] {
     Dbo::Transaction t(session);
+    string nameToSearch = name->text().toUTF8();
+    if(lastSearch == nameToSearch)
+      return;
+    lastSearch = nameToSearch;
+    transform(nameToSearch.begin(), nameToSearch.end(), nameToSearch.begin(), ::tolower);
+    int count = session.query<int>("select count(*) from denominations where lower(name) like '%' || ? || '%'").bind(nameToSearch);
+    wApp->log("notice") << "search by name: count=" << count;
+    if(count > 50) {
+      AstroPlanner::instance()->notification(WString::tr("select_objects_widget_add_by_name"), WString::tr("select_objects_widget_add_by_name_too_many"), AstroPlanner::Information, 5);
+      return;
+    }
     resultsTable->clear();
-    dbo::collection<dbo::ptr<NebulaDenomination>> dboDenominations = session.find<NebulaDenomination>().where("name like '%' || ? || '%' ")
-     .bind(name->text());
+    dbo::collection<dbo::ptr<NebulaDenomination>> dboDenominations = session.find<NebulaDenomination>().where("lower(name) like '%' || ? || '%' ")
+     .bind(nameToSearch);
     vector<NebulaDenominationPtr> denominations;
     copy_if(begin(dboDenominations), end(dboDenominations), back_inserter(denominations), [&denominations](const NebulaDenominationPtr &a){
       return count_if(begin(denominations), end(denominations), [&a](const NebulaDenominationPtr &b){ return a->ngcObject().id() == b->ngcObject().id(); }) == 0;
@@ -302,6 +313,10 @@ void SelectObjectsWidget::Private::searchByCatalogueTab(Dbo::Transaction& transa
   auto searchByCatalogueNumber = [=] {
     Dbo::Transaction t(session);
     resultsTable->clear();
+    string key = string("_bycat: ") + cataloguesCombo->currentText().toUTF8() + catalogueNumber->text().toUTF8();
+    if(lastSearch == key)
+      return;
+    lastSearch = key;
     dbo::collection<dbo::ptr<NebulaDenomination>> dboDenominations = session.find<NebulaDenomination>().where("catalogue = ?").where("number = ? ")
      .bind(cataloguesCombo->currentText()).bind(catalogueNumber->text());
     vector<NebulaDenominationPtr> denominations;

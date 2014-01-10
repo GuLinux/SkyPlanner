@@ -56,6 +56,7 @@
 <message id="search">Search</message>
 <message id="select_objects_widget_add_by_catalogue_number">Add By Catalogue Number</message>
 <message id="select_objects_widget_add_by_name">Search By Name</message>
+<message id="select_objects_widget_add_by_name_too_many">Too many result. Please use a more specific search.</message>
 <message id="object_column_ar">AR</message>
 <message id="object_column_dec">DEC</message>
 <message id="object_column_angular_size">Angular Size</message>

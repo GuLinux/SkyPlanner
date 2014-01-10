@@ -49,6 +49,7 @@ public:
     boost::thread bgThread;
     bool aborted = false;
     NgcObject::NebulaType nebulaTypeFilter = NgcObject::AllButStars;
+    std::string lastSearch;
 private:
     class SelectObjectsWidget* const q;
 };
