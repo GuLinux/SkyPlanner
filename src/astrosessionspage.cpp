@@ -73,7 +73,7 @@ void AstroSessionsPage::Private::removeTab(const Wt::Dbo::ptr<AstroSession> &ast
       continue;
     tabWidget->removeTab(tab.second.page);
     delete tab.second.page;
-    delete tab.second.menuItem;
+    //delete tab.second.menuItem;
     tabs.erase(tab.first);
   }
 }

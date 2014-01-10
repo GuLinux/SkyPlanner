@@ -43,6 +43,7 @@
 #include <Wt/WGroupBox>
 #include <Wt/WSpinBox>
 #include <boost/regex.hpp>
+#include <boost/algorithm/string.hpp>
 
 using namespace Wt;
 using namespace WtCommons;
@@ -264,9 +265,8 @@ void SelectObjectsWidget::Private::searchByNameTab(Dbo::Transaction& transaction
   WTable *resultsTable = WW<WTable>().addCss("table table-striped table-hover");
   auto searchByName = [=] {
     Dbo::Transaction t(session);
-    string nameToSearch = name->text().toUTF8();
+    string nameToSearch = boost::algorithm::trim_copy(name->text().toUTF8());
     boost::replace_all(nameToSearch, "*", "%");
-    boost::trim(nameToSearch);
     wApp->log("notice") << "wildcard names search: original=" << name->text() << ", new search pattern: '" << nameToSearch << "'";
     if(lastSearch == nameToSearch)
       return;
@@ -322,7 +322,7 @@ void SelectObjectsWidget::Private::searchByCatalogueTab(Dbo::Transaction& transa
       return;
     lastSearch = key;
     dbo::collection<dbo::ptr<NebulaDenomination>> dboDenominations = session.find<NebulaDenomination>().where("catalogue = ?").where("number = ? ")
-     .bind(cataloguesCombo->currentText()).bind(catalogueNumber->text());
+     .bind(cataloguesCombo->currentText()).bind(boost::algorithm::trim_copy(catalogueNumber->text().toUTF8()));
     vector<NebulaDenominationPtr> denominations;
     copy_if(begin(dboDenominations), end(dboDenominations), back_inserter(denominations), [&denominations](const NebulaDenominationPtr &a){
       return count_if(begin(denominations), end(denominations), [&a](const NebulaDenominationPtr &b){ return a->ngcObject().id() == b->ngcObject().id(); }) == 0;
