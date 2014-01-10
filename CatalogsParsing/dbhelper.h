@@ -248,7 +248,7 @@ long long int CatalogsImporter::lastInsertId( QSqlQuery &query, const QString &s
   for(auto v: bindValues)
     getValue.bindValue(v.first, v.second);
   if(! getValue.exec() || ! getValue.next() ) {
-    dumpQuery(query);
+    dumpQuery(getValue);
     return -1;
   }
   return getValue.value(0).toLongLong();
