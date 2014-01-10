@@ -165,6 +165,7 @@ int main(int argc, char **argv){
     importer.insertDenomination(catNumber.toStdString(), star.name, star.notes, ngcObjectId, NebulaDenomination::ByName, star.other_names);
     if(QString::fromStdString(star.other_names).trimmed().isEmpty())
       continue;
+    importer.setCatalogue(string());
     for(QString otherDenomination: QString::fromStdString(star.other_names).trimmed().split(";", QString::SkipEmptyParts)) {
       importer.insertDenomination(string(), otherDenomination.toStdString(), string(), ngcObjectId, NebulaDenomination::ByName, star.other_names);
     }
