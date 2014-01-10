@@ -209,7 +209,13 @@ long long CatalogsImporter::insertDenomination(QString catalogueNumber, const QS
     dumpQuery(query);
     return -1;
   }
-  return lastInsertId(query, "SELECT id from denominations WHERE catalogue = :catalogue AND number = :number", {{":catalogue", catalogue}, {":number", catalogueNumber}});
+  std::map<QString,QVariant> lastInsertIdBindValues = {{":catalogue", catalogue}, {":number", catalogueNumber}};
+  QString lastInsertIdQuery = "SELECT id from denominations WHERE catalogue = :catalogue AND number = :number";
+  if(catalogue.isEmpty() || catalogueNumber.isEmpty()) {
+    lastInsertIdBindValues = {{ ":name", name.trimmed() }};
+    lastInsertIdQuery = "SELECT id from denominations WHERE name = :name ORDER BY id desc LIMIT 1";
+  }
+  return lastInsertId(query, lastInsertIdQuery, lastInsertIdBindValues);
 }
 
 
