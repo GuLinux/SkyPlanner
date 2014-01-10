@@ -156,12 +156,18 @@ int main(int argc, char **argv){
   CatalogsImporter importer(saguaroCat, app);
   cout << "Import starting...." << endl;
   for(int i=0; i<number_of_stars; i++) {
+    importer.setCatalogue(QString::fromStdString(saguaroCat));
     RedStar star = list[i];
     QString catNumber = QString::number(i+1);
 
     QString objectId = QString("SAC_REDSTAR_%1").arg(i+1);
     auto ngcObjectId = importer.insertObject(objectId.toStdString(), star.rightAscension.radians(), star.declination.radians(), star.visual_magnitude, -1, NgcObject::RedStar);
     importer.insertDenomination(catNumber.toStdString(), star.name, star.notes, ngcObjectId, NebulaDenomination::ByName, star.other_names);
+    if(QString::fromStdString(star.other_names).trimmed().isEmpty())
+      continue;
+    for(QString otherDenomination: QString::fromStdString(star.other_names).trimmed().split(";", QString::SkipEmptyParts)) {
+      importer.insertDenomination(string(), otherDenomination.toStdString(), string(), ngcObjectId, NebulaDenomination::ByName, star.other_names);
+    }
   }
 }
 
