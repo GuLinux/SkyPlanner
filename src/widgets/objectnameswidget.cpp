@@ -88,7 +88,7 @@ ObjectNamesWidget::ObjectNamesWidget( const Wt::Dbo::ptr<NgcObject> &object, Ses
 
     string catName;
     string catNumber;
-    auto dboDenominations = object->nebulae();
+    auto dboDenominations = object->denominationsByCatalogueImportance();
     vector<NebulaDenominationPtr> denominations{begin(dboDenominations), end(dboDenominations)};
     for( auto nebula : denominations )
     {
