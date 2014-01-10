@@ -13,7 +13,9 @@
 #include <string>
 #include <cmath>
 #include <sstream>
-
+#include "dbhelper.h"
+#include "models/ngcobject.h"
+#include "models/nebuladenomination.h"
 using namespace std;
 
 // NAME |OTHER NAMES |CON|RA J2K |DecJ2K|V   |B-V |SPEC. |NOTES        
@@ -59,10 +61,11 @@ using namespace std;
 }
   
   float RedStar::DEC::radians(){
-	float degreesTot;
-	degreesTot = static_cast<float>(degrees) + (minutes/60.);
-	float rad = degreesTot/180.*M_PI;
-	return rad;
+    float degreesTot;
+          int sign = degrees>0?+1:-1;
+    degreesTot = static_cast<float>(degrees) + (minutes/60.*sign);
+    float rad = degreesTot/180.*M_PI;
+    return rad;
 }
   
   float stringToFloat(string);
@@ -70,15 +73,17 @@ using namespace std;
   RedStar::RA stringToRightAscension(string);
 
 
-int main(){
-  
+int main(int argc, char **argv){
+  QCoreApplication app(argc, argv);
+  QStringList arguments = app.arguments();
+  arguments.removeFirst();
   int number_of_stars = 333;
   
   RedStar * list;
   list = new RedStar[number_of_stars];
   
   ifstream upload;
-  upload.open("SAC_RedStars_ver20_FENCE.TXT");
+  upload.open(arguments.first().toStdString());
     if(!upload){
       cout << "File non trovato"<< endl;
       return -1;
@@ -147,7 +152,18 @@ int main(){
   
   cout << "WITH LOVE." << endl;
   
-  
+  string saguaroCat("Saguaro Astronomy Club Red Stars");
+  CatalogsImporter importer(saguaroCat, app);
+  cout << "Import starting...." << endl;
+  for(int i=0; i<number_of_stars; i++) {
+    RedStar star = list[i];
+    QString catNumber = QString::number(i+1);
+    cout << "Star with name: " << star.name << ", cat saguaro number: " << catNumber.toStdString();
+    QStringList otherDenominations = QString::fromStdString(star.other_names).trimmed().split(";");
+    for(QString den: otherDenominations)
+      cout << " other denomination: " << den.trimmed().toStdString();
+    cout << endl;
+  }
   return 0;
 }
 
