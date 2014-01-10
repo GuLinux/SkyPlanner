@@ -55,6 +55,7 @@
 <message id="catalogue_number">Catalogue Number</message>
 <message id="search">Search</message>
 <message id="select_objects_widget_add_by_catalogue_number">Add By Catalogue Number</message>
+<message id="select_objects_widget_add_by_name">Search By Name</message>
 <message id="object_column_ar">AR</message>
 <message id="object_column_dec">DEC</message>
 <message id="object_column_angular_size">Angular Size</message>

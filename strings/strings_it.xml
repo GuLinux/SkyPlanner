@@ -95,6 +95,7 @@
 <message id="catalogue_number">Numero Catalogo</message>
 <message id="search">Cerca</message>
 <message id="select_objects_widget_add_by_catalogue_number">Aggiungi per Numero di Catalogo</message>
+<message id="select_objects_widget_add_by_name">Cerca Per Nome</message>
 <message id="object_column_ar">AR</message>
 <message id="object_column_dec">DEC</message>
 <message id="object_column_angular_size">Dimensione Angolare</message>

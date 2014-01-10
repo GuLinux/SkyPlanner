@@ -70,8 +70,9 @@ SelectObjectsWidget::SelectObjectsWidget(const Dbo::ptr< AstroSession >& astroSe
     WTabWidget *addObjectsTabWidget = this;
     boost::unique_lock<boost::mutex> lockSession(d->sessionLockMutex);
     Dbo::Transaction t(session);
-    d->searchByCatalogueTab(t);
     d->suggestedObjects(t);
+    d->searchByCatalogueTab(t);
+    d->searchByNameTab(t);
 }
 
 void SelectObjectsWidget::Private::populateHeaders(WTable *table)
@@ -254,6 +255,40 @@ void SelectObjectsWidget::populateFor( const Dbo::ptr< Telescope > &telescope )
 }
 
 
+void SelectObjectsWidget::Private::searchByNameTab(Dbo::Transaction& transaction)
+{
+  WContainerWidget *addObjectByName = WW<WContainerWidget>();
+  WLineEdit *name = WW<WLineEdit>();
+  name->setEmptyText(WString::tr("select_objects_widget_add_by_name"));
+  WTable *resultsTable = WW<WTable>().addCss("table table-striped table-hover");
+  auto searchByName = [=] {
+    Dbo::Transaction t(session);
+    resultsTable->clear();
+    dbo::collection<dbo::ptr<NebulaDenomination>> dboDenominations = session.find<NebulaDenomination>().where("name like '%' || ? || '%' ")
+     .bind(name->text());
+    vector<NebulaDenominationPtr> denominations;
+    copy_if(begin(dboDenominations), end(dboDenominations), back_inserter(denominations), [&denominations](const NebulaDenominationPtr &a){
+      return count_if(begin(denominations), end(denominations), [&a](const NebulaDenominationPtr &b){ return a->ngcObject().id() == b->ngcObject().id(); }) == 0;
+    });
+    std::sort(denominations.rbegin(), denominations.rend(), [&t](const NebulaDenominationPtr &a, const NebulaDenominationPtr &b) {
+       string query("select count(distinct catalogue) from denominations where objects_id = ?");
+       return t.session().query<int>(query).bind(a->ngcObject().id()).resultValue() <  t.session().query<int>(query).bind(b->ngcObject().id()).resultValue();
+    });
+    populateHeaders(resultsTable);
+    Ephemeris ephemeris(astroSession->position());
+    AstroSession::ObservabilityRange range = astroSession->observabilityRange(ephemeris).delta({1,20,0});
+    for(auto nebula: denominations) {
+      auto bestAltitude = ephemeris.findBestAltitude(nebula->ngcObject()->coordinates(), range.begin, range.end);
+      append(resultsTable, nebula->ngcObject(), bestAltitude);
+    }
+  };
+  name->changed().connect([=](...){ searchByName(); });
+  addObjectByName->addWidget(WW<WContainerWidget>().css("form-inline").add(name)
+    .add(WW<WPushButton>(WString::tr("search")).css("btn btn-primary").onClick([=](WMouseEvent){ searchByName(); })));
+  addObjectByName->addWidget(resultsTable);
+  q->addTab(addObjectByName, WString::tr("select_objects_widget_add_by_name"));
+}
+
 void SelectObjectsWidget::Private::searchByCatalogueTab(Dbo::Transaction& transaction)
 {
   WContainerWidget *addObjectByCatalogue = WW<WContainerWidget>();
@@ -285,7 +320,7 @@ void SelectObjectsWidget::Private::searchByCatalogueTab(Dbo::Transaction& transa
       append(resultsTable, nebula->ngcObject(), bestAltitude);
     }
   };
-  catalogueNumber->changed().connect([=](_n1){ searchByCatalogueNumber(); });
+  catalogueNumber->changed().connect([=](...){ searchByCatalogueNumber(); });
   addObjectByCatalogue->addWidget(WW<WContainerWidget>().css("form-inline").add(cataloguesCombo).add(catalogueNumber)
     .add(WW<WPushButton>(WString::tr("search")).css("btn btn-primary").onClick([=](WMouseEvent){ searchByCatalogueNumber(); })));
   addObjectByCatalogue->addWidget(resultsTable);

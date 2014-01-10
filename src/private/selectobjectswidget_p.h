@@ -33,6 +33,7 @@ public:
     Wt::WTable *suggestedObjectsTable;
     Wt::WContainerWidget *suggestedObjectsTablePagination;
     void searchByCatalogueTab(Wt::Dbo::Transaction &transaction);
+    void searchByNameTab(Wt::Dbo::Transaction &transaction);
     void suggestedObjects(Wt::Dbo::Transaction &transaction);
     void populateSuggestedObjectsTable();
     void populateSuggestedObjectsList( double magnitudeLimit );
