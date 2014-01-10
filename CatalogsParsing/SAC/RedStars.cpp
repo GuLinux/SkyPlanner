@@ -160,7 +160,7 @@ int main(int argc, char **argv){
     QString catNumber = QString::number(i+1);
 
     QString objectId = QString("SAC_REDSTAR_%1").arg(i+1);
-    auto ngcObjectId = importer.insertObject(objectId.toStdString(), star.rightAscension.radians(), star.declination.radians(), star.visual_magnitude, 5./60., NgcObject::RedStar);
+    auto ngcObjectId = importer.insertObject(objectId.toStdString(), star.rightAscension.radians(), star.declination.radians(), star.visual_magnitude, -1, NgcObject::RedStar);
     importer.insertDenomination(catNumber.toStdString(), star.name, star.notes, ngcObjectId, NebulaDenomination::ByName, star.other_names);
   }
 }
