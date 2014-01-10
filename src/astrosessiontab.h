@@ -31,6 +31,7 @@ public:
     ~AstroSessionTab();
     AstroSessionTab(const Wt::Dbo::ptr<AstroSession>& astroSession, Session& session, Wt::WContainerWidget* parent = 0);
     Wt::Signal<std::string> &nameChanged() const;
+    static std::string pathComponent(const Wt::Dbo::ptr<AstroSession>& astroSession, Wt::Dbo::Transaction &transaction );
 private:
     D_PTR;
 };

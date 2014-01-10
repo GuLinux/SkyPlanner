@@ -56,6 +56,7 @@
 #include <Wt/WSlider>
 #include <Wt/WLocalDateTime>
 #include "astroplanner.h"
+#include <boost/regex.hpp>
 
 
 using namespace Wt;
@@ -172,6 +173,11 @@ void AstroSessionTab::Private::reload()
   });
 }
 
+string AstroSessionTab::pathComponent(const AstroSessionPtr &astroSession, Dbo::Transaction &transaction)
+{
+  string nameForMenu = boost::regex_replace(astroSession->name(), boost::regex{"[^a-zA-Z0-9]+"}, "-");
+  return format("/sessions/%x/%s") % astroSession.id() % nameForMenu;
+}
 
 Wt::Signal<std::string> &AstroSessionTab::nameChanged() const
 {

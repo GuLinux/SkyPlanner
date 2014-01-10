@@ -24,14 +24,26 @@
 class AstroSessionTab;
 class AstroSession;
 class Session;
+class AstroSessionsListTab;
+
+
 class AstroSessionsPage::Private
 {
 public:
-    Private(Session &session, AstroSessionsPage* q);
-    Session &session;
-    std::map<Wt::Dbo::ptr<AstroSession>, AstroSessionTab*> tabs;
+  struct Tab {
+    std::string path;
+    AstroSessionTab *page;
+    Wt::WMenuItem *menuItem;
+    Wt::Dbo::ptr<AstroSession> astroSession;
+  };
+  Private(Session &session, AstroSessionsPage* q);
+  Session &session;
+  std::map<int, Tab> tabs;
+  Wt::WTabWidget *tabWidget;
+  AstroSessionsListTab *astroSessionsListTab;
+  void removeTab(const Wt::Dbo::ptr<AstroSession> &astroSession);
 private:
-    class AstroSessionsPage* const q;
+  class AstroSessionsPage* const q;
 };
 
 #endif // ASTROSESSIONSPAGE_P_H

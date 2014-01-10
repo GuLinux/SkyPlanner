@@ -29,6 +29,7 @@
 #include <Wt/WMenu>
 #include <boost/regex.hpp>
 #include "utils/format.h"
+#include "utils/utils.h"
 
 using namespace Wt;
 using namespace WtCommons;
@@ -42,43 +43,71 @@ AstroSessionsPage::~AstroSessionsPage()
 }
 
 AstroSessionsPage::AstroSessionsPage(Session &session, WContainerWidget* parent)
-    : d(session, this)
+  : WContainerWidget(parent), d(session, this)
 {
-  WTabWidget *tabs = new WTabWidget(this);
-  tabs->setInternalPathEnabled("sessions/");
-  auto astroSessionsListTab = new AstroSessionsListTab(session);
-  astroSessionsListTab->deletingSession().connect([=](const Dbo::ptr<AstroSession> &astroSession, _n5){
-    for(auto tab: d->tabs) {
-      if(tab.first == astroSession) {
-	tabs->removeTab(tab.second);
-	delete tab.second;
-	d->tabs.erase(tab.first);
-      }
-    }
+  d->tabWidget = new WTabWidget(this);
+//  d->tabWidget->setInternalPathEnabled("sessions/");
+  d->astroSessionsListTab = new AstroSessionsListTab(session);
+  d->astroSessionsListTab->deletingSession().connect([=](const Dbo::ptr<AstroSession> &astroSession, _n5){
+    d->removeTab(astroSession);
   });
-  astroSessionsListTab->sessionClicked().connect([=](const Dbo::ptr<AstroSession> &astroSession, _n5){
-    if(d->tabs.count(astroSession) == 0) {
-      auto astroSessionTab = new AstroSessionTab(astroSession, d->session);
-      string nameForMenu = boost::regex_replace(astroSession->name(), boost::regex{"[^a-zA-Z0-9]+"}, "-");
-      WMenuItem *newTab = tabs->addTab(astroSessionTab, astroSession->name());
-      newTab->setPathComponent( format("%x-%s-%s") % astroSession.id() % nameForMenu % newTab->id() ); // TODO: internal path management should be improved
-      astroSessionTab->nameChanged().connect([=](const string &newName,_n5){
-        newTab->setText(WString::fromUTF8(newName));
-        astroSessionsListTab->reload();
-      });
-      newTab->setCloseable(true);
-      d->tabs[astroSession] = astroSessionTab;
-    }
-    tabs->setCurrentWidget(d->tabs[astroSession]);
-  });
-  WMenuItem *listMenuItem = tabs->addTab(astroSessionsListTab, WString::tr("astrosessionspage_sessions_list"));
+
+  WMenuItem *listMenuItem = d->tabWidget->addTab(d->astroSessionsListTab, WString::tr("astrosessionspage_sessions_list"));
   listMenuItem->setPathComponent("list/");
-  tabs->tabClosed().connect([=](int tabNumber, _n5){
-    for(auto tab: d->tabs) {
-      if(tab.second == tabs->widget(tabNumber)) {
-        d->tabs.erase(tab.first);
-      }
-    }
-    tabs->setCurrentWidget(astroSessionsListTab);
+  d->tabWidget->tabClosed().connect([=](int tabNumber, _n5){
+    wApp->log("notice") << __PRETTY_FUNCTION__ << ": tabNumber=" << tabNumber;
+    d->removeTab(d->tabs[0].astroSession);
+    d->tabWidget->setCurrentWidget(d->astroSessionsListTab);
   });
+  d->tabs[0].path = "/sessions/list";
+  d->tabWidget->currentChanged().connect([=](int index, _n5){
+    wApp->log("notice") << __PRETTY_FUNCTION__ << ", index= " << index << "path: " << d->tabs[index].path;
+    wApp->setInternalPath(d->tabs[index].path);
+  });
+}
+
+void AstroSessionsPage::Private::removeTab(const Wt::Dbo::ptr<AstroSession> &astroSession)
+{
+  for(auto tab: tabs) {
+    if(tab.second.astroSession != astroSession)
+      continue;
+    tabWidget->removeTab(tab.second.page);
+    delete tab.second.page;
+    delete tab.second.menuItem;
+    tabs.erase(tab.first);
+  }
+}
+
+void AstroSessionsPage::open(const string &tabName)
+{
+  wApp->log("notice") << __PRETTY_FUNCTION__ << ": tabName=" << tabName;
+  if(tabName == "list") {
+    d->tabWidget->setCurrentIndex(0);
+    return;
+  }
+  auto sessionId = Utils::fromHexString<Dbo::dbo_traits<AstroSession>::IdType>(tabName);
+  Dbo::Transaction t(d->session);
+  AstroSessionPtr astroSession = d->session.find<AstroSession>().where("id = ?").bind(sessionId);
+  if(!astroSession) {
+    d->tabWidget->setCurrentIndex(0);
+    wApp->log("warning") << "Unable to find astroSession for path: " << wApp->internalPath() << ", tabName=" << tabName;
+    return;
+  }
+  string internalPath = AstroSessionTab::pathComponent(astroSession, t);
+  wApp->log("notice") << "Setting internal path to " << internalPath;
+  wApp->setInternalPath(internalPath, false);
+  for(auto tab = find_if(begin(d->tabs), end(d->tabs), [=](pair<int, Private::Tab> t){ return t.second.astroSession.id() == sessionId; }); tab != end(d->tabs); tab++) {
+    d->tabWidget->setCurrentWidget(tab->second.page);
+    return;
+  }
+  auto astroSessionTab = new AstroSessionTab(astroSession, d->session);
+  WMenuItem *newTab = d->tabWidget->addTab(astroSessionTab, astroSession->name());
+  //newTab->setPathComponent( AstroSessionTab::pathComponent(astroSession, t) );
+  astroSessionTab->nameChanged().connect([=](const string &newName,_n5){
+    newTab->setText(WString::fromUTF8(newName));
+    d->astroSessionsListTab->reload();
+  });
+  newTab->setCloseable(true);
+  d->tabs[d->tabWidget->indexOf(astroSessionTab)] = {internalPath, astroSessionTab, newTab, astroSession};
+  d->tabWidget->setCurrentWidget(astroSessionTab);
 }

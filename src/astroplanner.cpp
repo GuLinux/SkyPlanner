@@ -130,6 +130,10 @@ AstroPlanner::AstroPlanner( const WEnvironment &environment )
     if(internalPathMatches("/dss")) {
       d->loadDSSPage(internalPathNextPart("/dss/"));
     }
+    if(internalPathMatches("/sessions")) {
+//      d->widgets->setCurrentWidget(astrosessionspage);
+      astrosessionspage->open(internalPathNextPart("/sessions/"));
+    }
     d->previousInternalPath = newPath;
   });
   d->widgets->addWidget(d->dssContainer = new WContainerWidget);

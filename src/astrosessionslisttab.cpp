@@ -18,6 +18,7 @@
  */
 
 #include "astrosessionslisttab.h"
+#include "astrosessiontab.h"
 #include "private/astrosessionslisttab_p.h"
 #include "utils/d_ptr_implementation.h"
 #include "session.h"
@@ -111,9 +112,9 @@ void AstroSessionsListTab::Private::populateSessions()
      if(!session.login().loggedIn() || ! session.user()) return;
      for(auto astroSession: session.find<AstroSession>().where("user_id = ?").bind(session.user().id()).orderBy("\"when\" DESC").resultList() ) {
        WTableRow *row = sessionsTable->insertRow(sessionsTable->rowCount());
-       row->elementAt(0)->addWidget(WW<WAnchor>("", astroSession->name()).css("link").onClick([=](WMouseEvent){
-	 sessionClicked.emit(astroSession);
-      }));
+       row->elementAt(0)->addWidget(WW<WAnchor>(
+              WLink(WLink::InternalPath, AstroSessionTab::pathComponent(astroSession, t)), astroSession->name())
+             .css("link"));
        row->elementAt(1)->addWidget(new WText{WLocalDateTime(astroSession->wDateWhen().date(), astroSession->wDateWhen().time()).toString("dddd, dd MMMM yyyy")});
        row->elementAt(2)->addWidget(WW<WPushButton>(WString::tr("buttons_remove")).css("btn btn-danger btn-mini").onClick([=](WMouseEvent){
 	 WMessageBox *confirm = new WMessageBox(WString::tr("messagebox_confirm_removal_title"), WString::tr("messagebox_confirm_removal_message"), Wt::Question, Ok | Cancel);

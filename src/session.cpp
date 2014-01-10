@@ -53,7 +53,7 @@ Session::Session()
     d->connection = make_shared<Dbo::backend::Sqlite3>("SkyPlanner.sqlite");
   }
 #else
-  d->connection = make_shared<Dbo::backend::Sqlite3>("ngc.sqlite");
+  d->connection = make_shared<Dbo::backend::Sqlite3>("SkyPlanner.sqlite");
 #endif
   setConnection(*d->connection);
   d->connection->setProperty("show-queries", "false");
