@@ -111,6 +111,7 @@ std::string NgcObject::typeDescriptionKey( NebulaType nebulaType )
     {NebUnknown, "ngcobject_type_NebUnknown"},
     {NebGalCluster, "ngcobject_type_GalClust"},
     {Asterism, "ngcobject_type_Asterism"},
+    {RedStar, "ngcobject_type_RedStar"},
   };
   return descriptions[nebulaType];
 }

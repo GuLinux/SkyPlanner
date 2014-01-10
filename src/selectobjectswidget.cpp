@@ -218,7 +218,7 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsList( double magnitud
     if(nebulaTypeFilter != NgcObject::All && nebulaTypeFilter != NgcObject::AllButStars) 
       ngcObjectsQuery.where("\"type\" = ?").bind(nebulaTypeFilter);
     if(nebulaTypeFilter == NgcObject::AllButStars)
-      ngcObjectsQuery.where("\"type\" <> ?").bind(NgcObject::Asterism);
+      ngcObjectsQuery.where("\"type\" NOT IN (?, ?)").bind(NgcObject::Asterism).bind(NgcObject::RedStar);
  
     dbo::collection<NgcObjectPtr> objects = ngcObjectsQuery.resultList();
     Ephemeris ephemeris(astroSession->position());

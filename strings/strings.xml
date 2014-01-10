@@ -93,6 +93,7 @@
 <message id="ngcobject_type_GalClust">Cluster of galaxies</message>
 <message id="ngcobject_type_NebUnknown">Unknown</message>
 <message id="ngcobject_type_Asterism">Asterism</message>
+<message id="ngcobject_type_RedStar">Red Star</message>
 
 <message id="dssimage_version_label">DSS Image Type: </message>
 <message id="dssimage_version_poss2ukstu_red">POSS2/UKSTU Red</message>

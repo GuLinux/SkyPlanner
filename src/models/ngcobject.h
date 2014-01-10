@@ -50,6 +50,7 @@ public:
             NebUnknown=0x8, //!< Unknown type, catalog errors, "Unidentified Southern Objects" etc.
             NebGalCluster=0x9, //!< Galaxy Clusters, mostly abell
             Asterism=0xA,
+            RedStar=0xB,
     };
     static const int NebulaTypeCount = 12;
     NgcObject();

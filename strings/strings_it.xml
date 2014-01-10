@@ -133,6 +133,7 @@
 <message id="ngcobject_type_GalClust">Ammasso di galassie</message>
 <message id="ngcobject_type_NebUnknown">Sconosciuto</message>
 <message id="ngcobject_type_Asterism">Asterismo</message>
+<message id="ngcobject_type_RedStar">Stella Rossa</message>
 
 <message id="dssimage_version_label">Tipo Immagine DSS: </message>
 

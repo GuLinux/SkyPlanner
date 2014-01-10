@@ -158,13 +158,11 @@ int main(int argc, char **argv){
   for(int i=0; i<number_of_stars; i++) {
     RedStar star = list[i];
     QString catNumber = QString::number(i+1);
-    cout << "Star with name: " << star.name << ", cat saguaro number: " << catNumber.toStdString();
-    QStringList otherDenominations = QString::fromStdString(star.other_names).trimmed().split(";");
-    for(QString den: otherDenominations)
-      cout << " other denomination: " << den.trimmed().toStdString();
-    cout << endl;
+
+    QString objectId = QString("SAC_REDSTAR_%1").arg(i+1);
+    auto ngcObjectId = importer.insertObject(objectId.toStdString(), star.rightAscension.radians(), star.declination.radians(), star.visual_magnitude, 5./60., NgcObject::RedStar);
+    importer.insertDenomination(catNumber.toStdString(), star.name, star.notes, ngcObjectId, NebulaDenomination::ByName, star.other_names);
   }
-  return 0;
 }
 
 float stringToFloat(string number){
