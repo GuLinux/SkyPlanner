@@ -42,6 +42,7 @@
 #include "astroplanner.h"
 #include <Wt/WGroupBox>
 #include <Wt/WSpinBox>
+#include <Wt/Dbo/QueryModel>
 #include <boost/regex.hpp>
 #include <boost/algorithm/string.hpp>
 
@@ -305,16 +306,15 @@ void SelectObjectsWidget::Private::searchByCatalogueTab(Dbo::Transaction& transa
 {
   WContainerWidget *addObjectByCatalogue = WW<WContainerWidget>();
   WComboBox *cataloguesCombo = new WComboBox();
+  Dbo::QueryModel<CataloguePtr> *cataloguesModel = new Dbo::QueryModel<CataloguePtr>(q);
+  cataloguesModel->setQuery(session.find<Catalogue>().where("hidden = ?").bind(false).orderBy("priority asc"));
+  cataloguesModel->addColumn("name");
+  cataloguesModel->addColumn("id");
   WLineEdit *catalogueNumber = WW<WLineEdit>();
   catalogueNumber->setEmptyText(WString::tr("catalogue_number"));
   WTable *resultsTable = WW<WTable>().addCss("table table-striped table-hover");
 
-  WStandardItemModel *cataloguesModel = new WStandardItemModel(q);
-  for(auto cat: session.find<Catalogue>().where("hidden = ?").bind(false).orderBy("priority asc").resultList()) {
-    WStandardItem *item = new WStandardItem(cat->name());
-    item->setData(cat.id());
-    cataloguesModel->appendRow(item);
-  }
+
   cataloguesCombo->setModel(cataloguesModel);
   auto searchByCatalogueNumber = [=] {
     Dbo::Transaction t(session);
@@ -324,7 +324,7 @@ void SelectObjectsWidget::Private::searchByCatalogueTab(Dbo::Transaction& transa
     lastSearch = key;
     resultsTable->clear();
     dbo::collection<dbo::ptr<NebulaDenomination>> dboDenominations = session.find<NebulaDenomination>().where("catalogues_id = ?").where("number = ? ")
-     .bind( boost::any_cast<Dbo::dbo_traits<Catalogue>::IdType>(cataloguesModel->item( cataloguesCombo->currentIndex())->data() ) )
+     .bind( cataloguesModel->resultRow(cataloguesCombo->currentIndex()).id() )
      .bind(boost::algorithm::trim_copy(catalogueNumber->text().toUTF8()));
     vector<NebulaDenominationPtr> denominations;
     copy_if(begin(dboDenominations), end(dboDenominations), back_inserter(denominations), [&denominations](const NebulaDenominationPtr &a){
