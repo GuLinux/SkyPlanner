@@ -7,7 +7,7 @@
 #include <cmath>
 #include "models/ngcobject.h"
 #include "../dbhelper.h"
-#include "models/nebuladenomination.h"
+#include "models/catalogue.h"
 
 using namespace std;
 
@@ -196,7 +196,7 @@ int main(int argc, char ** argv){
         }
         stringstream notes;
         notes << array[i].notes_type << "; other catalogue: " << array[i].other_names;
-        importer.insertDenomination(array[i].arp_number, objectId.str(), notes.str(), otherId, NebulaDenomination::ByCatalog, array[i].other_names);
+        importer.insertDenomination(array[i].arp_number, objectId.str(), notes.str(), otherId, Catalogue::ByCatalog, array[i].other_names);
 
   
 	 }

@@ -5,7 +5,7 @@
 #include <QDebug>
 #include <iostream>
 #include "models/ngcobject.h"
-#include "models/nebuladenomination.h"
+#include "models/catalogue.h"
 #include "dbhelper.h"
 using namespace std;
 
@@ -57,7 +57,7 @@ int main(int argc, char **argv) {
       throw std::runtime_error("Error adding object to database");
     o << objQuery.arg(catNumber).arg(radRA).arg(radDec).arg(magnitude).arg(-1).arg(NgcObject::NebGalCluster) << endl;
     QString objectName = QString("Abell %1").arg(catNumber.replace(" ", ""));
-    importer.insertDenomination(catNumber, objectName, "", objectId, NebulaDenomination::ByName );
+    importer.insertDenomination(catNumber, objectName, "", objectId, Catalogue::ByName );
     o << nameQuery.arg("Abell").arg(catNumber).arg(objectName).arg("").arg(QString("(SELECT id from objects WHERE object_id = 'Abell %1')").arg(catNumber)) << endl;
   }
   o << "END TRANSACTION;" << endl;

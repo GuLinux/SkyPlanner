@@ -31,7 +31,18 @@ class Telescope;
 class AstroSessionObject;
 class NebulaDenomination;
 namespace dbo = Wt::Dbo;
+class NgcObject;
+namespace Wt {
+    namespace Dbo {
+        template<>
+        struct dbo_traits<NgcObject> : public dbo_default_traits {
+            static const char *versionField() {
+              return 0;
+            }
+        };
 
+    }
+}
 class NgcObject
 {
 public:
@@ -72,6 +83,7 @@ public:
 
     template<class Action>
     void persist(Action& a) {
+        dbo::field(a, _id, "id");
         dbo::field(a, _objectId, "object_id");
         dbo::field(a, _rightAscension, "ra");
         dbo::field(a, _declination, "dec");
@@ -81,27 +93,17 @@ public:
 	dbo::hasMany(a, _nebulae, dbo::ManyToOne);
 	dbo::hasMany(a, _astroSessionObjects, dbo::ManyToOne);
     }
-    std::vector<dbo::ptr<NebulaDenomination>> denominationsByCatalogueImportance() const;
-    std::vector<std::string> namesByCatalogueImportance() const;
+    std::vector<dbo::ptr<NebulaDenomination>> denominationsByCatalogueImportance(dbo::Transaction &transaction) const;
+    std::vector<std::string> namesByCatalogueImportance(dbo::Transaction &transaction) const;
 private:
     boost::optional<std::string> _objectId;
     float _rightAscension, _declination, _magnitude, _angularSize;
     NebulaType _type;
     dbo::collection< dbo::ptr<NebulaDenomination> > _nebulae;
     dbo::collection< dbo::ptr<AstroSessionObject> > _astroSessionObjects;
+    dbo::dbo_traits<NgcObject>::IdType _id;
 };
 
 typedef dbo::ptr<NgcObject> NgcObjectPtr;
 
-namespace Wt {
-    namespace Dbo {
-        template<>
-        struct dbo_traits<NgcObject> : public dbo_default_traits {
-            static const char *versionField() {
-              return 0;
-            }
-        };
-
-    }
-}
 #endif // NGCOBJECT_H

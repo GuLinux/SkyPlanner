@@ -15,7 +15,7 @@
 #include <sstream>
 #include "dbhelper.h"
 #include "models/ngcobject.h"
-#include "models/nebuladenomination.h"
+#include "models/catalogue.h"
 using namespace std;
 
 // NAME |OTHER NAMES |CON|RA J2K |DecJ2K|V   |B-V |SPEC. |NOTES        
@@ -162,12 +162,12 @@ int main(int argc, char **argv){
 
     QString objectId = QString("SAC_REDSTAR_%1").arg(i+1);
     auto ngcObjectId = importer.insertObject(objectId.toStdString(), star.rightAscension.radians(), star.declination.radians(), star.visual_magnitude, -1, NgcObject::RedStar);
-    importer.insertDenomination(catNumber.toStdString(), star.name, star.notes, ngcObjectId, NebulaDenomination::ByName, star.other_names);
+    importer.insertDenomination(catNumber.toStdString(), star.name, star.notes, ngcObjectId, Catalogue::ByName, star.other_names);
     if(QString::fromStdString(star.other_names).trimmed().isEmpty())
       continue;
     importer.setCatalogue(QString());
     for(QString otherDenomination: QString::fromStdString(star.other_names).trimmed().split(";", QString::SkipEmptyParts)) {
-      importer.insertDenomination(string(), otherDenomination.toStdString(), string(), ngcObjectId, NebulaDenomination::ByName, star.other_names);
+      importer.insertDenomination(string(), otherDenomination.toStdString(), string(), ngcObjectId, Catalogue::ByName, star.other_names);
     }
   }
 }

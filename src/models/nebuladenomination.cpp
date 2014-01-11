@@ -22,15 +22,11 @@
 
 using namespace std;
 using namespace Wt;
-CataloguePtr NebulaDenomination::cataloguePtr() const
-{
-  return _cataloguePtr;
-}
-
-boost::optional<string> NebulaDenomination::catalogue() const
+CataloguePtr NebulaDenomination::catalogue() const
 {
   return _catalogue;
 }
+
 boost::optional<string> NebulaDenomination::comment() const
 {
   return _comment;
@@ -51,16 +47,16 @@ boost::optional<std::string> NebulaDenomination::number() const
 
 bool NebulaDenomination::isNgcIc() const
 {
-  return _catalogue && _number && (*_catalogue == "NGC" || *_catalogue == "IC");
+  return catalogue() && _number && (catalogue()->code() == "NGC" || catalogue()->code() == "IC");
 }
 
 string NebulaDenomination::search() const {
- switch(_searchMode) {
-    case ByName:
+ switch(catalogue()->searchMode()) {
+   case Catalogue::ByName:
       return name();
-    case ByCatalog:
-      return format("%s %s") % *_catalogue % *_number;
-    case ByNameAndType:
+    case Catalogue::ByCatalog:
+      return format("%s %s") % catalogue()->name() % *_number;
+    case Catalogue::ByNameAndType:
       return format("%s %s") % _ngcObject->typeDescription().toUTF8() % name();
  }
 }

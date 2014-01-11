@@ -12,7 +12,7 @@
 #include <boost/algorithm/string/replace.hpp>
 #include "dbhelper.h"
 #include "models/ngcobject.h"
-#include "models/nebuladenomination.h"
+#include "models/catalogue.h"
 using namespace std;
 
 
@@ -164,7 +164,7 @@ string insert(const Asterism &asterism, int index, CatalogsImporter &importer) {
              throw runtime_error("Error adding object to database");
            stringstream indexStr;
            indexStr << index;
-           importer.insertDenomination(indexStr.str(), asterism.name, asterism.notes, objectId, NebulaDenomination::ByNameAndType);
+           importer.insertDenomination(indexStr.str(), asterism.name, asterism.notes, objectId, Catalogue::ByNameAndType);
            o << "INSERT INTO denominations(catalogue, \"number\", name, comment, objects_id) VALUES("
             << "'Saguaro Astronomy Club Asterisms', " << index << ", '" << sql(asterism.name) << "', '" << sql(asterism.notes) << "', (select id from objects where object_id = '" << objectName.str() << "'));" << endl;
            return o.str();

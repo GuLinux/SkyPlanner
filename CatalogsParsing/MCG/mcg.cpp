@@ -7,7 +7,7 @@
 #include <cmath>
 #include "models/ngcobject.h"
 #include "../dbhelper.h"
-#include "models/nebuladenomination.h"
+#include "models/catalogue.h"
 #include <QCoreApplication>
 #include <QStringList>
 
@@ -180,7 +180,7 @@ int main(int argc, char ** argv){
             cerr << ", added new objectId: " << objectId;
           }
           //   long long insertDenomination(std::string catalogueNumber, const std::string &name, const std::string &comment, long long objectId, int searchMode, const std::string &other_catalogues = std::string());
-          auto denId = importer.insertDenomination(object.number, object.number, "", objectId, NebulaDenomination::ByName, object.other_names);
+          auto denId = importer.insertDenomination(object.number, object.number, "", objectId, Catalogue::ByName, object.other_names);
           cerr << ": id=" << denId << endl;
         }
 // 	for (int i=0;i<conta;i++){

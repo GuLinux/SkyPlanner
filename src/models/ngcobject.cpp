@@ -125,43 +125,24 @@ Wt::WString NgcObject::typeDescription() const
   return typeDescription( type() );
 }
 
-vector<NebulaDenominationPtr> NgcObject::denominationsByCatalogueImportance() const
+vector< Wt::Dbo::ptr< NebulaDenomination > > NgcObject::denominationsByCatalogueImportance( Wt::Dbo::Transaction &transaction ) const
 {
-  vector<NebulaDenominationPtr> denominations {_nebulae.begin(), _nebulae.end()};
-  static map<string, int> catalogRatings
-  {
-    {"Messier", -99},
-    {"NGC", -98},
-    {"IC", -97},
-    {"Arp", -96},
-    {"Caldwell", -95},
-    {"Abell", -94},
-    {"UGC", -93},
-    {"MCG", -92},
-  };
-  sort( denominations.begin(), denominations.end(), []( const NebulaDenominationPtr & a, const NebulaDenominationPtr & b )
-  {
-    if( !a->catalogue() && ! b->catalogue() )
-      return a->name() < b->name();
-
-    if( !a->catalogue() )
-      return true;
-
-    if( !b->catalogue() )
-      return false;
-
-    return catalogRatings[*a->catalogue()] < catalogRatings[*b->catalogue()];
-  } );
+  dbo::collection<NebulaDenominationPtr> denominationsByPriority =
+    transaction.session().query<NebulaDenominationPtr>("SELECT d from denominations d inner join catalogues on d.catalogues_id = catalogues.id \
+    WHERE d.objects_id = ? \
+    ORDER BY priority ASC").bind(_id);
+  vector<NebulaDenominationPtr> denominations {denominationsByPriority.begin(), denominationsByPriority.end()};
   return denominations;
 }
 
-vector< string > NgcObject::namesByCatalogueImportance() const
+vector< string > NgcObject::namesByCatalogueImportance( Wt::Dbo::Transaction &transaction ) const
 {
   vector<string> names;
-  auto denominations = denominationsByCatalogueImportance();
-  for(auto denomination: denominations) {
-      if(std::count(names.begin(), names.end(), denomination->name()) == 0)
-        names.push_back(denomination->name());
+  vector<NebulaDenominationPtr> denominations = denominationsByCatalogueImportance(transaction);
+  int size = denominations.size();
+  for(NebulaDenominationPtr d: denominations) {
+      if(std::count(names.begin(), names.end(), d->name()) == 0)
+        names.push_back( d->name());
   }
   return names;
 }

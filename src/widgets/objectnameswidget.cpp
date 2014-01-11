@@ -57,7 +57,8 @@ class ObjectNamesWidget::Private
 ObjectNamesWidget::ObjectNamesWidget( const Wt::Dbo::ptr<NgcObject> &object, Session &session, const Wt::Dbo::ptr<AstroSession> &astroSession, RenderType renderType, WContainerWidget *parent )
   : WContainerWidget( parent ), d( session, this )
 {
-  WString namesJoined = Utils::htmlEncode( WString::fromUTF8( boost::algorithm::join( object->namesByCatalogueImportance(), ", " ) ) );
+  Dbo::Transaction t(session);
+  WString namesJoined = Utils::htmlEncode( WString::fromUTF8( boost::algorithm::join( object->namesByCatalogueImportance(t), ", " ) ) );
 
   if( renderType == Printable )
   {
@@ -88,13 +89,13 @@ ObjectNamesWidget::ObjectNamesWidget( const Wt::Dbo::ptr<NgcObject> &object, Ses
 
     string catName;
     string catNumber;
-    auto dboDenominations = object->denominationsByCatalogueImportance();
+    auto dboDenominations = object->denominationsByCatalogueImportance(t);
     vector<NebulaDenominationPtr> denominations{begin(dboDenominations), end(dboDenominations)};
     for( auto nebula : denominations )
     {
       if( nebula->isNgcIc() )
       {
-        catName = *nebula->catalogue();
+        catName = nebula->catalogue()->name();
         catNumber = *nebula->number();
         WMenuItem *ngcIcMenuItem = popup->addItem( "NGC-IC Project Page" );
         ngcIcMenuItem->setLink( new AutoPostResource {"http://www.ngcicproject.org/ngcicdb.asp", {{"ngcicobject", *object->objectId()}}} );
