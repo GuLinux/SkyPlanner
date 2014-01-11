@@ -310,7 +310,7 @@ void SelectObjectsWidget::Private::searchByCatalogueTab(Dbo::Transaction& transa
   WTable *resultsTable = WW<WTable>().addCss("table table-striped table-hover");
 
   WStandardItemModel *cataloguesModel = new WStandardItemModel(q);
-  for(auto cat: session.find<Catalogue>().where("code <> 'proper_name'").orderBy("priority asc").resultList()) {
+  for(auto cat: session.find<Catalogue>().where("hidden = ?").bind(false).orderBy("priority asc").resultList()) {
     WStandardItem *item = new WStandardItem(cat->name());
     item->setData(cat.id());
     cataloguesModel->appendRow(item);

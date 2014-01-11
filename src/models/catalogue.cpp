@@ -28,6 +28,12 @@ Dbo::collection< NebulaDenominationPtr> Catalogue::nebulae() const
   return _nebulae;
 }
 
+bool Catalogue::hidden() const
+{
+  return _hidden;
+}
+
+
 string Catalogue::code() const
 {
   return _code;

@@ -37,6 +37,7 @@ public:
   std::string name() const;
   std::string code() const;
   int priority() const;
+  bool hidden() const;
   SearchMode searchMode() const;
   
     template<class Action>
@@ -45,11 +46,13 @@ public:
         dbo::field(a, _code, "code");
         dbo::field(a, _priority, "priority");
         dbo::field(a, _searchMode, "search_mode");
+        dbo::field(a, _hidden, "hidden");
         dbo::hasMany(a, _nebulae, dbo::ManyToOne);
     }
 private:
   std::string _name;
   std::string _code;
+  bool _hidden;
   int _priority;
   SearchMode _searchMode;
   dbo::collection<dbo::ptr<NebulaDenomination>> _nebulae;
