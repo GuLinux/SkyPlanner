@@ -25,6 +25,7 @@ set(SkyPlanner_SRCS
 )
 
 set(SkyPlanner_MODELS_SRCS
+  models/catalogue.cpp
   models/astrosessionobject.cpp
   models/astrosession.cpp
   models/telescope.cpp

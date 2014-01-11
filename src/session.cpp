@@ -57,6 +57,7 @@ Session::Session()
 #endif
   setConnection(*d->connection);
   d->connection->setProperty("show-queries", "false");
+  mapClass<Catalogue>("catalogues");
   mapClass<NgcObject>("objects");
   mapClass<NebulaDenomination>("denominations");
   mapClass<User>("user");

@@ -21,6 +21,11 @@
 #include "utils/format.h"
 
 using namespace std;
+using namespace Wt;
+CataloguePtr NebulaDenomination::cataloguePtr() const
+{
+  return _cataloguePtr;
+}
 
 boost::optional<string> NebulaDenomination::catalogue() const
 {
@@ -34,7 +39,7 @@ string NebulaDenomination::name() const
 {
   return _name;
 }
-Wt::Dbo::ptr< NgcObject > NebulaDenomination::ngcObject() const
+NgcObjectPtr NebulaDenomination::ngcObject() const
 {
   return _ngcObject;
 }

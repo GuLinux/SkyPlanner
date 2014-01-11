@@ -23,6 +23,7 @@
 #include <Wt/Dbo/Dbo>
 #include <string>
 
+class Catalogue;
 class NgcObject;
 namespace dbo = Wt::Dbo;
 
@@ -31,6 +32,7 @@ class NebulaDenomination
 public:
   enum SearchMode { ByName = 0x0, ByCatalog = 0x1, ByNameAndType = 0x2 };
   boost::optional<std::string> catalogue() const;
+  dbo::ptr<Catalogue> cataloguePtr() const;
   boost::optional<std::string> number() const;
   std::string name() const;
   boost::optional<std::string> comment() const;
@@ -44,6 +46,7 @@ public:
     dbo::field(a, _searchMode, "search_mode");
     dbo::field(a, _otherCatalogues, "other_catalogues");
     dbo::belongsTo(a, _ngcObject);
+    dbo::belongsTo(a, _cataloguePtr);
   }
 
   bool isNgcIc() const;
@@ -51,6 +54,7 @@ public:
 
 private:
   boost::optional<std::string> _catalogue;
+  dbo::ptr<Catalogue> _cataloguePtr;
   boost::optional<std::string> _number;
   std::string _name;
   boost::optional<std::string> _comment;
