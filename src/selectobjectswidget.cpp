@@ -309,17 +309,23 @@ void SelectObjectsWidget::Private::searchByCatalogueTab(Dbo::Transaction& transa
   catalogueNumber->setEmptyText(WString::tr("catalogue_number"));
   WTable *resultsTable = WW<WTable>().addCss("table table-striped table-hover");
 
-  for(auto cat: session.query<string>("select distinct catalogue from denominations WHERE catalogue <> ''").resultList())
-    cataloguesCombo->addItem(cat);
+  WStandardItemModel *cataloguesModel = new WStandardItemModel(q);
+  for(auto cat: session.find<Catalogue>().where("code <> 'object_name'").resultList()) {
+    WStandardItem *item = new WStandardItem(cat->name());
+    item->setData(cat.id());
+    cataloguesModel->appendRow(item);
+  }
+  cataloguesCombo->setModel(cataloguesModel);
   auto searchByCatalogueNumber = [=] {
     Dbo::Transaction t(session);
-    resultsTable->clear();
     string key = string("_bycat: ") + cataloguesCombo->currentText().toUTF8() + catalogueNumber->text().toUTF8();
     if(lastSearch == key)
       return;
     lastSearch = key;
-    dbo::collection<dbo::ptr<NebulaDenomination>> dboDenominations = session.find<NebulaDenomination>().where("catalogue = ?").where("number = ? ")
-     .bind(cataloguesCombo->currentText()).bind(boost::algorithm::trim_copy(catalogueNumber->text().toUTF8()));
+    resultsTable->clear();
+    dbo::collection<dbo::ptr<NebulaDenomination>> dboDenominations = session.find<NebulaDenomination>().where("catalogues_id = ?").where("number = ? ")
+     .bind( boost::any_cast<Dbo::dbo_traits<Catalogue>::IdType>(cataloguesModel->item( cataloguesCombo->currentIndex())->data() ) )
+     .bind(boost::algorithm::trim_copy(catalogueNumber->text().toUTF8()));
     vector<NebulaDenominationPtr> denominations;
     copy_if(begin(dboDenominations), end(dboDenominations), back_inserter(denominations), [&denominations](const NebulaDenominationPtr &a){
       return count_if(begin(denominations), end(denominations), [&a](const NebulaDenominationPtr &b){ return a->ngcObject().id() == b->ngcObject().id(); }) == 0;
