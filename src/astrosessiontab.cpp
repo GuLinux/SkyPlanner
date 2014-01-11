@@ -341,7 +341,7 @@ void AstroSessionTab::Private::populate()
     row->elementAt(3)->addWidget(new WText{ Utils::htmlEncode( WString::fromUTF8( sessionObject->coordinates().declination.printable() )) });
     row->elementAt(4)->addWidget(new WText{ WString::fromUTF8(ConstellationFinder::getName(sessionObject->coordinates()).name) });
     row->elementAt(5)->addWidget(new WText{ Utils::htmlEncode( WString::fromUTF8( Angle::degrees(sessionObject->ngcObject()->angularSize()).printable() )) });
-    row->elementAt(6)->addWidget(new WText{ format("%.1f") % sessionObject->ngcObject()->magnitude()});
+    row->elementAt(6)->addWidget(new WText{ sessionObject->ngcObject()->magnitude() > 90. ? "N/A" : (format("%.1f") % sessionObject->ngcObject()->magnitude()).str() });
     auto bestAltitude = sessionObject->bestAltitude(ephemeris, 1);
     row->elementAt(7)->addWidget(new WText{ WDateTime::fromPosixTime( bestAltitude.when).time().toString() });
     row->elementAt(8)->addWidget(new WText{ Utils::htmlEncode(WString::fromUTF8(bestAltitude.coordinates.altitude.printable() )) });

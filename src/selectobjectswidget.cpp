@@ -104,7 +104,7 @@ void SelectObjectsWidget::Private::append(WTable *table, const Dbo::ptr<NgcObjec
   row->elementAt(0)->addWidget(new ObjectNamesWidget{ngcObject, session, astroSession});
   row->elementAt(1)->addWidget(new WText{ ngcObject->typeDescription() });
   row->elementAt(2)->addWidget(new WText{ WString::fromUTF8(ConstellationFinder::getName(ngcObject->coordinates()).name) });
-  row->elementAt(3)->addWidget(new WText{format("%.1f") % ngcObject->magnitude()});
+  row->elementAt(3)->addWidget(new WText{ (ngcObject->magnitude() > 90.) ? "N/A" : (format("%.1f") % ngcObject->magnitude()).str() });
   WDateTime transit = WDateTime::fromPosixTime(bestAltitude.when);
   row->elementAt(4)->addWidget(new ObjectDifficultyWidget(ngcObject, selectedTelescope, 99 /* TODO: hack, to be replaced */));
   row->elementAt(5)->addWidget(new WText{transit.time().toString()});
@@ -274,7 +274,7 @@ void SelectObjectsWidget::Private::searchByNameTab(Dbo::Transaction& transaction
     transform(nameToSearch.begin(), nameToSearch.end(), nameToSearch.begin(), ::tolower);
     int count = session.query<int>("select count(*) from denominations where lower(name) like '%' || ? || '%'").bind(nameToSearch);
     wApp->log("notice") << "search by name: count=" << count;
-    if(count > 50) {
+    if(count > 200) { // TODO: pagination
       AstroPlanner::instance()->notification(WString::tr("select_objects_widget_add_by_name"), WString::tr("select_objects_widget_add_by_name_too_many"), AstroPlanner::Information, 5);
       return;
     }
@@ -285,10 +285,7 @@ void SelectObjectsWidget::Private::searchByNameTab(Dbo::Transaction& transaction
     copy_if(begin(dboDenominations), end(dboDenominations), back_inserter(denominations), [&denominations](const NebulaDenominationPtr &a){
       return count_if(begin(denominations), end(denominations), [&a](const NebulaDenominationPtr &b){ return a->ngcObject().id() == b->ngcObject().id(); }) == 0;
     });
-    std::sort(denominations.rbegin(), denominations.rend(), [&t](const NebulaDenominationPtr &a, const NebulaDenominationPtr &b) {
-       string query("select count(distinct catalogue) from denominations where objects_id = ?");
-       return t.session().query<int>(query).bind(a->ngcObject().id()).resultValue() <  t.session().query<int>(query).bind(b->ngcObject().id()).resultValue();
-    });
+
     populateHeaders(resultsTable);
     Ephemeris ephemeris(astroSession->position());
     AstroSession::ObservabilityRange range = astroSession->observabilityRange(ephemeris).delta({1,20,0});
@@ -327,10 +324,6 @@ void SelectObjectsWidget::Private::searchByCatalogueTab(Dbo::Transaction& transa
     copy_if(begin(dboDenominations), end(dboDenominations), back_inserter(denominations), [&denominations](const NebulaDenominationPtr &a){
       return count_if(begin(denominations), end(denominations), [&a](const NebulaDenominationPtr &b){ return a->ngcObject().id() == b->ngcObject().id(); }) == 0;
     });
-    std::sort(denominations.rbegin(), denominations.rend(), [&t](const NebulaDenominationPtr &a, const NebulaDenominationPtr &b) {
-       string query("select count(distinct catalogue) from denominations where objects_id = ?");
-       return t.session().query<int>(query).bind(a->ngcObject().id()).resultValue() <  t.session().query<int>(query).bind(b->ngcObject().id()).resultValue();
-    }); 
     populateHeaders(resultsTable);
     Ephemeris ephemeris(astroSession->position());
     AstroSession::ObservabilityRange range = astroSession->observabilityRange(ephemeris).delta({1,20,0});
