@@ -82,6 +82,10 @@ AstroSessionTab::AstroSessionTab(const Dbo::ptr<AstroSession>& astroSession, Ses
 void AstroSessionTab::Private::reload()
 {
   q->clear();
+  if(!session.user()) {
+    wApp->setInternalPath("/login");
+    return;
+  }
   WContainerWidget *actionsContainer = WW<WContainerWidget>().setMargin(10);
   q->addWidget(actionsContainer);
   pastObservation = astroSession->wDateWhen() < WDateTime::currentDateTime();
