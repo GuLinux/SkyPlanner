@@ -48,9 +48,9 @@ void __dumpQuery(const QString &where, const QSqlQuery &query) {
 
 CatalogsImporter::CatalogsImporter( const std::string &catalogue, const std::string &catalogueCode, int argc, char **argv )
 {
-  setCatalogue(QString::fromStdString(catalogue).trimmed(), QString::fromStdString(catalogueCode).trimmed());
   QCoreApplication app(argc, argv);
   init(app.arguments());
+  setCatalogue(QString::fromStdString(catalogue).trimmed(), QString::fromStdString(catalogueCode).trimmed());
 }
 
 
@@ -64,13 +64,17 @@ CatalogsImporter &CatalogsImporter::setCatalogue(QString _catalogue, QString _co
     _code = "proper_name";
   }
   catalogue =_catalogue.trimmed();
-  while(catalogueId = findBy("SELECT id FROM catalogues WHERE name = :name", {{":name", _catalogue.trimmed()}}) < 0) {
-    QSqlQuery sqlQuery("INSERT INTO catalogues(name, code) VALUES(:name, :code)", db);
-    sqlQuery.bindValue(":name", _catalogue);
-    sqlQuery.bindValue(":code", _code);
+  catalogueId = findBy("SELECT id FROM catalogues WHERE name = :name", {{":name", _catalogue.trimmed()}});
+  if(catalogueId <= 0) {
+    QSqlQuery sqlQuery(db);
+    sqlQuery.prepare("INSERT INTO catalogues (\"version\", \"name\", \"code\", \"priority\", \"search_mode\", \"hidden\") VALUES (0, :catalogue_name , :catalogue_code , -1, 0, 0)");
+    sqlQuery.bindValue(":catalogue_name", _catalogue);
+    sqlQuery.bindValue(":catalogue_code", _code);
     if(!sqlQuery.exec()) {
       dumpQuery( sqlQuery );
+      throw std::runtime_error("Error inserting new catalog");
     }
+    catalogueId = findBy("SELECT id FROM catalogues WHERE name = :name", {{":name", _catalogue.trimmed()}});
   }
   return *this;
 }
@@ -78,8 +82,8 @@ CatalogsImporter &CatalogsImporter::setCatalogue(QString _catalogue, QString _co
 
 CatalogsImporter::CatalogsImporter( const std::string &catalogue, const std::string &catalogueCode, QCoreApplication &app )
 {
-  setCatalogue(QString::fromStdString(catalogue).trimmed(), QString::fromStdString(catalogueCode).trimmed());
   init(app.arguments());
+  setCatalogue(QString::fromStdString(catalogue).trimmed(), QString::fromStdString(catalogueCode).trimmed());
 }
 
 CatalogsImporter::~CatalogsImporter()
@@ -164,8 +168,10 @@ long long int CatalogsImporter::findByCatalog( const std::string &catalogAndNumb
 
 long long CatalogsImporter::findByCatalog( const std::string &catalog, const std::string &number )
 {
-  return findBy("SELECT objects_id from denominations WHERE \
-    lower(denominations.catalogue)  = :catalogue AND \
+  return findBy("SELECT objects_id from denominations \
+    inner join catalogues on denominations.catalogues_id = catalogues.id \
+    WHERE \
+    lower(catalogues.name)  = :catalogue AND \
     lower(denominations.\"number\" ) = :number \
     ", {
       {":catalogue", QString::fromStdString(catalog).trimmed().toLower()},
@@ -200,19 +206,19 @@ long long CatalogsImporter::insertDenomination(QString catalogueNumber, const QS
 
   catalogueNumber = catalogueNumber.trimmed();
   if(!other_catalogues.isEmpty()) {
-    query.prepare("INSERT INTO denominations(\"catalogue\", \"number\", \"name\", \"comment\", objects_id, search_mode, other_catalogues) \
-    VALUES( :catalogue , :number , :name , :comment , :objectid, :search_mode , :othercatalogues )");
+    query.prepare("INSERT INTO denominations(\"catalogues_id\", \"number\", \"name\", \"comment\", objects_id, other_catalogues) \
+    VALUES( :catalogue_id , :number , :name , :comment , :objectid, :othercatalogues )");
     query.bindValue(":othercatalogues", other_catalogues.trimmed());
   } else {
-    query.prepare("INSERT INTO denominations(\"catalogue\", \"number\", \"name\", \"comment\", objects_id, search_mode) \
-    VALUES(:catalogue , :number , :name , :comment , :objectid , :search_mode)");
+    query.prepare("INSERT INTO denominations(\"catalogues_id\", \"number\", \"name\", \"comment\", objects_id) \
+    VALUES(:catalogue_id , :number , :name , :comment , :objectid )");
   }
-  query.bindValue(":catalogue", catalogue.isEmpty() ? QVariant(QVariant::String): catalogue);
+  if(catalogueId <= 0) throw std::runtime_error("Catalogue missing");
+  query.bindValue(":catalogue_id", catalogueId);
   query.bindValue(":number", catalogueNumber.isEmpty() ? QVariant(QVariant::String) : catalogueNumber);
   query.bindValue(":name", name.trimmed());
   query.bindValue(":comment", comment.trimmed().isEmpty() ? QVariant(QVariant::String) : comment.trimmed());
   query.bindValue(":objectid", objectId);
-  query.bindValue(":search_mode", searchMode);
   if(!query.exec()) {
     dumpQuery(query);
     return -1;
