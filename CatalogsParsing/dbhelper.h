@@ -14,8 +14,8 @@
 
 class CatalogsImporter {
 public:
-  CatalogsImporter(const std::string &catalogue, int argc, char **argv);
-  CatalogsImporter(const std::string &catalogue, QCoreApplication &app);
+  CatalogsImporter(const std::string &catalogue, const std::string &catalogueCode, int argc, char **argv);
+  CatalogsImporter(const std::string &catalogue, const std::string &catalogueCode, QCoreApplication &app);
   ~CatalogsImporter();
   long long insertObject(const std::string &objectId, double rightAscension, double declination, double magnitude, double angularSize, int type);
   long long insertObject(const QString &objectId, double rightAscension, double declination, double magnitude, double angularSize, int type);
@@ -25,7 +25,8 @@ public:
   long long findByCatalog(const std::string &catalog,  const std::string &number);
   long long findByCatalog(const std::string &catalogAndNumber);
   long long findBy(const std::string &query, const std::map<std::string,QVariant> &bindValues);
-  CatalogsImporter &setCatalogue(const QString &_catalogue) { catalogue = _catalogue; return *this;  }
+  CatalogsImporter &setCatalogue(QString _catalogue, QString _code = QString());
+  long long catalogueId;
 private:
   QString catalogue;
   void init(QStringList arguments);
@@ -33,12 +34,6 @@ private:
   QSqlDatabase db;
 };
 
-CatalogsImporter::CatalogsImporter( const std::string &catalogue, int argc, char **argv )
-  : catalogue(QString::fromStdString(catalogue).trimmed())
-{
-  QCoreApplication app(argc, argv);
-  init(app.arguments());
-}
 
 void __dumpQuery(const QString &where, const QSqlQuery &query) {
   qDebug() << where << ": Error running query " << query.lastQuery();
@@ -50,9 +45,40 @@ void __dumpQuery(const QString &where, const QSqlQuery &query) {
 #define dumpQuery(q) __dumpQuery(__PRETTY_FUNCTION__, q)
 
 
-CatalogsImporter::CatalogsImporter( const std::string &catalogue, QCoreApplication &app )
-  : catalogue(QString::fromStdString(catalogue).trimmed())
+
+CatalogsImporter::CatalogsImporter( const std::string &catalogue, const std::string &catalogueCode, int argc, char **argv )
 {
+  setCatalogue(QString::fromStdString(catalogue).trimmed(), QString::fromStdString(catalogueCode).trimmed());
+  QCoreApplication app(argc, argv);
+  init(app.arguments());
+}
+
+
+
+CatalogsImporter &CatalogsImporter::setCatalogue(QString _catalogue, QString _code)
+{
+  _catalogue = _catalogue.trimmed();
+  _code = _code.isEmpty() ? _catalogue : _code.trimmed();
+  if(_catalogue.isEmpty()) {
+    _catalogue = "proper_name";
+    _code = "proper_name";
+  }
+  catalogue =_catalogue.trimmed();
+  while(catalogueId = findBy("SELECT id FROM catalogues WHERE name = :name", {{":name", _catalogue.trimmed()}}) < 0) {
+    QSqlQuery sqlQuery("INSERT INTO catalogues(name, code) VALUES(:name, :code)", db);
+    sqlQuery.bindValue(":name", _catalogue);
+    sqlQuery.bindValue(":code", _code);
+    if(!sqlQuery.exec()) {
+      dumpQuery( sqlQuery );
+    }
+  }
+  return *this;
+}
+
+
+CatalogsImporter::CatalogsImporter( const std::string &catalogue, const std::string &catalogueCode, QCoreApplication &app )
+{
+  setCatalogue(QString::fromStdString(catalogue).trimmed(), QString::fromStdString(catalogueCode).trimmed());
   init(app.arguments());
 }
 
@@ -115,25 +141,7 @@ void CatalogsImporter::init( QStringList arguments )
     throw std::runtime_error(error.str());
   }
   qDebug() << "Opening transaction: " << QSqlDatabase::database().transaction();
-//   qDebug() << "Cleanup database";
-//   QSqlQuery removeDenominations;
-//   removeDenominations.prepare("delete from denominations  where catalogue = :catalogue");
-//   removeDenominations.bindValue(":catalogue", catalogue);
-//   bool queryOk = removeDenominations.exec();
-//   int affectedRows = removeDenominations.numRowsAffected();
-//   if(!queryOk) {
-//     qDebug() << __PRETTY_FUNCTION__ << ": Last error: " << removeDenominations.lastError().text();
-//     throw std::runtime_error("Error removing denominations");
-//   }
-//   qDebug() << "denominations removal: " << queryOk << ", rowsAffected=" << affectedRows;
-//   QSqlQuery removeOrphanObjects("delete from \"objects\" where id in (select \"objects\".id from \"objects\" left join denominations on \"objects\".id = denominations.objects_id where denominations.id is null)");
-//   queryOk = removeOrphanObjects.exec();
-//   affectedRows = removeOrphanObjects.numRowsAffected();
-//   if(!queryOk) {
-//     qDebug() << __PRETTY_FUNCTION__ << ": Last error: " << removeOrphanObjects.lastError().text();
-//     throw std::runtime_error("Error removing denominations");
-//   }
-//   qDebug() << "orphan objects removal: " << queryOk << ", rowsAffected=" << affectedRows;
+
 }
 
 

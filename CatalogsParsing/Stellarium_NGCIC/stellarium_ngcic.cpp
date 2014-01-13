@@ -156,7 +156,7 @@ int main(int argc, char *argv[])
 
 
     namesFile.close();
-    CatalogsImporter importer("", a);
+    CatalogsImporter importer("", "", a);
 
     int current = 0;
     for(auto obj: ngcObjects ) {

@@ -168,7 +168,7 @@ int main(int argc, char ** argv){
           }
           return 0;
         }
-        CatalogsImporter importer("MCG", argc, argv);
+        CatalogsImporter importer("MCG", "MCG", argc, argv);
         index = 0;
         for(MCG object: objects) {
           long long objectId = importer.findByCatalog(object.other_names);

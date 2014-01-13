@@ -83,7 +83,9 @@ public:
 
     template<class Action>
     void persist(Action& a) {
-        dbo::field(a, _id, "id");
+//      std::cerr << "type for action: " << typeid(a).name() << std::endl;
+        if(typeid(a) != typeid(Wt::Dbo::InitSchema))
+          dbo::field(a, _id, "id");
         dbo::field(a, _objectId, "object_id");
         dbo::field(a, _rightAscension, "ra");
         dbo::field(a, _declination, "dec");

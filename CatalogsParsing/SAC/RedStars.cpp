@@ -153,10 +153,10 @@ int main(int argc, char **argv){
   cout << "WITH LOVE." << endl;
   
   string saguaroCat("Saguaro Astronomy Club Red Stars");
-  CatalogsImporter importer(saguaroCat, app);
+  CatalogsImporter importer(saguaroCat, "SAC_RED_STARS", app);
   cout << "Import starting...." << endl;
   for(int i=0; i<number_of_stars; i++) {
-    importer.setCatalogue(QString::fromStdString(saguaroCat));
+    importer.setCatalogue(QString::fromStdString(saguaroCat), "SAC_RED_STARS");
     RedStar star = list[i];
     QString catNumber = QString::number(i+1);
 

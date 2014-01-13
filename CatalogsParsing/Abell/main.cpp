@@ -34,7 +34,7 @@ int main(int argc, char **argv) {
   file.open(QIODevice::ReadOnly);
   QTextStream s(&file);
   QTextStream o(stdout);
-  CatalogsImporter importer("Abell", app);
+  CatalogsImporter importer("Abell", "A", app);
 
   o << "BEGIN TRANSACTION;" << endl;
   const QString objQuery = "INSERT INTO objects (object_id, \"ra\", \"dec\", magnitude, angular_size, type) VALUES('Abell %1', %2, %3, %4, %5, %6);";

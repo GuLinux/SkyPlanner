@@ -147,7 +147,7 @@ int main(int argc, char ** argv){
           }
           return 0;
         }
-        CatalogsImporter importer("UGC", argc, argv);
+        CatalogsImporter importer("UGC", "UGC", argc, argv);
         index = 0;
         for(UGC object: objects) {
           long long objectId = importer.findBy("SELECT objects_id from denominations WHERE \

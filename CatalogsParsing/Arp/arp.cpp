@@ -179,7 +179,7 @@ int main(int argc, char ** argv){
           return 0;
         }
         
-        CatalogsImporter importer("Arp", app);
+        CatalogsImporter importer("Arp", "Arp", app);
 	for (int i=0;i<array.size();i++){
           string catName(array[i].other_names.begin(), array[i].other_names.begin() + 3);
           long long otherId;

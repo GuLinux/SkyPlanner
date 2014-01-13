@@ -121,7 +121,7 @@ int main(int argc, char **argv){
 			 
 		}
 	}
-	CatalogsImporter importer("Saguaro Astronomy Club Asterisms", app);
+	CatalogsImporter importer("Saguaro Astronomy Club Asterisms", "SAC_ASTERISMS", app);
 cout << "BEGIN TRANSACTION;" << endl;
         
 	for(int i=0;i<conta;i++){
