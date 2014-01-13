@@ -57,6 +57,9 @@
 #include <Wt/WLocalDateTime>
 #include "astroplanner.h"
 #include <boost/regex.hpp>
+#include <boost/algorithm/string/trim.hpp>
+#include <boost/algorithm/string/trim.hpp>
+#include <boost/algorithm/string/join.hpp>
 
 
 using namespace Wt;
@@ -350,6 +353,24 @@ void AstroSessionTab::Private::populate()
     row->elementAt(7)->addWidget(new WText{ WDateTime::fromPosixTime( bestAltitude.when).time().toString() });
     row->elementAt(8)->addWidget(new WText{ Utils::htmlEncode(WString::fromUTF8(bestAltitude.coordinates.altitude.printable() )) });
     row->elementAt(9)->addWidget(new ObjectDifficultyWidget{sessionObject->ngcObject(), selectedTelescope, bestAltitude.coordinates.altitude.degrees() }); 
+    
+    vector<string> dbDescriptions;
+    vector<NebulaDenominationPtr> denominations;
+    copy_if(begin(sessionObject->ngcObject()->nebulae()), end(sessionObject->ngcObject()->nebulae()), back_inserter(denominations),
+            [](const NebulaDenominationPtr &d){ return d->comment() && ! boost::algorithm::trim_copy(*d->comment()).empty(); });
+    
+    transform(begin(denominations), end(denominations), back_inserter(dbDescriptions), [](const NebulaDenominationPtr &d){ return *d->comment(); });
+    if(!dbDescriptions.empty()) {
+      WTableRow *descriptionRow = objectsTable->insertRow(objectsTable->rowCount());
+      WTableCell *descriptionCell = descriptionRow->elementAt(0);
+      descriptionCell->setColumnSpan(11);
+      descriptionCell->addWidget(new WText{Utils::htmlEncode(
+        WString::fromUTF8(
+          boost::algorithm::join(dbDescriptions, "\n")
+        ), Utils::HtmlEncodingFlag::EncodeNewLines
+      )});
+    }
+    
     WTableRow *descriptionRow = objectsTable->insertRow(objectsTable->rowCount());
     WTableCell *descriptionCell = descriptionRow->elementAt(0);
     descriptionCell->setHidden(true);
