@@ -125,21 +125,20 @@ Wt::WString NgcObject::typeDescription() const
   return typeDescription( type() );
 }
 
-vector< Wt::Dbo::ptr< NebulaDenomination > > NgcObject::denominationsByCatalogueImportance( Wt::Dbo::Transaction &transaction ) const
+vector< Wt::Dbo::ptr< NebulaDenomination > > NgcObject::denominationsByCatalogueImportance(Wt::Dbo::Transaction &transaction , const NgcObjectPtr &object)
 {
   dbo::collection<NebulaDenominationPtr> denominationsByPriority =
     transaction.session().query<NebulaDenominationPtr>("SELECT d from denominations d inner join catalogues on d.catalogues_id = catalogues.id \
     WHERE d.objects_id = ? \
-    ORDER BY priority ASC").bind(_id);
+    ORDER BY priority ASC").bind(object.id());
   vector<NebulaDenominationPtr> denominations {denominationsByPriority.begin(), denominationsByPriority.end()};
   return denominations;
 }
 
-vector< string > NgcObject::namesByCatalogueImportance( Wt::Dbo::Transaction &transaction ) const
+vector< string > NgcObject::namesByCatalogueImportance( Wt::Dbo::Transaction &transaction, const NgcObjectPtr &object )
 {
   vector<string> names;
-  vector<NebulaDenominationPtr> denominations = denominationsByCatalogueImportance(transaction);
-  int size = denominations.size();
+  vector<NebulaDenominationPtr> denominations = denominationsByCatalogueImportance(transaction, object);
   for(NebulaDenominationPtr d: denominations) {
       if(std::count(names.begin(), names.end(), d->name()) == 0)
         names.push_back( d->name());

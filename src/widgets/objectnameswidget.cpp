@@ -58,7 +58,7 @@ ObjectNamesWidget::ObjectNamesWidget( const Wt::Dbo::ptr<NgcObject> &object, Ses
   : WContainerWidget( parent ), d( session, this )
 {
   Dbo::Transaction t(session);
-  WString namesJoined = Utils::htmlEncode( WString::fromUTF8( boost::algorithm::join( object->namesByCatalogueImportance(t), ", " ) ) );
+  WString namesJoined = Utils::htmlEncode( WString::fromUTF8( boost::algorithm::join( NgcObject::namesByCatalogueImportance(t, object), ", " ) ) );
 
   if( renderType == Printable )
   {
@@ -89,7 +89,7 @@ ObjectNamesWidget::ObjectNamesWidget( const Wt::Dbo::ptr<NgcObject> &object, Ses
 
     string catName;
     string catNumber;
-    auto dboDenominations = object->denominationsByCatalogueImportance(t);
+    auto dboDenominations = NgcObject::denominationsByCatalogueImportance(t, object);
     vector<NebulaDenominationPtr> denominations{begin(dboDenominations), end(dboDenominations)};
     for( auto nebula : denominations )
     {

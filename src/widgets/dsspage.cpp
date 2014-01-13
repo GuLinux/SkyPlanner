@@ -77,7 +77,7 @@ DSSPage::DSSPage(const NgcObjectPtr &object, Session &session, std::function<voi
   if(object->type() == NgcObject::NebGx || object->type() == NgcObject::NebGx)
     d->imageVersions = {DSSImage::poss2ukstu_blue, DSSImage::poss1_blue, DSSImage::poss2ukstu_red, DSSImage::poss1_red, DSSImage::phase2_gsc2};
   d->imageContainer = WW<WContainerWidget>();
-  WString namesJoined = Utils::htmlEncode(WString::fromUTF8( boost::algorithm::join(object->namesByCatalogueImportance(t), ", ") ));
+  WString namesJoined = Utils::htmlEncode(WString::fromUTF8( boost::algorithm::join(NgcObject::namesByCatalogueImportance(t, object), ", ") ));
   addWidget(new WText{WString("<h4>{1}</h4>").arg(namesJoined)});
   d->typeCombo = WW<WComboBox>();
   d->typeModel = new WStandardItemModel(d->typeCombo);
@@ -112,6 +112,6 @@ string DSSPage::internalPath( const Dbo::ptr< NgcObject > &object, Dbo::Transact
 {
   return format("/dss/%x/%s")
     % object.id()
-    % boost::regex_replace(boost::algorithm::join(object->namesByCatalogueImportance(transaction), "-"), boost::regex("[^a-zA-Z0-9]+"), "-" );
+    % boost::regex_replace(boost::algorithm::join(NgcObject::namesByCatalogueImportance(transaction, object), "-"), boost::regex("[^a-zA-Z0-9]+"), "-" );
 }
 

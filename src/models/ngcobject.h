@@ -43,6 +43,9 @@ namespace Wt {
 
     }
 }
+class NgcObject;
+typedef dbo::ptr<NgcObject> NgcObjectPtr;
+
 class NgcObject
 {
 public:
@@ -83,9 +86,6 @@ public:
 
     template<class Action>
     void persist(Action& a) {
-//      std::cerr << "type for action: " << typeid(a).name() << std::endl;
-        if(typeid(a) != typeid(Wt::Dbo::InitSchema))
-          dbo::field(a, _id, "id");
         dbo::field(a, _objectId, "object_id");
         dbo::field(a, _rightAscension, "ra");
         dbo::field(a, _declination, "dec");
@@ -95,8 +95,8 @@ public:
 	dbo::hasMany(a, _nebulae, dbo::ManyToOne);
 	dbo::hasMany(a, _astroSessionObjects, dbo::ManyToOne);
     }
-    std::vector<dbo::ptr<NebulaDenomination>> denominationsByCatalogueImportance(dbo::Transaction &transaction) const;
-    std::vector<std::string> namesByCatalogueImportance(dbo::Transaction &transaction) const;
+    static std::vector<dbo::ptr<NebulaDenomination>> denominationsByCatalogueImportance(dbo::Transaction &transaction, const NgcObjectPtr &object);
+    static std::vector<std::string> namesByCatalogueImportance(dbo::Transaction &transaction, const NgcObjectPtr &object);
 private:
     boost::optional<std::string> _objectId;
     float _rightAscension, _declination, _magnitude, _angularSize;
@@ -106,6 +106,5 @@ private:
     dbo::dbo_traits<NgcObject>::IdType _id;
 };
 
-typedef dbo::ptr<NgcObject> NgcObjectPtr;
 
 #endif // NGCOBJECT_H
