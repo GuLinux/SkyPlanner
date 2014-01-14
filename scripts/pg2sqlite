@@ -1,0 +1,3 @@
+#!/bin/bash
+sed 's/true/1/g' | sed 's/false/0/g'
+
