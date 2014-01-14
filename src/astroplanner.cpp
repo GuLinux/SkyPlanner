@@ -37,6 +37,7 @@
 #include <Wt/WTimer>
 #include "models/Models"
 #include "widgets/dsspage.h"
+#include <Wt/Auth/AbstractUserDatabase>
 
 using namespace std;
 using namespace Wt;
@@ -117,14 +118,29 @@ AstroPlanner::AstroPlanner( const WEnvironment &environment )
   auto setLoggedInWidget = [=] {
     navBarMenu->select(d->session.login().loggedIn() ? mySessionsMenuItem : authMenuItem);
   };
+
+  auto loginLogoutMessage = [=] {
+    if(d->session.login().loggedIn()) {
+      Dbo::Transaction t(d->session);
+      d->loginname = d->session.authInfo()->identity("loginname");
+    }
+    wApp->log("notice") << "***** "
+                        << (d->session.login().loggedIn() ? "LOGIN"  : "LOGOUT")
+                        << ": user " << d->loginname << " logged "
+                        << (d->session.login().loggedIn() ?   "in"  : "out")
+                        << "; wApp->sessionId " << sessionId();
+  };
   
   logout->triggered().connect([=](WMenuItem*,_n5){ d->session.login().logout(); });
   d->session.login().changed().connect([=](_n6){
     setMenuItemsVisibility();
     setLoggedInWidget();
+    loginLogoutMessage();
   });
   setMenuItemsVisibility();
   setLoggedInWidget();
+  if(d->session.login().loggedIn())
+    loginLogoutMessage();
   auto handlePath = [=](const string &newPath){
     log("notice") << __PRETTY_FUNCTION__ << ": newPath=" << newPath;
     log("notice") << "first folder: " << internalPathNextPart("/");

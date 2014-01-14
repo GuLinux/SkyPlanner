@@ -40,6 +40,7 @@ public:
     void loadDSSPage(const std::string &hexId);
     std::string previousInternalPath = "/";
     Wt::WContainerWidget *dssContainer;
+    Wt::WString loginname;
 private:
     class AstroPlanner* const q;
 };

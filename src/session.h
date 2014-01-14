@@ -32,6 +32,9 @@ namespace Wt
     class AbstractUserDatabase;
     class PasswordService;
     class AuthService;
+    namespace Dbo {
+      template<typename T> class AuthInfo;
+    }
   }
 }
 
@@ -43,6 +46,7 @@ public:
     Wt::Auth::AbstractUserDatabase& users();
     Wt::Auth::Login& login();
     Wt::Dbo::ptr<User> user();
+    Wt::Dbo::ptr<Wt::Auth::Dbo::AuthInfo<User>> authInfo();
     static const Wt::Auth::AuthService &auth();
     static const Wt::Auth::PasswordService &passwordAuth();
     static void configureAuth();

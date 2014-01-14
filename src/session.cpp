@@ -102,15 +102,20 @@ Dbo::ptr<User> Session::user()
 {
   if (!d->login.loggedIn())
     return dbo::ptr<User>();
-  dbo::ptr<AuthInfo> authInfo = d->users->find(d->login.user());
-  dbo::ptr<User> user = authInfo->user();
+  dbo::ptr<AuthInfo> _authInfo = authInfo();
+  dbo::ptr<User> user = _authInfo->user();
   
   if(!user) {
     user = add(new User);
-    authInfo.modify()->setUser(user);
-    authInfo.flush();
+    _authInfo.modify()->setUser(user);
+    _authInfo.flush();
   }    
-  return authInfo->user();
+  return _authInfo->user();
+}
+
+Dbo::ptr<AuthInfo> Session::authInfo()
+{
+  return d->users->find(d->login.user());
 }
 
 void Session::configureAuth()
