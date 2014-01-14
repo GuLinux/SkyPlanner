@@ -29,6 +29,7 @@
 #include "ephemeris.h"
 #include "utils/format.h"
 #include "widgets/objectnameswidget.h"
+#include "widgets/cataloguesdescriptionwidget.h"
 #include "constellationfinder.h"
 #include "widgets/objectdifficultywidget.h"
 #include <Wt/Render/WPdfRenderer>
@@ -232,19 +233,10 @@ void PrintableAstroSessionResource::handleRequest(const Wt::Http::Request &reque
     rowTemplate.bindString("rows-spacing", format("%.1f") % (static_cast<double>(d->rowsSpacing) * 1.3) );
 
 
-    // TODO: refactoring
     auto dbDescriptions = sessionObject->ngcObject()->descriptions();
     rowTemplate.setCondition("have-catalogues-description", !dbDescriptions.empty());
     if(!dbDescriptions.empty()) {
-      WContainerWidget *descriptionCell = new WContainerWidget();
-      descriptionCell->addWidget(new WText{WString::tr("object_row_cataloguedesc")});
-      for(auto den: dbDescriptions)
-        descriptionCell->addWidget(new WText{WString("<strong>{1}</strong>: {2}")
-                                             .arg(den.catalogue->name() )
-                                             .arg(Utils::htmlEncode( WString::fromUTF8(den.description), Utils::HtmlEncodingFlag::EncodeNewLines )
-                                             )
-                                   });
-      rowTemplate.bindWidget("catalogues-description", descriptionCell);
+      rowTemplate.bindWidget("catalogues-description", new CataloguesDescriptionWidget{dbDescriptions});
     }
 
     rowTemplate.renderTemplate(tableRows);

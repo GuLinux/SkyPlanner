@@ -39,6 +39,7 @@
 #include "selectobjectswidget.h"
 #include "widgets/objectdifficultywidget.h"
 #include "widgets/objectnameswidget.h"
+#include "widgets/cataloguesdescriptionwidget.h"
 #include <Wt/Utils>
 #include <Wt/WTimer>
 #include <boost/format.hpp>
@@ -353,21 +354,7 @@ void AstroSessionTab::Private::populate()
     row->elementAt(8)->addWidget(new WText{ Utils::htmlEncode(WString::fromUTF8(bestAltitude.coordinates.altitude.printable() )) });
     row->elementAt(9)->addWidget(new ObjectDifficultyWidget{sessionObject->ngcObject(), selectedTelescope, bestAltitude.coordinates.altitude.degrees() }); 
     
-    // TODO: refactoring
-    auto dbDescriptions = sessionObject->ngcObject()->descriptions();
-    if(!dbDescriptions.empty()) {
-      WTableRow *descriptionRow = objectsTable->insertRow(objectsTable->rowCount());
-      WTableCell *descriptionCell = descriptionRow->elementAt(0);
-      descriptionCell->setColumnSpan(11);
-      descriptionCell->addStyleClass("alert alert-info");
-      descriptionCell->addWidget(new WText{WString::tr("object_row_cataloguedesc")});
-      for(auto den: dbDescriptions)
-        descriptionCell->addWidget(new WText{WString("<strong>{1}</strong>: {2}")
-                                             .arg(den.catalogue->name() )
-                                             .arg(Utils::htmlEncode( WString::fromUTF8(den.description), Utils::HtmlEncodingFlag::EncodeNewLines )
-                                             )
-                                   });
-    }
+    CataloguesDescriptionWidget::add(objectsTable, 11, sessionObject->ngcObject());
     
     WTableRow *descriptionRow = objectsTable->insertRow(objectsTable->rowCount());
     WTableCell *descriptionCell = descriptionRow->elementAt(0);

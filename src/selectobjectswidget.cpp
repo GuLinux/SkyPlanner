@@ -39,6 +39,7 @@
 #include "constellationfinder.h"
 #include "widgets/objectnameswidget.h"
 #include "widgets/objectdifficultywidget.h"
+#include "widgets/cataloguesdescriptionwidget.h"
 #include "astroplanner.h"
 #include <Wt/WGroupBox>
 #include <Wt/WSpinBox>
@@ -123,21 +124,7 @@ void SelectObjectsWidget::Private::append(WTable *table, const Dbo::ptr<NgcObjec
     objectsListChanged.emit();
   }));
 
-  // TODO: refactoring
-  auto dbDescriptions = ngcObject->descriptions();
-  if(!dbDescriptions.empty()) {
-    WTableRow *descriptionRow = table->insertRow(table->rowCount());
-    WTableCell *descriptionCell = descriptionRow->elementAt(0);
-    descriptionCell->setColumnSpan(8);
-    descriptionCell->addStyleClass("alert alert-info");
-    descriptionCell->addWidget(new WText{WString::tr("object_row_cataloguedesc")});
-    for(auto den: dbDescriptions)
-      descriptionCell->addWidget(new WText{WString("<strong>{1}</strong>: {2}")
-                                           .arg(den.catalogue->name() )
-                                           .arg(Utils::htmlEncode( WString::fromUTF8(den.description), Utils::HtmlEncodingFlag::EncodeNewLines )
-                                           )
-                                 });
-  }
+  CataloguesDescriptionWidget::add(table, 8, ngcObject);
 }
 
 
