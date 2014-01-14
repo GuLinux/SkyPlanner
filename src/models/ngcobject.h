@@ -45,6 +45,7 @@ namespace Wt {
 }
 class NgcObject;
 typedef dbo::ptr<NgcObject> NgcObjectPtr;
+typedef dbo::ptr<NebulaDenomination> NebulaDenominationPtr;
 
 class NgcObject
 {
@@ -71,7 +72,7 @@ public:
     ~NgcObject();
     // CREATE TABLE objects (object_id TEXT PRIMARY KEY, ra REAL, dec REAL, magnitude REAL, angular_size REAL, type INTEGER);
     boost::optional<std::string> objectId() const;
-    dbo::collection< dbo::ptr<NebulaDenomination> > nebulae() const;
+    dbo::collection<NebulaDenominationPtr> nebulae() const;
     float rightAscension() const;
     float declination() const;
     Coordinates::Equatorial coordinates() const;
@@ -95,14 +96,16 @@ public:
 	dbo::hasMany(a, _nebulae, dbo::ManyToOne);
 	dbo::hasMany(a, _astroSessionObjects, dbo::ManyToOne);
     }
-    static std::vector<dbo::ptr<NebulaDenomination>> denominationsByCatalogueImportance(dbo::Transaction &transaction, const NgcObjectPtr &object);
+    static std::vector<NebulaDenominationPtr> denominationsByCatalogueImportance(dbo::Transaction &transaction, const NgcObjectPtr &object);
     static std::vector<std::string> namesByCatalogueImportance(dbo::Transaction &transaction, const NgcObjectPtr &object);
+
+    std::map<NebulaDenominationPtr, std::string> descriptions() const;
 private:
     boost::optional<std::string> _objectId;
     float _rightAscension, _declination, _magnitude, _angularSize;
     NebulaType _type;
-    dbo::collection< dbo::ptr<NebulaDenomination> > _nebulae;
-    dbo::collection< dbo::ptr<AstroSessionObject> > _astroSessionObjects;
+    dbo::collection<NebulaDenominationPtr> _nebulae;
+    dbo::collection<NebulaDenominationPtr> _astroSessionObjects;
     dbo::dbo_traits<NgcObject>::IdType _id;
 };
 

@@ -48,6 +48,7 @@
 <message id="object_column_difficulty">Difficulty</message>
 <message id="object_column_highest_time">Highest At</message>
 <message id="object_column_max_altitude">Max Altitude</message>
+<message id="object_row_cataloguedesc"><h5>Catalogues description:</h5></message>
 <message id="notification_warning_title">Warning</message>
 <message id="notification_object_already_added">Object already added to this session, skipping.</message>
 <message id="filters">Filters</message>

@@ -100,6 +100,7 @@
 <message id="object_column_ar">AR</message>
 <message id="object_column_dec">DEC</message>
 <message id="object_column_angular_size">Dimensione Angolare</message>
+<message id="object_row_cataloguedesc"><h5>Descrizione dai cataloghi:</h5></message>
 <message id="object_notes">Le tue annotazioni</message>
 <message id="notification_success_title">Successo</message>
 <message id="notification_description_saved">Descrizione Salvata!</message>

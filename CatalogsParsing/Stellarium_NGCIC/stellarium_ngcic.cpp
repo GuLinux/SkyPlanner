@@ -168,7 +168,7 @@ int main(int argc, char *argv[])
           throw std::runtime_error("Error inserting ngc object");
 
         auto addDenomination = [=,&importer] (const QString &catalogue, int catalogueNumber, const QString &name, const QString &comment) {
-            importer.setCatalogue(catalogue);
+          importer.setCatalogue(catalogue, catalogue == "Messier" ? "M" : catalogue);
             qDebug() << "Adding object: catalogue=" << catalogue << "number=" << catalogueNumber << "name=" << name << "comment=" << comment;
             importer.insertDenomination(catalogueNumber <= 0 ? QString() : QString::number(catalogueNumber), name, comment, objectId, 0);
         };
