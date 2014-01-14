@@ -118,7 +118,7 @@ void AstroSessionTab::Private::reload()
   addObjectsTabWidget->objectsListChanged().connect([=](_n6){populate(); });
   q->addWidget(new WText{WString("<h3>{1}</h3>").arg(WString::tr("astrosessiontab_objects_title"))});
 
-  q->addWidget(objectsTable = WW<WTable>().addCss("table table-striped table-hover"));
+  q->addWidget(objectsTable = WW<WTable>().addCss("table  table-hover"));
   objectsTable->setHeaderCount(1);
   
   Dbo::Transaction t(session);
