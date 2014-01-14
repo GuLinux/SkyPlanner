@@ -14,7 +14,7 @@ CataloguesDescriptionWidget::CataloguesDescriptionWidget(const vector<NgcObject:
 
   container->addWidget(new WText{WString::tr("object_row_cataloguedesc")});
   for(auto d: cataloguesDescriptions)
-    container->addWidget(new WText{WString("<strong>{1}</strong>: {2}")
+    container->addWidget(new WText{WString("<strong>{1}</strong>: {2}<br />")
                                          .arg(d.catalogue->name() )
                                          .arg(Utils::htmlEncode( WString::fromUTF8(d.description), Utils::HtmlEncodingFlag::EncodeNewLines )
                                          )
