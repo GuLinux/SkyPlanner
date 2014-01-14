@@ -198,6 +198,9 @@ void PrintableAstroSessionResource::handleRequest(const Wt::Http::Request &reque
     <td>${difficulty}</td>\n\
     ${</have-telescope>}\
     </tr>\n\
+    ${<have-catalogues-description>}\
+    <tr><td colspan=\"${total-columns}\">${catalogues-description}</td></tr>\n\
+    ${</have-catalogues-description>}\
     ${<have-description>}\
     <tr><td colspan=\"${total-columns}\">${description}</td></tr>\n\
     ${</have-description>}\
@@ -227,6 +230,23 @@ void PrintableAstroSessionResource::handleRequest(const Wt::Http::Request &reque
     rowTemplate.bindString("description", Utils::htmlEncode(WString::fromUTF8(sessionObject->description())));
     rowTemplate.setCondition("have-rows-spacing", d->rowsSpacing > 0);
     rowTemplate.bindString("rows-spacing", format("%.1f") % (static_cast<double>(d->rowsSpacing) * 1.3) );
+
+
+    // TODO: refactoring
+    map<NebulaDenominationPtr, string> dbDescriptions = sessionObject->ngcObject()->descriptions();
+    rowTemplate.setCondition("have-catalogues-description", !dbDescriptions.empty());
+    if(!dbDescriptions.empty()) {
+      WContainerWidget *descriptionCell = new WContainerWidget();
+      descriptionCell->addWidget(new WText{WString::tr("object_row_cataloguedesc")});
+      for(auto den: dbDescriptions)
+        descriptionCell->addWidget(new WText{WString("<strong>{1}</strong>: {2}")
+                                             .arg(den.first->catalogue()->name() )
+                                             .arg(Utils::htmlEncode( WString::fromUTF8(den.second), Utils::HtmlEncodingFlag::EncodeNewLines )
+                                             )
+                                   });
+      rowTemplate.bindWidget("catalogues-description", descriptionCell);
+    }
+
     rowTemplate.renderTemplate(tableRows);
   }
   printable.bindString("table-rows", WString::fromUTF8(tableRows.str()));

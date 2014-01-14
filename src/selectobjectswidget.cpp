@@ -205,7 +205,7 @@ void SelectObjectsWidget::Private::suggestedObjects(Dbo::Transaction& transactio
   });
   
   suggestedObjectsContainer->addWidget(WW<WGroupBox>(WString::tr("filters")).add(WW<WContainerWidget>().css("form-inline").add(astroTypeLabel).add(astroTypeCombo)));
-  suggestedObjectsTable = WW<WTable>().addCss("table table-striped table-hover");
+  suggestedObjectsTable = WW<WTable>().addCss("table  table-hover");
   suggestedObjectsTablePagination = WW<WContainerWidget>();
   suggestedObjectsLoaded.connect(this, &SelectObjectsWidget::Private::populateSuggestedObjectsTable);
 
@@ -279,7 +279,7 @@ void SelectObjectsWidget::Private::searchByNameTab(Dbo::Transaction& transaction
   WContainerWidget *addObjectByName = WW<WContainerWidget>();
   WLineEdit *name = WW<WLineEdit>();
   name->setEmptyText(WString::tr("select_objects_widget_add_by_name"));
-  WTable *resultsTable = WW<WTable>().addCss("table table-striped table-hover");
+  WTable *resultsTable = WW<WTable>().addCss("table  table-hover");
   auto searchByName = [=] {
     Dbo::Transaction t(session);
     string nameToSearch = boost::algorithm::trim_copy(name->text().toUTF8());
@@ -328,7 +328,7 @@ void SelectObjectsWidget::Private::searchByCatalogueTab(Dbo::Transaction& transa
   cataloguesModel->addColumn("id");
   WLineEdit *catalogueNumber = WW<WLineEdit>();
   catalogueNumber->setEmptyText(WString::tr("catalogue_number"));
-  WTable *resultsTable = WW<WTable>().addCss("table table-striped table-hover");
+  WTable *resultsTable = WW<WTable>().addCss("table  table-hover");
 
 
   cataloguesCombo->setModel(cataloguesModel);
