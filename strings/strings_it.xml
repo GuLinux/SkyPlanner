@@ -81,6 +81,7 @@
 <message id="astrosessiontab_information_panel">Informazioni</message>
 <message id="astrosessiontab_object_observed">✓ Osservato</message>
 <message id="astrosessiontab_object_not_observed">✗ Osservato</message>
+<message id="object_more_info">Altro...</message>
 <message id="object_column_names">Nomi</message>
 <message id="object_column_type">Tipo</message>
 <message id="object_column_constellation">Costellazione</message>

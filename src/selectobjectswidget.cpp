@@ -103,7 +103,7 @@ void SelectObjectsWidget::Private::append(WTable *table, const Dbo::ptr<NgcObjec
   int existing = session.query<int>("select count(*) from astro_session_object where astro_session_id = ? AND objects_id = ? ").bind(astroSession.id() ).bind(ngcObject.id() );
   if(existing > 0)
     row->addStyleClass("success");
-  row->elementAt(0)->addWidget(new ObjectNamesWidget{ngcObject, session, astroSession});
+  row->elementAt(0)->addWidget(WW<ObjectNamesWidget>(new ObjectNamesWidget{ngcObject, session, astroSession}).setInline(true));
   row->elementAt(1)->addWidget(new WText{ ngcObject->typeDescription() });
   row->elementAt(2)->addWidget(new WText{ WString::fromUTF8(ConstellationFinder::getName(ngcObject->coordinates()).name) });
   row->elementAt(3)->addWidget(new WText{ (ngcObject->magnitude() > 90.) ? "N/A" : (format("%.1f") % ngcObject->magnitude()).str() });
@@ -124,7 +124,14 @@ void SelectObjectsWidget::Private::append(WTable *table, const Dbo::ptr<NgcObjec
     objectsListChanged.emit();
   }));
 
-  CataloguesDescriptionWidget::add(table, 8, ngcObject);
+  auto cataloguesDescriptionWidget = CataloguesDescriptionWidget::add(table, 8, ngcObject, true);
+  if(cataloguesDescriptionWidget) {
+    WPushButton *toggleDescriptionsButton = WW<WPushButton>(WString::tr("object_more_info"), row->elementAt(0)).css("btn btn-mini pull-right");
+    toggleDescriptionsButton->clicked().connect([=](WMouseEvent){
+      toggleDescriptionsButton->toggleStyleClass("btn-inverse", cataloguesDescriptionWidget->isHidden());
+      cataloguesDescriptionWidget->setHidden(!cataloguesDescriptionWidget->isHidden());
+    });
+  }
 }
 
 

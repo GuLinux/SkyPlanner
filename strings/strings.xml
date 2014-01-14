@@ -41,6 +41,7 @@
 <message id="astrosessiontab_object_observed">✓ Observed</message>
 <message id="astrosessiontab_object_not_observed">✗ Observed</message>
 
+<message id="object_more_info">More...</message>
 <message id="object_column_names">Names</message>
 <message id="object_column_type">Type</message>
 <message id="object_column_constellation">Constellation</message>

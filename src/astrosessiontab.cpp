@@ -342,7 +342,7 @@ void AstroSessionTab::Private::populate()
   for(auto sessionObjectElement: sessionObjects) {
     dbo::ptr<AstroSessionObject> sessionObject = sessionObjectElement.first;
     WTableRow *row = objectsTable->insertRow(objectsTable->rowCount());
-    row->elementAt(0)->addWidget(new ObjectNamesWidget{sessionObject->ngcObject(), session, astroSession});
+    row->elementAt(0)->addWidget(WW<ObjectNamesWidget>(new ObjectNamesWidget{sessionObject->ngcObject(), session, astroSession}).setInline(true));
     row->elementAt(1)->addWidget(new WText{sessionObject->ngcObject()->typeDescription() });
     row->elementAt(2)->addWidget(new WText{ Utils::htmlEncode( sessionObject->coordinates().rightAscension.printable(Angle::Hourly) ) });
     row->elementAt(3)->addWidget(new WText{ Utils::htmlEncode( WString::fromUTF8( sessionObject->coordinates().declination.printable() )) });
@@ -354,7 +354,14 @@ void AstroSessionTab::Private::populate()
     row->elementAt(8)->addWidget(new WText{ Utils::htmlEncode(WString::fromUTF8(bestAltitude.coordinates.altitude.printable() )) });
     row->elementAt(9)->addWidget(new ObjectDifficultyWidget{sessionObject->ngcObject(), selectedTelescope, bestAltitude.coordinates.altitude.degrees() }); 
     
-    CataloguesDescriptionWidget::add(objectsTable, 11, sessionObject->ngcObject());
+    auto cataloguesDescriptionWidget = CataloguesDescriptionWidget::add(objectsTable, 11, sessionObject->ngcObject(), true);
+    if(cataloguesDescriptionWidget) {
+      WPushButton *toggleDescriptionsButton = WW<WPushButton>(WString::tr("object_more_info"), row->elementAt(0)).css("btn btn-mini pull-right");
+      toggleDescriptionsButton->clicked().connect([=](WMouseEvent){
+        toggleDescriptionsButton->toggleStyleClass("btn-inverse", cataloguesDescriptionWidget->isHidden());
+        cataloguesDescriptionWidget->setHidden(!cataloguesDescriptionWidget->isHidden());
+      });
+    }
     
     WTableRow *descriptionRow = objectsTable->insertRow(objectsTable->rowCount());
     WTableCell *descriptionCell = descriptionRow->elementAt(0);

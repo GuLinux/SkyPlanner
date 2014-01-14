@@ -22,14 +22,17 @@ CataloguesDescriptionWidget::CataloguesDescriptionWidget(const vector<NgcObject:
 }
 
 
-void CataloguesDescriptionWidget::add(WTable *table, int colSpan, const NgcObjectPtr &object)
+WWidget *CataloguesDescriptionWidget::add(WTable *table, int colSpan, const NgcObjectPtr &object, bool hidden)
 {
   auto dbDescriptions = object->descriptions();
   if(!dbDescriptions.empty()) {
     WTableRow *descriptionRow = table->insertRow(table->rowCount());
     WTableCell *descriptionCell = descriptionRow->elementAt(0);
+    descriptionCell->setHidden(hidden);
     descriptionCell->setColumnSpan(colSpan);
     descriptionCell->addStyleClass("alert alert-info");
     descriptionCell->addWidget(new CataloguesDescriptionWidget{dbDescriptions});
+    return descriptionCell;
   }
+  return nullptr;
 }
