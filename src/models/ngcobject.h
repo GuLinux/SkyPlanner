@@ -44,8 +44,10 @@ namespace Wt {
     }
 }
 class NgcObject;
+class Catalogue;
 typedef dbo::ptr<NgcObject> NgcObjectPtr;
 typedef dbo::ptr<NebulaDenomination> NebulaDenominationPtr;
+typedef dbo::ptr<Catalogue> CataloguePtr;
 
 class NgcObject
 {
@@ -99,7 +101,12 @@ public:
     static std::vector<NebulaDenominationPtr> denominationsByCatalogueImportance(dbo::Transaction &transaction, const NgcObjectPtr &object);
     static std::vector<std::string> namesByCatalogueImportance(dbo::Transaction &transaction, const NgcObjectPtr &object);
 
-    std::map<NebulaDenominationPtr, std::string> descriptions() const;
+    struct CatalogueDescription {
+      CataloguePtr catalogue;
+      std::string description;
+    };
+
+    std::vector<CatalogueDescription> descriptions() const;
 private:
     boost::optional<std::string> _objectId;
     float _rightAscension, _declination, _magnitude, _angularSize;

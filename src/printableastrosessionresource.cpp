@@ -233,15 +233,15 @@ void PrintableAstroSessionResource::handleRequest(const Wt::Http::Request &reque
 
 
     // TODO: refactoring
-    map<NebulaDenominationPtr, string> dbDescriptions = sessionObject->ngcObject()->descriptions();
+    auto dbDescriptions = sessionObject->ngcObject()->descriptions();
     rowTemplate.setCondition("have-catalogues-description", !dbDescriptions.empty());
     if(!dbDescriptions.empty()) {
       WContainerWidget *descriptionCell = new WContainerWidget();
       descriptionCell->addWidget(new WText{WString::tr("object_row_cataloguedesc")});
       for(auto den: dbDescriptions)
         descriptionCell->addWidget(new WText{WString("<strong>{1}</strong>: {2}")
-                                             .arg(den.first->catalogue()->name() )
-                                             .arg(Utils::htmlEncode( WString::fromUTF8(den.second), Utils::HtmlEncodingFlag::EncodeNewLines )
+                                             .arg(den.catalogue->name() )
+                                             .arg(Utils::htmlEncode( WString::fromUTF8(den.description), Utils::HtmlEncodingFlag::EncodeNewLines )
                                              )
                                    });
       rowTemplate.bindWidget("catalogues-description", descriptionCell);

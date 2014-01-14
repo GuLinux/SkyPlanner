@@ -354,7 +354,7 @@ void AstroSessionTab::Private::populate()
     row->elementAt(9)->addWidget(new ObjectDifficultyWidget{sessionObject->ngcObject(), selectedTelescope, bestAltitude.coordinates.altitude.degrees() }); 
     
     // TODO: refactoring
-    map<NebulaDenominationPtr, string> dbDescriptions = sessionObject->ngcObject()->descriptions();
+    auto dbDescriptions = sessionObject->ngcObject()->descriptions();
     if(!dbDescriptions.empty()) {
       WTableRow *descriptionRow = objectsTable->insertRow(objectsTable->rowCount());
       WTableCell *descriptionCell = descriptionRow->elementAt(0);
@@ -363,8 +363,8 @@ void AstroSessionTab::Private::populate()
       descriptionCell->addWidget(new WText{WString::tr("object_row_cataloguedesc")});
       for(auto den: dbDescriptions)
         descriptionCell->addWidget(new WText{WString("<strong>{1}</strong>: {2}")
-                                             .arg(den.first->catalogue()->name() )
-                                             .arg(Utils::htmlEncode( WString::fromUTF8(den.second), Utils::HtmlEncodingFlag::EncodeNewLines )
+                                             .arg(den.catalogue->name() )
+                                             .arg(Utils::htmlEncode( WString::fromUTF8(den.description), Utils::HtmlEncodingFlag::EncodeNewLines )
                                              )
                                    });
     }

@@ -148,14 +148,13 @@ vector< string > NgcObject::namesByCatalogueImportance( Wt::Dbo::Transaction &tr
 }
 
 
-map<NebulaDenominationPtr, string> NgcObject::descriptions() const
+std::vector<NgcObject::CatalogueDescription> NgcObject::descriptions() const
 {
-  map<NebulaDenominationPtr, string> dbDescriptions;
+  vector<CatalogueDescription> dbDescriptions;
   vector<NebulaDenominationPtr> denominations;
   copy_if(begin(_nebulae), end(_nebulae), back_inserter(denominations),
           [](const NebulaDenominationPtr &d){ return d->comment() && ! boost::algorithm::trim_copy(*d->comment()).empty(); });
 
-  for(auto d: denominations)
-    dbDescriptions[d] = *d->comment();
+  transform(begin(denominations), end(denominations), back_inserter(dbDescriptions), [](const NebulaDenominationPtr &d){ return CatalogueDescription{d->catalogue(), *d->comment()}; });
   return dbDescriptions;
 }

@@ -124,7 +124,7 @@ void SelectObjectsWidget::Private::append(WTable *table, const Dbo::ptr<NgcObjec
   }));
 
   // TODO: refactoring
-  map<NebulaDenominationPtr, string> dbDescriptions = ngcObject->descriptions();
+  auto dbDescriptions = ngcObject->descriptions();
   if(!dbDescriptions.empty()) {
     WTableRow *descriptionRow = table->insertRow(table->rowCount());
     WTableCell *descriptionCell = descriptionRow->elementAt(0);
@@ -133,8 +133,8 @@ void SelectObjectsWidget::Private::append(WTable *table, const Dbo::ptr<NgcObjec
     descriptionCell->addWidget(new WText{WString::tr("object_row_cataloguedesc")});
     for(auto den: dbDescriptions)
       descriptionCell->addWidget(new WText{WString("<strong>{1}</strong>: {2}")
-                                           .arg(den.first->catalogue()->name() )
-                                           .arg(Utils::htmlEncode( WString::fromUTF8(den.second), Utils::HtmlEncodingFlag::EncodeNewLines )
+                                           .arg(den.catalogue->name() )
+                                           .arg(Utils::htmlEncode( WString::fromUTF8(den.description), Utils::HtmlEncodingFlag::EncodeNewLines )
                                            )
                                  });
   }
