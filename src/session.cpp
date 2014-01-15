@@ -61,6 +61,7 @@ Session::Session()
   mapClass<NgcObject>("objects");
   mapClass<NebulaDenomination>("denominations");
   mapClass<User>("user");
+  mapClass<User::Setting>("user_settings");
   mapClass<Telescope>("telescope");
   mapClass<AuthInfo>("auth_info");
   mapClass<AuthInfo::AuthIdentityType>("auth_identity");

@@ -5,6 +5,7 @@
 #include "ngcobject.h"
 #include "nebuladenomination.h"
 #include "user.h"
+#include "usersetting.h"
 #include "telescope.h"
 #include "astrosession.h"
 #include "astrosessionobject.h"

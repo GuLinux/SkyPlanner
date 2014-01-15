@@ -32,7 +32,6 @@ class User;
 class Telescope;
 class AstroSession;
 typedef Wt::Auth::Dbo::AuthInfo<User> AuthInfo;
-
 class User {
 public:
   template<class Action>
@@ -41,14 +40,21 @@ public:
     dbo::field(a, _isAdmin, "is_admin");
     dbo::hasMany(a, _telescopes, dbo::ManyToOne);
     dbo::hasMany(a, _astroSessions, dbo::ManyToOne);
+    dbo::hasMany(a, _settings, dbo::ManyToOne);
   }
   dbo::collection<dbo::ptr<Telescope>> telescopes() const;
   dbo::collection<dbo::ptr<AstroSession>> astroSessions() const;
   bool isAdmin() const;
+  class Setting;
+  typedef dbo::ptr<Setting> SettingPtr;
 private:
   dbo::collection<dbo::ptr<Telescope>> _telescopes;
   dbo::collection<dbo::ptr<AstroSession>> _astroSessions;
   bool _isAdmin = false;
+
+  friend class Setting;
+  dbo::collection<dbo::ptr<Setting>> _settings;
+
 };
 
 typedef dbo::ptr<User> UserPtr;

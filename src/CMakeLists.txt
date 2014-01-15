@@ -33,6 +33,7 @@ set(SkyPlanner_MODELS_SRCS
   models/user.cpp
   models/nebuladenomination.cpp
   models/ngcobject.cpp
+  models/usersetting.cpp
 )
 
 
