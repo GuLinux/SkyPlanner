@@ -38,6 +38,7 @@
 #include "models/Models"
 #include "widgets/dsspage.h"
 #include <Wt/Auth/AbstractUserDatabase>
+#include "usersettingspage.h"
 
 using namespace std;
 using namespace Wt;
@@ -101,6 +102,9 @@ AstroPlanner::AstroPlanner( const WEnvironment &environment )
   d->loggedInItems.push_back(telescopesMenuItem = navBarMenu->addItem(WString::tr("mainmenu_my_telescopes"), telescopesPage));
   telescopesMenuItem->setPathComponent("telescopes/");
   
+  WMenuItem *userSettingsMenuItem = navBarMenu->addItem(WString::tr("mainmenu_my_settings"), new UserSettingsPage(d->session));
+  d->loggedInItems.push_back(userSettingsMenuItem);
+  userSettingsMenuItem->setPathComponent("settings/");
   WMenuItem *logout = navBarMenu->addItem(WString::tr("mainmenu_logout"));
   logout->setPathComponent("logout/");
   d->loggedInItems.push_back(logout);

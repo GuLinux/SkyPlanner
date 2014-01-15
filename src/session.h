@@ -47,8 +47,8 @@ public:
     Wt::Auth::Login& login();
     Wt::Dbo::ptr<User> user();
     Wt::Dbo::ptr<Wt::Auth::Dbo::AuthInfo<User>> authInfo();
-    static const Wt::Auth::AuthService &auth();
-    static const Wt::Auth::PasswordService &passwordAuth();
+    static Wt::Auth::AuthService &auth();
+    static Wt::Auth::PasswordService &passwordAuth();
     static void configureAuth();
 private:
   D_PTR;

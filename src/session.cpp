@@ -133,12 +133,12 @@ void Session::configureAuth()
   myPasswordService.setStrengthValidator(passwordValidator);
 }
 
-const Auth::AuthService& Session::auth()
+Auth::AuthService& Session::auth()
 {
   return myAuthService;
 }
 
-const Auth::PasswordService& Session::passwordAuth()
+Auth::PasswordService& Session::passwordAuth()
 {
   return myPasswordService;
 }

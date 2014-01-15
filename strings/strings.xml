@@ -4,6 +4,8 @@
 <message id="mainmenu_login">Login</message>
 <message id="mainmenu_my_sessions">My Sessions</message>
 <message id="mainmenu_my_telescopes">My Telescopes</message>
+<message id="mainmenu_my_settings">Settings</message>
+
 <message id="mainmenu_logout">Logout</message>
 <message id="telescopes_telescope_name">Telescope Name</message>
 <message id="telescopes_diameter_mm">Diameter (mm)</message>
@@ -106,4 +108,14 @@
 <message id="dssimage_version_quickv">Quick-V</message>
 <message id="dssimage_version_phase2_gsc2">HST Phase 2 (GSC2)</message>
 <message id="dssimage_version_phase2_gsc1">HST Phase 2 (GSC1)</message>
+
+<message id="user_settings_change_password">Change Password</message>
+<message id="user_settings_old_password">Current Password</message>
+<message id="user_settings_new_password">New Password</message>
+<message id="user_settings_new_password_confirm">Confirm Password</message>
+
+<message id="changepwd_error_title">Error updating password</message>
+<message id="changepwd_wrong_password">Current password is wrong</message>
+<message id="changepwd__passwords_not_matching">New password and password confirmation do not match</message>
+<message id="changepwd_passwords_changed">Password was updated correctly</message>
 </messages>

@@ -44,6 +44,7 @@
 
 <message id="mainmenu_my_sessions">Le Mie Osservazioni</message>
 <message id="mainmenu_my_telescopes">I Miei Telescopi</message>
+<message id="mainmenu_my_settings">Impostazioni</message>
 <message id="mainmenu_logout">Esci</message>
 <message id="telescopes_telescope_name">Nome Telescopio</message>
 <message id="telescopes_diameter_mm">Diametro (mm)</message>
@@ -138,5 +139,15 @@
 <message id="ngcobject_type_RedStar">Stella Rossa</message>
 
 <message id="dssimage_version_label">Tipo Immagine DSS: </message>
+
+<message id="user_settings_change_password">Cambia Password</message>
+<message id="user_settings_old_password">Password Corrente</message>
+<message id="user_settings_new_password">Nuova Password</message>
+<message id="user_settings_new_password_confirm">Conferma Password</message>
+
+<message id="changepwd_error_title">Errore durante il cambio password</message>
+<message id="changepwd_wrong_password">La password corrente non corrisponde</message>
+<message id="changepwd__passwords_not_matching">La nuova password e la conferma password non corrispondono</message>
+<message id="changepwd_passwords_changed">La password è stata aggiornata correttamente</message>
 
 </messages>
