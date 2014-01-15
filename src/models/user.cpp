@@ -29,3 +29,8 @@ Dbo::collection< Dbo::ptr< AstroSession > > User::astroSessions() const
 {
   return _astroSessions;
 }
+
+bool User::isAdmin() const
+{
+  return _isAdmin;
+}

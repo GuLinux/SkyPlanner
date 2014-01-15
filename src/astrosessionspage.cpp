@@ -87,7 +87,11 @@ void AstroSessionsPage::open(const string &tabName)
   }
   auto sessionId = Utils::fromHexString<Dbo::dbo_traits<AstroSession>::IdType>(tabName);
   Dbo::Transaction t(d->session);
-  AstroSessionPtr astroSession = d->session.find<AstroSession>().where("id = ?").bind(sessionId);
+  AstroSessionPtr astroSession;
+  if(d->session.user()->isAdmin())
+    astroSession = d->session.find<AstroSession>().where("id = ?").bind(sessionId);
+  else
+    astroSession = d->session.find<AstroSession>().where("id = ?").where("user_id = ?").bind(sessionId).bind(d->session.user().id());
   if(!astroSession) {
     d->tabWidget->setCurrentIndex(0);
     wApp->log("warning") << "Unable to find astroSession for path: " << wApp->internalPath() << ", tabName=" << tabName;

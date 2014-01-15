@@ -38,14 +38,17 @@ public:
   template<class Action>
   void persist(Action& a)
   {
+    dbo::field(a, _isAdmin, "is_admin");
     dbo::hasMany(a, _telescopes, dbo::ManyToOne);
     dbo::hasMany(a, _astroSessions, dbo::ManyToOne);
   }
   dbo::collection<dbo::ptr<Telescope>> telescopes() const;
   dbo::collection<dbo::ptr<AstroSession>> astroSessions() const;
+  bool isAdmin() const;
 private:
   dbo::collection<dbo::ptr<Telescope>> _telescopes;
   dbo::collection<dbo::ptr<AstroSession>> _astroSessions;
+  bool _isAdmin = false;
 };
 
 typedef dbo::ptr<User> UserPtr;
