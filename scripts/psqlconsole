@@ -1,0 +1,7 @@
+#!/bin/bash
+PSQL_HOSTNAME="${PSQL_HOSTNAME-localhost}"
+PSQL_PORT="${PSQL_PORT-5432}"
+PSQL_SCHEMA="${PSQL_SCHEMA-ngcic_catalog}"
+PSQL_USER="${PSQL_USER-ngcic}"
+
+psql -h "$PSQL_HOSTNAME" -p "$PSQL_PORT" "$PSQL_SCHEMA" "$PSQL_USER" $@
