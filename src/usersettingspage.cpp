@@ -27,14 +27,6 @@ UserSettingsPage::Private::Private(Session &session, UserSettingsPage *q): sessi
 UserSettingsPage::UserSettingsPage(Session &session, Wt::WContainerWidget *parent)
   : WCompositeWidget(parent), d(session, this)
 {
-  Dbo::Transaction t(session);
-  cerr << "hello value: " << User::Setting::value<string>(t, "hello", session.user(), "world");
-  User::Setting::setValue(t, "hello", session.user(), "world2");
-  cerr << "hello value: " << User::Setting::value<string>(t, "hello", session.user());
-  cerr << "helloint value: " << User::Setting::value<int>(t, "helloint", session.user(), 1);
-  User::Setting::setValue(t, "helloint", session.user(), 2);
-  cerr << "helloint value: " << User::Setting::value<int>(t, "helloint", session.user());
-
   WContainerWidget *content = WW<WContainerWidget>();
   setImplementation(content);
   WGroupBox *changePassword = WW<WGroupBox>(WString::tr("user_settings_change_password"), content);

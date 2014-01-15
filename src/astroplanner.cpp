@@ -147,7 +147,6 @@ AstroPlanner::AstroPlanner( const WEnvironment &environment )
     loginLogoutMessage();
   auto handlePath = [=](const string &newPath){
     log("notice") << __PRETTY_FUNCTION__ << ": newPath=" << newPath;
-    log("notice") << "first folder: " << internalPathNextPart("/");
     if(internalPathMatches("/dss")) {
       d->loadDSSPage(internalPathNextPart("/dss/"));
     }

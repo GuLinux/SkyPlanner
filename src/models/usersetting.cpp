@@ -17,7 +17,7 @@ ostream& operator<< (ostream& o, const User::Setting::Id& id) {
 }
 
 User::SettingPtr User::Setting::find(const string &name, const UserPtr &user, dbo::Transaction &transaction) {
-  auto found = find_if(begin(user->_settings), end(user->_settings), [name](const User::SettingPtr &s) { return s->_id.name == name; });
+  auto found = find_if(begin(user->_settings), end(user->_settings), [name](const User::SettingPtr &s) { return s && s->_id.name == name; });
   if(found != end(user->_settings))
     return *found;
   return User::SettingPtr();
