@@ -95,6 +95,7 @@ void AstroSessionsPage::open(const string &tabName)
   if(!astroSession) {
     d->tabWidget->setCurrentIndex(0);
     wApp->log("warning") << "Unable to find astroSession for path: " << wApp->internalPath() << ", tabName=" << tabName;
+    wApp->setInternalPath("/sessions/list", true);
     return;
   }
   string internalPath = AstroSessionTab::pathComponent(astroSession, t);
