@@ -5,13 +5,20 @@
 #include <Wt-Commons/wt_helpers.h>
 #include <Wt/WContainerWidget>
 #include <Wt/WText>
+#include <Wt/WTextArea>
+#include <Wt/WPushButton>
 #include <Wt/Auth/Login>
+#include <Wt/Mail/Client>
+#include <Wt/Mail/Mailbox>
+#include <Wt/Mail/Message>
 
 #include "models/Models"
 #include "utils/format.h"
 #include "utils/utils.h"
 #include "session.h"
 #include "astroplanner.h"
+#include <boost/algorithm/string.hpp>
+#include <Wt/WIOService>
 
 using namespace Wt;
 using namespace WtCommons;
@@ -55,5 +62,42 @@ void SendFeedbackPage::Private::feedbackForm(const Wt::Dbo::ptr<NgcObject> &obje
     wApp->setInternalPath("/", true);
     return;
   }
-  content->addWidget(new WText{"Hello"});
+  content->addWidget(new WText{WString::tr("feedback_label")});
+  if(object) {
+    Dbo::Transaction t(session);
+    content->addWidget(new WText{WString::tr("feedback_label_object_data").arg(boost::algorithm::join(NgcObject::namesByCatalogueImportance(t, object), ", "))});
+  }
+  WTextArea *messageBody = WW<WTextArea>().css("input-block-level");
+  WPushButton *sendButton = WW<WPushButton>(WString::tr("buttons_send")).css("btn btn-primary").setEnabled(false);
+
+  sendButton->clicked().connect([=](WMouseEvent) {
+    sendButton->disable();
+    Mail::Client client;
+    Mail::Message message;
+    message.setFrom({"skyplanner@gulinux.net", "SkyPlanner"});
+    message.setSubject(WString::tr("feedback_email_subject"));
+
+    Dbo::Transaction t(session);
+    WString username = session.login().user().identity("loginname");
+    string userEmail = session.login().user().email();
+    string objectData = object ? (format("database id: %d; names: %s") % object.id() % boost::algorithm::join(NgcObject::namesByCatalogueImportance(t, object), ", ")).str() : "no object selected";
+
+    WString body = WString::tr("feedback_email_message").arg(username).arg(userEmail).arg(objectData).arg(messageBody->text());
+    message.setBody(body);
+    message.addRecipient(Mail::To, {"marco.gulino@gmail.com", "Marco Gulino"});
+    wApp->log("notice") << "email subject: " << message.subject();
+    wApp->log("notice") << "email body   : " << body;
+    if(client.connect()) {
+      client.send(message);
+      AstroPlanner::instance()->notification(WString::tr("notification_success_title"), WString::tr("feedback_sent_notification"), AstroPlanner::Success, 10);
+    }
+    else {
+      WServer::instance()->log("error") << "Error connetting to SMTP Agent.";
+      AstroPlanner::instance()->notification(WString::tr("notification_error_title"), WString::tr("feedback_sending_error_notification"), AstroPlanner::Error);
+    }
+  });
+  messageBody->keyWentUp().connect([=](WKeyEvent) { sendButton->setEnabled(messageBody->text().toUTF8().size() > 4 ); });
+
+  content->addWidget(messageBody);
+  content->addWidget(sendButton);
 }

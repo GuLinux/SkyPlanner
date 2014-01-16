@@ -17,6 +17,7 @@
 <message id="buttons_add">Add</message>
 <message id="buttons_remove">Remove</message>
 <message id="buttons_save">Save</message>
+<message id="buttons_send">Send</message>
 <message id="astrosessionspage_sessions_list">Sessions List</message>
 <message id="astrosessionslisttab_name">Name</message>
 <message id="astrosessionslisttab_when">When</message>
@@ -135,5 +136,22 @@
 
 <message id="feedback_user_without_email_error"><p>You need to set a valid email address and verify it before sending a feedback message.</p>
 <p>Please check it in the "Settings" page.</p>
+</message>
+
+<message id="feedback_sending_error_notification">Error sending feedback message. Please retry later.</message>
+<message id="feedback_sent_notification">Feedback message correctly sent</message>
+<message id="feedback_label"><p>You can use this page to contact us, sending us suggestions for improvement or corrections about our objects database.</p>
+<p>Feel free to write everything that can help us offering you a better software!</p>
+</message>
+<message id="feedback_label_object_data"><p>Feedback object: {1}</p></message>
+
+<message id="feedback_email_subject">SkyPlanner: user feedback message</message>
+<message id="feedback_email_message">Hello,
+User {1} ({2}) just sent you a feedback message!
+Selected object data: {3}
+Here comes the user message.
+------------------------------
+{4}
+------ User Message End ------
 </message>
 </messages>

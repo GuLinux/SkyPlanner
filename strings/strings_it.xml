@@ -57,6 +57,8 @@
 <message id="buttons_add">Aggiungi</message>
 <message id="buttons_save">Salva</message>
 <message id="buttons_remove">Cancella</message>
+<message id="buttons_send">Invia</message>
+
 <message id="astrosessionspage_sessions_list">Elenco Osservazioni</message>
 <message id="astrosessionslisttab_name">Nome</message>
 <message id="astrosessionslisttab_when">Data</message>
@@ -166,4 +168,12 @@
 <message id="feedback_user_without_email_error"><p>Devi impostare e verificare un indirizzo email valido prima di inviare messaggi di feedback.</p>
 <p>Per favore controlla nella scheda "Impostazioni".</p>
 </message>
+
+<message id="feedback_sending_error_notification">Errore durante l'invio del messaggio. Si prega di riprovare più tardi.</message>
+<message id="feedback_sent_notification">Messaggio inviato correttamente.</message>
+<message id="feedback_label"><p>Puoi usare questa pagina per contattarci, inviando suggerimenti per migliorare il sito o correzioni sul nostro database oggetti.</p>
+<p>Scrivi pure qualunque cosa che possa aiutarci ad offrirti un software migliore!</p>
+</message>
+<message id="feedback_label_object_data"><p>Oggetto del feedback: {1}</p></message>
+
 </messages>
