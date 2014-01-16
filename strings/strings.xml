@@ -154,4 +154,8 @@ Here comes the user message.
 {4}
 ------ User Message End ------
 </message>
+
+<message id="objectnames_feedback_title">Feedback</message>
+<message id="objectnames_feedback_menu">Report more data or errors</message>
+
 </messages>

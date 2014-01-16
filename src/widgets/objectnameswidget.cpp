@@ -40,6 +40,7 @@
 #include <boost/regex.hpp>
 #include <boost/algorithm/string/join.hpp>
 #include "widgets/dsspage.h"
+#include "sendfeedbackpage.hpp"
 
 using namespace WtCommons;
 using namespace Wt;
@@ -81,7 +82,8 @@ ObjectNamesWidget::ObjectNamesWidget( const Wt::Dbo::ptr<NgcObject> &object, Ses
 
       WMenuItem *menuItem = menu->addItem( label );
       menuItem->setLink( url );
-      menuItem->setLinkTarget( TargetNewWindow );
+      if(url.type() != WLink::InternalPath)
+        menuItem->setLinkTarget( TargetNewWindow );
     };
     popup->addSectionHeader( WString::tr( "objectnames_more_info" ) );
     WMenuItem *imagesMenuItem = popup->addItem( WString::tr( "objectnames_digitalized_sky_survey_menu" ) );
@@ -123,8 +125,6 @@ ObjectNamesWidget::ObjectNamesWidget( const Wt::Dbo::ptr<NgcObject> &object, Ses
         }
 
         addLink( "DSO Browser", dsoBrowserLink.str() );
-
-
       }
     }
 
@@ -161,6 +161,10 @@ ObjectNamesWidget::ObjectNamesWidget( const Wt::Dbo::ptr<NgcObject> &object, Ses
         addLink( name->search(), searchURL( "http://ned.ipac.caltech.edu/cgi-bin/objsearch?objname=%s", name ), nedSearchSubMenu );
       }
     }
+
+    popup->addSectionHeader( WString::tr( "objectnames_feedback_title" ) );
+    addLink(WString::tr( "objectnames_feedback_menu" ), WLink(WLink::InternalPath, SendFeedbackPage::internalPath(object)) );
+
 
     popup->popup( e );
   } );

@@ -176,4 +176,7 @@
 </message>
 <message id="feedback_label_object_data"><p>Oggetto del feedback: {1}</p></message>
 
+<message id="objectnames_feedback_title">Feedback</message>
+<message id="objectnames_feedback_menu">Scrivici per dati aggiuntivi o errori</message>
+
 </messages>
