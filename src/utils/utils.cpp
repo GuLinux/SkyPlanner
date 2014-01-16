@@ -19,6 +19,7 @@
 
 #include "utils.h"
 #include <cmath>
+#include <boost/regex.hpp>
 
 using namespace std;
 
@@ -28,4 +29,10 @@ int Utils::exponentialPercentage( double value, double limit, double base )
   limit = pow(base, limit);
   double percent = value * 100. /limit;
   return static_cast<int>(percent);
+}
+
+
+string Utils::sanitizeForURL(const string &in, const string &replacement)
+{
+  return boost::regex_replace(in, boost::regex("[^a-zA-Z0-9]+"), replacement );
 }

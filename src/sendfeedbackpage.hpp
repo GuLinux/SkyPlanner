@@ -10,7 +10,7 @@ class SendFeedbackPage : public Wt::WCompositeWidget {
 public:
   explicit SendFeedbackPage(Session &session, Wt::WContainerWidget *parent = 0);
   ~SendFeedbackPage();
-  static std::string internalPath(const Wt::Dbo::ptr<NgcObject> &object = Wt::Dbo::ptr<NgcObject>());
+  static std::string internalPath(const Wt::Dbo::ptr<NgcObject> &object = Wt::Dbo::ptr<NgcObject>(), Wt::Dbo::Transaction *transaction = nullptr);
 private:
   D_PTR;
 };

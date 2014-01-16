@@ -36,6 +36,7 @@ public:
     ss >> t;
     return t;
   }
+  static std::string sanitizeForURL(const std::string &in, const std::string &replacement = "-");
 };
 
 class Scope {

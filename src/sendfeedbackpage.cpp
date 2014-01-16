@@ -46,12 +46,14 @@ SendFeedbackPage::~SendFeedbackPage()
 {
 }
 
-string SendFeedbackPage::internalPath(const Wt::Dbo::ptr<NgcObject> &object)
+string SendFeedbackPage::internalPath(const Wt::Dbo::ptr<NgcObject> &object, Dbo::Transaction *transaction)
 {
-  if(!object) {
+  if(!object || ! transaction) {
     return "/feedback";
   }
-  return format("/feedback/%x") % object.id();
+
+  return format("/feedback/%x/%s") % object.id()
+      % Utils::sanitizeForURL(boost::algorithm::join(NgcObject::namesByCatalogueImportance(*transaction, object), "-"));
 }
 
 void SendFeedbackPage::Private::feedbackForm(const Wt::Dbo::ptr<NgcObject> &object)

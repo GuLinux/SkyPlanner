@@ -20,7 +20,8 @@
 #include "dsspage.h"
 #include "private/dsspage_p.h"
 #include "utils/d_ptr_implementation.h"
-#include <utils/format.h>
+#include "utils/format.h"
+#include "utils/utils.h"
 #include <Wt/WApplication>
 #include <Wt-Commons/wt_helpers.h>
 #include "models/Models"
@@ -34,7 +35,6 @@
 #include <Wt/WAnchor>
 #include <Wt/Utils>
 #include <boost/algorithm/string/join.hpp>
-#include <boost/regex.hpp>
 #include <Wt/WApplication>
 using namespace Wt;
 using namespace WtCommons;
@@ -112,6 +112,6 @@ string DSSPage::internalPath( const Dbo::ptr< NgcObject > &object, Dbo::Transact
 {
   return format("/dss/%x/%s")
     % object.id()
-    % boost::regex_replace(boost::algorithm::join(NgcObject::namesByCatalogueImportance(transaction, object), "-"), boost::regex("[^a-zA-Z0-9]+"), "-" );
+    % ::Utils::sanitizeForURL(boost::algorithm::join(NgcObject::namesByCatalogueImportance(transaction, object), "-"));
 }
 

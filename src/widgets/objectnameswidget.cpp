@@ -163,7 +163,7 @@ ObjectNamesWidget::ObjectNamesWidget( const Wt::Dbo::ptr<NgcObject> &object, Ses
     }
 
     popup->addSectionHeader( WString::tr( "objectnames_feedback_title" ) );
-    addLink(WString::tr( "objectnames_feedback_menu" ), WLink(WLink::InternalPath, SendFeedbackPage::internalPath(object)) );
+    addLink(WString::tr( "objectnames_feedback_menu" ), WLink(WLink::InternalPath, SendFeedbackPage::internalPath(object, &t)) );
 
 
     popup->popup( e );
