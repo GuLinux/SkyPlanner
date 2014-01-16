@@ -8,6 +8,8 @@ class UserSettingsPage::Private
 public:
   Private(Session &session, UserSettingsPage *q);
   Session &session;
+  Wt::WContainerWidget *content;
+  void onDisplay();
 private:
   UserSettingsPage *q;
 };

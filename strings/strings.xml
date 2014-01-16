@@ -5,6 +5,7 @@
 <message id="mainmenu_my_sessions">My Sessions</message>
 <message id="mainmenu_my_telescopes">My Telescopes</message>
 <message id="mainmenu_my_settings">Settings</message>
+<message id="mainmenu_feedback">Feedback</message>
 
 <message id="mainmenu_logout">Logout</message>
 <message id="telescopes_telescope_name">Telescope Name</message>
@@ -52,7 +53,11 @@
 <message id="object_column_highest_time">Highest At</message>
 <message id="object_column_max_altitude">Max Altitude</message>
 <message id="object_row_cataloguedesc"><h5>Catalogues description:</h5></message>
+
+<message id="notification_success_title">Success</message>
+<message id="notification_error_title">Error</message>
 <message id="notification_warning_title">Warning</message>
+
 <message id="notification_object_already_added">Object already added to this session, skipping.</message>
 <message id="filters">Filters</message>
 <message id="select_objects_widget_best_visible_objects">Best Visible Objects</message>
@@ -65,7 +70,6 @@
 <message id="object_column_dec">DEC</message>
 <message id="object_column_angular_size">Angular Size</message>
 <message id="object_notes">Your notes and description</message>
-<message id="notification_success_title">Success</message>
 <message id="notification_description_saved">Description saved!</message>
 <message id="description">Description</message>
 <message id="placewidget_maps_instructions">Just click a point on the map to set the observation place. Use the search box to find places by name.</message>
@@ -114,8 +118,22 @@
 <message id="user_settings_new_password">New Password</message>
 <message id="user_settings_new_password_confirm">Confirm Password</message>
 
+<message id="user_settings_email">Email</message>
+<message id="user_settings_current_email">Current Email Address</message>
+<message id="user_settings_new_email">New Email Address</message>
+<message id="user_settings_update_email">Change</message>
+<message id="user_settings_resend_verification">Resend Verification Email</message>
+<message id="user_settings_email_changed_notify"><p>Email address changed.</p></message>
+<message id="user_settings_email_verification_notify"><p>An email has been sent to the specified address. Please check your inbox and follow the instructions to verify your new email address.</p></message>
+<message id="user_settings_email_verification_notify_title"><p>Email Verification</p></message>
+
 <message id="changepwd_error_title">Error updating password</message>
 <message id="changepwd_wrong_password">Current password is wrong</message>
 <message id="changepwd__passwords_not_matching">New password and password confirmation do not match</message>
 <message id="changepwd_passwords_changed">Password was updated correctly</message>
+
+
+<message id="feedback_user_without_email_error"><p>You need to set a valid email address and verify it before sending a feedback message.</p>
+<p>Please check it in the "Settings" page.</p>
+</message>
 </messages>

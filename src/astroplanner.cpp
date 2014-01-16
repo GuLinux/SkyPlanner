@@ -39,6 +39,7 @@
 #include "widgets/dsspage.h"
 #include <Wt/Auth/AbstractUserDatabase>
 #include "usersettingspage.h"
+#include "sendfeedbackpage.hpp"
 
 using namespace std;
 using namespace Wt;
@@ -105,6 +106,11 @@ AstroPlanner::AstroPlanner( const WEnvironment &environment )
   WMenuItem *userSettingsMenuItem = navBarMenu->addItem(WString::tr("mainmenu_my_settings"), new UserSettingsPage(d->session));
   d->loggedInItems.push_back(userSettingsMenuItem);
   userSettingsMenuItem->setPathComponent("settings/");
+
+  WMenuItem *feedbackMenuItem = navBarMenu->addItem(WString::tr("mainmenu_feedback"), new SendFeedbackPage(d->session));
+  d->loggedInItems.push_back(feedbackMenuItem);
+  feedbackMenuItem->setPathComponent("feedback/");
+
   WMenuItem *logout = navBarMenu->addItem(WString::tr("mainmenu_logout"));
   logout->setPathComponent("logout/");
   d->loggedInItems.push_back(logout);
@@ -186,7 +192,7 @@ WContainerWidget *AstroPlanner::notification(const WString &title, const WString
   static map<NotificationType,string> notificationStyles {
     {Error, "alert-error"},
     {Success, "alert-success"},
-    {Information, "alert-information"},
+    {Information, "alert-info"},
   };
   WContainerWidget *notification = WW<WContainerWidget>().addCss("alert alert-block").addCss(notificationStyles[type]).setHidden(true);
   auto deleteNotification = [=](WMouseEvent) {

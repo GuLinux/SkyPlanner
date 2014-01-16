@@ -45,6 +45,8 @@
 <message id="mainmenu_my_sessions">Le Mie Osservazioni</message>
 <message id="mainmenu_my_telescopes">I Miei Telescopi</message>
 <message id="mainmenu_my_settings">Impostazioni</message>
+<message id="mainmenu_feedback">Contatti</message>
+
 <message id="mainmenu_logout">Esci</message>
 <message id="telescopes_telescope_name">Nome Telescopio</message>
 <message id="telescopes_diameter_mm">Diametro (mm)</message>
@@ -90,7 +92,11 @@
 <message id="object_column_difficulty">Difficoltà</message>
 <message id="object_column_highest_time">Orario max. altezza</message>
 <message id="object_column_max_altitude">Max Altezza</message>
+
+<message id="notification_success_title">Successo</message>
 <message id="notification_warning_title">Attenzione</message>
+<message id="notification_error_title">Errore</message>
+
 <message id="notification_object_already_added">Oggetto già aggiunto a questa sessione.</message>
 <message id="filters">Filtri</message>
 <message id="select_objects_widget_best_visible_objects">Migliori Oggetti Visibili</message>
@@ -104,7 +110,6 @@
 <message id="object_column_angular_size">Dimensione Angolare</message>
 <message id="object_row_cataloguedesc"><h5>Descrizione dai cataloghi:</h5></message>
 <message id="object_notes">Le tue annotazioni</message>
-<message id="notification_success_title">Successo</message>
 <message id="notification_description_saved">Descrizione Salvata!</message>
 <message id="description">Descrizione</message>
 <message id="placewidget_maps_instructions">Clicca su un punto della mappa per impostare il luogo di osservazione. Usa il box di ricerca per trovare luoghi dal nome.</message>
@@ -145,9 +150,20 @@
 <message id="user_settings_new_password">Nuova Password</message>
 <message id="user_settings_new_password_confirm">Conferma Password</message>
 
+<message id="user_settings_current_email">Indirizzo Email Corrente</message>
+<message id="user_settings_new_email">Nuovo Indirizzo Email</message>
+<message id="user_settings_update_email">Cambia</message>
+<message id="user_settings_resend_verification">Rimanda Email di Verifica</message>
+
+<message id="user_settings_email_changed_notify"><p>Indirizzo email modificato.</p></message>
+<message id="user_settings_email_verification_notify_title"><p>Verifica Indirizzo Email</p></message>
+<message id="user_settings_email_verification_notify"><p>Una email è stata inviata all'indirizzo specificato. Per favore controlla la tua casella email e segui le istruzioni per verificare il tuo nuovo indirizzo.</p></message>
 <message id="changepwd_error_title">Errore durante il cambio password</message>
 <message id="changepwd_wrong_password">La password corrente non corrisponde</message>
 <message id="changepwd__passwords_not_matching">La nuova password e la conferma password non corrispondono</message>
 <message id="changepwd_passwords_changed">La password è stata aggiornata correttamente</message>
 
+<message id="feedback_user_without_email_error"><p>Devi impostare e verificare un indirizzo email valido prima di inviare messaggi di feedback.</p>
+<p>Per favore controlla nella scheda "Impostazioni".</p>
+</message>
 </messages>

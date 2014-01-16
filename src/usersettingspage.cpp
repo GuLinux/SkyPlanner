@@ -15,6 +15,9 @@
 #include "astroplanner.h"
 #include <Wt/Auth/PasswordStrengthValidator>
 #include "Models"
+#include <Wt/WToolBar>
+#include <Wt/Auth/AuthService>
+
 
 using namespace Wt;
 using namespace WtCommons;
@@ -27,15 +30,27 @@ UserSettingsPage::Private::Private(Session &session, UserSettingsPage *q): sessi
 UserSettingsPage::UserSettingsPage(Session &session, Wt::WContainerWidget *parent)
   : WCompositeWidget(parent), d(session, this)
 {
-  WContainerWidget *content = WW<WContainerWidget>();
-  setImplementation(content);
+  d->content = WW<WContainerWidget>();
+  setImplementation(d->content);
+  wApp->internalPathChanged().connect([this,&session](const string &newPath, ...) {
+    if(!wApp->internalPathMatches("/settings") || !session.user() ) {
+      return;
+    }
+    d->onDisplay();
+  });
+}
+
+void UserSettingsPage::Private::onDisplay()
+{
+  content->clear();
   WGroupBox *changePassword = WW<WGroupBox>(WString::tr("user_settings_change_password"), content);
 
-  auto controlElement = [=] (WFormWidget *w, const string &labelKey = string() ) {
+  auto controlElement = [=] (WWidget *w, const string &labelKey = string() ) {
     WContainerWidget *container = WW<WContainerWidget>().css("control-group");
     if(!labelKey.empty()) {
       WLabel *label = WW<WLabel>(WString::tr(labelKey), container).css("control-label");
-      label->setBuddy(w);
+      if(dynamic_cast<WFormWidget*>(w))
+        label->setBuddy(dynamic_cast<WFormWidget*>(w));
     }
     container->addWidget(WW<WContainerWidget>().css("controls").add(w));
     return container;
@@ -47,8 +62,8 @@ UserSettingsPage::UserSettingsPage(Session &session, Wt::WContainerWidget *paren
   for(auto edit: vector<WLineEdit*>{oldPassword, newPassword, newPasswordConfirm})
     edit->setEchoMode(WLineEdit::Password);
   WPushButton *changePasswordButton = WW<WPushButton>(WString::tr("user_settings_change_password")).css("btn btn-primary").onClick([=](WMouseEvent) {
-    Auth::PasswordService &passwordService = d->session.passwordAuth();
-    if(!passwordService.verifyPassword(d->session.login().user(), oldPassword->text() )) {
+    Auth::PasswordService &passwordService = session.passwordAuth();
+    if(!passwordService.verifyPassword(session.login().user(), oldPassword->text() )) {
       AstroPlanner::instance()->notification(WString::tr("changepwd_error_title"), WString::tr("changepwd_wrong_password"), AstroPlanner::Error, 10);
       return;
     }
@@ -56,15 +71,32 @@ UserSettingsPage::UserSettingsPage(Session &session, Wt::WContainerWidget *paren
       AstroPlanner::instance()->notification(WString::tr("changepwd_error_title"), WString::tr("changepwd__passwords_not_matching"), AstroPlanner::Error, 10);
       return;
     }
-    string email = d->session.login().user().email().empty() ? d->session.login().user().unverifiedEmail() : d->session.login().user().email();
-    WValidator::Result passwordValidation = passwordService.strengthValidator()->validate(newPassword->text(), d->session.login().user().identity("loginname"), email);
+    string email = session.login().user().email().empty() ? session.login().user().unverifiedEmail() : session.login().user().email();
+    WValidator::Result passwordValidation = passwordService.strengthValidator()->validate(newPassword->text(), session.login().user().identity("loginname"), email);
     if( passwordValidation.state() != WValidator::Valid ) {
       AstroPlanner::instance()->notification(WString::tr("changepwd_error_title"), passwordValidation.message(), AstroPlanner::Error, 10);
       return;
     }
-    passwordService.updatePassword(d->session.login().user(), newPassword->text());
+    passwordService.updatePassword(session.login().user(), newPassword->text());
+    oldPassword->setText(WString());
+    newPassword->setText(WString());
+    newPasswordConfirm->setText(WString());
     AstroPlanner::instance()->notification(WString::tr("notification_success_title"), WString::tr("changepwd_passwords_changed"), AstroPlanner::Success, 10);
   });
+
+  auto enableChangePasswordButton = [=] {
+    bool enable = true;
+    for(auto edit: vector<WLineEdit*>{oldPassword, newPassword, newPasswordConfirm})
+      enable &= !edit->text().empty();
+    enable &= oldPassword->text() != newPassword->text();
+    enable &= newPassword->text() == newPasswordConfirm->text();
+    changePasswordButton->setEnabled(enable);
+  };
+
+  oldPassword->keyWentUp().connect([=](WKeyEvent) { enableChangePasswordButton(); });
+  newPassword->keyWentUp().connect([=](WKeyEvent) { enableChangePasswordButton(); });
+  newPasswordConfirm->keyWentUp().connect([=](WKeyEvent) { enableChangePasswordButton(); });
+  enableChangePasswordButton();
 
   changePassword->addWidget(WW<WContainerWidget>().css("form-horizontal")
                             .add(controlElement(oldPassword, "user_settings_old_password"))
@@ -72,6 +104,52 @@ UserSettingsPage::UserSettingsPage(Session &session, Wt::WContainerWidget *paren
                             .add(controlElement(newPasswordConfirm, "user_settings_new_password_confirm"))
                             .add(controlElement(changePasswordButton))
                             );
+
+
+  WGroupBox *email = WW<WGroupBox>(WString::tr("user_settings_email"), content);
+  Auth::User user = session.login().user();
+  bool mailIsVerified = !user.email().empty();
+  bool needsVerification = !user.unverifiedEmail().empty();
+  WLineEdit *currentEmail = WW<WLineEdit>(mailIsVerified ? user.email() : user.unverifiedEmail() ).setEnabled(false);
+  WLineEdit *newEmail = WW<WLineEdit>(mailIsVerified ? user.email() : user.unverifiedEmail());
+  WPushButton *changeAddress = WW<WPushButton>(WString::tr("user_settings_update_email")).css("btn btn-primary");
+
+
+  auto enableChangeButton = [=] {
+    string currentEmail = mailIsVerified ? user.email() : user.unverifiedEmail();
+    string newEmailAddress = newEmail->text().toUTF8();
+    changeAddress->setEnabled(!newEmailAddress.empty() && newEmailAddress != currentEmail);
+  };
+
+  changeAddress->clicked().connect([=](WMouseEvent) {
+    user.setEmail({});
+    user.setUnverifiedEmail(newEmail->text().toUTF8());
+    currentEmail->setText(newEmail->text());
+    session.auth().verifyEmailAddress(user, newEmail->text().toUTF8());
+    changeAddress->disable();
+    AstroPlanner::instance()->notification(WString::tr("user_settings_new_email"), WString::tr("user_settings_email_changed_notify") + WString::tr("user_settings_email_verification_notify"), AstroPlanner::Information, 10);
+  });
+
+
+  newEmail->keyWentUp().connect([=](WKeyEvent) { enableChangeButton(); });
+
+  WToolBar *toolbar = WW<WToolBar>().addButton(changeAddress);
+  if(needsVerification) {
+    WPushButton *resendVerification = WW<WPushButton>(WString::tr("user_settings_resend_verification")).css("btn");
+    changeAddress->clicked().connect([=](WMouseEvent) { resendVerification->disable(); });
+    resendVerification->clicked().connect([=](WMouseEvent) {
+      session.auth().verifyEmailAddress(user, user.unverifiedEmail());
+      resendVerification->disable();
+      AstroPlanner::instance()->notification(WString::tr("user_settings_email_verification_notify_title"), WString::tr("user_settings_email_verification_notify"), AstroPlanner::Information, 10);
+    });
+    toolbar->addButton(resendVerification);
+  }
+  email->addWidget(WW<WContainerWidget>().css("form-horizontal")
+                   .add(controlElement(currentEmail, "user_settings_current_email"))
+                   .add(controlElement(newEmail, "user_settings_new_email"))
+                   .add(controlElement(toolbar))
+                   );
+  enableChangeButton();
 }
 
 UserSettingsPage::~UserSettingsPage()

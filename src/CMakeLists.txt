@@ -23,6 +23,7 @@ set(SkyPlanner_SRCS
   constellationfinder.cpp
   printableastrosessionresource.cpp
   usersettingspage.cpp
+  sendfeedbackpage.cpp
 )
 
 set(SkyPlanner_MODELS_SRCS
