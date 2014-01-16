@@ -40,6 +40,10 @@
 #include <Wt/Auth/AbstractUserDatabase>
 #include "usersettingspage.h"
 #include "sendfeedbackpage.hpp"
+#include <Wt/WCombinedLocalizedStrings>
+#include <Wt/WMessageResourceBundle>
+#include <Wt-Commons/whtmltemplateslocalizedstrings.h>
+
 
 using namespace std;
 using namespace Wt;
@@ -64,8 +68,16 @@ AstroPlanner::AstroPlanner( const WEnvironment &environment )
 {
   string stringsDirectory = (boost::filesystem::current_path() / "strings").string();
   readConfigurationProperty("strings_directory", stringsDirectory);
-  messageResourceBundle().use(stringsDirectory + "/strings");
-  messageResourceBundle().use(stringsDirectory + "/wt_auth_strings");
+
+  WCombinedLocalizedStrings *combinedLocalization = new WCombinedLocalizedStrings();
+  WMessageResourceBundle *bundle = new WMessageResourceBundle();
+  bundle->use(stringsDirectory + "/strings");
+  bundle->use(stringsDirectory + "/wt_auth_strings");
+  WHTMLTemplatesLocalizedStrings *htmlTemplates = new WHTMLTemplatesLocalizedStrings(stringsDirectory + "/html");
+  combinedLocalization->add(bundle);
+  combinedLocalization->add(htmlTemplates);
+  setLocalizedStrings(combinedLocalization);
+
   setTitle(WString::tr("application_title"));
   enableUpdates(true);
   setTheme( new WBootstrapTheme( this ) );

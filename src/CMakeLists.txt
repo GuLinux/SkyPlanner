@@ -24,6 +24,7 @@ set(SkyPlanner_SRCS
   printableastrosessionresource.cpp
   usersettingspage.cpp
   sendfeedbackpage.cpp
+  Wt-Commons/whtmltemplateslocalizedstrings.cpp
 )
 
 set(SkyPlanner_MODELS_SRCS
