@@ -44,7 +44,7 @@ HomePage::HomePage( Session &session, Wt::WContainerWidget *parent )
   setImplementation(d->content = new WTemplate(WString::tr("home")));
   d->populate();
   wApp->internalPathChanged().connect([=](const string &newPath, ...) {
-    if(newPath == "/")
+    if(wApp->internalPathMatches("/home"))
       d->populate();
   });
   d->link.connect([=](const string &path, ...) { wApp->setInternalPath(path, true);});

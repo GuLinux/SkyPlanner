@@ -87,7 +87,6 @@ AstroPlanner::AstroPlanner( const WEnvironment &environment )
   setTheme( new WBootstrapTheme( this ) );
   requireJQuery("http://codeorigin.jquery.com/jquery-1.8.3.min.js");
 
-  string startPath = internalPath();
   WNavigationBar *navBar = WW<WNavigationBar>( root() ).addCss( "navbar-inverse" );
   navBar->setResponsive( true );
   navBar->setTitle( WString::tr("application_title"), WLink(WLink::InternalPath, HOME_PATH) );
@@ -144,10 +143,6 @@ AstroPlanner::AstroPlanner( const WEnvironment &environment )
       i->setHidden(loggedIn);
   };
   
-  auto setLoggedInWidget = [=] {
-    navBarMenu->select(d->session.login().loggedIn() ? mySessionsMenuItem : authMenuItem);
-  };
-
   auto loginLogoutMessage = [=] {
     if(d->session.login().loggedIn()) {
       Dbo::Transaction t(d->session);
@@ -162,12 +157,12 @@ AstroPlanner::AstroPlanner( const WEnvironment &environment )
   
   logout->triggered().connect([=](WMenuItem*,_n5){ d->session.login().logout(); });
   d->session.login().changed().connect([=](_n6){
+    if(internalPathMatches("/login") || internalPathMatches("/logout"))
+      setInternalPath(HOME_PATH, true);
     setMenuItemsVisibility();
-    setLoggedInWidget();
     loginLogoutMessage();
   });
   setMenuItemsVisibility();
-  setLoggedInWidget();
   if(d->session.login().loggedIn())
     loginLogoutMessage();
   auto handlePath = [=](const string &newPath){
@@ -183,9 +178,9 @@ AstroPlanner::AstroPlanner( const WEnvironment &environment )
   internalPathChanged().connect([=](string p, ...) {handlePath(p); });
   d->widgets->addWidget(d->dssContainer = new WContainerWidget);
   if(!d->session.login().loggedIn() ) {
-    startPath = HOME_PATH;
+    setInternalPath(HOME_PATH, true);
   }
-  setInternalPath(startPath, true);
+  handlePath(internalPath());
 }
 
 void AstroPlanner::Private::loadDSSPage( const std::string &hexId )
