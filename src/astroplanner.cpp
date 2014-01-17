@@ -177,7 +177,7 @@ AstroPlanner::AstroPlanner( const WEnvironment &environment )
   };
   internalPathChanged().connect([=](string p, ...) {handlePath(p); });
   d->widgets->addWidget(d->dssContainer = new WContainerWidget);
-  if(!d->session.login().loggedIn() ) {
+  if(!d->session.login().loggedIn() && ! internalPathMatches("/dss") ) {
     setInternalPath(HOME_PATH, true);
   }
   handlePath(internalPath());
