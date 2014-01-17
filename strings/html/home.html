@@ -1,7 +1,7 @@
 ${<logged-in>}
-<p style="padding-right: 10px;">Hello, ${login-name} </p>
+<h5 style="padding-left: 20px;"><i>Hello, ${login-name}</i></h5>
 ${</logged-in>}
-<p>Welcome to ${tr:application_title}.</p>
+<p>Welcome to <b>${tr:application_title}</b>.</p>
 <p>This software can help you organize
 ${<logged-in>}<a class="link" onclick="${sessions-menu-path}">your star gazing sessions</a>${</logged-in>}
 ${<not-logged-in>}your star gazing sessions${</not-logged-in>}
@@ -12,4 +12,4 @@ ${<not-logged-in>}
 <p>You can register immediatly,  without needing to fill an email address, creating a personal profile with your data and star gazing sessions.</p>
 <p>To enter or register the web site, click the <a class="link" onclick="${login-menu-path};">login</a> menu item</p>
 ${</not-logged-in>}
-<p style="padding-right: 10px;">Happy star gazing!</p>
+<p style="padding-left: 30%;"><i>Happy star gazing!</i></p>

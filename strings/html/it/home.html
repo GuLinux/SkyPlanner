@@ -1,7 +1,7 @@
 ${<logged-in>}
-<p style="padding-right: 10px;">Ciao, ${login-name} </p>
+<h5 style="padding-left: 20px;"><i>Ciao, ${login-name}</i></h5>
 ${</logged-in>}
-<p>Benvenuto su ${tr:application_title}.</p>
+<p>Benvenuto su <b>${tr:application_title}</b>.</p>
 <p>Questo software ti permette di organizzare
 ${<logged-in>}<a class="link" onclick="${sessions-menu-path}">le tue uscite astronomiche</a>${</logged-in>}
 ${<not-logged-in>}le tue uscite astronomiche${</not-logged-in>}
@@ -14,4 +14,4 @@ ${<not-logged-in>}
 un tuo profilo personale con i tuoi dati e le tue sessioni osservative.</p>
 <p>Per entrare nel tuo profilo, o per registrarti, usa il menù <a class="link" onclick="${login-menu-path};">login</a></p>
 ${</not-logged-in>}
-<p style="padding-right: 10px;">Cieli sereni.</p>
+<p style="padding-left: 30%;"><i>Cieli sereni!</i></p>
