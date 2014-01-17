@@ -64,6 +64,9 @@ AstroPlanner *AstroPlanner::instance()
   return dynamic_cast<AstroPlanner*>(wApp);
 }
 
+
+const string AstroPlanner::HOME_PATH = "/home/";
+
 AstroPlanner::AstroPlanner( const WEnvironment &environment )
   : WApplication( environment ), d( this )
 {
@@ -87,7 +90,7 @@ AstroPlanner::AstroPlanner( const WEnvironment &environment )
   string startPath = internalPath();
   WNavigationBar *navBar = WW<WNavigationBar>( root() ).addCss( "navbar-inverse" );
   navBar->setResponsive( true );
-  navBar->setTitle( WString::tr("application_title"), WLink(WLink::InternalPath, "/") );
+  navBar->setTitle( WString::tr("application_title"), WLink(WLink::InternalPath, HOME_PATH) );
   useStyleSheet( "/skyplanner_style.css" );
   root()->addWidget(d->notifications = new WContainerWidget);
   d->widgets = new WStackedWidget( root() );
@@ -103,7 +106,7 @@ AstroPlanner::AstroPlanner( const WEnvironment &environment )
   navBarMenu->setInternalPathEnabled("/");
   
   WMenuItem *home = navBarMenu->addItem(WString::tr("mainmenu_home"), new HomePage(d->session));
-  home->setPathComponent("");
+  home->setPathComponent("home/");
   
   WMenuItem *authMenuItem;
   d->loggedOutItems.push_back(authMenuItem = navBarMenu->addItem(WString::tr("mainmenu_login"), authWidget));
@@ -180,7 +183,7 @@ AstroPlanner::AstroPlanner( const WEnvironment &environment )
   internalPathChanged().connect([=](string p, ...) {handlePath(p); });
   d->widgets->addWidget(d->dssContainer = new WContainerWidget);
   if(!d->session.login().loggedIn() ) {
-    startPath = "/";
+    startPath = HOME_PATH;
   }
   setInternalPath(startPath, true);
 }

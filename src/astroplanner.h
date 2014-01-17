@@ -31,6 +31,7 @@ public:
     static AstroPlanner *instance();
     enum NotificationType { Alert, Error, Success, Information };
     Wt::WContainerWidget * notification( const Wt::WString &title, const Wt::WString &content, AstroPlanner::NotificationType type, int autoHideSeconds = 0 );
+    static const std::string HOME_PATH;
 private:
     D_PTR;
 };
