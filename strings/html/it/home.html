@@ -3,12 +3,8 @@ ${<logged-in>}
 ${</logged-in>}
 <p>Benvenuto su ${tr:application_title}.</p>
 <p>Questo software ti permette di organizzare
-${<logged-in>}
-<a class="link" onclick="${sessions-menu-path}">le tue uscite astronomiche</a>
-${</logged-in>}
-${<not-logged-in>}
-le tue uscite astronomiche
-${</not-logged-in>}
+${<logged-in>}<a class="link" onclick="${sessions-menu-path}">le tue uscite astronomiche</a>${</logged-in>}
+${<not-logged-in>}le tue uscite astronomiche${</not-logged-in>}
 .</p>
 <p>Puoi cercare tra svariati cataloghi, tra i quali i classici <i>Messier</i>, <i>NGC</i> e <i>IC</i>, ma anche <i>Arp</i>, <i>Abell</i>, e cataloghi di asterismi e stelle rosse; creare la tua scaletta stampabile, aggiungere le tue note,
 avere un'anteprima degli oggetti celesti, suggerimenti personalizzati per la tua strumentazione

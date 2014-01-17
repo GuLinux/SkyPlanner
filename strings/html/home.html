@@ -1,1 +1,15 @@
-<p>Home English.. coming soon :-)</p>
+${<logged-in>}
+<p style="padding-right: 10px;">Hello, ${login-name} </p>
+${</logged-in>}
+<p>Welcome to ${tr:application_title}.</p>
+<p>This software can help you organize
+${<logged-in>}<a class="link" onclick="${sessions-menu-path}">your star gazing sessions</a>${</logged-in>}
+${<not-logged-in>}your star gazing sessions${</not-logged-in>}
+.</p>
+<p>You can browse various catalogues, like the famous<i>Messier</i>, <i>NGC</i>/<i>IC</i>, and also <i>Arp</i>, <i>Abell</i>, red stars,  asterisms; create your own printable session plan, add your notes,
+get a preview of the selected celestial objects, suggestions customized on your instruments,  and many other features.</p>
+${<not-logged-in>}
+<p>You can register immediatly,  without needing to fill an email address, creating a personal profile with your data and star gazing sessions.</p>
+<p>To enter or register the web site, click the <a class="link" onclick="${login-menu-path};">login</a> menu item</p>
+${</not-logged-in>}
+<p style="padding-right: 10px;">Happy star gazing!</p>
