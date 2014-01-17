@@ -2,6 +2,7 @@
 <messages>
 <message id="application_title">SkyPlanner</message>
 <message id="mainmenu_login">Login</message>
+<message id="mainmenu_home">Home</message>
 <message id="mainmenu_my_sessions">My Sessions</message>
 <message id="mainmenu_my_telescopes">My Telescopes</message>
 <message id="mainmenu_my_settings">Settings</message>

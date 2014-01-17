@@ -43,6 +43,7 @@
 #include <Wt/WCombinedLocalizedStrings>
 #include <Wt/WMessageResourceBundle>
 #include <Wt-Commons/whtmltemplateslocalizedstrings.h>
+#include "homepage.h"
 
 
 using namespace std;
@@ -84,10 +85,9 @@ AstroPlanner::AstroPlanner( const WEnvironment &environment )
   requireJQuery("http://codeorigin.jquery.com/jquery-1.8.3.min.js");
 
   string startPath = internalPath();
-  cerr << __PRETTY_FUNCTION__ << ": current start path: " << startPath << endl;
   WNavigationBar *navBar = WW<WNavigationBar>( root() ).addCss( "navbar-inverse" );
   navBar->setResponsive( true );
-  navBar->setTitle( WString::tr("application_title") );
+  navBar->setTitle( WString::tr("application_title"), WLink(WLink::InternalPath, "/") );
   useStyleSheet( "/skyplanner_style.css" );
   root()->addWidget(d->notifications = new WContainerWidget);
   d->widgets = new WStackedWidget( root() );
@@ -101,6 +101,10 @@ AstroPlanner::AstroPlanner( const WEnvironment &environment )
   authWidget->processEnvironment();
   
   navBarMenu->setInternalPathEnabled("/");
+  
+  WMenuItem *home = navBarMenu->addItem(WString::tr("mainmenu_home"), new HomePage(d->session));
+  home->setPathComponent("");
+  
   WMenuItem *authMenuItem;
   d->loggedOutItems.push_back(authMenuItem = navBarMenu->addItem(WString::tr("mainmenu_login"), authWidget));
   authMenuItem->setPathComponent("login/");
@@ -176,7 +180,7 @@ AstroPlanner::AstroPlanner( const WEnvironment &environment )
   internalPathChanged().connect([=](string p, ...) {handlePath(p); });
   d->widgets->addWidget(d->dssContainer = new WContainerWidget);
   if(!d->session.login().loggedIn() ) {
-    startPath = "/login";
+    startPath = "/";
   }
   setInternalPath(startPath, true);
 }
@@ -208,13 +212,13 @@ WContainerWidget *AstroPlanner::notification(const WString &title, const WString
   };
   WContainerWidget *notification = WW<WContainerWidget>().addCss("alert alert-block").addCss(notificationStyles[type]).setHidden(true);
   auto deleteNotification = [=](WMouseEvent) {
-    notification->animateHide({WAnimation::Fade, WAnimation::EaseInOut, 500});
+    notification->hide();
     WTimer::singleShot(3000, [=](WMouseEvent){delete notification; });
   };
   if(autoHideSeconds<=0) {
     WPushButton *closeButton = WW<WPushButton>().css("close").onClick(deleteNotification);
     closeButton->setTextFormat(XHTMLUnsafeText);
-    closeButton->setText("&times;");
+    closeButton->setText("<h4><strong>&times;</strong></h4>");
     notification->addWidget(closeButton);
   } else {
     WTimer::singleShot(1000*autoHideSeconds, deleteNotification);
