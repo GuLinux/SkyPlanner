@@ -201,6 +201,7 @@ void AstroSessionTab::Private::printableVersion()
   auto printableResource = new PrintableAstroSessionResource(astroSession, session, q);
 #ifdef DISABLE_LIBHARU
 #define PDF_INDEX -1
+#warning "libharu Disabled, export to PDF will not be available"
   printableResource->setReportType(PrintableAstroSessionResource::HTML);
 #else
 #define PDF_INDEX 0
@@ -221,7 +222,7 @@ void AstroSessionTab::Private::printableVersion()
   
   WSlider *fontScalingSlider = new WSlider();
   WComboBox *formatCombo = new WComboBox();
-#ifdef DISABLE_LIBHARU
+#ifndef DISABLE_LIBHARU
   formatCombo->addItem("PDF");
 #endif
   formatCombo->addItem("HTML");
