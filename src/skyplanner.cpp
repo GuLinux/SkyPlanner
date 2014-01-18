@@ -201,7 +201,7 @@ void SkyPlanner::Private::loadDSSPage( const std::string &hexId )
 }
 
 
-WContainerWidget *SkyPlanner::notification(const WString &title, const WString &content, NotificationType type, int autoHideSeconds)
+WContainerWidget *SkyPlanner::notification(const WString &title, const WString &content, NotificationType type, int autoHideSeconds, WContainerWidget *addTo)
 {
   static map<NotificationType,string> notificationStyles {
     {Error, "alert-error"},
@@ -224,7 +224,7 @@ WContainerWidget *SkyPlanner::notification(const WString &title, const WString &
   
   notification->addWidget(new WText{WString("<h4>{1}</h4>").arg(title) });
   notification->addWidget(new WText{content});
-  d->notifications->addWidget(notification);
+  (addTo ? addTo : d->notifications)->addWidget(notification);
   notification->animateShow({WAnimation::Fade, WAnimation::EaseInOut, 500});
   return notification;
 }

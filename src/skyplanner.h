@@ -30,7 +30,7 @@ public:
     SkyPlanner(const Wt::WEnvironment& environment);
     static SkyPlanner *instance();
     enum NotificationType { Alert, Error, Success, Information };
-    Wt::WContainerWidget * notification( const Wt::WString &title, const Wt::WString &content, SkyPlanner::NotificationType type, int autoHideSeconds = 0 );
+    Wt::WContainerWidget * notification( const Wt::WString &title, const Wt::WString &content, SkyPlanner::NotificationType type, int autoHideSeconds = 0 , Wt::WContainerWidget *addTo = nullptr);
     static const std::string HOME_PATH;
 private:
     D_PTR;
