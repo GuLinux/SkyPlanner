@@ -278,6 +278,11 @@ void SelectObjectsWidget::Private::searchByNameTab(Dbo::Transaction& transaction
     Dbo::Transaction t(session);
     string nameToSearch = boost::algorithm::trim_copy(name->text().toUTF8());
     boost::replace_all(nameToSearch, "*", "%");
+    if(nameToSearch.empty()) {
+      resultsTable->clear();
+      return;
+    }
+    
     wApp->log("notice") << "wildcard names search: original=" << name->text() << ", new search pattern: '" << nameToSearch << "'";
     if(lastSearch == nameToSearch)
       return;
