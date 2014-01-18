@@ -40,7 +40,7 @@
 #include "widgets/objectnameswidget.h"
 #include "widgets/objectdifficultywidget.h"
 #include "widgets/cataloguesdescriptionwidget.h"
-#include "astroplanner.h"
+#include "skyplanner.h"
 #include <Wt/WGroupBox>
 #include <Wt/WSpinBox>
 #include <Wt/Dbo/QueryModel>
@@ -115,7 +115,7 @@ void SelectObjectsWidget::Private::append(WTable *table, const Dbo::ptr<NgcObjec
     Dbo::Transaction t(session);
     int existing = session.query<int>("select count(*) from astro_session_object where astro_session_id = ? AND objects_id = ? ").bind(astroSession.id() ).bind(ngcObject.id() );
     if(existing>0) {
-      AstroPlanner::instance()->notification(WString::tr("notification_warning_title"), WString::tr("notification_object_already_added"), AstroPlanner::Alert, 10);
+      SkyPlanner::instance()->notification(WString::tr("notification_warning_title"), WString::tr("notification_object_already_added"), SkyPlanner::Alert, 10);
       return;
     }
     astroSession.modify()->astroSessionObjects().insert(new AstroSessionObject(ngcObject));
@@ -291,7 +291,7 @@ void SelectObjectsWidget::Private::searchByNameTab(Dbo::Transaction& transaction
     int count = session.query<int>("select count(*) from denominations where lower(name) like '%' || ? || '%'").bind(nameToSearch);
     wApp->log("notice") << "search by name: count=" << count;
     if(count > 200) { // TODO: pagination
-      AstroPlanner::instance()->notification(WString::tr("select_objects_widget_add_by_name"), WString::tr("select_objects_widget_add_by_name_too_many"), AstroPlanner::Information, 5);
+      SkyPlanner::instance()->notification(WString::tr("select_objects_widget_add_by_name"), WString::tr("select_objects_widget_add_by_name_too_many"), SkyPlanner::Information, 5);
       return;
     }
     resultsTable->clear();

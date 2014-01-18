@@ -16,7 +16,7 @@
 #include "utils/format.h"
 #include "utils/utils.h"
 #include "session.h"
-#include "astroplanner.h"
+#include "skyplanner.h"
 #include <boost/algorithm/string.hpp>
 #include <Wt/WIOService>
 
@@ -60,7 +60,7 @@ void SendFeedbackPage::Private::feedbackForm(const Wt::Dbo::ptr<NgcObject> &obje
 {
   content->clear();
   if(session.login().user().email().empty()) {
-    AstroPlanner::instance()->notification(WString::tr("notification_error_title"), WString::tr("feedback_user_without_email_error"), AstroPlanner::Error);
+    SkyPlanner::instance()->notification(WString::tr("notification_error_title"), WString::tr("feedback_user_without_email_error"), SkyPlanner::Error);
     wApp->setInternalPath("/", true);
     return;
   }
@@ -91,11 +91,11 @@ void SendFeedbackPage::Private::feedbackForm(const Wt::Dbo::ptr<NgcObject> &obje
     wApp->log("notice") << "email body   : " << body;
     if(client.connect()) {
       client.send(message);
-      AstroPlanner::instance()->notification(WString::tr("notification_success_title"), WString::tr("feedback_sent_notification"), AstroPlanner::Success, 10);
+      SkyPlanner::instance()->notification(WString::tr("notification_success_title"), WString::tr("feedback_sent_notification"), SkyPlanner::Success, 10);
     }
     else {
       WServer::instance()->log("error") << "Error connetting to SMTP Agent.";
-      AstroPlanner::instance()->notification(WString::tr("notification_error_title"), WString::tr("feedback_sending_error_notification"), AstroPlanner::Error);
+      SkyPlanner::instance()->notification(WString::tr("notification_error_title"), WString::tr("feedback_sending_error_notification"), SkyPlanner::Error);
     }
   });
   messageBody->keyWentUp().connect([=](WKeyEvent) { sendButton->setEnabled(messageBody->text().toUTF8().size() > 4 ); });

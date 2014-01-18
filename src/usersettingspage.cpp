@@ -12,7 +12,7 @@
 #include <Wt/Auth/PasswordService>
 #include <Wt/Auth/Login>
 #include <Wt/Auth/AbstractUserDatabase>
-#include "astroplanner.h"
+#include "skyplanner.h"
 #include <Wt/Auth/PasswordStrengthValidator>
 #include "Models"
 #include <Wt/WToolBar>
@@ -64,24 +64,24 @@ void UserSettingsPage::Private::onDisplay()
   WPushButton *changePasswordButton = WW<WPushButton>(WString::tr("user_settings_change_password")).css("btn btn-primary").onClick([=](WMouseEvent) {
     Auth::PasswordService &passwordService = session.passwordAuth();
     if(!passwordService.verifyPassword(session.login().user(), oldPassword->text() )) {
-      AstroPlanner::instance()->notification(WString::tr("changepwd_error_title"), WString::tr("changepwd_wrong_password"), AstroPlanner::Error, 10);
+      SkyPlanner::instance()->notification(WString::tr("changepwd_error_title"), WString::tr("changepwd_wrong_password"), SkyPlanner::Error, 10);
       return;
     }
     if(newPassword->text() != newPasswordConfirm->text()) {
-      AstroPlanner::instance()->notification(WString::tr("changepwd_error_title"), WString::tr("changepwd__passwords_not_matching"), AstroPlanner::Error, 10);
+      SkyPlanner::instance()->notification(WString::tr("changepwd_error_title"), WString::tr("changepwd__passwords_not_matching"), SkyPlanner::Error, 10);
       return;
     }
     string email = session.login().user().email().empty() ? session.login().user().unverifiedEmail() : session.login().user().email();
     WValidator::Result passwordValidation = passwordService.strengthValidator()->validate(newPassword->text(), session.login().user().identity("loginname"), email);
     if( passwordValidation.state() != WValidator::Valid ) {
-      AstroPlanner::instance()->notification(WString::tr("changepwd_error_title"), passwordValidation.message(), AstroPlanner::Error, 10);
+      SkyPlanner::instance()->notification(WString::tr("changepwd_error_title"), passwordValidation.message(), SkyPlanner::Error, 10);
       return;
     }
     passwordService.updatePassword(session.login().user(), newPassword->text());
     oldPassword->setText(WString());
     newPassword->setText(WString());
     newPasswordConfirm->setText(WString());
-    AstroPlanner::instance()->notification(WString::tr("notification_success_title"), WString::tr("changepwd_passwords_changed"), AstroPlanner::Success, 10);
+    SkyPlanner::instance()->notification(WString::tr("notification_success_title"), WString::tr("changepwd_passwords_changed"), SkyPlanner::Success, 10);
   });
 
   auto enableChangePasswordButton = [=] {
@@ -127,7 +127,7 @@ void UserSettingsPage::Private::onDisplay()
     currentEmail->setText(newEmail->text());
     session.auth().verifyEmailAddress(user, newEmail->text().toUTF8());
     changeAddress->disable();
-    AstroPlanner::instance()->notification(WString::tr("user_settings_new_email"), WString::tr("user_settings_email_changed_notify") + WString::tr("user_settings_email_verification_notify"), AstroPlanner::Information, 10);
+    SkyPlanner::instance()->notification(WString::tr("user_settings_new_email"), WString::tr("user_settings_email_changed_notify") + WString::tr("user_settings_email_verification_notify"), SkyPlanner::Information, 10);
   });
 
 
@@ -140,7 +140,7 @@ void UserSettingsPage::Private::onDisplay()
     resendVerification->clicked().connect([=](WMouseEvent) {
       session.auth().verifyEmailAddress(user, user.unverifiedEmail());
       resendVerification->disable();
-      AstroPlanner::instance()->notification(WString::tr("user_settings_email_verification_notify_title"), WString::tr("user_settings_email_verification_notify"), AstroPlanner::Information, 10);
+      SkyPlanner::instance()->notification(WString::tr("user_settings_email_verification_notify_title"), WString::tr("user_settings_email_verification_notify"), SkyPlanner::Information, 10);
     });
     toolbar->addButton(resendVerification);
   }

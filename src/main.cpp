@@ -3,7 +3,7 @@
 #include <Wt/WMemoryResource>
 #include <signal.h>
 #include "ngcresource.h"
-#include "astroplanner.h"
+#include "skyplanner.h"
 #include "style.css.h"
 #include "session.h"
 using namespace std;
@@ -12,7 +12,7 @@ using namespace Wt;
 
 WApplication *createAstroPlanner(const WEnvironment &env)
 {
-   return new AstroPlanner(env);
+   return new SkyPlanner(env);
 }
 
 int main(int argc, char **argv) {

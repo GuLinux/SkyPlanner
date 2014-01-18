@@ -29,7 +29,7 @@
 #include "utils/format.h"
 #include <utils/utils.h>
 #include <boost/filesystem.hpp>
-#include "astroplanner.h"
+#include "skyplanner.h"
 #include <Wt-Commons/wt_helpers.h>
 
 using namespace Wt;

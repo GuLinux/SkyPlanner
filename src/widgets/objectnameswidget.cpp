@@ -36,7 +36,7 @@
 #include <Wt/WTimer>
 #include "session.h"
 #include "types.h"
-#include "astroplanner.h"
+#include "skyplanner.h"
 #include <boost/regex.hpp>
 #include <boost/algorithm/string/join.hpp>
 #include "widgets/dsspage.h"

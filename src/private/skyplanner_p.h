@@ -17,23 +17,32 @@
  *
  */
 
-#ifndef ASTROPLANNER_H
-#define ASTROPLANNER_H
+#ifndef ASTROPLANNER_P_H
+#define ASTROPLANNER_P_H
+#include "skyplanner.h"
+#include "session.h"
 
-#include <Wt/WApplication>
-#include "utils/d_ptr.h"
+namespace Wt
+{
+  class WMenuItem;
+}
 
-class AstroPlanner : public Wt::WApplication
+class SkyPlanner::Private
 {
 public:
-    ~AstroPlanner();
-    AstroPlanner(const Wt::WEnvironment& environment);
-    static AstroPlanner *instance();
-    enum NotificationType { Alert, Error, Success, Information };
-    Wt::WContainerWidget * notification( const Wt::WString &title, const Wt::WString &content, AstroPlanner::NotificationType type, int autoHideSeconds = 0 );
-    static const std::string HOME_PATH;
+    Private(SkyPlanner* q);
+    Session session;
+    
+    std::vector<Wt::WMenuItem*> loggedInItems;
+    std::vector<Wt::WMenuItem*> loggedOutItems;
+    Wt::WContainerWidget *notifications;
+    Wt::WStackedWidget *widgets;
+    void loadDSSPage(const std::string &hexId);
+    std::string previousInternalPath = "/";
+    Wt::WContainerWidget *dssContainer;
+    Wt::WString loginname;
 private:
-    D_PTR;
+    class SkyPlanner* const q;
 };
 
-#endif // ASTROPLANNER_H
+#endif // ASTROPLANNER_P_H

@@ -17,8 +17,8 @@
  *
  */
 
-#include "astroplanner.h"
-#include "private/astroplanner_p.h"
+#include "skyplanner.h"
+#include "private/skyplanner_p.h"
 #include "utils/d_ptr_implementation.h"
 #include "utils/utils.h"
 #include <Wt/WNavigationBar>
@@ -50,24 +50,24 @@ using namespace std;
 using namespace Wt;
 using namespace WtCommons;
 
-AstroPlanner::Private::Private( AstroPlanner *q ) : q( q )
+SkyPlanner::Private::Private( SkyPlanner *q ) : q( q )
 {
 }
 
-AstroPlanner::~AstroPlanner()
+SkyPlanner::~SkyPlanner()
 {
 }
 
 
-AstroPlanner *AstroPlanner::instance()
+SkyPlanner *SkyPlanner::instance()
 {
-  return dynamic_cast<AstroPlanner*>(wApp);
+  return dynamic_cast<SkyPlanner*>(wApp);
 }
 
 
-const string AstroPlanner::HOME_PATH = "/home/";
+const string SkyPlanner::HOME_PATH = "/home/";
 
-AstroPlanner::AstroPlanner( const WEnvironment &environment )
+SkyPlanner::SkyPlanner( const WEnvironment &environment )
   : WApplication( environment ), d( this )
 {
   string stringsDirectory = (boost::filesystem::current_path() / "strings").string();
@@ -183,7 +183,7 @@ AstroPlanner::AstroPlanner( const WEnvironment &environment )
   handlePath(internalPath());
 }
 
-void AstroPlanner::Private::loadDSSPage( const std::string &hexId )
+void SkyPlanner::Private::loadDSSPage( const std::string &hexId )
 {
   WWidget *currentWidget = widgets->currentWidget();
   dssContainer->clear();
@@ -201,7 +201,7 @@ void AstroPlanner::Private::loadDSSPage( const std::string &hexId )
 }
 
 
-WContainerWidget *AstroPlanner::notification(const WString &title, const WString &content, NotificationType type, int autoHideSeconds)
+WContainerWidget *SkyPlanner::notification(const WString &title, const WString &content, NotificationType type, int autoHideSeconds)
 {
   static map<NotificationType,string> notificationStyles {
     {Error, "alert-error"},

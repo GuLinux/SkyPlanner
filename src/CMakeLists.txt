@@ -5,12 +5,12 @@ include(widgets/source_files.cmake)
 set(LIBHARU_PREFIX /usr CACHE PATH "LibHaru path prefix")
 include_directories(${LIBHARU_PREFIX}/include/)
 set(SkyPlanner_SRCS
+  skyplanner.cpp
   forecast.cpp
   placewidget.cpp
   astrosessiontab.cpp
   astrosessionslisttab.cpp
   astrosessionspage.cpp
-  astroplanner.cpp
   ngcresource.cpp
   session.cpp
   ephemeris.cpp

@@ -56,7 +56,7 @@
 #include "printableastrosessionresource.h"
 #include <Wt/WSlider>
 #include <Wt/WLocalDateTime>
-#include "astroplanner.h"
+#include "skyplanner.h"
 #include <boost/regex.hpp>
 #include <boost/algorithm/string/join.hpp>
 
@@ -375,7 +375,7 @@ void AstroSessionTab::Private::populate()
       .add(WW<WPushButton>(WString::tr("buttons_save")).css("btn btn-mini btn-primary pull-right").onClick([=](WMouseEvent){
         Dbo::Transaction t(session);
         sessionObject.modify()->setDescription(descriptionTextArea->text().toUTF8());
-	AstroPlanner::instance()->notification(WString::tr("notification_success_title"), WString::tr("notification_description_saved"), AstroPlanner::Success, 5);
+	SkyPlanner::instance()->notification(WString::tr("notification_success_title"), WString::tr("notification_description_saved"), SkyPlanner::Success, 5);
       }));
     descriptionCell->addWidget(descriptionContainer);
     WToolBar *actions = new WToolBar;
