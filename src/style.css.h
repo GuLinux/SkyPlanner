@@ -31,6 +31,9 @@ std::vector<uint8_t> styleCss() {
     .btn-group button {
       margin-right: 0px;
     }
+    .navbar {
+      margin-bottom: 0px;
+    }
   );
   return std::vector<uint8_t>(css.begin(), css.end());
 }
