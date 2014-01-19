@@ -43,6 +43,7 @@
 #include "skyplanner.h"
 #include <Wt/WGroupBox>
 #include <Wt/WSpinBox>
+#include <Wt/WToolBar>
 #include <Wt/Dbo/QueryModel>
 #include <boost/regex.hpp>
 #include <boost/algorithm/string.hpp>
@@ -312,7 +313,14 @@ void SelectObjectsWidget::Private::searchByNameTab(Dbo::Transaction& transaction
   };
   name->changed().connect([=](...){ searchByName(); });
   addObjectByName->addWidget(WW<WContainerWidget>().css("form-inline").add(name)
-    .add(WW<WPushButton>(WString::tr("search")).css("btn btn-primary").onClick([=](WMouseEvent){ searchByName(); })));
+    .add(
+         WW<WToolBar>()
+            .addButton( WW<WPushButton>(WString::tr("search")).css("btn btn-primary").onClick([=](WMouseEvent){ searchByName(); }) )
+            .addButton( WW<WPushButton>("?").css("btn btn-primary").onClick([=](WMouseEvent){
+                SkyPlanner::instance()->notification(WString::tr("help_notification"), WString::tr("help_search_by_name"), SkyPlanner::Information, 10 );
+            }) )
+
+         ));
   addObjectByName->addWidget(resultsTable);
   q->addTab(addObjectByName, WString::tr("select_objects_widget_add_by_name"));
 }

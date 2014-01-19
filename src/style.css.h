@@ -28,6 +28,9 @@ std::vector<uint8_t> styleCss() {
     .form-inline * {
       margin-right: 5px;
     }
+    .btn-group button {
+      margin-right: 0px;
+    }
   );
   return std::vector<uint8_t>(css.begin(), css.end());
 }
