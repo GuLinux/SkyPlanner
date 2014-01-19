@@ -34,6 +34,13 @@ std::vector<uint8_t> styleCss() {
     .navbar {
       margin-bottom: 0px;
     }
+    .blog-link-cell {
+      display: inline;
+      right: 0px;
+      bottom: 0px;
+      position: fixed;
+      margin-bottom: 0px;
+    }
   );
   return std::vector<uint8_t>(css.begin(), css.end());
 }

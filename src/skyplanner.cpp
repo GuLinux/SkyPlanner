@@ -181,6 +181,10 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
     setInternalPath(HOME_PATH, true);
   }
   handlePath(internalPath());
+
+  root()->addWidget(WW<WContainerWidget>().css("alert blog-link-cell").add(
+                        WW<WAnchor>("http://blog.gulinux.net", "Blog: gulinux.net").setTarget(TargetNewWindow)
+                        ));
 }
 
 void SkyPlanner::Private::loadDSSPage( const std::string &hexId )
