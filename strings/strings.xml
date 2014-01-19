@@ -163,4 +163,6 @@ Here comes the user message.
 <message id="help_search_by_name">Here you can type object names to search them, like <i>Andromeda</i>, or <i>NGC 7686</i><br />
 You can use a <b><i>*</i></b> as a wildcard, an example: <i>Kemble<b>*</b>Cascade</i></message>
 
+<message id="dss_downloading_message">Downloading image from DSS Website, please wait.</message>
+<message id="dss_download_error">Error downloading image from DSS Website. Please retry later, or try another image format.</message>
 </messages>

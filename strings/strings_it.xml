@@ -183,4 +183,7 @@
 <message id="help_search_by_name">Qui puoi cercare gli oggetti celesti direttamente per nome, come <i>Andromeda</i>, o <i>NGC 7686</i><br />
 Puoi usare un asterisco (<b><i>*</i></b>) come carattere jolly, ad esempio: <i>Kemble<b>*</b>Cascade</i></message>
 
+<message id="dss_downloading_message">Download immagine dal sito DSS, si prega di attendere.</message>
+<message id="dss_download_error">Errore durante il download dell'immagine dal sito DSS. Si prega di riprovare più tardi, o di cambiare formato di immagine.</message>
+
 </messages>

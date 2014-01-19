@@ -144,6 +144,105 @@ void DSSImage::Private::setCacheImage()
   anchor->addWidget(new WImage(imageLink));
   content->addWidget(anchor);
 }
+
+#include <curl/curl.h>
+#include <boost/thread.hpp>
+#include <Wt/WProgressBar>
+
+struct CurlProgressHandler {
+    WApplication *app;
+    WProgressBar *progressBar;
+    shared_ptr<boost::mutex> mutex;
+};
+
+static size_t WriteToFileCallback(void *contents, size_t size, size_t nmemb, void *userp)
+{
+    size_t realsize = size * nmemb;
+    ofstream *output = static_cast<ofstream *>(userp);
+
+    output->write(static_cast<char*>(contents), realsize);
+    return realsize;
+}
+static size_t WriteHeadersCallback(void *contents, size_t size, size_t nmemb, void *userp)
+{
+    size_t realsize = size * nmemb;
+    string *output = static_cast<string *>(userp);
+
+    for(int i=0; i<realsize; i++)
+        output->push_back(static_cast<char*>(contents)[i]);
+    return realsize;
+}
+
+int curlProgress(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow) {
+    if(dltotal <= 0 ) return 0;
+    CurlProgressHandler *handler = static_cast<CurlProgressHandler*>(clientp);
+    double currentPercent = dlnow*100./dltotal;
+    if(! currentPercent > handler->progressBar->value()) return 0;
+
+    WServer::instance()->post(handler->app->sessionId(), [=]{
+        handler->progressBar->setValue(currentPercent);
+        handler->app->triggerUpdate();
+    });
+    return 0;
+}
+
+
+void DSSImage::Private::curlDownload()
+{
+    content->clear();
+    content->addWidget(new WText(WString::tr("dss_downloading_message")));
+    CurlProgressHandler progressHandler;
+    progressHandler.progressBar = new WProgressBar();
+    progressHandler.progressBar->setMaximum(100);
+    content->addWidget(new WBreak);
+
+    content->addWidget(progressHandler.progressBar);
+    progressHandler.app = wApp;
+    boost::thread([=] () mutable {
+        progressHandler.mutex.reset(new boost::mutex);
+        CURL *curl_handle;
+        CURLcode res;
+        curl_handle = curl_easy_init();
+        Scope cleanup([=] {
+            curl_easy_cleanup(curl_handle);
+        });
+        curl_easy_setopt(curl_handle, CURLOPT_URL, imageLink().data());
+        ofstream output(cacheFile.string());
+        string headers;
+        curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, WriteToFileCallback);
+        curl_easy_setopt(curl_handle, CURLOPT_HEADERFUNCTION, WriteHeadersCallback);
+        curl_easy_setopt(curl_handle, CURLOPT_PROGRESSFUNCTION, curlProgress);
+        curl_easy_setopt(curl_handle, CURLOPT_PROGRESSDATA, &progressHandler);
+        curl_easy_setopt(curl_handle, CURLOPT_NOPROGRESS, 0);
+
+        curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, static_cast<void *>(&output));
+        curl_easy_setopt(curl_handle, CURLOPT_WRITEHEADER, static_cast<void *>(&headers));
+        res = curl_easy_perform(curl_handle);
+        bool statusIs200 = headers.find("200 OK") != string::npos;
+        bool contentTypeIsGIF = headers.find("image/gif") != string::npos;
+        /* expected headers:
+HTTP/1.1 200 OK
+Date: Sun, 19 Jan 2014 17:21:00 GMT
+Server: Apache/2.2.3 (Red Hat) DAV/2 mod_ssl/2.2.3 OpenSSL/0.9.8e-fips-rhel5 PHP/5.3.8 mod_apreq2-20090110/2.6.1 mod_perl/2.0.4 Perl/v5.8.8
+Set-Cookie: Apache=93.50.83.19.1390152060653883; path=/
+Content-length: 11589258
+Content-Type: image/gif
+*/
+        WServer::instance()->post(progressHandler.app->sessionId(), [=] {
+            Scope triggerUpdate([=]{ progressHandler.app->triggerUpdate(); });
+            delete progressHandler.progressBar;
+            if(res != CURLE_OK || !statusIs200 || !contentTypeIsGIF) {
+                WServer::instance()->log("warning") << "Error downloading data using libCURL: " << curl_easy_strerror(res);
+                boost::filesystem::remove(cacheFile);
+                content->addWidget(new WText(WString::tr("dss_download_error")));
+                failed.emit();
+                return;
+            }
+            setCacheImage();
+        });
+    });
+}
+
 void DSSImage::Private::startDownload()
 {
   content->clear();
@@ -195,6 +294,8 @@ DSSImage::DSSImage( const Coordinates::Equatorial &coordinates, const Angle &siz
   setImplementation(WW<WContainerWidget>().add(original).add(d->content));
   if(fs::exists(d->cacheFile))
     d->setCacheImage();
-  else
-    d->startDownload();
+  else {
+//    d->startDownload();
+    d->curlDownload();
+  }
 }

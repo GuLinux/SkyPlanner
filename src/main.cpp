@@ -6,6 +6,9 @@
 #include "skyplanner.h"
 #include "style.css.h"
 #include "session.h"
+#include "utils/utils.h"
+#include "curl/curl.h"
+
 using namespace std;
 using namespace Wt;
 
@@ -16,6 +19,8 @@ WApplication *createAstroPlanner(const WEnvironment &env)
 }
 
 int main(int argc, char **argv) {
+    curl_global_init(CURL_GLOBAL_ALL);
+    Scope cleanup([] {  curl_global_cleanup(); });
     try {
         WServer server(argv[0]);
         server.setServerConfiguration(argc, argv, WTHTTP_CONFIGURATION);
