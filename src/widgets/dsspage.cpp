@@ -36,6 +36,7 @@
 #include <Wt/Utils>
 #include <boost/algorithm/string/join.hpp>
 #include <Wt/WApplication>
+#include <Wt/WEnvironment>
 using namespace Wt;
 using namespace WtCommons;
 using namespace std;
@@ -78,7 +79,7 @@ DSSPage::DSSPage(const NgcObjectPtr &object, Session &session, std::function<voi
   d->imageContainer = WW<WContainerWidget>();
   WString namesJoined = Utils::htmlEncode(WString::fromUTF8( boost::algorithm::join(NgcObject::namesByCatalogueImportance(t, object), ", ") ));
   addWidget(new WText{WString("<h4>{1}</h4>").arg(namesJoined)});
-  d->typeCombo = WW<WComboBox>();
+  d->typeCombo = WW<WComboBox>().setMargin(10, Wt::Right);
   d->typeModel = new WStandardItemModel(d->typeCombo);
   d->typeCombo->setModel(d->typeModel);
 
@@ -91,9 +92,17 @@ DSSPage::DSSPage(const NgcObjectPtr &object, Session &session, std::function<voi
     d->setImageType(boost::any_cast<DSSImage::ImageVersion>(d->typeModel->item(index)->data()));
   });
 
-  addWidget(WW<WContainerWidget>()
+  WPushButton *invertButton = WW<WPushButton>("Invert").css("btn btn-inverse")
+    .onClick([=](WMouseEvent) { d->imageContainer->toggleStyleClass("image-inverse", !d->imageContainer->hasStyleClass("image-inverse")); } )
+    .setEnabled(wApp->environment().agentIsWebKit()
+  );
+
+ 
+
+  addWidget(WW<WContainerWidget>().css("form-inline")
       .add(WW<WLabel>(WString::tr("dssimage_version_label")).setMargin(10, Wt::Right))
       .add(d->typeCombo)
+      .add(invertButton)
       .add(WW<WPushButton>(WString::tr("buttons_close")).css("btn btn-danger pull-right").onClick([=](WMouseEvent){
         runOnClose();
       })
