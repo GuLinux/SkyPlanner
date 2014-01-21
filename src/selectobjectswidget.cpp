@@ -284,13 +284,13 @@ void SelectObjectsWidget::Private::searchByNameTab(Dbo::Transaction& transaction
       return;
     }
     
-    wApp->log("notice") << "wildcard names search: original=" << name->text() << ", new search pattern: '" << nameToSearch << "'";
+    spLog("notice") << "wildcard names search: original=" << name->text() << ", new search pattern: '" << nameToSearch << "'";
     if(lastSearch == nameToSearch)
       return;
     lastSearch = nameToSearch;
     transform(nameToSearch.begin(), nameToSearch.end(), nameToSearch.begin(), ::tolower);
     int count = session.query<int>("select count(*) from denominations where lower(name) like '%' || ? || '%'").bind(nameToSearch);
-    wApp->log("notice") << "search by name: count=" << count;
+    spLog("notice") << "search by name: count=" << count;
     if(count > 200) { // TODO: pagination
       SkyPlanner::instance()->notification(WString::tr("select_objects_widget_add_by_name"), WString::tr("select_objects_widget_add_by_name_too_many"), SkyPlanner::Information, 5);
       return;

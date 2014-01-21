@@ -30,6 +30,7 @@
 #include <boost/regex.hpp>
 #include "utils/format.h"
 #include "utils/utils.h"
+#include "skyplanner.h"
 
 using namespace Wt;
 using namespace WtCommons;
@@ -55,13 +56,13 @@ AstroSessionsPage::AstroSessionsPage(Session &session, WContainerWidget* parent)
   WMenuItem *listMenuItem = d->tabWidget->addTab(d->astroSessionsListTab, WString::tr("astrosessionspage_sessions_list"));
   listMenuItem->setPathComponent("list/");
   d->tabWidget->tabClosed().connect([=](int tabNumber, _n5){
-    wApp->log("notice") << __PRETTY_FUNCTION__ << ": tabNumber=" << tabNumber;
+    spLog("notice") << __PRETTY_FUNCTION__ << ": tabNumber=" << tabNumber;
     d->removeTab(d->tabs[0].astroSession);
     d->tabWidget->setCurrentWidget(d->astroSessionsListTab);
   });
   d->tabs[0].path = "/sessions/list";
   d->tabWidget->currentChanged().connect([=](int index, _n5){
-    wApp->log("notice") << __PRETTY_FUNCTION__ << ", index= " << index << "path: " << d->tabs[index].path;
+    spLog("notice") << __PRETTY_FUNCTION__ << ", index= " << index << "path: " << d->tabs[index].path;
     wApp->setInternalPath(d->tabs[index].path);
   });
 }

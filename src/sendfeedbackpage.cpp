@@ -87,14 +87,14 @@ void SendFeedbackPage::Private::feedbackForm(const Wt::Dbo::ptr<NgcObject> &obje
     WString body = WString::tr("feedback_email_message").arg(username).arg(userEmail).arg(objectData).arg(messageBody->text());
     message.setBody(body);
     message.addRecipient(Mail::To, {"marco.gulino@gmail.com", "Marco Gulino"});
-    wApp->log("notice") << "email subject: " << message.subject();
-    wApp->log("notice") << "email body   : " << body;
+    spLog("notice") << "email subject: " << message.subject();
+    spLog("notice") << "email body   : " << body;
     if(client.connect()) {
       client.send(message);
       SkyPlanner::instance()->notification(WString::tr("notification_success_title"), WString::tr("feedback_sent_notification"), SkyPlanner::Success, 10);
     }
     else {
-      WServer::instance()->log("error") << "Error connetting to SMTP Agent.";
+      spLog("error") << "Error connetting to SMTP Agent.";
       SkyPlanner::instance()->notification(WString::tr("notification_error_title"), WString::tr("feedback_sending_error_notification"), SkyPlanner::Error);
     }
   });

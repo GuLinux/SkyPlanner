@@ -254,9 +254,9 @@ void DSSImage::Private::startDownload()
   WApplication *app = wApp;
   client->done().connect([=](boost::system::error_code err, Http::Message message, _n4){
     Scope triggerUpdate{[=]{app->triggerUpdate();}};
-    wApp->log("notice") << __PRETTY_FUNCTION__ << ", download done: err=" << err  << "(" << err.message() << ")" << ", status: " << message.status() << ", retry: " << retry;
+    spLog("notice") << __PRETTY_FUNCTION__ << ", download done: err=" << err  << "(" << err.message() << ")" << ", status: " << message.status() << ", retry: " << retry;
     for(auto header: message.headers()) {
-      wApp->log("notice") << __PRETTY_FUNCTION__ << " message header: " << header.name() << ", value='" << header.value() << "'";
+      spLog("notice") << __PRETTY_FUNCTION__ << " message header: " << header.name() << ", value='" << header.value() << "'";
     }
     const string *contentType = message.getHeader("Content-Type");
     auto isNotAnImage = [=] {

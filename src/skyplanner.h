@@ -32,8 +32,12 @@ public:
     enum NotificationType { Alert, Error, Success, Information };
     Wt::WContainerWidget * notification( const Wt::WString &title, const Wt::WString &content, SkyPlanner::NotificationType type, int autoHideSeconds = 0 , Wt::WContainerWidget *addTo = nullptr);
     static const std::string HOME_PATH;
+    Wt::WLogEntry uLog (const std::string &type) const;
+
 private:
     D_PTR;
 };
+
+#define spLog(type) SkyPlanner::instance()->uLog(type)
 
 #endif // ASTROPLANNER_H

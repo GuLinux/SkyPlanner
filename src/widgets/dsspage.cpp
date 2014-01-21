@@ -49,7 +49,6 @@ DSSPage::Private::Private(const NgcObjectPtr &object, Session &session, DSSPage 
 
 DSSPage::~DSSPage()
 {
-  wApp->log("notice") << __PRETTY_FUNCTION__;
 }
 
 void DSSPage::Private::setImageType(DSSImage::ImageVersion version)

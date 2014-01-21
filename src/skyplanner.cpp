@@ -204,6 +204,11 @@ void SkyPlanner::Private::loadDSSPage( const std::string &hexId )
   widgets->setCurrentWidget( dssContainer );
 }
 
+WLogEntry SkyPlanner::uLog(const string &type) const
+{
+    return WApplication::log(type) << " - user: '" << d->loginname << "' - ";
+}
+
 
 WContainerWidget *SkyPlanner::notification(const WString &title, const WString &content, NotificationType type, int autoHideSeconds, WContainerWidget *addTo)
 {
