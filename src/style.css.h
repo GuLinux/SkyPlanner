@@ -41,6 +41,10 @@ std::vector<uint8_t> styleCss() {
       position: fixed;
       margin-bottom: 0px;
     }
+
+    .image-inverse {
+      -webkit-filter: invert(100%);
+    }
   );
   return std::vector<uint8_t>(css.begin(), css.end());
 }
