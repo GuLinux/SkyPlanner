@@ -81,7 +81,7 @@ void AstroSessionsPage::Private::removeTab(const Wt::Dbo::ptr<AstroSession> &ast
 
 void AstroSessionsPage::open(const string &tabName)
 {
-  wApp->log("notice") << __PRETTY_FUNCTION__ << ": tabName=" << tabName;
+  spLog("notice") << __PRETTY_FUNCTION__ << ": tabName=" << tabName;
   if(tabName == "list") {
     d->tabWidget->setCurrentIndex(0);
     return;
@@ -95,12 +95,12 @@ void AstroSessionsPage::open(const string &tabName)
     astroSession = d->session.find<AstroSession>().where("id = ?").where("user_id = ?").bind(sessionId).bind(d->session.user().id());
   if(!astroSession) {
     d->tabWidget->setCurrentIndex(0);
-    wApp->log("warning") << "Unable to find astroSession for path: " << wApp->internalPath() << ", tabName=" << tabName;
+    spLog("warning") << "Unable to find astroSession for path: " << wApp->internalPath() << ", tabName=" << tabName;
     wApp->setInternalPath("/sessions/list", true);
     return;
   }
   string internalPath = AstroSessionTab::pathComponent(astroSession, t);
-  wApp->log("notice") << "Setting internal path to " << internalPath;
+  spLog("notice") << "Setting internal path to " << internalPath;
   wApp->setInternalPath(internalPath, false);
   for(auto tab = find_if(begin(d->tabs), end(d->tabs), [=](pair<int, Private::Tab> t){ return t.second.astroSession.id() == sessionId; }); tab != end(d->tabs); tab++) {
     d->tabWidget->setCurrentWidget(tab->second.page);
