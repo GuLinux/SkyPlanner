@@ -148,7 +148,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
       Dbo::Transaction t(d->session);
       d->loginname = d->session.authInfo()->identity("loginname");
     }
-    wApp->log("notice") << "***** "
+    spLog("notice") << "***** "
                         << (d->session.login().loggedIn() ? "LOGIN"  : "LOGOUT")
                         << ": user " << d->loginname << " logged "
                         << (d->session.login().loggedIn() ?   "in"  : "out")
@@ -166,7 +166,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
   if(d->session.login().loggedIn())
     loginLogoutMessage();
   auto handlePath = [=](const string &newPath){
-    log("notice") << __PRETTY_FUNCTION__ << ": newPath=" << newPath;
+    spLog("notice") << __PRETTY_FUNCTION__ << ": newPath=" << newPath;
     if(internalPathMatches("/dss")) {
       d->loadDSSPage(internalPathNextPart("/dss/"));
     }
