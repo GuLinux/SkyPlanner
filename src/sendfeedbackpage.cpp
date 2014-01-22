@@ -19,11 +19,12 @@
 #include "skyplanner.h"
 #include <boost/algorithm/string.hpp>
 #include <Wt/WIOService>
+#include <Wt/WJavaScript>
 
 using namespace Wt;
 using namespace WtCommons;
 using namespace std;
-SendFeedbackPage::Private::Private(Session &session, SendFeedbackPage *q): session(session), q(q)
+SendFeedbackPage::Private::Private(Session &session, SendFeedbackPage *q): session(session), enableSendButton(q, "enable_send_button"), q(q)
 {
 }
 
@@ -98,7 +99,17 @@ void SendFeedbackPage::Private::feedbackForm(const Wt::Dbo::ptr<NgcObject> &obje
       SkyPlanner::instance()->notification(WString::tr("notification_error_title"), WString::tr("feedback_sending_error_notification"), SkyPlanner::Error);
     }
   });
-  messageBody->keyWentUp().connect([=](WKeyEvent) { sendButton->setEnabled(messageBody->text().toUTF8().size() > 4 ); });
+  enableSendButtonConnection.disconnect();
+  enableSendButtonConnection = enableSendButton.connect([=](bool enable, ...) {
+    sendButton->setEnabled(enable);
+  });
+
+  textChanged.setJavaScript(format("function(sender, event) { \
+    var enableButton = $('#%s').val().length > 4; \
+    if( $('#%s').prop('disabled') == enableButton ) \
+      %s;\
+  }") % messageBody->id() % sendButton->id() % enableSendButton.createCall("enableButton") );
+  messageBody->keyWentUp().connect(textChanged);
 
   content->addWidget(messageBody);
   content->addWidget(sendButton);
