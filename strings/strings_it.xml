@@ -58,6 +58,7 @@
 <message id="buttons_save">Salva</message>
 <message id="buttons_remove">Cancella</message>
 <message id="buttons_send">Invia</message>
+<message id="buttons_invert">Inverti</message>
 
 <message id="astrosessionspage_sessions_list">Elenco Osservazioni</message>
 <message id="astrosessionslisttab_name">Nome</message>

@@ -92,7 +92,7 @@ DSSPage::DSSPage(const NgcObjectPtr &object, Session &session, std::function<voi
     d->setImageType(boost::any_cast<DSSImage::ImageVersion>(d->typeModel->item(index)->data()));
   });
 
-  WPushButton *invertButton = WW<WPushButton>("Invert").css("btn btn-inverse")
+  WPushButton *invertButton = WW<WPushButton>(WString::tr("buttons_invert")).css("btn btn-inverse")
     .onClick([=](WMouseEvent) { d->imageContainer->toggleStyleClass("image-inverse", !d->imageContainer->hasStyleClass("image-inverse")); } )
     .setEnabled(wApp->environment().agentIsWebKit()
   );
