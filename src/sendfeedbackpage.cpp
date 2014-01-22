@@ -33,14 +33,19 @@ SendFeedbackPage::SendFeedbackPage(Session &session, Wt::WContainerWidget *paren
 {
   d->content = new WContainerWidget;
   setImplementation(d->content);
-  wApp->internalPathChanged().connect([this,&session](const string &newPath, ...) {
+  auto loadFeedbackForm = [this,&session] {
     if( !wApp->internalPathMatches("/feedback") || !session.user() ) {
       return;
     }
     auto id = Utils::fromHexString<Dbo::dbo_traits<NgcObject>::IdType>(wApp->internalPathNextPart("/feedback/"));
     Dbo::Transaction t(session);
     d->feedbackForm(session.find<NgcObject>().where("id = ?").bind(id).resultValue());
+
+  };
+  wApp->internalPathChanged().connect([this,&session,loadFeedbackForm](const string &, ...) {
+    loadFeedbackForm();
   });
+  loadFeedbackForm(); 
 }
 
 SendFeedbackPage::~SendFeedbackPage()

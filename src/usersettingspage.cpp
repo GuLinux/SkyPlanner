@@ -32,12 +32,17 @@ UserSettingsPage::UserSettingsPage(Session &session, Wt::WContainerWidget *paren
 {
   d->content = WW<WContainerWidget>();
   setImplementation(d->content);
-  wApp->internalPathChanged().connect([this,&session](const string &newPath, ...) {
+  auto setupPage = [this,&session] {
     if(!wApp->internalPathMatches("/settings") || !session.user() ) {
       return;
     }
     d->onDisplay();
+  };
+
+  wApp->internalPathChanged().connect([this,setupPage,&session](const string &newPath, ...) {
+    setupPage();
   });
+  setupPage();
 }
 
 void UserSettingsPage::Private::onDisplay()
