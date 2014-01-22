@@ -70,6 +70,7 @@ Session::Session()
   mapClass<AstroSessionObject>("astro_session_object");
   d->users = new UserDatabase(*this);
   static bool creationScriptPrinted = false;
+  static bool createTablesExecuted = false;
   if(!creationScriptPrinted) {
     cerr << "Tables creation script: " << endl;
     cerr << "-----------------------------------------------" << endl;
@@ -77,11 +78,14 @@ Session::Session()
     cerr << "-----------------------------------------------" << endl;
     creationScriptPrinted = true;
   }
-  try {
-    createTables();
-  } catch(Dbo::Exception &e) {
-    cerr << "Creation script failed, perhaps schema is already existing?" << endl;
-    cerr << "Error details: " << e.what() << endl;
+  if(!createTablesExecuted) {
+    createTablesExecuted = true;
+    try {
+      createTables();
+    } catch(Dbo::Exception &e) {
+      cerr << "Creation script failed, perhaps schema is already existing?" << endl;
+      cerr << "Error details: " << e.what() << endl;
+    }
   }
 }
 
