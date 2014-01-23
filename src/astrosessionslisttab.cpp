@@ -34,7 +34,9 @@
 #include <Wt/Utils>
 #include <Wt/WLocalDateTime>
 #include "ephemeris.h"
+#include "skyplanner.h"
 #include "utils/format.h"
+
 using namespace Wt;
 using namespace WtCommons;
 using namespace std;
@@ -50,6 +52,19 @@ AstroSessionsListTab::~AstroSessionsListTab()
 AstroSessionsListTab::AstroSessionsListTab(Session &session, Wt::WContainerWidget* parent)
     : d(session, this)
 {
+
+  WContainerWidget *helpContainer = new WContainerWidget(this);
+  auto displayFirstLoginHelp = [=] {
+    if(! wApp->internalPathMatches("/sessions") || !d->session.login().loggedIn()) return;
+    Dbo::Transaction t(d->session);
+    if(User::Setting::value<bool>(t, "astrosessionlisttab_firstintro_shown", d->session.user(), false))
+      return;
+    helpContainer->clear();
+    SkyPlanner::instance()->notification(WString::tr("help_notification"), WString::tr("help_astrosessionlisttab_1"), SkyPlanner::Information, 0, helpContainer);
+    User::Setting::setValue(t, "astrosessionlisttab_firstintro_shown", d->session.user(), true);
+  };
+  displayFirstLoginHelp();
+  wApp->internalPathChanged().connect([=](const string &, ...){ displayFirstLoginHelp(); });
   WLineEdit *newSessionName = WW<WLineEdit>();
   newSessionName->setEmptyText(WString::tr("astrosessionslisttab_name"));
   WDateEdit *newSessionDate = WW<WDateEdit>();

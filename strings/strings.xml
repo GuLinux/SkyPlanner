@@ -163,6 +163,11 @@ Here comes the user message.
 <message id="help_notification">Help</message>
 <message id="help_search_by_name">Here you can type object names to search them, like <i>Andromeda</i>, or <i>NGC 7686</i><br />
 You can use a <b><i>*</i></b> as a wildcard, an example: <i>Kemble<b>*</b>Cascade</i></message>
+<message id="help_astrosessionlisttab_1">In this tab you can add, remove and modify new star gazing sessions.<br />
+Add a descriptive name to new sessions, to easly identify them in the future: for instance, you can name them after the position and the date.<br />
+As you can see the nights with low moon phase are automatically suggested for a better star gazing experience.<br />
+After you added a session, click it to add new objects.
+</message>
 
 <message id="dss_downloading_message">Downloading image from DSS Website, please wait.</message>
 <message id="dss_download_error">Error downloading image from DSS Website. Please retry later, or try another image format.</message>
