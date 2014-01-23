@@ -60,7 +60,7 @@ AstroSessionsListTab::AstroSessionsListTab(Session &session, Wt::WContainerWidge
     if(User::Setting::value<bool>(t, "astrosessionlisttab_firstintro_shown", d->session.user(), false))
       return;
     helpContainer->clear();
-    SkyPlanner::instance()->notification(WString::tr("help_notification"), WString::tr("help_astrosessionlisttab_1"), SkyPlanner::Information, 0, helpContainer);
+    SkyPlanner::instance()->notification(WString::tr("help_notification"), WString::tr("help_astrosessionlisttab_1"), SkyPlanner::Notification::Information, 0, helpContainer);
     User::Setting::setValue(t, "astrosessionlisttab_firstintro_shown", d->session.user(), true);
   };
   displayFirstLoginHelp();

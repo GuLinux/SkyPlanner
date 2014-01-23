@@ -210,31 +210,54 @@ WLogEntry SkyPlanner::uLog(const string &type) const
 }
 
 
-WContainerWidget *SkyPlanner::notification(const WString &title, const WString &content, NotificationType type, int autoHideSeconds, WContainerWidget *addTo)
+SkyPlanner::Notification *SkyPlanner::notification(const WString &title, const WString &content, Notification::Type type, int autoHideSeconds, WContainerWidget *addTo)
 {
-  static map<NotificationType,string> notificationStyles {
-    {Error, "alert-error"},
-    {Success, "alert-success"},
-    {Information, "alert-info"},
-  };
-  WContainerWidget *notification = WW<WContainerWidget>().addCss("alert alert-block").addCss(notificationStyles[type]).setHidden(true);
-  auto deleteNotification = [=](WMouseEvent) {
-    notification->hide();
-    WTimer::singleShot(3000, [=](WMouseEvent){delete notification; });
-  };
-  if(autoHideSeconds<=0) {
-    WPushButton *closeButton = WW<WPushButton>().css("close").onClick(deleteNotification);
-    closeButton->setTextFormat(XHTMLUnsafeText);
-    closeButton->setText("<h4><strong>&times;</strong></h4>");
-    notification->addWidget(closeButton);
-  } else {
-    WTimer::singleShot(1000*autoHideSeconds, deleteNotification);
-  }
-  
-  notification->addWidget(new WText{WString("<h4>{1}</h4>").arg(title) });
-  notification->addWidget(new WText{content});
+  Notification *notification = new Notification(title, content, type, autoHideSeconds);
   (addTo ? addTo : d->notifications)->addWidget(notification);
   notification->animateShow({WAnimation::Fade, WAnimation::EaseInOut, 500});
   return notification;
 }
 
+class SkyPlanner::Notification::Private {
+public:
+  Signal<> closed;
+};
+
+Signal<> &SkyPlanner::Notification::closed() const
+{
+  return d->closed;
+}
+
+SkyPlanner::Notification::Notification(const WString &title, const WString &content, Type type, int autoHideSeconds, WContainerWidget *parent)
+  : WContainerWidget(parent), d()
+{
+  static map<Type,string> notificationStyles {
+    {Error, "alert-error"},
+    {Success, "alert-success"},
+    {Information, "alert-info"},
+  };
+  addStyleClass("alert");
+  addStyleClass("alert-block");
+  addStyleClass(notificationStyles[type]);
+  auto deleteNotification = [=](WMouseEvent) {
+    d->closed.emit();
+    hide();
+    WTimer::singleShot(3000, [=](WMouseEvent){delete this; });
+  };
+  if(autoHideSeconds<=0) {
+    WPushButton *closeButton = WW<WPushButton>().css("close").onClick(deleteNotification);
+    closeButton->setTextFormat(XHTMLUnsafeText);
+    closeButton->setText("<h4><strong>&times;</strong></h4>");
+    addWidget(closeButton);
+  } else {
+    WTimer::singleShot(1000*autoHideSeconds, deleteNotification);
+  }
+
+  addWidget(new WText{WString("<h4>{1}</h4>").arg(title) });
+  addWidget(new WText{content});
+}
+
+SkyPlanner::Notification::~Notification()
+{
+
+}

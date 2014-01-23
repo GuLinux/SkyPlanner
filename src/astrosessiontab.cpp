@@ -375,7 +375,7 @@ void AstroSessionTab::Private::populate()
       .add(WW<WPushButton>(WString::tr("buttons_save")).css("btn btn-mini btn-primary pull-right").onClick([=](WMouseEvent){
         Dbo::Transaction t(session);
         sessionObject.modify()->setDescription(descriptionTextArea->text().toUTF8());
-	SkyPlanner::instance()->notification(WString::tr("notification_success_title"), WString::tr("notification_description_saved"), SkyPlanner::Success, 5);
+    SkyPlanner::instance()->notification(WString::tr("notification_success_title"), WString::tr("notification_description_saved"), SkyPlanner::Notification::Success, 5);
       }));
     descriptionCell->addWidget(descriptionContainer);
     WToolBar *actions = new WToolBar;

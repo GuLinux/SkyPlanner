@@ -21,16 +21,25 @@
 #define ASTROPLANNER_H
 
 #include <Wt/WApplication>
+#include <Wt/WContainerWidget>
 #include "utils/d_ptr.h"
 
 class SkyPlanner : public Wt::WApplication
 {
 public:
+  SkyPlanner(const Wt::WEnvironment& environment);
     ~SkyPlanner();
-    SkyPlanner(const Wt::WEnvironment& environment);
+    class Notification : public Wt::WContainerWidget {
+    public:
+      enum Type { Alert, Error, Success, Information };
+      Notification(const Wt::WString &title, const Wt::WString &content, Type type, int autoHideSeconds = 0, Wt::WContainerWidget *parent = 0);
+      ~Notification();
+      Wt::Signal<> &closed() const;
+    private:
+      D_PTR;
+    };
     static SkyPlanner *instance();
-    enum NotificationType { Alert, Error, Success, Information };
-    Wt::WContainerWidget * notification( const Wt::WString &title, const Wt::WString &content, SkyPlanner::NotificationType type, int autoHideSeconds = 0 , Wt::WContainerWidget *addTo = nullptr);
+    Notification * notification( const Wt::WString &title, const Wt::WString &content, Notification::Type type, int autoHideSeconds = 0 , Wt::WContainerWidget *addTo = nullptr);
     static const std::string HOME_PATH;
     Wt::WLogEntry uLog (const std::string &type) const;
 

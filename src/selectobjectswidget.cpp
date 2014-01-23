@@ -116,7 +116,7 @@ void SelectObjectsWidget::Private::append(WTable *table, const Dbo::ptr<NgcObjec
     Dbo::Transaction t(session);
     int existing = session.query<int>("select count(*) from astro_session_object where astro_session_id = ? AND objects_id = ? ").bind(astroSession.id() ).bind(ngcObject.id() );
     if(existing>0) {
-      SkyPlanner::instance()->notification(WString::tr("notification_warning_title"), WString::tr("notification_object_already_added"), SkyPlanner::Alert, 10);
+      SkyPlanner::instance()->notification(WString::tr("notification_warning_title"), WString::tr("notification_object_already_added"), SkyPlanner::Notification::Alert, 10);
       return;
     }
     astroSession.modify()->astroSessionObjects().insert(new AstroSessionObject(ngcObject));
@@ -292,7 +292,7 @@ void SelectObjectsWidget::Private::searchByNameTab(Dbo::Transaction& transaction
     int count = session.query<int>("select count(*) from denominations where lower(name) like '%' || ? || '%'").bind(nameToSearch);
     spLog("notice") << "search by name: count=" << count;
     if(count > 200) { // TODO: pagination
-      SkyPlanner::instance()->notification(WString::tr("select_objects_widget_add_by_name"), WString::tr("select_objects_widget_add_by_name_too_many"), SkyPlanner::Information, 5);
+      SkyPlanner::instance()->notification(WString::tr("select_objects_widget_add_by_name"), WString::tr("select_objects_widget_add_by_name_too_many"), SkyPlanner::Notification::Information, 5);
       return;
     }
     resultsTable->clear();
@@ -317,7 +317,7 @@ void SelectObjectsWidget::Private::searchByNameTab(Dbo::Transaction& transaction
          WW<WToolBar>()
             .addButton( WW<WPushButton>(WString::tr("search")).css("btn btn-primary").onClick([=](WMouseEvent){ searchByName(); }) )
             .addButton( WW<WPushButton>("?").css("btn btn-primary").onClick([=](WMouseEvent){
-                SkyPlanner::instance()->notification(WString::tr("help_notification"), WString::tr("help_search_by_name"), SkyPlanner::Information, 10 );
+                SkyPlanner::instance()->notification(WString::tr("help_notification"), WString::tr("help_search_by_name"), SkyPlanner::Notification::Information, 10 );
             }) )
 
          ));
