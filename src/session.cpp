@@ -31,6 +31,9 @@
 #include <Wt/Auth/PasswordVerifier>
 #include <Wt/Auth/PasswordStrengthValidator>
 #include <Wt/Auth/HashFunction>
+#include <Wt/Auth/OAuthService>
+#include <Wt/Auth/GoogleService>
+#include <Wt/Auth/FacebookService>
 #include <Wt/WServer>
 #include "ngcobject.h"
 #include "nebuladenomination.h"
@@ -89,6 +92,12 @@ Session::Session()
   }
 }
 
+const std::vector<const Auth::OAuthService*> &Session::oAuth()
+{
+  return myOAuthServices;
+}
+
+
 Session::~Session()
 {
 }
@@ -136,6 +145,11 @@ void Session::configureAuth()
   passwordValidator->setMandatory(true);
   passwordValidator->setMinimumLength(Auth::PasswordStrengthValidator::OneCharClass, 8);
   myPasswordService.setStrengthValidator(passwordValidator);
+  if (Wt::Auth::GoogleService::configured())
+    myOAuthServices.push_back(new Wt::Auth::GoogleService(myAuthService));
+
+  if (Wt::Auth::FacebookService::configured())
+    myOAuthServices.push_back(new Wt::Auth::FacebookService(myAuthService));
 }
 
 Auth::AuthService& Session::auth()

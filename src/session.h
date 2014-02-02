@@ -35,6 +35,7 @@ namespace Wt
     namespace Dbo {
       template<typename T> class AuthInfo;
     }
+    class OAuthService;
   }
 }
 
@@ -50,6 +51,7 @@ public:
     static Wt::Auth::AuthService &auth();
     static Wt::Auth::PasswordService &passwordAuth();
     static void configureAuth();
+    static const std::vector<const Wt::Auth::OAuthService*> &oAuth();
 private:
   D_PTR;
 };

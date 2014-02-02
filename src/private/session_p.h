@@ -6,6 +6,7 @@
 #include <Wt/Auth/Dbo/UserDatabase>
 #include <Wt/Auth/AuthService>
 #include <Wt/Auth/PasswordService>
+#include <Wt/Auth/OAuthService>
 
 typedef Wt::Auth::Dbo::UserDatabase<AuthInfo> UserDatabase;
 
@@ -21,6 +22,8 @@ public:
 namespace {
   Wt::Auth::AuthService myAuthService;
   Wt::Auth::PasswordService myPasswordService(myAuthService);
+  std::vector<const Wt::Auth::OAuthService*> myOAuthServices;
+
 }
 #endif
 

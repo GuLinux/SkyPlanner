@@ -99,6 +99,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
   navBar->addMenu(navBarMenu);
   Auth::AuthWidget *authWidget = new Auth::AuthWidget( Session::auth(), d->session.users(), d->session.login() );
   authWidget->model()->addPasswordAuth( &Session::passwordAuth() );
+  authWidget->model()->addOAuth(Session::oAuth());
   authWidget->setRegistrationEnabled( true );
   authWidget->processEnvironment();
   
