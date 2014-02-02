@@ -55,6 +55,7 @@ AstroSessionsListTab::AstroSessionsListTab(Session &session, Wt::WContainerWidge
 
   WContainerWidget *helpContainer = new WContainerWidget(this);
   auto displayFirstLoginHelp = [=] {
+    return; // TODO: reenable when ready
     if(! wApp->internalPathMatches("/sessions") || !d->session.login().loggedIn()) return;
     Dbo::Transaction t(d->session);
     if(User::Setting::value<bool>(t, "astrosessionlisttab_firstintro_shown", d->session.user(), false))
