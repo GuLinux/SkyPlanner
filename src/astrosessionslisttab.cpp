@@ -129,7 +129,7 @@ void AstroSessionsListTab::Private::populateSessions()
      for(auto astroSession: session.find<AstroSession>().where("user_id = ?").bind(session.user().id()).orderBy("\"when\" DESC").resultList() ) {
        WTableRow *row = sessionsTable->insertRow(sessionsTable->rowCount());
        row->elementAt(0)->addWidget(WW<WAnchor>(
-              WLink(WLink::InternalPath, AstroSessionTab::pathComponent(astroSession, t)), astroSession->name())
+              WLink(WLink::InternalPath, AstroSessionTab::pathComponent(astroSession, t)), WString::fromUTF8(astroSession->name()))
              .css("link"));
        row->elementAt(1)->addWidget(new WText{WLocalDateTime(astroSession->wDateWhen().date(), astroSession->wDateWhen().time()).toString("dddd, dd MMMM yyyy")});
        row->elementAt(2)->addWidget(WW<WPushButton>(WString::tr("buttons_remove")).css("btn btn-danger btn-mini").onClick([=](WMouseEvent){

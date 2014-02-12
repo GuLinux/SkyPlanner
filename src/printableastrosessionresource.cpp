@@ -154,7 +154,7 @@ void PrintableAstroSessionResource::handleRequest(const Wt::Http::Request &reque
   ", XHTMLUnsafeText);
   printable.setCondition("render-type-html", d->reportType == HTML);
   printable.setCondition("render-type-pdf", d->reportType == PDF);
-  printable.bindString("title", d->astroSession->name());
+  printable.bindString("title", WString::fromUTF8(d->astroSession->name()));
   printable.setCondition("have-place", d->astroSession->position());
   printable.setCondition("have-telescope", d->telescope);
   if(d->telescope) {

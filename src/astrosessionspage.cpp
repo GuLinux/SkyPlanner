@@ -107,7 +107,7 @@ void AstroSessionsPage::open(const string &tabName)
     return;
   }
   auto astroSessionTab = new AstroSessionTab(astroSession, d->session);
-  WMenuItem *newTab = d->tabWidget->addTab(astroSessionTab, astroSession->name());
+  WMenuItem *newTab = d->tabWidget->addTab(astroSessionTab, WString::fromUTF8(astroSession->name()));
   //newTab->setPathComponent( AstroSessionTab::pathComponent(astroSession, t) );
   astroSessionTab->nameChanged().connect([=](const string &newName,_n5){
     newTab->setText(WString::fromUTF8(newName));
