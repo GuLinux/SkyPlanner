@@ -74,7 +74,15 @@ AstroSessionsListTab::AstroSessionsListTab(Session &session, Wt::WContainerWidge
   setMinimumSize(WLength::Auto, 500);
   
   WPushButton *newSessionAdd = WW<WPushButton>(WString::tr("buttons_add")).css("btn btn-primary btn-small").onClick([=](WMouseEvent){
-   if(!d->session.login().loggedIn() || ! d->session.user() || newSessionName->text().empty()) return;
+    if(!d->session.login().loggedIn() || ! d->session.user() ) return;
+    if( newSessionName->text().empty() ) {
+      SkyPlanner::instance()->notification(WString::tr("notification_error_title"), WString::tr("astrosessionslisttab_add_new_name_empty"), SkyPlanner::Notification::Error, 10  );
+      return;
+    }
+    if( ! newSessionDate->date().isValid() ) {
+      SkyPlanner::instance()->notification(WString::tr("notification_error_title"), WString::tr("astrosessionslisttab_add_new_date_invalid"), SkyPlanner::Notification::Error, 10  );
+      return;
+    }
     d->addNew(newSessionName->text(), newSessionDate->date());
     d->populateSessions();
     newSessionName->setText("");

@@ -25,6 +25,10 @@
 <message id="astrosessionslisttab_when">When</message>
 <message id="astrosessionslisttab_next_nights_without_moon">Next nights without moon: </message>
 <message id="astrosessionslisttab_add_new_label">Add New Session: </message>
+
+<message id="astrosessionslisttab_add_new_name_empty">Session name cannot be empty.</message>
+<message id="astrosessionslisttab_add_new_date_invalid">You must enter a valid session date.</message>
+
 <message id="messagebox_confirm_removal_title">Confirm removal</message>
 <message id="messagebox_confirm_removal_message">Are you sure? This cannot be undone</message>
 <message id="position_title">Position</message>
