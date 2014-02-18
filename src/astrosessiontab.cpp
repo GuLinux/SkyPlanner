@@ -280,7 +280,7 @@ void AstroSessionTab::Private::updatePositionDetails()
   positionDetails->clear();
   auto addMoonPhaseDetails = [=](const Ephemeris &ephemeris) {
     Ephemeris::LunarPhase lunarPhase = ephemeris.moonPhase(astroSession->when());
-    positionDetails->addWidget(new WText(WString(WString::tr("astrosessiontab_moon_phase")).arg(static_cast<int>(lunarPhase.illuminated_fraction * 100 ))));
+    positionDetails->addWidget(new WText(WString::tr("astrosessiontab_moon_phase").arg(static_cast<int>(lunarPhase.illuminated_fraction * 100 ))));
     positionDetails->addWidget(new WBreak);
   };
   if(!astroSession->position()) {
@@ -305,7 +305,9 @@ void AstroSessionTab::Private::updatePositionDetails()
   ));
   positionDetails->addWidget(new WBreak);
   addMoonPhaseDetails(ephemeris);
-  
+
+  auto darkness = ephemeris.darknessHours(astroSession->when() );
+  positionDetails->addWidget(new WText{WString::tr("astrosessiontab_darkness_hours").arg(darkness.hours()).arg(darkness.minutes() ) });  
   positionDetails->addWidget(new WImage(WLink{format("http://www.7timer.com/v4/bin/astro.php?lon=%f&lat=%f&lang=en&ac=0&unit=metric&tzshift=0")
     % astroSession->position().longitude.degrees() % astroSession->position().latitude.degrees()
   } ));
