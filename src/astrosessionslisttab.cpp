@@ -86,8 +86,8 @@ AstroSessionsListTab::AstroSessionsListTab(Session &session, Wt::WContainerWidge
     d->addNew(newSessionName->text(), newSessionDate->date());
     d->populateSessions();
     newSessionName->setText("");
-  }).setEnabled(false);
-  newSessionName->keyWentUp().connect([=](WKeyEvent){ newSessionAdd->setEnabled(!newSessionName->text().empty() );});
+  }).setEnabled(true);
+//  newSessionName->keyWentUp().connect([=](WKeyEvent){ newSessionAdd->setEnabled(!newSessionName->text().empty() );});
   addWidget(WW<WContainerWidget>().css("form-inline").add(new WLabel{WString::tr("astrosessionslisttab_add_new_label")}).add(newSessionName).add(newSessionDate).add(newSessionAdd));
   
   vector<pair<Ephemeris::LunarPhase,boost::posix_time::ptime>> newMoons;
