@@ -67,7 +67,7 @@ AstroSessionsListTab::AstroSessionsListTab(Session &session, Wt::WContainerWidge
   displayFirstLoginHelp();
   wApp->internalPathChanged().connect([=](const string &, ...){ displayFirstLoginHelp(); });
   WLineEdit *newSessionName = WW<WLineEdit>();
-  newSessionName->setEmptyText(WString::tr("astrosessionslisttab_name"));
+//  newSessionName->setEmptyText(WString::tr("astrosessionslisttab_name"));
   WDateEdit *newSessionDate = WW<WDateEdit>();
 //  newSessionDate->setEmptyText(WString::tr("astrosessionslisttab_when"));
   newSessionDate->setDate(WDate::currentDate());
