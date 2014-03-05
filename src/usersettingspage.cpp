@@ -49,15 +49,18 @@ void UserSettingsPage::Private::onDisplay()
 {
   content->clear();
   WGroupBox *changePassword = WW<WGroupBox>(WString::tr("user_settings_change_password"), content);
+#define labelSize "5"
+#define controlSize "7"
 
   auto controlElement = [=] (WWidget *w, const string &labelKey = string() ) {
-    WContainerWidget *container = WW<WContainerWidget>().css("control-group");
+    WContainerWidget *container = WW<WContainerWidget>().css("form-group");
     if(!labelKey.empty()) {
-      WLabel *label = WW<WLabel>(WString::tr(labelKey), container).css("control-label");
+      WLabel *label = WW<WLabel>(WString::tr(labelKey), container).css("control-label col-sm-" labelSize);
+      w->addStyleClass("form-control");
       if(dynamic_cast<WFormWidget*>(w))
         label->setBuddy(dynamic_cast<WFormWidget*>(w));
     }
-    container->addWidget(WW<WContainerWidget>().css("controls").add(w));
+    container->addWidget(WW<WContainerWidget>().css(labelKey.empty() ? "col-sm-" controlSize " col-sm-offset-" labelSize : "col-sm-" controlSize).add(w));
     return container;
   };
 
@@ -103,7 +106,8 @@ void UserSettingsPage::Private::onDisplay()
   newPasswordConfirm->keyWentUp().connect([=](WKeyEvent) { enableChangePasswordButton(); });
   enableChangePasswordButton();
 
-  changePassword->addWidget(WW<WContainerWidget>().css("form-horizontal")
+  changePassword->addWidget(WW<WContainerWidget>().css("form-horizontal col-sm-7")
+                            .setAttribute("role", "form")
                             .add(controlElement(oldPassword, "user_settings_old_password"))
                             .add(controlElement(newPassword, "user_settings_new_password"))
                             .add(controlElement(newPasswordConfirm, "user_settings_new_password_confirm"))
@@ -149,7 +153,8 @@ void UserSettingsPage::Private::onDisplay()
     });
     toolbar->addButton(resendVerification);
   }
-  email->addWidget(WW<WContainerWidget>().css("form-horizontal")
+  email->addWidget(WW<WContainerWidget>().css("form-horizontal col-sm-7")
+                   .setAttribute("role", "form")
                    .add(controlElement(currentEmail, "user_settings_current_email"))
                    .add(controlElement(newEmail, "user_settings_new_email"))
                    .add(controlElement(toolbar))

@@ -84,7 +84,9 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
 
   setTitle(WString::tr("application_title"));
   enableUpdates(true);
-  setTheme( new WBootstrapTheme( this ) );
+  auto theme = new WBootstrapTheme(this);
+  theme->setVersion(WBootstrapTheme::Version3);
+  setTheme( theme );
   requireJQuery("http://codeorigin.jquery.com/jquery-1.8.3.min.js");
 
   WNavigationBar *navBar = WW<WNavigationBar>( root() ).addCss( "navbar-inverse" );
