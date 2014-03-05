@@ -31,6 +31,7 @@
 #include <Wt/WLineEdit>
 #include <Wt/WSpinBox>
 #include <Wt/WLabel>
+#include <Wt-Commons/wform.h>
 #include <boost/format.hpp>
 
 using namespace Wt;
@@ -68,23 +69,11 @@ TelescopesPage::TelescopesPage( Session &session, WContainerWidget *parent )
     t.commit();
     d->populate();
   });
-  addWidget(WW<WContainerWidget>().css("form-horizontal")
-  .add(WW<WContainerWidget>().css("control-group")
-    .add(telescopeNameLabel)
-    .add(WW<WContainerWidget>().css("controls").add(telescopeName))
-  )
-  .add(WW<WContainerWidget>().css("control-group")
-    .add(telescopeDiameterLabel)
-    .add(WW<WContainerWidget>().css("controls").add(telescopeDiameter))
-  )
-  .add(WW<WContainerWidget>().css("control-group")
-    .add(telescopeFocalLengthLabel)
-    .add(WW<WContainerWidget>().css("controls").add(telescopeFocalLength))
-  )
-  .add(WW<WContainerWidget>().css("control-group")
-    .add(WW<WContainerWidget>().css("controls").add(addTelescopeButton))
-   )
-    
+  addWidget(WW<WForm>(WForm::Horizontal).addCss("col-sm-6").get()
+    ->add(telescopeName, "telescopes_telescope_name")
+    ->add(telescopeDiameter, "telescopes_diameter_mm")
+    ->add(telescopeFocalLength, "telescopes_focal_length_mm")
+    ->addButton(addTelescopeButton)
   );
   d->telescopesTable = WW<WTable>(this).addCss("table table-striped table-hover");
   d->telescopesTable->setHeaderCount(1);

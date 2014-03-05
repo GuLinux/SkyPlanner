@@ -94,7 +94,7 @@ void UserSettingsPage::Private::onDisplay()
   newPasswordConfirm->keyWentUp().connect([=](WKeyEvent) { enableChangePasswordButton(); });
   enableChangePasswordButton();
 
-  changePassword->addWidget(WW<WForm>(WForm::Horizontal, 5).css("col-sm-6").get()
+  changePassword->addWidget(WW<WForm>(WForm::Horizontal, 5).addCss("col-sm-6").get()
                             ->add(oldPassword, "user_settings_old_password")
                             ->add(newPassword, "user_settings_new_password")
                             ->add(newPasswordConfirm, "user_settings_new_password_confirm")
@@ -140,7 +140,7 @@ void UserSettingsPage::Private::onDisplay()
     });
     toolbar->addButton(resendVerification);
   }
-  email->addWidget(WW<WForm>(WForm::Horizontal).css("col-sm-6").get()
+  email->addWidget(WW<WForm>(WForm::Horizontal).addCss("col-sm-6").get()
                    ->add(currentEmail, "user_settings_current_email")
                    ->add(newEmail, "user_settings_new_email")
                    ->addButton(toolbar)
