@@ -81,9 +81,10 @@ void AstroSession::setPosition(const Coordinates::LatLng& position)
 
 AstroSession::ObservabilityRange AstroSession::observabilityRange( const Ephemeris &ephemeris ) const
 {
+  auto sunEphemeris = ephemeris.sun(when());
   return {  
-    ephemeris.sun( when() ).set,
-    ephemeris.sun( when() + boost::posix_time::time_duration{24 ,0,0}).rise
+    sunEphemeris.set,
+    sunEphemeris.rise
   };
 }
 
