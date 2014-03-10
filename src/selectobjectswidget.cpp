@@ -152,8 +152,7 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsTable()
     };
     static const int pagesSize = 15;
     suggestedObjectsTablePagination->clear();
-    suggestedObjectsTablePagination->setStyleClass("pagination pagination-mini");
-    WContainerWidget *paginationWidget = WW<WContainerWidget>();
+    WContainerWidget *paginationWidget = WW<WContainerWidget>().addCss("pagination pagination-sm");
     paginationWidget->setList(true);
     shared_ptr<vector<WContainerWidget*>> pages(new vector<WContainerWidget*>());
     suggestedObjectsTablePagination->addWidget(paginationWidget);
