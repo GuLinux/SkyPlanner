@@ -59,6 +59,8 @@
 #include "skyplanner.h"
 #include <boost/regex.hpp>
 #include <boost/algorithm/string/join.hpp>
+#include <Wt/Http/Client>
+#include <Wt/Http/Message>
 
 
 
@@ -66,7 +68,8 @@ using namespace Wt;
 using namespace WtCommons;
 using namespace std;
 
-AstroSessionTab::Private::Private(const Dbo::ptr<AstroSession>& astroSession, Session &session, AstroSessionTab* q) : astroSession(astroSession), session(session), q(q)
+AstroSessionTab::Private::Private(const Dbo::ptr<AstroSession>& astroSession, Session &session, AstroSessionTab* q)
+  : astroSession(astroSession), session(session), client(new Http::Client(q)), q(q)
 {
 }
 
@@ -277,6 +280,23 @@ void AstroSessionTab::Private::updatePositionDetails()
 {
   Dbo::Transaction t(session);
   astroSession.reread();
+  
+  client->done().connect([=](const boost::system::error_code &err, const Http::Message &m, _n4){
+    spLog("notice") << "got google response: err=" << err.value() << " [" << err.message() << "]";
+    for(auto header: m.headers())
+      spLog("notice") << "header: " << header.name() << "=" << header.value();
+    spLog("notice") << "status: " << m.status() << ", body: " << m.body();
+  });
+  string url = format("https://maps.googleapis.com/maps/api/timezone/json?location=%f,%f&timestamp=%d&sensor=false&key=%s")
+    % astroSession->position().latitude.degrees()
+    % astroSession->position().longitude.degrees()
+    % astroSession->wDateWhen().toTime_t()
+    % "TODO";
+  spLog("notice") << "URL: " << url;
+  bool getRequest = client->get(url);
+  
+  spLog("notice") << "get request: " << boolalpha << getRequest;
+  
   positionDetails->clear();
   auto addMoonPhaseDetails = [=](const Ephemeris &ephemeris) {
     Ephemeris::LunarPhase lunarPhase = ephemeris.moonPhase(astroSession->when());

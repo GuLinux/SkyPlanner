@@ -22,6 +22,14 @@
 #include "astrosessiontab.h"
 #include <forecast.h>
 
+namespace Wt
+{
+  namespace Http
+  {
+    class Client;
+  }
+}
+
 class Telescope;
 class Session;
 class AstroSessionTab::Private
@@ -41,6 +49,7 @@ public:
     Wt::Signal<std::string> nameChanged;
     void printableVersion();
     bool pastObservation;
+    std::shared_ptr<Wt::Http::Client> client;
 private:
     class AstroSessionTab* const q;
 };
