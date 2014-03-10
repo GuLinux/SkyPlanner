@@ -36,6 +36,7 @@
 #include "ephemeris.h"
 #include "skyplanner.h"
 #include "utils/format.h"
+#include "Wt-Commons/wform.h"
 
 using namespace Wt;
 using namespace WtCommons;
@@ -88,7 +89,8 @@ AstroSessionsListTab::AstroSessionsListTab(Session &session, Wt::WContainerWidge
     newSessionName->setText("");
   }).setEnabled(true);
 //  newSessionName->keyWentUp().connect([=](WKeyEvent){ newSessionAdd->setEnabled(!newSessionName->text().empty() );});
-  addWidget(WW<WContainerWidget>().css("form-inline").add(new WLabel{WString::tr("astrosessionslisttab_add_new_label")}).add(newSessionName).add(newSessionDate).add(newSessionAdd));
+//  addWidget(WW<WContainerWidget>().css("form-inline").add(new WLabel{WString::tr("astrosessionslisttab_add_new_label")}).add(newSessionName).add(newSessionDate).add(newSessionAdd));
+  addWidget(WW<WForm>(WForm::Inline).get()->add(newSessionName, "astrosessionslisttab_add_new_label")->add(newSessionDate)->addButton(newSessionAdd));
   
   vector<pair<Ephemeris::LunarPhase,boost::posix_time::ptime>> newMoons;
   Ephemeris moonPhaseEphemeris{{}};
