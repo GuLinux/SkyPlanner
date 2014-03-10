@@ -63,7 +63,7 @@ TelescopesPage::TelescopesPage( Session &session, WContainerWidget *parent )
   telescopeName->setEmptyText(WString::tr("telescopes_telescope_name"));
   telescopeDiameter->setEmptyText(WString::tr("telescopes_diameter_mm"));
   telescopeFocalLength->setEmptyText(WString::tr("telescopes_focal_length_mm"));
-  WPushButton *addTelescopeButton = WW<WPushButton>(WString::tr("buttons_add")).css("btn btn-primary btn-small").onClick([=](WMouseEvent){
+  WPushButton *addTelescopeButton = WW<WPushButton>(WString::tr("buttons_add")).css("btn btn-primary").onClick([=](WMouseEvent){
     Dbo::Transaction t(d->session);
     d->session.user().modify()->telescopes().insert(new Telescope(telescopeName->text().toUTF8(), telescopeDiameter->value(), telescopeFocalLength->value()));
     t.commit();
@@ -97,7 +97,7 @@ void TelescopesPage::Private::populate()
     row->elementAt(2)->addWidget(new WText{WString("{1}").arg(telescope->focalLength()) });
     row->elementAt(3)->addWidget(new WText{ format("%.3f") % telescope->limitMagnitudeGain() });
     row->elementAt(4)->addWidget(new WText{ format("%.3f") % (telescope->limitMagnitudeGain() + 6) });
-    row->elementAt(5)->addWidget(WW<WPushButton>(WString::tr("buttons_remove")).css("btn btn-danger btn-mini").onClick([=](WMouseEvent){
+    row->elementAt(5)->addWidget(WW<WPushButton>(WString::tr("buttons_remove")).css("btn btn-danger btn-xs").onClick([=](WMouseEvent){
       Dbo::Transaction t(session);
       session.user().modify()->telescopes().erase(telescope);
       Dbo::ptr<Telescope> tel = telescope;

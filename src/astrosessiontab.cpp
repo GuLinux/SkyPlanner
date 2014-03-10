@@ -359,7 +359,7 @@ void AstroSessionTab::Private::populate()
     
     auto cataloguesDescriptionWidget = CataloguesDescriptionWidget::add(objectsTable, 11, sessionObject->ngcObject(), true);
     if(cataloguesDescriptionWidget) {
-      WPushButton *toggleDescriptionsButton = WW<WPushButton>(WString::tr("object_more_info"), row->elementAt(0)).css("btn btn-mini pull-right");
+      WPushButton *toggleDescriptionsButton = WW<WPushButton>(WString::tr("object_more_info"), row->elementAt(0)).css("btn btn-xs pull-right");
       toggleDescriptionsButton->clicked().connect([=](WMouseEvent){
         toggleDescriptionsButton->toggleStyleClass("btn-inverse", cataloguesDescriptionWidget->isHidden());
         cataloguesDescriptionWidget->setHidden(!cataloguesDescriptionWidget->isHidden());
@@ -374,7 +374,7 @@ void AstroSessionTab::Private::populate()
     WContainerWidget *descriptionContainer = WW<WContainerWidget>()
       .add(new WLabel{WString::tr("object_notes")})
       .add(descriptionTextArea)
-      .add(WW<WPushButton>(WString::tr("buttons_save")).css("btn btn-mini btn-primary pull-right").onClick([=](WMouseEvent){
+      .add(WW<WPushButton>(WString::tr("buttons_save")).css("btn btn-xs btn-primary pull-right").onClick([=](WMouseEvent){
         Dbo::Transaction t(session);
         sessionObject.modify()->setDescription(descriptionTextArea->text().toUTF8());
     SkyPlanner::instance()->notification(WString::tr("notification_success_title"), WString::tr("notification_description_saved"), SkyPlanner::Notification::Success, 5);
@@ -382,10 +382,10 @@ void AstroSessionTab::Private::populate()
     descriptionCell->addWidget(descriptionContainer);
     WToolBar *actions = new WToolBar;
     row->elementAt(10)->addWidget(actions);
-    actions->addButton(WW<WPushButton>(WString::tr("description")).css("btn btn-mini").onClick([=](WMouseEvent){
+    actions->addButton(WW<WPushButton>(WString::tr("description")).css("btn btn-xs").onClick([=](WMouseEvent){
       descriptionCell->setHidden(!descriptionCell->isHidden());
     }));
-    actions->addButton(WW<WPushButton>(WString::tr("buttons_remove")).css("btn btn-danger btn-mini").onClick([=](WMouseEvent){
+    actions->addButton(WW<WPushButton>(WString::tr("buttons_remove")).css("btn btn-danger btn-xs").onClick([=](WMouseEvent){
       WMessageBox *confirmation = new WMessageBox(WString::tr("messagebox_confirm_removal_title"), WString::tr("messagebox_confirm_removal_message"), Wt::Question, Wt::Ok | Wt::Cancel);
       confirmation->buttonClicked().connect([=](StandardButton b, _n5) {
         if(b != Wt::Ok) {
@@ -404,7 +404,7 @@ void AstroSessionTab::Private::populate()
     }));
 
     if(pastObservation) {
-      WPushButton *observedToggleButton = WW<WPushButton>().css("btn btn-mini");
+      WPushButton *observedToggleButton = WW<WPushButton>().css("btn btn-xs");
       observedToggleButton->setTextFormat(XHTMLUnsafeText);
       auto setObservedButtonStyle = [=]( const Dbo::ptr<AstroSessionObject> &o) {
         observedToggleButton->setText(o->observed() ? WString::tr("astrosessiontab_object_observed") : WString::tr("astrosessiontab_object_not_observed"));
