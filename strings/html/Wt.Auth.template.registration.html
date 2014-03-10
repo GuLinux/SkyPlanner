@@ -1,0 +1,42 @@
+    <div class="Wt-auth-registration">
+      <p class="lead">
+  ${password-description}
+      </p>
+
+      <div class="form-horizontal">
+        ${<if:user-name>}
+    <div class="form-group">
+      <label for="${id:user-name}" class="col-sm-4">
+        ${user-name-label}
+      </label>
+      <div class="col-sm-8">
+        ${user-name class="form-control"}
+      </div>
+        <div class="help-block col-sm-8">
+    ${user-name-info} ${confirm-is-you class="btn-link"}
+        </div>
+
+    </div>
+  ${</if:user-name>}
+
+  ${block:Wt.Auth.field choose-password form-control}
+  ${block:Wt.Auth.field repeat-password form-control}
+  ${block:Wt.Auth.field email form-control}
+
+  ${<if:oauth>}
+    <p class="lead">
+      ${oauth-description}
+    </p>
+    <div class="form-group">
+      <label class="col-sm-4">${tr:Wt.Auth.oauth}</label>
+      <div class="col-sm-8">
+        ${icons}
+      </div>
+    </div>
+  ${</if:oauth>}
+
+  <div class="modal-footer"> <!-- assuming here we're in a dialog -->
+    ${ok-button class="btn-primary"} ${cancel-button}
+  </div>
+      </div>
+    </div>
