@@ -17,6 +17,7 @@
 #include "Models"
 #include <Wt/WToolBar>
 #include <Wt/Auth/AuthService>
+#include "Wt-Commons/wform.h"
 
 
 using namespace Wt;
@@ -50,16 +51,6 @@ void UserSettingsPage::Private::onDisplay()
   content->clear();
   WGroupBox *changePassword = WW<WGroupBox>(WString::tr("user_settings_change_password"), content);
 
-  auto controlElement = [=] (WWidget *w, const string &labelKey = string() ) {
-    WContainerWidget *container = WW<WContainerWidget>().css("control-group");
-    if(!labelKey.empty()) {
-      WLabel *label = WW<WLabel>(WString::tr(labelKey), container).css("control-label");
-      if(dynamic_cast<WFormWidget*>(w))
-        label->setBuddy(dynamic_cast<WFormWidget*>(w));
-    }
-    container->addWidget(WW<WContainerWidget>().css("controls").add(w));
-    return container;
-  };
 
   WLineEdit *oldPassword = WW<WLineEdit>();
   WLineEdit *newPassword = WW<WLineEdit>();
@@ -103,11 +94,11 @@ void UserSettingsPage::Private::onDisplay()
   newPasswordConfirm->keyWentUp().connect([=](WKeyEvent) { enableChangePasswordButton(); });
   enableChangePasswordButton();
 
-  changePassword->addWidget(WW<WContainerWidget>().css("form-horizontal")
-                            .add(controlElement(oldPassword, "user_settings_old_password"))
-                            .add(controlElement(newPassword, "user_settings_new_password"))
-                            .add(controlElement(newPasswordConfirm, "user_settings_new_password_confirm"))
-                            .add(controlElement(changePasswordButton))
+  changePassword->addWidget(WW<WForm>(WForm::Horizontal, 5).addCss("col-sm-6").get()
+                            ->add(oldPassword, "user_settings_old_password")
+                            ->add(newPassword, "user_settings_new_password")
+                            ->add(newPasswordConfirm, "user_settings_new_password_confirm")
+                            ->addButton(changePasswordButton)
                             );
 
 
@@ -149,10 +140,10 @@ void UserSettingsPage::Private::onDisplay()
     });
     toolbar->addButton(resendVerification);
   }
-  email->addWidget(WW<WContainerWidget>().css("form-horizontal")
-                   .add(controlElement(currentEmail, "user_settings_current_email"))
-                   .add(controlElement(newEmail, "user_settings_new_email"))
-                   .add(controlElement(toolbar))
+  email->addWidget(WW<WForm>(WForm::Horizontal).addCss("col-sm-6").get()
+                   ->add(currentEmail, "user_settings_current_email")
+                   ->add(newEmail, "user_settings_new_email")
+                   ->addButton(toolbar)
                    );
   enableChangeButton();
 }

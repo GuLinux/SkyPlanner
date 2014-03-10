@@ -25,6 +25,7 @@ set(SkyPlanner_SRCS
   usersettingspage.cpp
   sendfeedbackpage.cpp
   Wt-Commons/whtmltemplateslocalizedstrings.cpp
+  Wt-Commons/wform.cpp
   homepage.cpp
 )
 
