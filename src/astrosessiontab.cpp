@@ -69,8 +69,17 @@ using namespace WtCommons;
 using namespace std;
 
 AstroSessionTab::Private::Private(const Dbo::ptr<AstroSession>& astroSession, Session &session, AstroSessionTab* q)
-  : astroSession(astroSession), session(session), client(new Http::Client(q)), q(q)
+  : astroSession(astroSession), session(session), client(new Http::Client()), q(q)
 {
+  client->setTimeout(15);
+  client->setMaximumResponseSize(10 * 1024);
+  client->done().connect([=](const boost::system::error_code &err, const Http::Message &m, _n4){
+    spLog("notice") << "got google response: err=" << err.value() << " [" << err.message() << "]";
+    for(auto header: m.headers())
+      spLog("notice") << "header: " << header.name() << "=" << header.value();
+    spLog("notice") << "status: " << m.status() << ", body: " << m.body();
+  });
+
 }
 
 AstroSessionTab::~AstroSessionTab()
@@ -280,20 +289,21 @@ void AstroSessionTab::Private::updatePositionDetails()
 {
   Dbo::Transaction t(session);
   astroSession.reread();
+
+  static string googleApiKey;
+  if(googleApiKey.empty())
+    wApp->readConfigurationProperty("google_api_server_key", googleApiKey);
+
+
   
-  client->done().connect([=](const boost::system::error_code &err, const Http::Message &m, _n4){
-    spLog("notice") << "got google response: err=" << err.value() << " [" << err.message() << "]";
-    for(auto header: m.headers())
-      spLog("notice") << "header: " << header.name() << "=" << header.value();
-    spLog("notice") << "status: " << m.status() << ", body: " << m.body();
-  });
   string url = format("https://maps.googleapis.com/maps/api/timezone/json?location=%f,%f&timestamp=%d&sensor=false&key=%s")
     % astroSession->position().latitude.degrees()
     % astroSession->position().longitude.degrees()
     % astroSession->wDateWhen().toTime_t()
-    % "TODO";
+    % googleApiKey
+  ;
   spLog("notice") << "URL: " << url;
-  bool getRequest = client->get(url);
+  bool getRequest = ! googleApiKey.empty() && client->get(url);
   
   spLog("notice") << "get request: " << boolalpha << getRequest;
   
