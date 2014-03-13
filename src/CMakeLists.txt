@@ -19,6 +19,7 @@ set(SkyPlanner_SRCS
   main.cpp
   utils/utils.cpp
   utils/autopostresource.cpp
+  utils/curl.cpp
   telescopespage.cpp
   constellationfinder.cpp
   printableastrosessionresource.cpp

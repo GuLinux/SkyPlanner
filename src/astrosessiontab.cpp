@@ -22,6 +22,7 @@
 #include "private/astrosessiontab_p.h"
 #include "utils/d_ptr_implementation.h"
 #include "utils/format.h"
+#include "utils/curl.h"
 #include "Wt-Commons/wt_helpers.h"
 #include "session.h"
 #include "placewidget.h"
@@ -303,9 +304,12 @@ void AstroSessionTab::Private::updatePositionDetails()
     % googleApiKey
   ;
   spLog("notice") << "URL: " << url;
-  bool getRequest = ! googleApiKey.empty() && client->get(url);
+  stringstream data;
+  Curl curl(data);
+
+  bool getRequest = ! googleApiKey.empty() && curl.get(url).requestOk();
   
-  spLog("notice") << "get request: " << boolalpha << getRequest;
+  spLog("notice") << "get request: " << boolalpha << getRequest << ", out: " << data.str();
   
   positionDetails->clear();
   auto addMoonPhaseDetails = [=](const Ephemeris &ephemeris) {
