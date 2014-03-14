@@ -108,7 +108,7 @@ void SelectObjectsWidget::Private::append(WTable *table, const Dbo::ptr<NgcObjec
   row->elementAt(1)->addWidget(new WText{ ngcObject->typeDescription() });
   row->elementAt(2)->addWidget(new WText{ WString::fromUTF8(ConstellationFinder::getName(ngcObject->coordinates()).name) });
   row->elementAt(3)->addWidget(new WText{ (ngcObject->magnitude() > 90.) ? "N/A" : (format("%.1f") % ngcObject->magnitude()).str() });
-  WDateTime transit = WDateTime::fromPosixTime(bestAltitude.when);
+  WDateTime transit = WDateTime::fromPosixTime(timezone.fix(bestAltitude.when));
   row->elementAt(4)->addWidget(new ObjectDifficultyWidget(ngcObject, selectedTelescope, 99 /* TODO: hack, to be replaced */));
   row->elementAt(5)->addWidget(new WText{transit.time().toString()});
   row->elementAt(6)->addWidget(new WText{Utils::htmlEncode(WString::fromUTF8(bestAltitude.coordinates.altitude.printable()))});
@@ -195,7 +195,7 @@ void SelectObjectsWidget::Private::suggestedObjects(Dbo::Transaction& transactio
     astroTypeCombo->addItem(NgcObject::typeDescription(static_cast<NgcObject::NebulaType>(i)));
   astroTypeCombo->activated().connect([=](int i, _n5) {
     nebulaTypeFilter = static_cast<NgcObject::NebulaType>(i-2);
-    q->populateFor(selectedTelescope);
+    q->populateFor(selectedTelescope, timezone);
   });
   
   suggestedObjectsContainer->addWidget(WW<WGroupBox>(WString::tr("filters")).add(WW<WContainerWidget>().css("form-inline").add(astroTypeLabel).add(astroTypeCombo)));
@@ -260,10 +260,11 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsList( double magnitud
 }
 
 
-void SelectObjectsWidget::populateFor( const Dbo::ptr< Telescope > &telescope )
+void SelectObjectsWidget::populateFor(const Dbo::ptr< Telescope > &telescope , Timezone timezone)
 {
   double magnitudeLimit = (telescope ? telescope->limitMagnitudeGain() + 6.5 : 12);
   d->selectedTelescope = telescope;
+  d->timezone = timezone;
   d->populateSuggestedObjectsList(magnitudeLimit);
 }
 

@@ -125,9 +125,13 @@ void AstroSessionTab::Private::reload()
       });
     });
   }
+  updateTimezone();
+
+
   SelectObjectsWidget *addObjectsTabWidget = new SelectObjectsWidget(astroSession, session);
   placeWidget->placeChanged().connect([=](double lat, double lng, _n4) {
-    addObjectsTabWidget->populateFor(selectedTelescope);
+    updateTimezone();
+    addObjectsTabWidget->populateFor(selectedTelescope, timezone);
     updatePositionDetails();
   });
   addPanel(WString::tr("astrosessiontab_add_observable_object"), addObjectsTabWidget, true);
@@ -182,7 +186,7 @@ void AstroSessionTab::Private::reload()
     telescopeCombo->activated().connect([=](int index, _n5){
       selectedTelescope = boost::any_cast<Dbo::ptr<Telescope>>(model->item(index)->data());
       populate();
-      addObjectsTabWidget->populateFor(selectedTelescope);
+      addObjectsTabWidget->populateFor(selectedTelescope, timezone);
     });
   } else {
     actionsContainer->addWidget(WW<WText>(WString::tr("astrosessiontab_no_telescopes_message")).css("pull-right"));
@@ -191,7 +195,7 @@ void AstroSessionTab::Private::reload()
   populate();
   updatePositionDetails();
   WTimer::singleShot(200, [=](WMouseEvent) {
-    addObjectsTabWidget->populateFor(selectedTelescope);
+    addObjectsTabWidget->populateFor(selectedTelescope, timezone);
   });
 }
 
@@ -207,13 +211,53 @@ Wt::Signal<std::string> &AstroSessionTab::nameChanged() const
 }
 
 
+void AstroSessionTab::Private::updateTimezone()
+{
+  static string googleApiKey;
+  if(googleApiKey.empty())
+    wApp->readConfigurationProperty("google_api_server_key", googleApiKey);
+
+  timezone = Timezone{};
+  static map<string,Timezone> timezonesCache;
+  string key = Timezone::key(astroSession->position().latitude.degrees(), astroSession->position().longitude.degrees(), astroSession->when(), wApp->locale().name());
+  spLog("notice") << "Timezone identifier: " << key;
+  if(timezonesCache.count(key)) {
+    timezone = timezonesCache[key];
+    spLog("notice") << "Timezone " << timezone << " found in cache, skipping webservice request";
+  } else {
+    string url = format("https://maps.googleapis.com/maps/api/timezone/json?location=%f,%f&timestamp=%d&sensor=false&key=%s&language=%s")
+      % astroSession->position().latitude.degrees()
+      % astroSession->position().longitude.degrees()
+      % astroSession->wDateWhen().toTime_t()
+      % googleApiKey
+      % wApp->locale().name();
+    ;
+    spLog("notice") << "URL: " << url;
+    stringstream data;
+    Curl curl(data);
+    bool getRequest = ! googleApiKey.empty() && curl.get(url).requestOk();
+
+    spLog("notice") << "get request: " << boolalpha << getRequest << ", http code: " << curl.httpResponseCode() << ", out: " << data.str();
+    if(getRequest) {
+      try {
+        timezone = Timezone::from(data.str(), astroSession->position().latitude.degrees(), astroSession->position().longitude.degrees());
+        timezonesCache[key] = timezone;
+        spLog("notice") << "got timezone info: " << timezone;
+      } catch(std::exception &e) {
+        spLog("notice") << "Unable to parse json response into a timezone object: " << e.what();
+      }
+    }
+  }
+
+}
+
 void AstroSessionTab::Private::printableVersion()
 {
   WDialog *printableDialog = new WDialog(WString::tr("astrosessiontab_printable_version"));
   WPushButton *okButton;
   printableDialog->footer()->addWidget(okButton = WW<WPushButton>(WString::tr("Wt.WMessageBox.Ok")).css("btn btn-primary").onClick([=](WMouseEvent){ printableDialog->accept(); }));
   printableDialog->footer()->addWidget(WW<WPushButton>(WString::tr("Wt.WMessageBox.Cancel")).css("btn btn-danger").onClick([=](WMouseEvent){ printableDialog->reject(); }));
-  auto printableResource = new PrintableAstroSessionResource(astroSession, session, q);
+  auto printableResource = new PrintableAstroSessionResource(astroSession, session, timezone, q);
 #ifdef DISABLE_LIBHARU
 #define PDF_INDEX -1
 #warning "libharu Disabled, export to PDF will not be available"
@@ -294,43 +338,6 @@ void AstroSessionTab::Private::updatePositionDetails()
 {
   Dbo::Transaction t(session);
   astroSession.reread();
-
-  static string googleApiKey;
-  if(googleApiKey.empty())
-    wApp->readConfigurationProperty("google_api_server_key", googleApiKey);
-
-  timezone = Timezone{};
-  static map<string,Timezone> timezonesCache;
-  string key = Timezone::key(astroSession->position().latitude.degrees(), astroSession->position().longitude.degrees(), astroSession->when(), wApp->locale().name());
-  spLog("notice") << "Timezone identifier: " << key;
-  if(timezonesCache.count(key)) {
-    timezone = timezonesCache[key];
-    spLog("notice") << "Timezone " << timezone << " found in cache, skipping webservice request";
-  } else {
-    string url = format("https://maps.googleapis.com/maps/api/timezone/json?location=%f,%f&timestamp=%d&sensor=false&key=%s&language=%s")
-      % astroSession->position().latitude.degrees()
-      % astroSession->position().longitude.degrees()
-      % astroSession->wDateWhen().toTime_t()
-      % googleApiKey
-      % wApp->locale().name();
-    ;
-    spLog("notice") << "URL: " << url;
-    stringstream data;
-    Curl curl(data);
-    bool getRequest = ! googleApiKey.empty() && curl.get(url).requestOk();
-
-    spLog("notice") << "get request: " << boolalpha << getRequest << ", http code: " << curl.httpResponseCode() << ", out: " << data.str();
-    if(getRequest) {
-      try {
-        timezone = Timezone::from(data.str(), astroSession->position().latitude.degrees(), astroSession->position().longitude.degrees());
-        timezonesCache[key] = timezone;
-        spLog("notice") << "got timezone info: " << timezone;
-      } catch(std::exception &e) {
-        spLog("notice") << "Unable to parse json response into a timezone object: " << e.what();
-      }
-    }
-  }
-  
   positionDetails->clear();
   auto addMoonPhaseDetails = [=](const Ephemeris &ephemeris) {
     Ephemeris::LunarPhase lunarPhase = ephemeris.moonPhase(astroSession->when());

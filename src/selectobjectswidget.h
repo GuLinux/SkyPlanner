@@ -23,6 +23,7 @@
 #include <Wt/WTabWidget>
 #include "utils/d_ptr.h"
 #include <Wt/Dbo/ptr>
+#include "types.h"
 
 class Telescope;
 class AstroSession;
@@ -32,7 +33,7 @@ class SelectObjectsWidget : public Wt::WTabWidget
 public:
     ~SelectObjectsWidget();
     SelectObjectsWidget(const Wt::Dbo::ptr<AstroSession>& astroSession, Session &session, Wt::WContainerWidget* parent = 0);
-    void populateFor(const Wt::Dbo::ptr<Telescope> &telescope);
+    void populateFor(const Wt::Dbo::ptr<Telescope> &telescope, Timezone timezone);
     Wt::Signal<> &objectsListChanged() const;
 private:
     D_PTR;

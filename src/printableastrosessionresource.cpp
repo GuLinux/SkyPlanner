@@ -51,13 +51,13 @@
 using namespace Wt;
 using namespace std;
 
-PrintableAstroSessionResource::Private::Private(const Dbo::ptr< AstroSession >& astroSession, Session& session, PrintableAstroSessionResource* q) 
-  : astroSession(astroSession), session(session), rowsSpacing(0), q(q)
+PrintableAstroSessionResource::Private::Private(const Dbo::ptr< AstroSession >& astroSession, Session& session, Timezone timezone, PrintableAstroSessionResource* q)
+  : astroSession(astroSession), session(session), rowsSpacing(0), timezone(timezone), q(q)
 {
 }
 
-PrintableAstroSessionResource::PrintableAstroSessionResource(const Dbo::ptr<AstroSession> &astroSession, Session &session, WObject* parent)
-  : WResource(parent), d(astroSession, session, this)
+PrintableAstroSessionResource::PrintableAstroSessionResource(const Dbo::ptr<AstroSession> &astroSession, Session &session, Timezone timezone, WObject* parent)
+  : WResource(parent), d(astroSession, session, timezone, this)
 {
 }
 
@@ -119,9 +119,12 @@ void PrintableAstroSessionResource::handleRequest(const Wt::Http::Request &reque
       </style>\n\
   ${</render-type-pdf>}\
   <h2 style=\"text-align: center; \">${title}</h2>\n\
+  <p>Time in ${timezone_info}</p>\n\
   ${<have-place>}\
   <p>${sessionDate}, Moon Phase: ${moonPhase}%, ${objects-number} objects.</p>\n\
-  <div>Sun: rising at ${sunRise}, setting at ${sunSet}<br />\n\
+  <div>\
+  Sun: rising at ${sunRise}, setting at ${sunSet}<br />\n\
+  Astronomical Twilight: begins at ${astroTwilightBegin}, ends at ${astroTwilightEnd}<br />\n\
   Moon: rising at ${moonRise}, setting at ${moonSet}</div>\n\
   ${<have-telescope>}<p>Suggestions for telescope: \"${telescope-name}\", diameter ${telescope-diameter}mm, focal length ${telescope-focal-length}mm</p>${</have-telescope>}\
   ${</have-place>}\
@@ -165,14 +168,18 @@ void PrintableAstroSessionResource::handleRequest(const Wt::Http::Request &reque
   Ephemeris ephemeris(d->astroSession->position());
   printable.bindInt("moonPhase", static_cast<int>(ephemeris.moonPhase(d->astroSession->when()).illuminated_fraction*100.));
   printable.bindString("sessionDate", d->astroSession->wDateWhen().date().toString("dddd dd MMMM yyyy"));
+  printable.bindString("timezone_info", d->timezone.timeZoneName);
   if(d->astroSession->position()) {
     auto sun = ephemeris.sun(d->astroSession->when());
+    auto twilight = ephemeris.sunAstronomical(d->astroSession->when());
     auto moon = ephemeris.moon(d->astroSession->when());
-    auto formatTime = [](const boost::posix_time::ptime &t) { return (format("%02d:%02d") % t.time_of_day().hours() % t.time_of_day().minutes()).str(); };
+    auto formatTime = [=](const boost::posix_time::ptime &time) { auto t = d->timezone.fix(time); return (format("%02d:%02d") % t.time_of_day().hours() % t.time_of_day().minutes()).str(); };
     printable.bindString("sunRise",formatTime(sun.rise));
     printable.bindString("sunSet", formatTime(sun.set));
     printable.bindString("moonRise", formatTime(moon.rise));
     printable.bindString("moonSet", formatTime(moon.set));
+    printable.bindString("astroTwilightBegin", formatTime(twilight.rise));
+    printable.bindString("astroTwilightEnd", formatTime(twilight.set));
   }
   stringstream tableRows;
   auto sessionObjectsDbCollection = d->astroSession->astroSessionObjects();

@@ -44,6 +44,7 @@ public:
     boost::mutex suggestedObjectsListMutex;
     int pagesCurrentIndex = 0;
     Wt::Dbo::ptr< Telescope > selectedTelescope;
+    Timezone timezone;
     void populateHeaders(Wt::WTable *table);
     void append(Wt::WTable *table, const Wt::Dbo::ptr<NgcObject> &ngcObject, const Ephemeris::BestAltitude &bestAltitude);
     boost::thread bgThread;

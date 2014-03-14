@@ -22,6 +22,7 @@
 
 #include <Wt/WResource>
 #include "utils/d_ptr.h"
+#include "types.h"
 
 class Session;
 class Telescope;
@@ -30,7 +31,7 @@ class PrintableAstroSessionResource : public Wt::WResource
 {
 public:
   enum ReportType { HTML, PDF };
-  PrintableAstroSessionResource(const Wt::Dbo::ptr<AstroSession> &astroSession, Session &session, Wt::WObject *parent = 0);
+  PrintableAstroSessionResource(const Wt::Dbo::ptr<AstroSession> &astroSession, Session &session, Timezone timezone, Wt::WObject *parent = 0);
   virtual ~PrintableAstroSessionResource();
   virtual void handleRequest(const Wt::Http::Request &request, Wt::Http::Response &response);
   void setRowsSpacing(int spacing);

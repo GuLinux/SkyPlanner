@@ -53,6 +53,7 @@ public:
     bool pastObservation;
     std::shared_ptr<Wt::Http::Client> client;
     Timezone timezone;
+    void updateTimezone();
 private:
     class AstroSessionTab* const q;
 };

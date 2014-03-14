@@ -27,9 +27,10 @@ class Session;
 class PrintableAstroSessionResource::Private
 {
 public:
-    Private(const Wt::Dbo::ptr<AstroSession> &astroSession, Session &session, PrintableAstroSessionResource* q);
+    Private(const Wt::Dbo::ptr<AstroSession> &astroSession, Session &session, Timezone timezone, PrintableAstroSessionResource* q);
     Wt::Dbo::ptr<AstroSession> astroSession;
     Session &session;
+    Timezone timezone;
     Wt::Dbo::ptr<Telescope> telescope;
     int rowsSpacing;
     ReportType reportType = HTML;
