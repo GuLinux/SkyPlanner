@@ -62,8 +62,10 @@
 #include <boost/algorithm/string/join.hpp>
 #include <Wt/Http/Client>
 #include <Wt/Http/Message>
-
-
+#include <Wt/Json/Parser>
+#include <Wt/Json/Value>
+#include <Wt/Json/Array>
+#include <Wt/Json/Object>
 
 using namespace Wt;
 using namespace WtCommons;
@@ -286,6 +288,59 @@ void AstroSessionTab::Private::printableVersion()
   printableDialog->show();
 }
 
+struct Timezone {
+  int dstOffset = 0;
+  int rawOffset = 0;
+  string timeZoneId = "UTC";
+  string timeZoneName = "UTC";
+  double latitude;
+  double longitude;
+  string key();
+  static string key(double lat, double lng);
+  static Timezone from(const string &response, double lat, double lng);
+  boost::posix_time::ptime fix(const boost::posix_time::ptime &src) const;
+  boost::posix_time::ptime fixUTC(const boost::posix_time::ptime &src) const;
+};
+
+
+boost::posix_time::ptime Timezone::fix(const boost::posix_time::ptime &src) const
+{
+  return src + boost::posix_time::seconds(dstOffset);
+}
+
+boost::posix_time::ptime Timezone::fixUTC(const boost::posix_time::ptime &src) const
+{
+  return fix(src) + boost::posix_time::seconds(dstOffset);
+}
+
+string Timezone::key()
+{
+  return key(latitude, longitude);
+}
+string Timezone::key(double latitude, double longitude)
+{
+  return format("%f-%f") % latitude % longitude;
+}
+
+Timezone Timezone::from(const string &response, double lat, double lng)
+{
+  Json::Object timezoneJsonObject;
+  Json::parse(response, timezoneJsonObject);
+  Timezone timezone;
+  timezone.dstOffset = timezoneJsonObject.get("dstOffset");
+  timezone.rawOffset = timezoneJsonObject.get("rawOffset");
+  timezone.timeZoneId = timezoneJsonObject.get("timeZoneId").orIfNull(string{});
+  timezone.timeZoneName = timezoneJsonObject.get("timeZoneName").orIfNull(string{});
+  timezone.latitude = lat;
+  timezone.longitude = lng;
+  return timezone;
+}
+
+ostream &operator<<(ostream &o, const Timezone &t)
+{
+  o << "{ dstOffset=" << t.dstOffset << ", rawOffset=" << t.rawOffset << ", timeZoneId=" << t.timeZoneId << ", timeZoneName=" << t.timeZoneName << ", latitude=" << t.latitude << ", longitude=" << t.longitude << "}";
+  return o;
+}
 void AstroSessionTab::Private::updatePositionDetails()
 {
   Dbo::Transaction t(session);
@@ -295,13 +350,14 @@ void AstroSessionTab::Private::updatePositionDetails()
   if(googleApiKey.empty())
     wApp->readConfigurationProperty("google_api_server_key", googleApiKey);
 
-
+  Timezone timezone;
   
-  string url = format("https://maps.googleapis.com/maps/api/timezone/json?location=%f,%f&timestamp=%d&sensor=false&key=%s")
+  string url = format("https://maps.googleapis.com/maps/api/timezone/json?location=%f,%f&timestamp=%d&sensor=false&key=%s&language=%s")
     % astroSession->position().latitude.degrees()
     % astroSession->position().longitude.degrees()
     % astroSession->wDateWhen().toTime_t()
     % googleApiKey
+    % wApp->locale().name();
   ;
   spLog("notice") << "URL: " << url;
   stringstream data;
@@ -309,6 +365,10 @@ void AstroSessionTab::Private::updatePositionDetails()
   bool getRequest = ! googleApiKey.empty() && curl.get(url).requestOk();
   
   spLog("notice") << "get request: " << boolalpha << getRequest << ", http code: " << curl.httpResponseCode() << ", out: " << data.str();
+  if(getRequest) {
+    timezone = Timezone::from(data.str(), astroSession->position().latitude.degrees(), astroSession->position().longitude.degrees());
+    spLog("notice") << "got timezone info: " << timezone;
+  }
   
   positionDetails->clear();
   auto addMoonPhaseDetails = [=](const Ephemeris &ephemeris) {
@@ -328,19 +388,23 @@ void AstroSessionTab::Private::updatePositionDetails()
 
   auto formatTime = [](const boost::posix_time::ptime &t) { return (format("%02d:%02d") % t.time_of_day().hours() % t.time_of_day().minutes()).str(); };
   positionDetails->addWidget(new WText(WString(WString::tr("astrosessiontab_sun_info"))
-    .arg(formatTime(sun.rise))
-    .arg(formatTime(sun.set))
+    .arg(formatTime(timezone.fix(sun.rise)))
+    .arg(formatTime(timezone.fix(sun.set)))
+    .arg(timezone.timeZoneName)
   ));
   positionDetails->addWidget(new WBreak);
   positionDetails->addWidget(new WText(WString(WString::tr("astrosessiontab_moon_info"))
-    .arg(formatTime(moon.rise))
-    .arg(formatTime(moon.set))
+    .arg(formatTime(timezone.fix(moon.rise)))
+    .arg(formatTime(timezone.fix(moon.set)))
+    .arg(timezone.timeZoneName)
   ));
   positionDetails->addWidget(new WBreak);
   addMoonPhaseDetails(ephemeris);
-
+/*
   auto darkness = ephemeris.darknessHours(astroSession->when() );
   positionDetails->addWidget(new WText{WString::tr("astrosessiontab_darkness_hours").arg(darkness.hours()).arg(darkness.minutes() ) });  
+  positionDetails->addWidget(new WBreak);
+*/
   positionDetails->addWidget(new WImage(WLink{format("http://www.7timer.com/v4/bin/astro.php?lon=%f&lat=%f&lang=en&ac=0&unit=metric&tzshift=0")
     % astroSession->position().longitude.degrees() % astroSession->position().latitude.degrees()
   } ));

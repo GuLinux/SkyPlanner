@@ -44,9 +44,9 @@
 <message id="printable_version_dialog_using_telescope">Using Telescope {1}</message>
 <message id="printable_version_dialog_telescope_combo_label">Telescope: </message>
 <message id="astrosessiontab_moon_phase">Moon Phase: {1}%</message>
-<message id="astrosessiontab_sun_info">Sun: rising at {1}, setting at {2}</message>
+<message id="astrosessiontab_sun_info">Sun: rising at {1}, setting at {2} ({3})</message>
 <message id="astrosessiontab_darkness_hours">Astronomical sky darkness: {1} hours and {2} minutes.</message>
-<message id="astrosessiontab_moon_info">Moon: rising at {1}, setting at {2}</message>
+<message id="astrosessiontab_moon_info">Moon: rising at {1}, setting at {2} ({3})</message>
 <message id="astrosessiontab_printable_version_dialog_export_as">Export as...</message>
 <message id="astrosessiontab_information_panel">Information</message>
 <message id="astrosessiontab_object_observed">✓ Observed</message>
