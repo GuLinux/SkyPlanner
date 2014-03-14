@@ -37,6 +37,8 @@ class Curl
     long httpResponseCode() const;
     std::string header(const std::string &name) const;
     std::map<std::string,std::string> headers() const;
+    std::string contentType() const;
+    std::string lastErrorMessage() const;
 
   private:
     D_PTR;

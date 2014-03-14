@@ -35,7 +35,6 @@ class Curl::Private
     static int curlProgress(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow);
     ProgressFunc progress = [](double, double, double) {};
     CURLcode res;
-    char errorBuffer[CURLOPT_ERRORBUFFER] = {0};
     long responseCode = 0;
     std::map<std::string,std::string> parsedHeaders;
   private:

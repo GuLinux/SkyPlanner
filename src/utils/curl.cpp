@@ -42,7 +42,6 @@ Curl::Curl( ostream &output )
 
   curl_easy_setopt(d->curl_handle, CURLOPT_WRITEDATA, static_cast<void *>(d.get()));
   curl_easy_setopt(d->curl_handle, CURLOPT_WRITEHEADER, static_cast<void *>(d.get()));
-  curl_easy_setopt(d->curl_handle, CURLOPT_ERRORBUFFER, static_cast<void*>(d->errorBuffer));
 }
 
 Curl::~Curl()
@@ -91,6 +90,16 @@ bool Curl::requestOk()
   return d->res == CURLE_OK;
 }
 
+string Curl::lastErrorMessage() const
+{
+  const char *error = curl_easy_strerror(d->res);
+  return string(error);
+}
+
+string Curl::contentType() const
+{
+  return d->parsedHeaders["Content-Type"];
+}
 
 size_t Curl::Private::WriteToFileCallback(void *contents, size_t size, size_t nmemb, void *userp)
 {

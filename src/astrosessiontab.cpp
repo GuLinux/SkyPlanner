@@ -306,7 +306,6 @@ void AstroSessionTab::Private::updatePositionDetails()
   spLog("notice") << "URL: " << url;
   stringstream data;
   Curl curl(data);
-
   bool getRequest = ! googleApiKey.empty() && curl.get(url).requestOk();
   
   spLog("notice") << "get request: " << boolalpha << getRequest << ", http code: " << curl.httpResponseCode() << ", out: " << data.str();
