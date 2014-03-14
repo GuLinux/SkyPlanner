@@ -145,7 +145,7 @@ void DSSImage::Private::setCacheImage()
   auto anchor = new WAnchor();
   anchor->setLink(imageLink);
   anchor->setTarget(Wt::TargetNewWindow);
-  anchor->addWidget(WW<WImage>(imageLink).addCss("img-responsive");
+  anchor->addWidget(WW<WImage>(imageLink).addCss("img-responsive"));
   content->addWidget(anchor);
 }
 
