@@ -21,7 +21,8 @@
 #define CURL_P_H
 #include "utils/curl.h"
 #include <curl/curl.h>
-#include <array>
+
+
 class Curl::Private
 {
   public:
@@ -35,6 +36,8 @@ class Curl::Private
     ProgressFunc progress = [](double, double, double) {};
     CURLcode res;
     char errorBuffer[CURLOPT_ERRORBUFFER] = {0};
+    long responseCode = 0;
+    std::map<std::string,std::string> parsedHeaders;
   private:
     class Curl *const q;
 };

@@ -22,6 +22,7 @@
 
 #include "utils/d_ptr.h"
 #include <functional>
+#include <map>
 
 class Curl
 {
@@ -33,6 +34,9 @@ class Curl
     Curl &setProgressCallback(ProgressFunc progressFunc);
     Curl &get(const std::string &url);
     bool requestOk();
+    long httpResponseCode() const;
+    std::string header(const std::string &name) const;
+    std::map<std::string,std::string> headers() const;
 
   private:
     D_PTR;

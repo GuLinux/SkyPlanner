@@ -309,7 +309,7 @@ void AstroSessionTab::Private::updatePositionDetails()
 
   bool getRequest = ! googleApiKey.empty() && curl.get(url).requestOk();
   
-  spLog("notice") << "get request: " << boolalpha << getRequest << ", out: " << data.str();
+  spLog("notice") << "get request: " << boolalpha << getRequest << ", http code: " << curl.httpResponseCode() << ", out: " << data.str();
   
   positionDetails->clear();
   auto addMoonPhaseDetails = [=](const Ephemeris &ephemeris) {

@@ -31,6 +31,7 @@
 #include <boost/filesystem.hpp>
 #include "skyplanner.h"
 #include <Wt-Commons/wt_helpers.h>
+#include "utils/curl.h"
 
 using namespace Wt;
 using namespace WtCommons;

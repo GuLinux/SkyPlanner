@@ -21,12 +21,16 @@
 #include "private/curl_p.h"
 #include "utils/d_ptr_implementation.h"
 #include <iostream>
+#include <boost/algorithm/string.hpp>
 
-Curl::Private::Private( std::ostream &output, Curl *q ) : output(output), q( q )
+using namespace std;
+
+
+Curl::Private::Private( ostream &output, Curl *q ) : output(output), q( q )
 {
 }
 
-Curl::Curl( std::ostream &output )
+Curl::Curl( ostream &output )
   : d( output, this )
 {
   d->curl_handle = curl_easy_init();
@@ -46,13 +50,34 @@ Curl::~Curl()
   curl_easy_cleanup(d->curl_handle);
 }
 
-#include <Wt/WApplication>
-Curl &Curl::get( const std::string &url )
+Curl &Curl::get( const string &url )
 {
   curl_easy_setopt(d->curl_handle, CURLOPT_URL, url.data());
   d->res = curl_easy_perform(d->curl_handle);
-  wApp->log("notice") << __PRETTY_FUNCTION__ << "Error: " << d->res << " = " << d->errorBuffer;
+  curl_easy_getinfo (d->curl_handle, CURLINFO_RESPONSE_CODE, &d->responseCode);
+  d->parsedHeaders.clear();
+  vector<string> headerLines;
+  boost::split(headerLines, d->headers, boost::is_any_of("\n\r"));
+  for(auto s: headerLines) {
+    if(s.empty() || s.find("HTTP/1") != string::npos)
+      continue;
+    vector<string> headerSplitted;
+    bool firstMatchFound = false;
+    boost::split(headerSplitted, s, [&firstMatchFound](char c) {  bool match = c == ':' && !firstMatchFound; firstMatchFound |= (c==':'); return match; });
+    if(headerSplitted.size() == 2)
+      d->parsedHeaders[boost::trim_copy(headerSplitted[0])] = boost::trim_copy(headerSplitted[1]);
+  }
   return *this;
+}
+
+string Curl::header(const string &name) const
+{
+  return d->parsedHeaders[name];
+}
+
+map<string,string> Curl::headers() const
+{
+  return d->parsedHeaders;
 }
 
 Curl &Curl::setProgressCallback( Curl::ProgressFunc progressFunc )
@@ -82,6 +107,10 @@ size_t Curl::Private::WriteHeadersCallback(void *contents, size_t size, size_t n
     for(int i=0; i<realsize; i++)
         d->headers.push_back(static_cast<char*>(contents)[i]);
     return realsize;
+}
+
+long Curl::httpResponseCode() const {
+    return d->responseCode;
 }
 
 
