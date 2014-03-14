@@ -86,6 +86,7 @@
 <message id="printable_version_dialog_using_telescope">Telescopio: {1}</message>
 <message id="printable_version_dialog_telescope_combo_label">Telescopio: </message>
 <message id="astrosessiontab_moon_phase">Fase Lunare: {1}%</message>
+<message id="astrosessiontab_astro_twilight_info">Crepuscolo astronomico: inizia alle {1}, finisce alle {2} ({3})</message>
 <message id="astrosessiontab_sun_info">Sole: sorge alle {1}, tramonta alle {2} ({3})</message>
 <message id="astrosessiontab_darkness_hours">{1} ore e {2} minuti di buio astronomico.</message>
 <message id="astrosessiontab_moon_info">Luna: sorge alle {1}, tramonta alle {2} ({3})</message>

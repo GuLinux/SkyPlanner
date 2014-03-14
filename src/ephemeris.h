@@ -45,6 +45,7 @@ class Ephemeris
     Ephemeris(const Coordinates::LatLng &geoPosition);
     ~Ephemeris();
     RiseTransitSet sun(const boost::posix_time::ptime &when, bool nightMode = true) const;
+    RiseTransitSet sunAstronomical(const boost::posix_time::ptime &when, bool nightMode = true) const;
     RiseTransitSet moon(const boost::posix_time::ptime &when, bool nightMode = true) const;
     LunarPhase moonPhase(const boost::posix_time::ptime &when) const;
     boost::posix_time::time_duration darknessHours(const boost::posix_time::ptime &when) const;

@@ -29,7 +29,7 @@ class Ephemeris::Private
     Coordinates::LatLng geoPosition;
     void GetSolarRaDecByJulian(double JD, double& RA, double& Dec);
     void GetLunarRaDecByJulian(double JD, double& RA, double& Dec);
-    AAPlus::CAARiseTransitSetDetails GetSunRiseTransitSet(double JD, double longitude, double latitude);
+    AAPlus::CAARiseTransitSetDetails GetSunRiseTransitSet(double JD, double longitude, double latitude, double sunAltitude = -0.8333);
     AAPlus::CAARiseTransitSetDetails GetMoonRiseTransitSet(double JD, double longitude, double latitude);
     void GetMoonIllumination(double JD, double& illuminated_fraction, double& position_angle, double& phase_angle);
 

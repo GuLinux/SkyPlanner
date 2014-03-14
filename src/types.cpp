@@ -21,8 +21,13 @@
 #include "aaplus/AA+.h"
 #include <string>
 #include <boost/format.hpp>
+#include "utils/format.h"
+#include <Wt/Json/Value>
+#include <Wt/Json/Object>
+#include <Wt/Json/Parser>
 
 using namespace std;
+using namespace Wt;
 using namespace AAPlus;
 
 Angle Angle::degrees(double degrees)
@@ -40,17 +45,17 @@ Angle Angle::hours(double hours)
   return Angle::degrees(CAACoordinateTransformation::HoursToDegrees(hours));
 }
 
-Angle::Angle(double degrees) : _degrees(degrees), valid(true)
+Angle::Angle(double degrees) : _degrees(degrees), _valid(true)
 {
 }
 
-Angle::Angle() : _degrees(0), valid(false)
+Angle::Angle() : _degrees(0), _valid(false)
 {
 }
 
-Angle::operator bool() const
+bool Angle::valid() const
 {
-  return valid;
+  return _valid;
 }
 
 double Angle::degrees() const
@@ -108,3 +113,42 @@ string Angle::printable(Format format, PrintFormat printFormat) const
 }
 
  
+
+boost::posix_time::ptime Timezone::fix(const boost::posix_time::ptime &src) const
+{
+  return src + boost::posix_time::seconds(dstOffset);
+}
+
+boost::posix_time::ptime Timezone::fixUTC(const boost::posix_time::ptime &src) const
+{
+  return fix(src) + boost::posix_time::seconds(dstOffset);
+}
+
+string Timezone::key(const boost::posix_time::ptime &when, const std::string &language)
+{
+  return key(latitude, longitude, when, language);
+}
+string Timezone::key(double latitude, double longitude, const boost::posix_time::ptime &when, const string &language)
+{
+  return format("%f-%f-%s-%s") % latitude % longitude % boost::posix_time::to_iso_extended_string(boost::posix_time::ptime(when.date())) % language;
+}
+
+Timezone Timezone::from(const string &response, double lat, double lng)
+{
+  Json::Object timezoneJsonObject;
+  Json::parse(response, timezoneJsonObject);
+  Timezone timezone;
+  timezone.dstOffset = timezoneJsonObject.get("dstOffset");
+  timezone.rawOffset = timezoneJsonObject.get("rawOffset");
+  timezone.timeZoneId = timezoneJsonObject.get("timeZoneId").orIfNull(string{});
+  timezone.timeZoneName = timezoneJsonObject.get("timeZoneName").orIfNull(string{});
+  timezone.latitude = lat;
+  timezone.longitude = lng;
+  return timezone;
+}
+
+ostream &operator<<(ostream &o, const Timezone &t)
+{
+  o << "{ dstOffset=" << t.dstOffset << ", rawOffset=" << t.rawOffset << ", timeZoneId=" << t.timeZoneId << ", timeZoneName=" << t.timeZoneName << ", latitude=" << t.latitude << ", longitude=" << t.longitude << "}";
+  return o;
+}

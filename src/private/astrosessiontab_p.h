@@ -21,6 +21,7 @@
 #define ASTROSESSIONTAB_P_H
 #include "astrosessiontab.h"
 #include <forecast.h>
+#include "types.h"
 
 namespace Wt
 {
@@ -35,6 +36,7 @@ class Session;
 class AstroSessionTab::Private
 {
 public:
+
     Private(const Wt::Dbo::ptr<AstroSession>& astroSession, Session& session, AstroSessionTab* q);
     void reload();
     Wt::Dbo::ptr<AstroSession> astroSession;
@@ -50,6 +52,7 @@ public:
     void printableVersion();
     bool pastObservation;
     std::shared_ptr<Wt::Http::Client> client;
+    Timezone timezone;
 private:
     class AstroSessionTab* const q;
 };

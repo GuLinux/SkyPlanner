@@ -125,8 +125,9 @@ PlaceWidget::PlaceWidget(const Wt::Dbo::ptr< AstroSession >& astroSession, Sessi
   WLineEdit *searchBox = WW<WLineEdit>(this).css("controls");
   searchBox->setWidth(500);
   searchBox->setMargin(10);
-  MapsWidget *map = new MapsWidget(searchBox, d->mapReady, this);
+  MapsWidget *map = new MapsWidget(searchBox, d->mapReady);
   map->setHeight(450);
+  addWidget(map);
   if(astroSession->position()) {
     WGoogleMap::Coordinate currentPlace = {astroSession->position().latitude.degrees(), astroSession->position().longitude.degrees()};
     map->setCenter(currentPlace);

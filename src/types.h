@@ -21,6 +21,7 @@
 #define ASTROPLANNER_TYPES_H
 
 #include <string>
+#include <boost/date_time.hpp>
 
 class Angle {
   public:
@@ -46,32 +47,49 @@ class Angle {
     enum Format { Hourly, Degrees };
     enum PrintFormat{ UTF8, HTML};
     std::string printable(Format format = Degrees, PrintFormat printFormat = UTF8 ) const;
-    operator bool() const;
+    bool valid() const;
   private:
     Angle(double degrees);
     double _degrees;
-    bool valid = false;
+    bool _valid = false;
 };
 
 namespace Coordinates {
   struct Equatorial {
     Angle rightAscension;
     Angle declination;
-    operator bool() { return rightAscension && declination; }
+    operator bool() { return rightAscension.valid() && declination.valid(); }
   };
 
   struct AltAzimuth {
     Angle altitude;
     Angle azimuth;
-    operator bool() { return altitude && azimuth; }
+    operator bool() { return altitude.valid() && azimuth.valid(); }
   };
 
   struct LatLng {
     Angle latitude;
     Angle longitude;
-    operator bool() { return latitude && longitude; }
+    operator bool() { return latitude.valid() && longitude.valid(); }
   };
 }
+
+struct Timezone {
+  int dstOffset = 0;
+  int rawOffset = 0;
+  std::string timeZoneId = "UTC";
+  std::string timeZoneName = "UTC";
+  double latitude;
+  double longitude;
+  std::string key(const boost::posix_time::ptime &when, const std::string &language);
+  static std::string key(double lat, double lng, const boost::posix_time::ptime &when, const std::string &language);
+  static Timezone from(const std::string &response, double lat, double lng);
+  boost::posix_time::ptime fix(const boost::posix_time::ptime &src) const;
+  boost::posix_time::ptime fixUTC(const boost::posix_time::ptime &src) const;
+};
+
+std::ostream &operator<<(std::ostream &o, const Timezone &t);
+
 #endif
 
 

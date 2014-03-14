@@ -40,7 +40,7 @@ Ephemeris::~Ephemeris()
 Coordinates::AltAzimuth Ephemeris::arDec2altAz( const Coordinates::Equatorial &arDec, const boost::posix_time::ptime &when ) const
 {
   double AST = CAASidereal::ApparentGreenwichSiderealTime(d->date(when).Julian());
-  double LongtitudeAsHourAngle = CAACoordinateTransformation::DegreesToHours(d->geoPosition.longitude);
+  double LongtitudeAsHourAngle = CAACoordinateTransformation::DegreesToHours(d->geoPosition.longitude.degrees());
   double LocalHourAngle = AST - LongtitudeAsHourAngle - arDec.rightAscension.hours();
   auto coords = CAACoordinateTransformation::Equatorial2Horizontal(LocalHourAngle, arDec.declination.degrees(), d->geoPosition.latitude.degrees());
   return {Angle::degrees(coords.Y), Angle::degrees(180. + coords.X)};
@@ -49,24 +49,40 @@ Coordinates::AltAzimuth Ephemeris::arDec2altAz( const Coordinates::Equatorial &a
 
 Ephemeris::RiseTransitSet Ephemeris::moon( const boost::posix_time::ptime &when, bool nightMode ) const
 {
-  CAARiseTransitSetDetails s = d->GetMoonRiseTransitSet(d->date(when).Julian(), d->geoPosition.longitude, d->geoPosition.latitude);
+  CAARiseTransitSetDetails s = d->GetMoonRiseTransitSet(d->date(when).Julian(), d->geoPosition.longitude.degrees(), d->geoPosition.latitude.degrees());
   auto result =  d->convert(s, when);
   if(nightMode && result.set > result.rise) {
     auto nextDay = when + boost::posix_time::hours(24);
-    s = d->GetMoonRiseTransitSet(d->date(nextDay).Julian(), d->geoPosition.longitude, d->geoPosition.latitude);
+    s = d->GetMoonRiseTransitSet(d->date(nextDay).Julian(), d->geoPosition.longitude.degrees(), d->geoPosition.latitude.degrees());
     auto nextDayResult =  d->convert(s, nextDay);
     result.rise = nextDayResult.rise;
   }
   return result;
 }
 
+
 Ephemeris::RiseTransitSet Ephemeris::sun( const boost::posix_time::ptime &when, bool nightMode ) const
 {
-  CAARiseTransitSetDetails s = d->GetSunRiseTransitSet(d->date(when).Julian(), d->geoPosition.longitude, d->geoPosition.latitude);
-  auto result =  d->convert(s, when);
+  boost::posix_time::ptime midnight(when.date());
+  CAARiseTransitSetDetails s = d->GetSunRiseTransitSet(d->date(midnight).Julian(), d->geoPosition.longitude.degrees(), d->geoPosition.latitude.degrees());
+  auto result =  d->convert(s, midnight);
   if(nightMode && result.rise < result.set) {
-    auto nextDay = when + boost::posix_time::hours(24);
-    s = d->GetSunRiseTransitSet(d->date(nextDay).Julian(), d->geoPosition.longitude, d->geoPosition.latitude);
+    auto nextDay = midnight + boost::posix_time::hours(24);
+    s = d->GetSunRiseTransitSet(d->date(nextDay).Julian(), d->geoPosition.longitude.degrees(), d->geoPosition.latitude.degrees());
+    auto nextDayResult =  d->convert(s, nextDay);
+    result.rise = nextDayResult.rise;
+  }
+  return result;
+}
+
+Ephemeris::RiseTransitSet Ephemeris::sunAstronomical( const boost::posix_time::ptime &when, bool nightMode ) const
+{
+  boost::posix_time::ptime midnight(when.date());
+  CAARiseTransitSetDetails s = d->GetSunRiseTransitSet(d->date(midnight).Julian(), d->geoPosition.longitude.degrees(), d->geoPosition.latitude.degrees(), -18);
+  auto result =  d->convert(s, midnight);
+  if(nightMode && result.rise < result.set) {
+    auto nextDay = midnight + boost::posix_time::hours(24);
+    s = d->GetSunRiseTransitSet(d->date(nextDay).Julian(), d->geoPosition.longitude.degrees(), d->geoPosition.latitude.degrees(), -18);
     auto nextDayResult =  d->convert(s, nextDay);
     result.rise = nextDayResult.rise;
   }
@@ -176,7 +192,7 @@ void Ephemeris::Private::GetLunarRaDecByJulian(double JD, double& RA, double& De
   Dec = Lunarcoord.Y;
 }
 
-CAARiseTransitSetDetails Ephemeris::Private::GetSunRiseTransitSet(double JD, double longitude, double latitude)
+CAARiseTransitSetDetails Ephemeris::Private::GetSunRiseTransitSet(double JD, double longitude, double latitude, double sunAltitude)
 {
   double alpha1 = 0;
   double delta1 = 0;
@@ -187,7 +203,7 @@ CAARiseTransitSetDetails Ephemeris::Private::GetSunRiseTransitSet(double JD, dou
   double alpha3 = 0;
   double delta3 = 0;
   GetSolarRaDecByJulian(JD + 1, alpha3, delta3);
-  return CAARiseTransitSet::Calculate(CAADynamicalTime::UTC2TT(JD), alpha1, delta1, alpha2, delta2, alpha3, delta3, longitude, latitude, -0.8333);
+  return CAARiseTransitSet::Calculate(CAADynamicalTime::UTC2TT(JD), alpha1, delta1, alpha2, delta2, alpha3, delta3, longitude, latitude, sunAltitude);
 }
 
 CAARiseTransitSetDetails Ephemeris::Private::GetMoonRiseTransitSet(double JD, double longitude, double latitude)

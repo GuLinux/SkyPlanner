@@ -17,3 +17,14 @@ BOOST_AUTO_TEST_CASE(TestAndromedaEquatorialToAltAz)
   Coordinates::AltAzimuth altAz = ephemeris.arDec2altAz({Angle::radians(andromedaArAsRad), Angle::radians(andromedaDecAsRad)}, boost::posix_time::time_from_string("2013-11-28 20:04:00"));
   cerr << "alt: " << altAz.altitude.degrees() << ", az: " << altAz.azimuth.degrees() << endl;
 }
+
+BOOST_AUTO_TEST_CASE(TestSunRiseSet)
+{
+  double latitude = 44.6427;
+  double longitude = 9.2150;
+  Ephemeris ephemeris({Angle::degrees(latitude), Angle::degrees(longitude)});
+  auto sun = ephemeris.sun(boost::posix_time::time_from_string("2014-02-26 22:22:11"), false);
+  auto sunAstro = ephemeris.sunAstronomical(boost::posix_time::time_from_string("2014-02-26 22:22:11"), false);
+  cerr << "Sun: rise=" << sun.rise << ", transit=" << sun.transit << ", set=" << sun.set << endl;
+  cerr << "Astronomical twilight: rise=" << sunAstro.rise << ", transit=" << sunAstro.transit << ", set=" << sunAstro.set << endl;
+}
