@@ -151,6 +151,7 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsTable()
       return;
     auto populateRange = [=] (size_t startOffset, size_t size) {
       Dbo::Transaction transaction(session);
+      selectedRow = 0;
       populateHeaders(suggestedObjectsTable);
       for(size_t i=startOffset; i<min(startOffset+size, suggestedObjectsList.size()); i++) {
         NgcObjectPtr ngcObject = session.find<NgcObject>().where("id = ?").bind(suggestedObjectsList.at(i).first.id());
