@@ -85,7 +85,7 @@ ObjectNamesWidget::ObjectNamesWidget( const Wt::Dbo::ptr<NgcObject> &object, Ses
       if(url.type() != WLink::InternalPath)
         menuItem->setLinkTarget( TargetNewWindow );
     };
-    popup->addSectionHeader( WString::tr( "objectnames_more_info" ) );
+    popup->addSectionHeader( WString::tr( "objectnames_more_info" ) )->addStyleClass("dropdown-header");
     WMenuItem *imagesMenuItem = popup->addItem( WString::tr( "objectnames_digitalized_sky_survey_menu" ) );
     imagesMenuItem->setLink(WLink(WLink::InternalPath, DSSPage::internalPath(object, t)));
 
@@ -129,7 +129,7 @@ ObjectNamesWidget::ObjectNamesWidget( const Wt::Dbo::ptr<NgcObject> &object, Ses
     }
 
 
-    popup->addSectionHeader( WString::tr( "objectnames_search_menu_title" ) );
+    popup->addSectionHeader( WString::tr( "objectnames_search_menu_title" ) )->addStyleClass("dropdown-header");
     auto searchURL = [ = ]( string url, NebulaDenominationPtr nebulaDenomination )
     {
       return ( format( url ) % Utils::urlDecode( nebulaDenomination->search() ) ).str();
@@ -162,7 +162,7 @@ ObjectNamesWidget::ObjectNamesWidget( const Wt::Dbo::ptr<NgcObject> &object, Ses
       }
     }
 
-    popup->addSectionHeader( WString::tr( "objectnames_feedback_title" ) );
+    popup->addSectionHeader( WString::tr( "objectnames_feedback_title" ) )->addStyleClass("dropdown-header");
     addLink(WString::tr( "objectnames_feedback_menu" ), WLink(WLink::InternalPath, SendFeedbackPage::internalPath(object, &t)) );
 
 
