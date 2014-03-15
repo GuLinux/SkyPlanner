@@ -22,6 +22,11 @@
 #include "selectobjectswidget.h"
 #include <boost/thread.hpp>
 
+namespace Wt
+{
+  class WTableRow;
+}
+
 class NgcObject;
 class SelectObjectsWidget::Private
 {
@@ -51,6 +56,7 @@ public:
     bool aborted = false;
     NgcObject::NebulaType nebulaTypeFilter = NgcObject::AllButStars;
     std::string lastSearch;
+    Wt::WTableRow *selectedRow = 0;
 private:
     class SelectObjectsWidget* const q;
 };

@@ -95,6 +95,8 @@ void SelectObjectsWidget::Private::populateHeaders(WTable *table)
 void SelectObjectsWidget::Private::append(WTable *table, const Dbo::ptr<NgcObject> &ngcObject, const Ephemeris::BestAltitude &bestAltitude)
 {
   WTableRow *row = table->insertRow(table->rowCount());
+  
+
   stringstream names;
   string separator = "";
   for(auto denomination: ngcObject->nebulae()) {
@@ -104,7 +106,13 @@ void SelectObjectsWidget::Private::append(WTable *table, const Dbo::ptr<NgcObjec
   int existing = session.query<int>("select count(*) from astro_session_object where astro_session_id = ? AND objects_id = ? ").bind(astroSession.id() ).bind(ngcObject.id() );
   if(existing > 0)
     row->addStyleClass("success");
-  row->elementAt(0)->addWidget(WW<ObjectNamesWidget>(new ObjectNamesWidget{ngcObject, session, astroSession}).setInline(true));
+  row->elementAt(0)->addWidget(WW<ObjectNamesWidget>(new ObjectNamesWidget{ngcObject, session, astroSession}).setInline(true).onClick([=](WMouseEvent) {
+    if(selectedRow)
+      selectedRow->removeStyleClass("info");
+    row->addStyleClass("info");
+    selectedRow = row;
+  }
+  ));
   row->elementAt(1)->addWidget(new WText{ ngcObject->typeDescription() });
   row->elementAt(2)->addWidget(new WText{ WString::fromUTF8(ConstellationFinder::getName(ngcObject->coordinates()).name) });
   row->elementAt(3)->addWidget(new WText{ (ngcObject->magnitude() > 90.) ? "N/A" : (format("%.1f") % ngcObject->magnitude()).str() });
@@ -216,6 +224,7 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsList( double magnitud
   suggestedObjectsTable->clear();
   suggestedObjectsList.clear();
   suggestedObjectsTablePagination->clear();
+  selectedRow = 0;
   WApplication *app = wApp;
   aborted = true;
   bgThread.join();

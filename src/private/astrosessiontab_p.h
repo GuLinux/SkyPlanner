@@ -29,6 +29,7 @@ namespace Wt
   {
     class Client;
   }
+  class WTableRow;
 }
 
 class Telescope;
@@ -54,6 +55,7 @@ public:
     std::shared_ptr<Wt::Http::Client> client;
     Timezone timezone;
     void updateTimezone();
+    Wt::WTableRow *selectedRow = 0;
 private:
     class AstroSessionTab* const q;
 };

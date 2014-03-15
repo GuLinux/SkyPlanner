@@ -398,6 +398,7 @@ void AstroSessionTab::Private::updatePositionDetails()
 void AstroSessionTab::Private::populate()
 {
   objectsTable->clear();
+  selectedRow = 0;
   objectsTable->elementAt(0,0)->addWidget(new WText{WString::tr("object_column_names")});
   objectsTable->elementAt(0,1)->addWidget(new WText{WString::tr("object_column_type")});
   objectsTable->elementAt(0,2)->addWidget(new WText{WString::tr("object_column_ar")});
@@ -426,7 +427,12 @@ void AstroSessionTab::Private::populate()
   for(auto sessionObjectElement: sessionObjects) {
     dbo::ptr<AstroSessionObject> sessionObject = sessionObjectElement.first;
     WTableRow *row = objectsTable->insertRow(objectsTable->rowCount());
-    row->elementAt(0)->addWidget(WW<ObjectNamesWidget>(new ObjectNamesWidget{sessionObject->ngcObject(), session, astroSession}).setInline(true));
+    row->elementAt(0)->addWidget(WW<ObjectNamesWidget>(new ObjectNamesWidget{sessionObject->ngcObject(), session, astroSession}).setInline(true).onClick([=](WMouseEvent){
+      if(selectedRow)
+        selectedRow->removeStyleClass("info");
+      row->addStyleClass("info");
+      selectedRow = row;
+    }));
     row->elementAt(1)->addWidget(new WText{sessionObject->ngcObject()->typeDescription() });
     row->elementAt(2)->addWidget(new WText{ Utils::htmlEncode( sessionObject->coordinates().rightAscension.printable(Angle::Hourly) ) });
     row->elementAt(3)->addWidget(new WText{ Utils::htmlEncode( WString::fromUTF8( sessionObject->coordinates().declination.printable() )) });

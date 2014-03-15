@@ -166,9 +166,10 @@ ObjectNamesWidget::ObjectNamesWidget( const Wt::Dbo::ptr<NgcObject> &object, Ses
     addLink(WString::tr( "objectnames_feedback_menu" ), WLink(WLink::InternalPath, SendFeedbackPage::internalPath(object, &t)) );
 
 
-    popup->popup( e );
+    popup->popup(e);
   } );
 }
+
 
 ObjectNamesWidget::~ObjectNamesWidget()
 {
