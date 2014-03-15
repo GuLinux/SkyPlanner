@@ -96,6 +96,11 @@ AstroSessionTab::AstroSessionTab(const Dbo::ptr<AstroSession>& astroSession, Ses
   d->reload();
 }
 
+Signal< NoClass > &AstroSessionTab::close() const
+{
+  return d->close;
+}
+
 
 void AstroSessionTab::Private::reload()
 {
@@ -144,7 +149,7 @@ void AstroSessionTab::Private::reload()
   Dbo::Transaction t(session);
   WToolBar *sessionActions = WW<WToolBar>();
     
-  sessionActions->addButton(WW<WPushButton>(WString::tr("astrosessiontab_change_name_or_date")).css("btn btn-small").onClick([=](WMouseEvent){
+  sessionActions->addButton(WW<WPushButton>(WString::tr("astrosessiontab_change_name_or_date")).css("btn btn-sm").onClick([=](WMouseEvent){
     WDialog *changeNameOrDateDialog = new WDialog(WString::tr("astrosessiontab_change_name_or_date"));
     WLineEdit *sessionName = WW<WLineEdit>(astroSession->name()).css("input-block-level");
     WDateEdit *sessionDate = WW<WDateEdit>().css("input-block-level");
@@ -163,7 +168,8 @@ void AstroSessionTab::Private::reload()
     changeNameOrDateDialog->contents()->addWidget(form);
     changeNameOrDateDialog->show();
   }));
-  sessionActions->addButton(WW<WPushButton>(WString::tr("astrosessiontab_printable_version")).css("btn btn-info btn-small").onClick( [=](WMouseEvent){ printableVersion(); } ));
+  sessionActions->addButton(WW<WPushButton>(WString::tr("astrosessiontab_printable_version")).css("btn btn-info btn-sm").onClick( [=](WMouseEvent){ printableVersion(); } ));
+  sessionActions->addButton(WW<WPushButton>(WString::tr("buttons_close")).css("btn btn-warning btn-sm").onClick( [=](WMouseEvent){ close.emit(); } ));
   actionsContainer->addWidget(sessionActions);
   auto telescopes = session.user()->telescopes();
   if(telescopes.size() > 0) {

@@ -56,6 +56,7 @@ public:
     Timezone timezone;
     void updateTimezone();
     Wt::WTableRow *selectedRow = 0;
+    Wt::Signal<> close;
 private:
     class AstroSessionTab* const q;
 };

@@ -45,6 +45,9 @@ std::vector<uint8_t> styleCss() {
     .image-inverse {
       -webkit-filter: invert(100%);
     }
+    .nav-tabs .close {
+      display: none;
+    }
   );
   return std::vector<uint8_t>(css.begin(), css.end());
 }

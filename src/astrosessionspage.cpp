@@ -27,6 +27,7 @@
 #include <Wt/WTabWidget>
 #include <Wt/WMenuItem>
 #include <Wt/WMenu>
+#include <Wt/WPushButton>
 #include <boost/regex.hpp>
 #include "utils/format.h"
 #include "utils/utils.h"
@@ -114,6 +115,10 @@ void AstroSessionsPage::open(const string &tabName)
     d->astroSessionsListTab->reload();
   });
   newTab->setCloseable(true);
+  astroSessionTab->close().connect([=](_n6){
+    newTab->close();
+  });
+  //newTab->addWidget(WW<WPushButton>().setTextFormat(Wt::XHTMLUnsafeText).setText("&times;").css("close"));
   d->tabs[d->tabWidget->indexOf(astroSessionTab)] = {internalPath, astroSessionTab, newTab, astroSession};
   d->tabWidget->setCurrentWidget(astroSessionTab);
 }
