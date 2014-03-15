@@ -51,12 +51,14 @@ Curl::~Curl()
 
 Curl &Curl::get( const string &url )
 {
+  d->headers.str({});
   curl_easy_setopt(d->curl_handle, CURLOPT_URL, url.data());
   d->res = curl_easy_perform(d->curl_handle);
   curl_easy_getinfo (d->curl_handle, CURLINFO_RESPONSE_CODE, &d->responseCode);
   d->parsedHeaders.clear();
   vector<string> headerLines;
-  boost::split(headerLines, d->headers, boost::is_any_of("\n\r"));
+  auto headers = d->headers.str();
+  boost::split(headerLines,headers, boost::is_any_of("\n\r"));
   for(auto s: headerLines) {
     if(s.empty() || s.find("HTTP/1") != string::npos)
       continue;
@@ -112,9 +114,7 @@ size_t Curl::Private::WriteHeadersCallback(void *contents, size_t size, size_t n
 {
     size_t realsize = size * nmemb;
     Curl::Private *d = static_cast<Curl::Private*>(userp);
-
-    for(int i=0; i<realsize; i++)
-        d->headers.push_back(static_cast<char*>(contents)[i]);
+    d->headers.write(static_cast<char*>(contents), realsize);
     return realsize;
 }
 

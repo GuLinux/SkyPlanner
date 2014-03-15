@@ -21,7 +21,7 @@
 #define CURL_P_H
 #include "utils/curl.h"
 #include <curl/curl.h>
-
+#include <sstream>
 
 class Curl::Private
 {
@@ -29,7 +29,7 @@ class Curl::Private
     Private( std::ostream &output, Curl *q );
     CURL *curl_handle;
     std::ostream &output;
-    std::string headers;
+    std::stringstream headers;
     static size_t WriteHeadersCallback(void *contents, size_t size, size_t nmemb, void *userp);
     static size_t WriteToFileCallback(void *contents, size_t size, size_t nmemb, void *userp);
     static int curlProgress(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow);
