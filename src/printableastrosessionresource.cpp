@@ -171,7 +171,7 @@ void PrintableAstroSessionResource::handleRequest(const Wt::Http::Request &reque
   printable.bindString("timezone_info", d->timezone.timeZoneName);
   if(d->astroSession->position()) {
     auto sun = ephemeris.sun(d->astroSession->when());
-    auto twilight = ephemeris.sunAstronomical(d->astroSession->when());
+    auto twilight = ephemeris.astronomicalTwilight(d->astroSession->when());
     auto moon = ephemeris.moon(d->astroSession->when());
     auto formatTime = [=](const boost::posix_time::ptime &time) { auto t = d->timezone.fix(time); return (format("%02d:%02d") % t.time_of_day().hours() % t.time_of_day().minutes()).str(); };
     printable.bindString("sunRise",formatTime(sun.rise));

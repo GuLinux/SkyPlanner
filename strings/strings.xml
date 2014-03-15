@@ -46,7 +46,7 @@
 <message id="astrosessiontab_moon_phase">Moon Phase: {1}%</message>
 <message id="astrosessiontab_astro_twilight_info">Astronomical twilight: begins at {1}, ends at {2} ({3})</message>
 <message id="astrosessiontab_sun_info">Sun: rising at {1}, setting at {2} ({3})</message>
-<message id="astrosessiontab_darkness_hours">Astronomical sky darkness: {1} hours and {2} minutes.</message>
+<message id="astrosessiontab_darkness_hours">Real darkness: begins at {1}, ends at {2}, duration: {3}.</message>
 <message id="astrosessiontab_moon_info">Moon: rising at {1}, setting at {2} ({3})</message>
 <message id="astrosessiontab_printable_version_dialog_export_as">Export as...</message>
 <message id="astrosessiontab_information_panel">Information</message>

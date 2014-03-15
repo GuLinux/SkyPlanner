@@ -41,14 +41,19 @@ class Ephemeris
       Coordinates::AltAzimuth coordinates;
       boost::posix_time::ptime when;
     };
+    struct Darkness {
+      boost::posix_time::ptime begin;
+      boost::posix_time::ptime end;
+      boost::posix_time::time_duration duration;
+    };
 
     Ephemeris(const Coordinates::LatLng &geoPosition);
     ~Ephemeris();
     RiseTransitSet sun(const boost::posix_time::ptime &when, bool nightMode = true) const;
-    RiseTransitSet sunAstronomical(const boost::posix_time::ptime &when, bool nightMode = true) const;
+    RiseTransitSet astronomicalTwilight(const boost::posix_time::ptime &when, bool nightMode = true) const;
     RiseTransitSet moon(const boost::posix_time::ptime &when, bool nightMode = true) const;
     LunarPhase moonPhase(const boost::posix_time::ptime &when) const;
-    boost::posix_time::time_duration darknessHours(const boost::posix_time::ptime &when) const;
+    Darkness darknessHours(const boost::posix_time::ptime &when) const;
 
     Coordinates::AltAzimuth arDec2altAz(const Coordinates::Equatorial &equatorial, const boost::posix_time::ptime &when) const;
     BestAltitude findBestAltitude(const Coordinates::Equatorial &equatorial, const boost::posix_time::ptime &rangeStart, const boost::posix_time::ptime &rangeEnd) const;

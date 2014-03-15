@@ -75,7 +75,7 @@ Ephemeris::RiseTransitSet Ephemeris::sun( const boost::posix_time::ptime &when, 
   return result;
 }
 
-Ephemeris::RiseTransitSet Ephemeris::sunAstronomical( const boost::posix_time::ptime &when, bool nightMode ) const
+Ephemeris::RiseTransitSet Ephemeris::astronomicalTwilight( const boost::posix_time::ptime &when, bool nightMode ) const
 {
   boost::posix_time::ptime midnight(when.date());
   CAARiseTransitSetDetails s = d->GetSunRiseTransitSet(d->date(midnight).Julian(), d->geoPosition.longitude.degrees(), d->geoPosition.latitude.degrees(), -18);
@@ -97,14 +97,11 @@ Ephemeris::LunarPhase Ephemeris::moonPhase( const boost::posix_time::ptime &when
 }
 
 
-boost::posix_time::time_duration Ephemeris::darknessHours(const boost::posix_time::ptime &when) const
+Ephemeris::Darkness Ephemeris::darknessHours( const boost::posix_time::ptime &when ) const
 {
-  RiseTransitSet darkness = sun(when);
+  RiseTransitSet darkness = astronomicalTwilight(when);
   RiseTransitSet _moon = moon(when);
   
-  darkness.set += boost::posix_time::minutes(40);
-  darkness.rise -= boost::posix_time::minutes(40);
-
   if(darkness.set < _moon.set)
     darkness.set = _moon.set;
 
@@ -118,7 +115,7 @@ boost::posix_time::time_duration Ephemeris::darknessHours(const boost::posix_tim
   if(darkness.rise - moonEphemeris.rise < boost::posix_time::hours(4) && moonEphemeris.rise < darkness.rise )
     darkness.rise = moonEphemeris.rise;
 */
-  return darkness.rise - darkness.set;
+  return {darkness.set, darkness.rise, darkness.rise - darkness.set};
 }
 
 Ephemeris::BestAltitude Ephemeris::findBestAltitude( const Coordinates::Equatorial &arDec, const boost::posix_time::ptime &rangeStart, const boost::posix_time::ptime &rangeEnd ) const

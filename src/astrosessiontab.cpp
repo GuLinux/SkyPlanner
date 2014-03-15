@@ -339,19 +339,18 @@ void AstroSessionTab::Private::updatePositionDetails()
   Dbo::Transaction t(session);
   astroSession.reread();
   positionDetails->clear();
-  auto addMoonPhaseDetails = [=](const Ephemeris &ephemeris) {
-    Ephemeris::LunarPhase lunarPhase = ephemeris.moonPhase(astroSession->when());
+  auto addMoonPhaseDetails = [=](const Ephemeris::LunarPhase &lunarPhase) {
     positionDetails->addWidget(new WText(WString::tr("astrosessiontab_moon_phase").arg(static_cast<int>(lunarPhase.illuminated_fraction * 100 ))));
     positionDetails->addWidget(new WBreak);
   };
   if(!astroSession->position()) {
-    addMoonPhaseDetails(Ephemeris{{}});
+    addMoonPhaseDetails(Ephemeris({}).moonPhase(astroSession->when()));
     return;
   }
 //   forecast.fetch(astroSession->position().longitude, astroSession->position().latitude);
   Ephemeris ephemeris({astroSession->position().latitude, astroSession->position().longitude});
   Ephemeris::RiseTransitSet sun = ephemeris.sun(astroSession->when());
-  Ephemeris::RiseTransitSet astroTwilight = ephemeris.sunAstronomical(astroSession->when());
+  Ephemeris::RiseTransitSet astroTwilight = ephemeris.astronomicalTwilight(astroSession->when());
   Ephemeris::RiseTransitSet moon = ephemeris.moon(astroSession->when());
 
   auto formatTime = [=](const boost::posix_time::ptime &solarT) { auto t = timezone.fix(solarT); return (format("%02d:%02d") % t.time_of_day().hours() % t.time_of_day().minutes()).str(); };
@@ -373,15 +372,26 @@ void AstroSessionTab::Private::updatePositionDetails()
     .arg(timezone.timeZoneName)
   ));
   positionDetails->addWidget(new WBreak);
-  addMoonPhaseDetails(ephemeris);
-/*
-  auto darkness = ephemeris.darknessHours(astroSession->when() );
-  positionDetails->addWidget(new WText{WString::tr("astrosessiontab_darkness_hours").arg(darkness.hours()).arg(darkness.minutes() ) });  
-  positionDetails->addWidget(new WBreak);
-*/
-  positionDetails->addWidget(new WImage(WLink{format("http://www.7timer.com/v4/bin/astro.php?lon=%f&lat=%f&lang=en&ac=0&unit=metric&tzshift=0")
-    % astroSession->position().longitude.degrees() % astroSession->position().latitude.degrees()
-  } ));
+  Ephemeris::LunarPhase lunarPhase = ephemeris.moonPhase(astroSession->when());
+
+  addMoonPhaseDetails(lunarPhase);
+  if(lunarPhase.illuminated_fraction <= 0.5) {
+    auto darkness = ephemeris.darknessHours(astroSession->when() );
+    positionDetails->addWidget(new WText{
+      WString::tr("astrosessiontab_darkness_hours")
+        .arg(formatTime(darkness.begin))
+        .arg(formatTime(darkness.end))
+        .arg(boost::posix_time::to_simple_string(darkness.duration))
+    });
+  }
+
+  auto now = boost::posix_time::second_clock::local_time();
+  if(astroSession->when() > now && astroSession->when() - now < boost::posix_time::hours(72)) {
+    positionDetails->addWidget(new WBreak);
+    positionDetails->addWidget(new WImage(WLink{format("http://www.7timer.com/v4/bin/astro.php?lon=%f&lat=%f&lang=en&ac=0&unit=metric&tzshift=0")
+      % astroSession->position().longitude.degrees() % astroSession->position().latitude.degrees()
+    } ));
+  }
 }
 
 
