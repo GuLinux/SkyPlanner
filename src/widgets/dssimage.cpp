@@ -153,6 +153,7 @@ struct CurlProgressHandler {
     WApplication *app;
     WProgressBar *progressBar;
     shared_ptr<boost::mutex> mutex;
+    bool alive = true;
 };
 
 
@@ -160,28 +161,29 @@ void DSSImage::Private::curlDownload()
 {
     content->clear();
     content->addWidget(new WText(WString::tr("dss_downloading_message")));
-    CurlProgressHandler progressHandler;
-    progressHandler.progressBar = new WProgressBar();
-    progressHandler.progressBar->setMaximum(100);
+    shared_ptr<CurlProgressHandler> progressHandler{new CurlProgressHandler};
+    progressHandler->progressBar = new WProgressBar();
+    progressHandler->progressBar->setMaximum(100);
     content->addWidget(new WBreak);
 
-    content->addWidget(progressHandler.progressBar);
-    progressHandler.app = wApp;
+    content->addWidget(progressHandler->progressBar);
+    progressHandler->app = wApp;
     boost::thread([=] () mutable {
-        progressHandler.mutex.reset(new boost::mutex);
+        progressHandler->mutex.reset(new boost::mutex);
         ofstream output(cacheFile.string());
         shared_ptr<Curl> curl(new Curl{output});
         curl->setProgressCallback([=](double, double, double percent) {
-          if(! percent > progressHandler.progressBar->value()) return;
-          WServer::instance()->post(progressHandler.app->sessionId(), [=]{
-            progressHandler.progressBar->setValue(percent);
-            progressHandler.app->triggerUpdate();
+          if(! progressHandler->alive || ! percent > progressHandler->progressBar->value()) return;
+          WServer::instance()->post(progressHandler->app->sessionId(), [=]{
+            progressHandler->progressBar->setValue(percent);
+            progressHandler->app->triggerUpdate();
           });
         });
         curl->get(imageLink());
-        WServer::instance()->post(progressHandler.app->sessionId(), [=] {
-            Scope triggerUpdate([=]{ progressHandler.app->triggerUpdate(); });
-            delete progressHandler.progressBar;
+        WServer::instance()->post(progressHandler->app->sessionId(), [=] {
+            Scope triggerUpdate([=]{ progressHandler->app->triggerUpdate(); });
+            progressHandler->alive = false;
+            delete progressHandler->progressBar;
             if( ! curl->requestOk() || curl->httpResponseCode() != 200 || curl->contentType() != "image/gif" ) {
                 WServer::instance()->log("warning") << "Error downloading data using libCURL: " << curl->lastErrorMessage();
                 boost::filesystem::remove(cacheFile);
