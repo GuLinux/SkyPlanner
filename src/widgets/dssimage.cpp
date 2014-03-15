@@ -34,6 +34,7 @@
 #include "utils/curl.h"
 #include <boost/thread.hpp>
 #include <Wt/WProgressBar>
+#include <mutex>
 
 
 using namespace Wt;
@@ -151,9 +152,8 @@ void DSSImage::Private::setCacheImage()
 
 struct CurlProgressHandler {
     WApplication *app;
-    WProgressBar *progressBar;
-    shared_ptr<boost::mutex> mutex;
-    bool alive = true;
+    WProgressBar *progressBar = nullptr;
+    std::mutex mutex;
 };
 
 
@@ -169,11 +169,11 @@ void DSSImage::Private::curlDownload()
     content->addWidget(progressHandler->progressBar);
     progressHandler->app = wApp;
     boost::thread([=] () mutable {
-        progressHandler->mutex.reset(new boost::mutex);
         ofstream output(cacheFile.string());
         shared_ptr<Curl> curl(new Curl{output});
         curl->setProgressCallback([=](double, double, double percent) {
-          if(! progressHandler->alive || ! percent > progressHandler->progressBar->value()) return;
+          std::unique_lock<std::mutex> lock(progressHandler->mutex);
+          if(! progressHandler->progressBar || ! percent > progressHandler->progressBar->value()) return;
           WServer::instance()->post(progressHandler->app->sessionId(), [=]{
             progressHandler->progressBar->setValue(percent);
             progressHandler->app->triggerUpdate();
@@ -182,7 +182,8 @@ void DSSImage::Private::curlDownload()
         curl->get(imageLink());
         WServer::instance()->post(progressHandler->app->sessionId(), [=] {
             Scope triggerUpdate([=]{ progressHandler->app->triggerUpdate(); });
-            progressHandler->alive = false;
+            std::unique_lock<std::mutex> lock(progressHandler->mutex);
+            progressHandler->progressBar = nullptr;
             delete progressHandler->progressBar;
             if( ! curl->requestOk() || curl->httpResponseCode() != 200 || curl->contentType() != "image/gif" ) {
                 WServer::instance()->log("warning") << "Error downloading data using libCURL: " << curl->lastErrorMessage();
