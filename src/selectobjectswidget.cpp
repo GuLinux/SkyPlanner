@@ -249,7 +249,6 @@ void SelectObjectsWidget::Private::suggestedObjects(Dbo::Transaction& transactio
   minimumMagnitudeSlider->setValue(0);
   minimumMagnitudeSlider->valueChanged().connect([=](int value, _n5){
     minimumMagnitude = static_cast<double>(value)/10.;
-    spLog("notice") << "valueChanged: " << value;
     minimumMagnitudeValue->setText(format("%.1f") % minimumMagnitude);
     if(value == minimumMagnitudeSlider->minimum()) {
       minimumMagnitudeValue->setText(WString::tr("not_set"));
