@@ -241,23 +241,23 @@ void SelectObjectsWidget::Private::suggestedObjects(Dbo::Transaction& transactio
   selectFilters(selectAllButStars);
   
 
-  WText *minimumMagnitudeLabel = new WText{WString::tr("not_set")};
+  WText *minimumMagnitudeValue = WW<WText>(WString::tr("not_set")).css("badge");
   minimumMagnitudeSlider = WW<WSlider>().css("form-slider");
-  //minimumMagnitudeSlider->setNativeControl(true);
-  minimumMagnitude = -100;
-  minimumMagnitudeSlider->setRange(-50, 200);
-  minimumMagnitudeSlider->setValue(-50);
+  minimumMagnitudeSlider->setNativeControl(false);
+  minimumMagnitude = -500;
+  minimumMagnitudeSlider->setRange(0, 200);
+  minimumMagnitudeSlider->setValue(0);
   minimumMagnitudeSlider->valueChanged().connect([=](int value, _n5){
     minimumMagnitude = static_cast<double>(value)/10.;
     spLog("notice") << "valueChanged: " << value;
-    minimumMagnitudeLabel->setText(format("%.1f") % minimumMagnitude);
+    minimumMagnitudeValue->setText(format("%.1f") % minimumMagnitude);
     if(value == minimumMagnitudeSlider->minimum()) {
-      minimumMagnitudeLabel->setText(WString::tr("not_set"));
-      minimumMagnitude = -100;
+      minimumMagnitudeValue->setText(WString::tr("not_set"));
+      minimumMagnitude = -500;
     }
     q->populateFor(selectedTelescope, timezone);
   });
-  WContainerWidget *minimumMagnitudeWidget = WW<WContainerWidget>().setInline(true).add(new WText{WString::tr("minimum_magnitude_label")}).add(minimumMagnitudeLabel).add(minimumMagnitudeSlider);
+  WContainerWidget *minimumMagnitudeWidget = WW<WContainerWidget>().setInline(true).add(new WText{WString::tr("minimum_magnitude_label")}).add(minimumMagnitudeSlider).add(minimumMagnitudeValue);
   
   suggestedObjectsContainer->addWidget(WW<WGroupBox>(WString::tr("filters")).add(WW<WContainerWidget>().css("form-inline").add(astroTypeButton).add(minimumMagnitudeWidget) ));
   suggestedObjectsTable = WW<WTable>().addCss("table  table-hover");
