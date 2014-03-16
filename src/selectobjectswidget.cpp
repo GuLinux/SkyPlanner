@@ -240,13 +240,26 @@ void SelectObjectsWidget::Private::suggestedObjects(Dbo::Transaction& transactio
 
   selectFilters(selectAllButStars);
   
-  /*
-  WText *minimumMagnitudeLabel = new WText{"-3"};
-  WSlider *minimumMagnitudeSlider = new WSlider;
-  minimumMagnitudeSlider->setRange(-10, 99);
-  WContainerWidget *minimumMagnitudeWidget = WW<WContainerWidget>().add(minimumMagnitudeLabel).add(minimumMagnitudeSlider);
-*/  
-  suggestedObjectsContainer->addWidget(WW<WGroupBox>(WString::tr("filters")).add(WW<WContainerWidget>().css("form-inline").add(astroTypeButton)/*.add(minimumMagnitudeWidget)*/ ));
+
+  WText *minimumMagnitudeLabel = new WText{WString::tr("not_set")};
+  minimumMagnitudeSlider = WW<WSlider>().css("form-slider");
+  //minimumMagnitudeSlider->setNativeControl(true);
+  minimumMagnitude = -100;
+  minimumMagnitudeSlider->setRange(-50, 200);
+  minimumMagnitudeSlider->setValue(-50);
+  minimumMagnitudeSlider->valueChanged().connect([=](int value, _n5){
+    minimumMagnitude = static_cast<double>(value)/10.;
+    spLog("notice") << "valueChanged: " << value;
+    minimumMagnitudeLabel->setText(format("%.1f") % minimumMagnitude);
+    if(value == minimumMagnitudeSlider->minimum()) {
+      minimumMagnitudeLabel->setText(WString::tr("not_set"));
+      minimumMagnitude = -100;
+    }
+    q->populateFor(selectedTelescope, timezone);
+  });
+  WContainerWidget *minimumMagnitudeWidget = WW<WContainerWidget>().setInline(true).add(new WText{WString::tr("minimum_magnitude_label")}).add(minimumMagnitudeLabel).add(minimumMagnitudeSlider);
+  
+  suggestedObjectsContainer->addWidget(WW<WGroupBox>(WString::tr("filters")).add(WW<WContainerWidget>().css("form-inline").add(astroTypeButton).add(minimumMagnitudeWidget) ));
   suggestedObjectsTable = WW<WTable>().addCss("table  table-hover");
   suggestedObjectsTablePagination = WW<WContainerWidget>();
   suggestedObjectsLoaded.connect(this, &SelectObjectsWidget::Private::populateSuggestedObjectsTable);
@@ -260,6 +273,7 @@ void SelectObjectsWidget::Private::suggestedObjects(Dbo::Transaction& transactio
 
 void SelectObjectsWidget::Private::populateSuggestedObjectsList( double magnitudeLimit )
 {
+  minimumMagnitudeSlider->setMaximum((magnitudeLimit-0.5)*10);
   boost::unique_lock<boost::mutex> l1(suggestedObjectsListMutex);
   suggestedObjectsTable->clear();
   suggestedObjectsList.clear();
@@ -274,7 +288,7 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsList( double magnitud
     boost::unique_lock<boost::mutex> lockSession(sessionLockMutex);
     Session threadSession;
     Dbo::Transaction t(threadSession);
-    auto ngcObjectsQuery = threadSession.find<NgcObject>().where("magnitude < ?").bind(magnitudeLimit);
+    auto ngcObjectsQuery = threadSession.find<NgcObject>().where("magnitude < ? AND magnitude >= ?").bind(magnitudeLimit).bind(minimumMagnitude);
     vector<string> filterConditions{nebulaTypeFilters.size(), "?"};
     ngcObjectsQuery.where(format("\"type\" IN (%s)") % boost::algorithm::join(filterConditions, ", ") );
     for(auto filter: nebulaTypeFilters)

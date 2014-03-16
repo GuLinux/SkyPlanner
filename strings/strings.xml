@@ -7,6 +7,8 @@
 <message id="mainmenu_my_telescopes">My Telescopes</message>
 <message id="mainmenu_my_settings">Settings</message>
 <message id="mainmenu_feedback">Feedback</message>
+<message id="not_set">not set</message>
+<message id="minimum_magnitude_label">Minimum Magnitude: </message>
 
 <message id="mainmenu_logout">Logout</message>
 <message id="telescopes_telescope_name">Telescope Name</message>

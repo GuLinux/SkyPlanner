@@ -41,6 +41,8 @@
   <message id="Wt.WMessageBox.Cancel">Annulla</message>
 
 
+<message id="not_set">non impostato</message>
+<message id="minimum_magnitude_label">Magnitudine minima: </message>
 
 <message id="mainmenu_my_sessions">Le Mie Osservazioni</message>
 <message id="mainmenu_my_telescopes">I Miei Telescopi</message>

@@ -25,6 +25,7 @@
 namespace Wt
 {
   class WTableRow;
+  class WSlider;
 }
 
 class NgcObject;
@@ -57,6 +58,8 @@ public:
     std::set<NgcObject::NebulaType> nebulaTypeFilters;
     std::string lastSearch;
     Wt::WTableRow *selectedRow = 0;
+    double minimumMagnitude;
+    Wt::WSlider *minimumMagnitudeSlider;
 private:
     class SelectObjectsWidget* const q;
 };

@@ -48,6 +48,9 @@ std::vector<uint8_t> styleCss() {
     .nav-tabs .close {
       display: none;
     }
+    .form-slider {
+      vertical-align: middle;
+    }
   );
   return std::vector<uint8_t>(css.begin(), css.end());
 }
