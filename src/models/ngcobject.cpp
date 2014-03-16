@@ -91,11 +91,11 @@ NgcObject::NebulaType NgcObject::type() const
             NebUnknown=8 //!< Unknown type, catalog errors, "Unidentified Southern Objects" etc.
     };
 */
-std::string NgcObject::typeDescriptionKey() const
+string NgcObject::typeDescriptionKey() const
 {
   return typeDescriptionKey( type() );
 }
-std::string NgcObject::typeDescriptionKey( NebulaType nebulaType )
+string NgcObject::typeDescriptionKey( NebulaType nebulaType )
 {
   static map<NebulaType, string> descriptions
   {
@@ -141,14 +141,23 @@ vector< string > NgcObject::namesByCatalogueImportance( Wt::Dbo::Transaction &tr
   vector<string> names;
   vector<NebulaDenominationPtr> denominations = denominationsByCatalogueImportance(transaction, object);
   for(NebulaDenominationPtr d: denominations) {
-      if(std::count(names.begin(), names.end(), d->name()) == 0)
+      if(count(names.begin(), names.end(), d->name()) == 0)
         names.push_back( d->name());
   }
   return names;
 }
 
+set< NgcObject::NebulaType > NgcObject::nebulaTypes()
+{
+  static set<NgcObject::NebulaType> nebulaTypes;
+  if(nebulaTypes.empty())
+    for(int i=NebGx; i<NebulaTypeCount; i++)
+      nebulaTypes.insert(static_cast<NebulaType>(i));
+  return nebulaTypes;
+}
 
-std::vector<NgcObject::CatalogueDescription> NgcObject::descriptions() const
+
+vector<NgcObject::CatalogueDescription> NgcObject::descriptions() const
 {
   vector<CatalogueDescription> dbDescriptions;
   vector<NebulaDenominationPtr> denominations;

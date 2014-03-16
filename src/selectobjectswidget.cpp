@@ -46,6 +46,7 @@
 #include <Wt/WToolBar>
 #include <Wt/Dbo/QueryModel>
 #include <Wt/WPopupMenu>
+#include <Wt/WSlider>
 #include <boost/regex.hpp>
 #include <boost/algorithm/string.hpp>
 #include <../../opt/wt-git/include/Wt/WCheckBox>
@@ -202,49 +203,50 @@ void SelectObjectsWidget::Private::suggestedObjects(Dbo::Transaction& transactio
   WPushButton *astroTypeButton = WW<WPushButton>(WString::tr("object_column_type"));
   WPopupMenu *astroTypeMenu = new WPopupMenu; 
   astroTypeButton->setMenu(astroTypeMenu);
-
-  map<NgcObject::NebulaType, WMenuItem*> menuItems;
-  astroTypeMenu->addSeparator();
-  for(int type = NgcObject::NebGx; type < NgcObject::NebulaTypeCount; type++) {
-     WMenuItem *item = astroTypeMenu->addItem(NgcObject::typeDescription(static_cast<NgcObject::NebulaType>(type)));
-     item->setCheckable(true);
-     item->checkBox()->changed().connect([=](_n1){
-       spLog("notice") << "ngc object type: " << NgcObject::typeDescription(static_cast<NgcObject::NebulaType>(type)) << ", checked: " << item->checkBox()->isChecked();
-       if(item->checkBox()->isChecked())
-         nebulaTypeFilters.insert(static_cast<NgcObject::NebulaType>(type));
-       else
-         nebulaTypeFilters.erase(static_cast<NgcObject::NebulaType>(type));
-       q->populateFor(selectedTelescope, timezone);
-     });
-     menuItems[static_cast<NgcObject::NebulaType>(type)] = item;
-  }
- 
   
-  auto selectAllButStars = [=] {
+
+  astroTypeMenu->addSeparator();
+  map<NgcObject::NebulaType, WMenuItem*> menuItems;
+  for(auto type: NgcObject::nebulaTypes())
+    menuItems[type] = astroTypeMenu->addItem(NgcObject::typeDescription(type));
+    
+  auto selectFilters = [=] (function<bool(NgcObject::NebulaType)> includeFunc) {
     nebulaTypeFilters.clear();
-    for(auto item: menuItems) {
-      bool notStar = item.first != NgcObject::RedStar && item.first != NgcObject::Asterism;
-      item.second->setChecked(notStar);
-      if(notStar)
-        nebulaTypeFilters.insert(item.first);
-    }
+    for(auto type: NgcObject::nebulaTypes())
+      if(includeFunc(type)) nebulaTypeFilters.insert(type);
+    for(auto item: menuItems)
+      item.second->checkBox()->setChecked(nebulaTypeFilters.count(item.first));
   };
   
+  for(auto item: menuItems) {
+     item.second->setCheckable(true);
+     item.second->checkBox()->changed().connect([=](_n1){
+       selectFilters([=](NgcObject::NebulaType t) { return menuItems.at(t)->isChecked(); });
+       q->populateFor(selectedTelescope, timezone);
+     });
+  }
+  
+  auto selectAllButStars = [](NgcObject::NebulaType t) { return t != NgcObject::RedStar && t != NgcObject::Asterism; };
+  
   astroTypeMenu->insertItem(0, NgcObject::typeDescription(NgcObject::AllButStars))->triggered().connect([=](WMenuItem*, _n5){
-    selectAllButStars();
+    selectFilters(selectAllButStars);
     q->populateFor(selectedTelescope, timezone);
   });
   astroTypeMenu->insertItem(1, NgcObject::typeDescription(NgcObject::All))->triggered().connect([=](WMenuItem*, _n5){
     nebulaTypeFilters.clear();
-    for(auto item: menuItems) {
-      item.second->setChecked(true);
-      nebulaTypeFilters.insert(item.first);
-    }
+    selectFilters([](NgcObject::NebulaType) { return true; });
     q->populateFor(selectedTelescope, timezone);
   });
-  selectAllButStars();
+
+  selectFilters(selectAllButStars);
   
-  suggestedObjectsContainer->addWidget(WW<WGroupBox>(WString::tr("filters")).add(WW<WContainerWidget>().css("form-inline").add(astroTypeButton) ));
+  /*
+  WText *minimumMagnitudeLabel = new WText{"-3"};
+  WSlider *minimumMagnitudeSlider = new WSlider;
+  minimumMagnitudeSlider->setRange(-10, 99);
+  WContainerWidget *minimumMagnitudeWidget = WW<WContainerWidget>().add(minimumMagnitudeLabel).add(minimumMagnitudeSlider);
+*/  
+  suggestedObjectsContainer->addWidget(WW<WGroupBox>(WString::tr("filters")).add(WW<WContainerWidget>().css("form-inline").add(astroTypeButton)/*.add(minimumMagnitudeWidget)*/ ));
   suggestedObjectsTable = WW<WTable>().addCss("table  table-hover");
   suggestedObjectsTablePagination = WW<WContainerWidget>();
   suggestedObjectsLoaded.connect(this, &SelectObjectsWidget::Private::populateSuggestedObjectsTable);
@@ -275,9 +277,8 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsList( double magnitud
     auto ngcObjectsQuery = threadSession.find<NgcObject>().where("magnitude < ?").bind(magnitudeLimit);
     vector<string> filterConditions{nebulaTypeFilters.size(), "?"};
     ngcObjectsQuery.where(format("\"type\" IN (%s)") % boost::algorithm::join(filterConditions, ", ") );
-    for(auto filter: nebulaTypeFilters) {
+    for(auto filter: nebulaTypeFilters)
       ngcObjectsQuery.bind(filter);
-    }
  
     dbo::collection<NgcObjectPtr> objects = ngcObjectsQuery.resultList();
     Ephemeris ephemeris(astroSession->position());

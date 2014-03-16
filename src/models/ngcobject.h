@@ -70,6 +70,7 @@ public:
             RedStar=0xB,
     };
     static const int NebulaTypeCount = 12;
+    static std::set<NebulaType> nebulaTypes();
     NgcObject();
     ~NgcObject();
     // CREATE TABLE objects (object_id TEXT PRIMARY KEY, ra REAL, dec REAL, magnitude REAL, angular_size REAL, type INTEGER);
