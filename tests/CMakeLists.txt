@@ -41,6 +41,7 @@ if(Boost_UNIT_TEST_FRAMEWORK_LIBRARY)
   )
   link_unit_test(ephemeris)
   
+  add_definitions(-DTESTS_NO_WT=1)
   register_unit_test(utils utils_test.cpp ${CMAKE_SOURCE_DIR}/src/utils/utils.cpp)
   link_unit_test(utils)
 endif(Boost_UNIT_TEST_FRAMEWORK_LIBRARY)

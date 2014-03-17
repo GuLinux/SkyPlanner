@@ -22,12 +22,13 @@
 #include <string>
 #include <boost/format.hpp>
 #include "utils/format.h"
+#ifndef TESTS_NO_WT
 #include <Wt/Json/Value>
 #include <Wt/Json/Object>
 #include <Wt/Json/Parser>
-
-using namespace std;
 using namespace Wt;
+#endif
+using namespace std;
 using namespace AAPlus;
 
 Angle Angle::degrees(double degrees)
@@ -135,9 +136,10 @@ string Timezone::key(double latitude, double longitude, const boost::posix_time:
 
 Timezone Timezone::from(const string &response, double lat, double lng)
 {
+  Timezone timezone;
+  #ifndef TESTS_NO_WT
   Json::Object timezoneJsonObject;
   Json::parse(response, timezoneJsonObject);
-  Timezone timezone;
   timezone.dstOffset = timezoneJsonObject.get("dstOffset");
   timezone.rawOffset = timezoneJsonObject.get("rawOffset");
   timezone.timeZoneId = timezoneJsonObject.get("timeZoneId").orIfNull(string{});
@@ -145,6 +147,7 @@ Timezone Timezone::from(const string &response, double lat, double lng)
   timezone.latitude = lat;
   timezone.longitude = lng;
   return timezone;
+#endif
 }
 
 ostream &operator<<(ostream &o, const Timezone &t)

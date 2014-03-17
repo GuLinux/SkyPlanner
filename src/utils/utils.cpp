@@ -20,6 +20,8 @@
 #include "utils.h"
 #include <cmath>
 #include <boost/regex.hpp>
+#include "utils/format.h"
+#include <boost/algorithm/string.hpp>
 
 using namespace std;
 
@@ -35,4 +37,13 @@ int Utils::exponentialPercentage( double value, double limit, double base )
 string Utils::sanitizeForURL(const string &in, const string &replacement)
 {
   return boost::regex_replace(in, boost::regex("[^a-zA-Z0-9]+"), replacement );
+}
+
+string Utils::csv( const string &value, char separator )
+{
+  vector<char> toEscape{'\n', '\r', '"', separator};
+  if(any_of(begin(toEscape), end(toEscape), [&value](char c) { return value.find(c) != string::npos; })) {
+    return format("\"%s\"") % boost::algorithm::replace_all_copy(value, "\"", "\"\"");
+  }
+  return value;
 }

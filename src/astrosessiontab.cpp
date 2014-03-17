@@ -66,6 +66,8 @@
 #include <Wt/Json/Value>
 #include <Wt/Json/Array>
 #include <Wt/Json/Object>
+#include <Wt/WPopupMenu>
+#include <Wt/WMemoryResource>
 
 using namespace Wt;
 using namespace WtCommons;
@@ -169,6 +171,23 @@ void AstroSessionTab::Private::reload()
     changeNameOrDateDialog->show();
   }));
   sessionActions->addButton(WW<WPushButton>(WString::tr("astrosessiontab_printable_version")).css("btn btn-info btn-sm").onClick( [=](WMouseEvent){ printableVersion(); } ));
+  
+  WPushButton *exportButton = WW<WPushButton>(WString::tr("astrosessiontab_export")).css("btn btn-sm btn-info");
+  WPopupMenu *exportMenu = new WPopupMenu;
+  exportButton->setMenu(exportMenu);
+  WMenuItem *exportToCsv = exportMenu->addItem("CSV");
+  WMemoryResource *exportToCsvResource = new WMemoryResource("text/csv", exportToCsv);
+  exportToCsv->triggered().connect([=](WMenuItem*, _n5){
+    exportToCsvResource->suggestFileName(astroSession->name());
+    static int exportNum = 0;
+    string dataStr = format("Hello! %d") % exportNum++;
+    vector<uint8_t> data(begin(dataStr), end(dataStr));
+    exportToCsvResource->setData(data);
+    exportButton->doJavaScript(format("window.open('%s', '_blank');") % exportToCsvResource->url());
+  });
+  // sessionActions->addButton(exportButton);
+  
+  
   sessionActions->addButton(WW<WPushButton>(WString::tr("buttons_close")).css("btn btn-warning btn-sm").onClick( [=](WMouseEvent){ close.emit(); } ));
   actionsContainer->addWidget(sessionActions);
   auto telescopes = session.user()->telescopes();

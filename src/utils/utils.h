@@ -37,6 +37,7 @@ public:
     return t;
   }
   static std::string sanitizeForURL(const std::string &in, const std::string &replacement = "-");
+  static std::string csv(const std::string &value, char separator=',');
 };
 
 class Scope {
