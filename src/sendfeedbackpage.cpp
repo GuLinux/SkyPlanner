@@ -85,9 +85,12 @@ void SendFeedbackPage::Private::feedbackForm(const Wt::Dbo::ptr<NgcObject> &obje
     message.setFrom({"skyplanner@gulinux.net", "SkyPlanner"});
     message.setSubject(WString::tr("feedback_email_subject"));
 
+
     Dbo::Transaction t(session);
     WString username = session.login().user().identity("loginname");
     string userEmail = session.login().user().email();
+
+    message.setReplyTo({userEmail, username});
     string objectData = object ? (format("database id: %d; names: %s") % object.id() % boost::algorithm::join(NgcObject::namesByCatalogueImportance(t, object), ", ")).str() : "no object selected";
 
     WString body = WString::tr("feedback_email_message").arg(username).arg(userEmail).arg(objectData).arg(messageBody->text());
