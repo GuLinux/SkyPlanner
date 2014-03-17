@@ -225,32 +225,34 @@ void AstroSessionTab::Private::updateTimezone()
 
   timezone = Timezone{};
   static map<string,Timezone> timezonesCache;
-  string key = Timezone::key(astroSession->position().latitude.degrees(), astroSession->position().longitude.degrees(), astroSession->when(), wApp->locale().name());
-  spLog("notice") << "Timezone identifier: " << key;
-  if(timezonesCache.count(key)) {
-    timezone = timezonesCache[key];
-    spLog("notice") << "Timezone " << timezone << " found in cache, skipping webservice request";
-  } else {
-    string url = format("https://maps.googleapis.com/maps/api/timezone/json?location=%f,%f&timestamp=%d&sensor=false&key=%s&language=%s")
-      % astroSession->position().latitude.degrees()
-      % astroSession->position().longitude.degrees()
-      % astroSession->wDateWhen().toTime_t()
-      % googleApiKey
-      % wApp->locale().name();
-    ;
-    spLog("notice") << "URL: " << url;
-    stringstream data;
-    Curl curl(data);
-    bool getRequest = ! googleApiKey.empty() && curl.get(url).requestOk();
+  if(astroSession->position()){
+    string key = Timezone::key(astroSession->position().latitude.degrees(), astroSession->position().longitude.degrees(), astroSession->when(), wApp->locale().name());
+    spLog("notice") << "Timezone identifier: " << key;
+    if(timezonesCache.count(key)) {
+      timezone = timezonesCache[key];
+      spLog("notice") << "Timezone " << timezone << " found in cache, skipping webservice request";
+    } else {
+      string url = format("https://maps.googleapis.com/maps/api/timezone/json?location=%f,%f&timestamp=%d&sensor=false&key=%s&language=%s")
+        % astroSession->position().latitude.degrees()
+        % astroSession->position().longitude.degrees()
+        % astroSession->wDateWhen().toTime_t()
+        % googleApiKey
+        % wApp->locale().name();
+      ;
+      spLog("notice") << "URL: " << url;
+      stringstream data;
+      Curl curl(data);
+      bool getRequest = ! googleApiKey.empty() && curl.get(url).requestOk();
 
-    spLog("notice") << "get request: " << boolalpha << getRequest << ", http code: " << curl.httpResponseCode() << ", out: " << data.str();
-    if(getRequest) {
-      try {
-        timezone = Timezone::from(data.str(), astroSession->position().latitude.degrees(), astroSession->position().longitude.degrees());
-        timezonesCache[key] = timezone;
-        spLog("notice") << "got timezone info: " << timezone;
-      } catch(std::exception &e) {
-        spLog("notice") << "Unable to parse json response into a timezone object: " << e.what();
+      spLog("notice") << "get request: " << boolalpha << getRequest << ", http code: " << curl.httpResponseCode() << ", out: " << data.str();
+      if(getRequest) {
+        try {
+          timezone = Timezone::from(data.str(), astroSession->position().latitude.degrees(), astroSession->position().longitude.degrees());
+          timezonesCache[key] = timezone;
+          spLog("notice") << "got timezone info: " << timezone;
+        } catch(std::exception &e) {
+          spLog("notice") << "Unable to parse json response into a timezone object: " << e.what();
+        }
       }
     }
   }
