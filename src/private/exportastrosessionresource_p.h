@@ -19,15 +19,15 @@
 
 #ifndef PRINTABLEASTROSESSIONRESOURCE_P_H
 #define PRINTABLEASTROSESSIONRESOURCE_P_H
-#include "printableastrosessionresource.h"
+#include "exportastrosessionresource.h"
 
 #include <Wt/Dbo/ptr>
 class AstroSession;
 class Session;
-class PrintableAstroSessionResource::Private
+class ExportAstroSessionResource::Private
 {
 public:
-    Private(const Wt::Dbo::ptr<AstroSession> &astroSession, Session &session, Timezone timezone, PrintableAstroSessionResource* q);
+    Private(const Wt::Dbo::ptr<AstroSession> &astroSession, Session &session, Timezone timezone, ExportAstroSessionResource* q);
     Wt::Dbo::ptr<AstroSession> astroSession;
     Session &session;
     Timezone timezone;
@@ -36,6 +36,6 @@ public:
     ReportType reportType = HTML;
     double fontScale = 1.0;
 private:
-    class PrintableAstroSessionResource* const q;
+    class ExportAstroSessionResource* const q;
 };
 #endif // PRINTABLEASTROSESSIONRESOURCE_P_H

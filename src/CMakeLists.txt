@@ -22,7 +22,7 @@ set(SkyPlanner_SRCS
   utils/curl.cpp
   telescopespage.cpp
   constellationfinder.cpp
-  printableastrosessionresource.cpp
+  exportastrosessionresource.cpp
   usersettingspage.cpp
   sendfeedbackpage.cpp
   Wt-Commons/whtmltemplateslocalizedstrings.cpp

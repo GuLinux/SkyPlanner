@@ -17,8 +17,8 @@
  *
  */
 
-#include "printableastrosessionresource.h"
-#include "private/printableastrosessionresource_p.h"
+#include "exportastrosessionresource.h"
+#include "private/exportastrosessionresource_p.h"
 #include "utils/d_ptr_implementation.h"
 #include "Models"
 #include "session.h"
@@ -53,40 +53,40 @@
 using namespace Wt;
 using namespace std;
 
-PrintableAstroSessionResource::Private::Private(const Dbo::ptr< AstroSession >& astroSession, Session& session, Timezone timezone, PrintableAstroSessionResource* q)
+ExportAstroSessionResource::Private::Private(const Dbo::ptr< AstroSession >& astroSession, Session& session, Timezone timezone, ExportAstroSessionResource* q)
   : astroSession(astroSession), session(session), rowsSpacing(0), timezone(timezone), q(q)
 {
 }
 
-PrintableAstroSessionResource::PrintableAstroSessionResource(const Dbo::ptr<AstroSession> &astroSession, Session &session, Timezone timezone, WObject* parent)
+ExportAstroSessionResource::ExportAstroSessionResource(const Dbo::ptr<AstroSession> &astroSession, Session &session, Timezone timezone, WObject* parent)
   : WResource(parent), d(astroSession, session, timezone, this)
 {
 }
 
-PrintableAstroSessionResource::~PrintableAstroSessionResource()
+ExportAstroSessionResource::~ExportAstroSessionResource()
 {
 }
 
-void PrintableAstroSessionResource::setTelescope(const Dbo::ptr<Telescope> &telescope)
+void ExportAstroSessionResource::setTelescope(const Dbo::ptr<Telescope> &telescope)
 {
   d->telescope = telescope;
 }
-void PrintableAstroSessionResource::setRowsSpacing(int spacing)
+void ExportAstroSessionResource::setRowsSpacing(int spacing)
 {
   d->rowsSpacing = spacing;
 }
 
-void PrintableAstroSessionResource::setReportType(ReportType type)
+void ExportAstroSessionResource::setReportType(ReportType type)
 {
   d->reportType = type;
 }
 
-void PrintableAstroSessionResource::setFontScale(double fontScale)
+void ExportAstroSessionResource::setFontScale(double fontScale)
 {
   d->fontScale = fontScale;
 }
 
-void PrintableAstroSessionResource::setTimezone(const Timezone &timezone)
+void ExportAstroSessionResource::setTimezone(const Timezone &timezone)
 {
   d->timezone = timezone;
 }
@@ -98,7 +98,7 @@ namespace {
     }
 }
 #endif
-void PrintableAstroSessionResource::handleRequest(const Wt::Http::Request &request, Wt::Http::Response &response) {
+void ExportAstroSessionResource::handleRequest(const Wt::Http::Request &request, Wt::Http::Response &response) {
   Dbo::Transaction t(d->session);
   Ephemeris ephemeris(d->astroSession->position());
   auto sessionObjectsDbCollection = d->astroSession->astroSessionObjects();

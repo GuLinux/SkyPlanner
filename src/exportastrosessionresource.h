@@ -27,12 +27,12 @@
 class Session;
 class Telescope;
 class AstroSession;
-class PrintableAstroSessionResource : public Wt::WResource
+class ExportAstroSessionResource : public Wt::WResource
 {
 public:
   enum ReportType { HTML, PDF, CSV };
-  PrintableAstroSessionResource(const Wt::Dbo::ptr<AstroSession> &astroSession, Session &session, Timezone timezone, Wt::WObject *parent = 0);
-  virtual ~PrintableAstroSessionResource();
+  ExportAstroSessionResource(const Wt::Dbo::ptr<AstroSession> &astroSession, Session &session, Timezone timezone, Wt::WObject *parent = 0);
+  virtual ~ExportAstroSessionResource();
   virtual void handleRequest(const Wt::Http::Request &request, Wt::Http::Response &response);
   void setRowsSpacing(int spacing);
   void setTelescope(const Wt::Dbo::ptr<Telescope> &telescope);

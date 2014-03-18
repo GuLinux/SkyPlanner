@@ -54,7 +54,7 @@
 #include <Wt/WToolBar>
 #include <Wt/WTemplate>
 #include "constellationfinder.h"
-#include "printableastrosessionresource.h"
+#include "exportastrosessionresource.h"
 #include <Wt/WSlider>
 #include <Wt/WLocalDateTime>
 #include "skyplanner.h"
@@ -176,8 +176,8 @@ void AstroSessionTab::Private::reload()
   WPopupMenu *exportMenu = new WPopupMenu;
   exportButton->setMenu(exportMenu);
   WMenuItem *exportToCsv = exportMenu->addItem("CSV");
-  exportToCsvResource = new PrintableAstroSessionResource(astroSession, session, timezone, exportToCsv);
-  exportToCsvResource->setReportType(PrintableAstroSessionResource::CSV);
+  exportToCsvResource = new ExportAstroSessionResource(astroSession, session, timezone, exportToCsv);
+  exportToCsvResource->setReportType(ExportAstroSessionResource::CSV);
   exportToCsv->setLink(exportToCsvResource);
   exportToCsv->setLinkTarget(TargetNewWindow);
 #ifndef PRODUCTION_MODE
@@ -281,14 +281,14 @@ void AstroSessionTab::Private::printableVersion()
   WPushButton *okButton;
   printableDialog->footer()->addWidget(okButton = WW<WPushButton>(WString::tr("Wt.WMessageBox.Ok")).css("btn btn-primary").onClick([=](WMouseEvent){ printableDialog->accept(); }));
   printableDialog->footer()->addWidget(WW<WPushButton>(WString::tr("Wt.WMessageBox.Cancel")).css("btn btn-danger").onClick([=](WMouseEvent){ printableDialog->reject(); }));
-  auto printableResource = new PrintableAstroSessionResource(astroSession, session, timezone, q);
+  auto printableResource = new ExportAstroSessionResource(astroSession, session, timezone, q);
 #ifdef DISABLE_LIBHARU
 #define PDF_INDEX -1
 #warning "libharu Disabled, export to PDF will not be available"
   printableResource->setReportType(PrintableAstroSessionResource::HTML);
 #else
 #define PDF_INDEX 0
-  printableResource->setReportType(PrintableAstroSessionResource::PDF);
+  printableResource->setReportType(ExportAstroSessionResource::PDF);
 #endif
   okButton->setLink(printableResource);
   okButton->setLinkTarget(TargetNewWindow);
@@ -310,7 +310,7 @@ void AstroSessionTab::Private::printableVersion()
 #endif
   formatCombo->addItem("HTML");
   formatCombo->activated().connect([=](int r, _n5){
-    printableResource->setReportType(r==PDF_INDEX ? PrintableAstroSessionResource::PDF : PrintableAstroSessionResource::HTML);
+    printableResource->setReportType(r==PDF_INDEX ? ExportAstroSessionResource::PDF : ExportAstroSessionResource::HTML);
     fontScalingSlider->setEnabled(r==PDF_INDEX);
   });
   printableDialog->contents()->addWidget(WW<WContainerWidget>().add(new WLabel{WString::tr("astrosessiontab_printable_version_dialog_export_as")}).add(formatCombo).add(new WBreak));
