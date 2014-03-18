@@ -1,0 +1,59 @@
+${<render-type-html>}
+  <html>
+    <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+      <title>${title}</title>
+      <style type="text/css">
+      td { font-size: 0.7em; }
+      th { font-size: 0.8em; }
+      @media print {
+    table { page-break-inside:auto }
+    tr    { page-break-inside:avoid; page-break-after:auto }
+    td    { page-break-inside:avoid; page-break-after:auto; }
+      }
+      </style>
+    </head>
+  <body>
+  ${</render-type-html>}
+  ${<render-type-pdf>}
+      <style type="text/css">
+        table { page-break-inside:auto }
+    tr    { page-break-inside:avoid; page-break-after:auto }
+      </style>
+  ${</render-type-pdf>}
+  <h2 style="text-align: center;">${title}</h2>
+  <p>Time in ${timezone_info}</p>
+  ${<have-place>}
+  <p>${sessionDate}, Moon Phase: ${moonPhase}%, ${objects-number} objects.</p>
+  <div>
+  Sun: rising at ${sunRise}, setting at ${sunSet}<br />
+  Astronomical Twilight: begins at ${astroTwilightBegin}, ends at ${astroTwilightEnd}<br />
+  Moon: rising at ${moonRise}, setting at ${moonSet}</div>
+  ${<have-telescope>}<p>Suggestions for telescope: "${telescope-name}", diameter ${telescope-diameter}mm, focal length ${telescope-focal-length}mm</p>${</have-telescope>}
+  ${</have-place>}
+  <table border="1">
+    <thead>
+      <tr>
+    <th>Names</th>
+    <th>AR</th>
+    <th>Dec</th>
+    <th>Constellation</th>
+    <th>Size</th>
+    <th>Magn.</th>
+    <th>Type</th>
+    ${<have-place>}
+    <th>Highest</th>
+    <th>Max</th>
+    ${</have-place>}
+    ${<have-telescope>}
+    <th>Difficulty</th>
+    ${</have-telescope>}
+      </tr>
+    </thead>
+    <tbody>
+      ${table-rows}
+    </tbody>
+  </table>
+  ${<render-type-html>}
+  </body></html>
+  ${</render-type-html>}

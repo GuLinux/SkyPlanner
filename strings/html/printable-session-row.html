@@ -1,0 +1,27 @@
+<tr style="page-break-inside:avoid; page-break-after:auto">
+    <td>${namesWidget}</td>
+    <td style='white-space:nowrap; font-size: smaller;'>${ar}</td>
+    <td style='white-space:nowrap; font-size: smaller;'>${dec}</td>
+    <td>${constellation}</td>
+    <td style='white-space:nowrap; font-size: smaller;'>${size}</td>
+    <td>${magnitude}</td>
+    <td>${type}</td>
+    ${<have-place>}
+    <td style='white-space:nowrap; font-size: smaller;'>${highestAt}</td>
+    <td style='white-space:nowrap; font-size: smaller;'>${maxAltitude}</td>
+    ${</have-place>}
+    ${<have-telescope>}
+    <td>${difficulty}</td>
+    ${</have-telescope>}
+    </tr>
+    ${<have-catalogues-description>}
+    <tr><td colspan="${total-columns}">${catalogues-description}</td></tr>
+    ${</have-catalogues-description>}
+    ${<have-description>}
+    <tr><td colspan="${total-columns}">${description}</td></tr>
+    ${</have-description>}
+    ${<have-rows-spacing>}
+    <tr style="page-break-inside:avoid; page-break-after:auto">
+      <td colspan="${total-columns}" style="height: ${rows-spacing}em; page-break-inside:avoid; page-break-after:auto" />
+    </tr>
+    ${</have-rows-spacing>}

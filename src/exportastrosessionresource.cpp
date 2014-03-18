@@ -110,7 +110,10 @@ void ExportAstroSessionResource::handleRequest(const Wt::Http::Request &request,
   if(d->reportType == CSV) {
     suggestFileName(format("%s.csv") % d->astroSession->name());
     response.setMimeType("text/csv");
-    response.out() << boost::algorithm::join(vector<string>{"Names", "AR", "Declination", "Constellation", "Size", "Magnitude", "Type", "Transit", "Max Altitude"}, ",") << endl;
+    vector<string> headers{"object_column_names", "object_column_ar", "object_column_dec", "object_column_constellation", "object_column_angular_size", "object_column_magnitude", "object_column_type", "object_column_highest_time", "object_column_max_altitude"};
+    transform(begin(headers), end(headers), begin(headers), [](const std::string &s) { return WString::tr(s).toUTF8(); });
+    transform(begin(headers), end(headers), begin(headers), bind(::Utils::csv, placeholders::_1, ','));
+    response.out() << boost::algorithm::join(headers, ",") << endl;
 
     for(AstroSessionObjectPtr object: sessionObjects) {
       vector<string> fields;
@@ -136,67 +139,7 @@ void ExportAstroSessionResource::handleRequest(const Wt::Http::Request &request,
   }
 
   WTemplate printable;
-  printable.setTemplateText(R"(
-  ${<render-type-html>}
-  <html>
-    <head>
-      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-      <title>${title}</title>
-      <style type="text/css">
-      td { font-size: 0.7em; }
-      th { font-size: 0.8em; }
-      @media print {
-    table { page-break-inside:auto }
-    tr    { page-break-inside:avoid; page-break-after:auto }
-    td    { page-break-inside:avoid; page-break-after:auto; }
-      }
-      </style>
-    </head>
-  <body>
-  ${</render-type-html>}
-  ${<render-type-pdf>}
-      <style type="text/css">
-        table { page-break-inside:auto }
-    tr    { page-break-inside:avoid; page-break-after:auto }
-      </style>
-  ${</render-type-pdf>}
-  <h2 style="text-align: center;">${title}</h2>
-  <p>Time in ${timezone_info}</p>
-  ${<have-place>}
-  <p>${sessionDate}, Moon Phase: ${moonPhase}%, ${objects-number} objects.</p>
-  <div>
-  Sun: rising at ${sunRise}, setting at ${sunSet}<br />
-  Astronomical Twilight: begins at ${astroTwilightBegin}, ends at ${astroTwilightEnd}<br />
-  Moon: rising at ${moonRise}, setting at ${moonSet}</div>
-  ${<have-telescope>}<p>Suggestions for telescope: "${telescope-name}", diameter ${telescope-diameter}mm, focal length ${telescope-focal-length}mm</p>${</have-telescope>}
-  ${</have-place>}
-  <table border="1">
-    <thead>
-      <tr>
-    <th>Names</th>
-    <th>AR</th>
-    <th>Dec</th>
-    <th>Constellation</th>
-    <th>Size</th>
-    <th>Magn.</th>
-    <th>Type</th>
-    ${<have-place>}
-    <th>Highest</th>
-    <th>Max</th>
-    ${</have-place>}
-    ${<have-telescope>}
-    <th>Difficulty</th>
-    ${</have-telescope>}
-      </tr>
-    </thead>
-    <tbody>
-      ${table-rows}
-    </tbody>
-  </table>
-  ${<render-type-html>}
-  </body></html>
-  ${</render-type-html>}
-  )", XHTMLUnsafeText);
+  printable.setTemplateText(WString::tr("printable-session"), XHTMLUnsafeText);
   printable.setCondition("render-type-html", d->reportType == HTML);
   printable.setCondition("render-type-pdf", d->reportType == PDF);
   printable.bindString("title", WString::fromUTF8(d->astroSession->name()));
@@ -227,34 +170,7 @@ void ExportAstroSessionResource::handleRequest(const Wt::Http::Request &request,
   printable.bindInt("objects-number", sessionObjects.size());
   for(auto sessionObject: sessionObjects) {
     WTemplate rowTemplate;
-    rowTemplate.setTemplateText(R"(<tr style="page-break-inside:avoid; page-break-after:auto">
-    <td>${namesWidget}</td>
-    <td style='white-space:nowrap; font-size: smaller;'>${ar}</td>
-    <td style='white-space:nowrap; font-size: smaller;'>${dec}</td>
-    <td>${constellation}</td>
-    <td style='white-space:nowrap; font-size: smaller;'>${size}</td>
-    <td>${magnitude}</td>
-    <td>${type}</td>
-    ${<have-place>}
-    <td style='white-space:nowrap; font-size: smaller;'>${highestAt}</td>
-    <td style='white-space:nowrap; font-size: smaller;'>${maxAltitude}</td>
-    ${</have-place>}
-    ${<have-telescope>}
-    <td>${difficulty}</td>
-    ${</have-telescope>}
-    </tr>
-    ${<have-catalogues-description>}
-    <tr><td colspan="${total-columns}">${catalogues-description}</td></tr>
-    ${</have-catalogues-description>}
-    ${<have-description>}
-    <tr><td colspan="${total-columns}">${description}</td></tr>
-    ${</have-description>}
-    ${<have-rows-spacing>}
-    <tr style="page-break-inside:avoid; page-break-after:auto">
-      <td colspan="${total-columns}" style="height: ${rows-spacing}em; page-break-inside:avoid; page-break-after:auto" />
-    </tr>
-    ${</have-rows-spacing>}
-    )", XHTMLUnsafeText);
+    rowTemplate.setTemplateText(WString::tr("printable-session-row"), XHTMLUnsafeText);
     rowTemplate.bindWidget("namesWidget", new ObjectNamesWidget{sessionObject->ngcObject(), d->session, d->astroSession, ObjectNamesWidget::Printable});
     rowTemplate.bindString("ar", sessionObject->coordinates().rightAscension.printable(Angle::Hourly));
     rowTemplate.bindWidget("dec", new WText{WString::fromUTF8( sessionObject->coordinates().declination.printable(Angle::Degrees, Angle::HTML) ) } );
