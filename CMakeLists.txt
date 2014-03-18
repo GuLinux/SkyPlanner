@@ -11,6 +11,11 @@ find_package(Boost REQUIRED COMPONENTS signals system filesystem chrono thread r
 if(Wt_DBOPOSTGRES_LIBRARY)
     add_definitions(-DHAVE_WT_POSTGRES)
 endif(Wt_DBOPOSTGRES_LIBRARY)
+set(PRODUCTION_MODE OFF CACHE BOOL "Enable Production Mode")
+if(PRODUCTION_MODE)
+    add_definitions(-DPRODUCTION_MODE)
+endif(PRODUCTION_MODE)
+
 set(DISABLE_HARU OFF CACHE BOOL "Disable LibHaru PDF Export")
 if(DISABLE_HARU)
     add_definitions(-DDISABLE_LIBHARU)

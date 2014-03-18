@@ -176,17 +176,13 @@ void AstroSessionTab::Private::reload()
   WPopupMenu *exportMenu = new WPopupMenu;
   exportButton->setMenu(exportMenu);
   WMenuItem *exportToCsv = exportMenu->addItem("CSV");
-  WMemoryResource *exportToCsvResource = new WMemoryResource("text/csv", exportToCsv);
-  exportToCsv->triggered().connect([=](WMenuItem*, _n5){
-    exportToCsvResource->suggestFileName(astroSession->name());
-    static int exportNum = 0;
-    string dataStr = format("Hello! %d") % exportNum++;
-    vector<uint8_t> data(begin(dataStr), end(dataStr));
-    exportToCsvResource->setData(data);
-    exportButton->doJavaScript(format("window.open('%s', '_blank');") % exportToCsvResource->url());
-  });
-  // sessionActions->addButton(exportButton);
-  
+  PrintableAstroSessionResource *exportToCsvResource = new PrintableAstroSessionResource(astroSession, session, timezone, exportToCsv);
+  exportToCsvResource->setReportType(PrintableAstroSessionResource::CSV);
+  exportToCsv->setLink(exportToCsvResource);
+  exportToCsv->setLinkTarget(TargetNewWindow);
+#ifndef PRODUCTION_MODE
+  sessionActions->addButton(exportButton);
+#endif
   
   sessionActions->addButton(WW<WPushButton>(WString::tr("buttons_close")).css("btn btn-warning btn-sm").onClick( [=](WMouseEvent){ close.emit(); } ));
   actionsContainer->addWidget(sessionActions);

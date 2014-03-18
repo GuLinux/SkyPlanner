@@ -30,7 +30,7 @@ class AstroSession;
 class PrintableAstroSessionResource : public Wt::WResource
 {
 public:
-  enum ReportType { HTML, PDF };
+  enum ReportType { HTML, PDF, CSV };
   PrintableAstroSessionResource(const Wt::Dbo::ptr<AstroSession> &astroSession, Session &session, Timezone timezone, Wt::WObject *parent = 0);
   virtual ~PrintableAstroSessionResource();
   virtual void handleRequest(const Wt::Http::Request &request, Wt::Http::Response &response);

@@ -28,12 +28,14 @@
 #include <Wt/Utils>
 #include "ephemeris.h"
 #include "utils/format.h"
+#include "utils/utils.h"
 #include "widgets/objectnameswidget.h"
 #include "widgets/cataloguesdescriptionwidget.h"
 #include "constellationfinder.h"
 #include "widgets/objectdifficultywidget.h"
 #include <Wt/Render/WPdfRenderer>
 #include <Wt/WServer>
+#include <boost/algorithm/string.hpp>
 
 #ifndef DISABLE_LIBHARU
 #include <hpdf.h>
@@ -92,8 +94,27 @@ namespace {
 }
 #endif
 void PrintableAstroSessionResource::handleRequest(const Wt::Http::Request &request, Wt::Http::Response &response) {
-  WTemplate printable;
   Dbo::Transaction t(d->session);
+  Ephemeris ephemeris(d->astroSession->position());
+  auto sessionObjectsDbCollection = d->astroSession->astroSessionObjects();
+  vector<dbo::ptr<AstroSessionObject>> sessionObjects(sessionObjectsDbCollection.begin(), sessionObjectsDbCollection.end());
+  sort(begin(sessionObjects), end(sessionObjects), [&](const dbo::ptr<AstroSessionObject> &a, const dbo::ptr<AstroSessionObject> &b){
+    return a->bestAltitude(ephemeris, -3 ).when < b->bestAltitude(ephemeris, -3).when;
+  });
+
+  if(d->reportType == CSV) {
+    suggestFileName(format("%s.csv") % d->astroSession->name());
+    response.setMimeType("text/csv");
+    for(auto object: sessionObjects) {
+      vector<string> fields;
+      fields.push_back(::Utils::csv(boost::algorithm::join(NgcObject::namesByCatalogueImportance(t, object->ngcObject()), ", ")));
+
+      response.out() << boost::algorithm::join(fields, ",") << endl;
+    }
+    return;
+  }
+
+  WTemplate printable;
   printable.setTemplateText("\
   ${<render-type-html>}\
   <html>\n\
@@ -165,7 +186,7 @@ void PrintableAstroSessionResource::handleRequest(const Wt::Http::Request &reque
     printable.bindInt("telescope-diameter", d->telescope->diameter());
     printable.bindInt("telescope-focal-length", d->telescope->focalLength());
   }
-  Ephemeris ephemeris(d->astroSession->position());
+
   printable.bindInt("moonPhase", static_cast<int>(ephemeris.moonPhase(d->astroSession->when()).illuminated_fraction*100.));
   printable.bindString("sessionDate", d->astroSession->wDateWhen().date().toString("dddd dd MMMM yyyy"));
   printable.bindString("timezone_info", d->timezone.timeZoneName);
@@ -182,11 +203,6 @@ void PrintableAstroSessionResource::handleRequest(const Wt::Http::Request &reque
     printable.bindString("astroTwilightEnd", formatTime(twilight.set));
   }
   stringstream tableRows;
-  auto sessionObjectsDbCollection = d->astroSession->astroSessionObjects();
-  vector<dbo::ptr<AstroSessionObject>> sessionObjects(sessionObjectsDbCollection.begin(), sessionObjectsDbCollection.end());
-  sort(begin(sessionObjects), end(sessionObjects), [&](const dbo::ptr<AstroSessionObject> &a, const dbo::ptr<AstroSessionObject> &b){
-    return a->bestAltitude(ephemeris, -3 ).when < b->bestAltitude(ephemeris, -3).when;
-  });
   printable.bindInt("objects-number", sessionObjects.size());
   for(auto sessionObject: sessionObjects) {
     WTemplate rowTemplate;
