@@ -180,9 +180,7 @@ void AstroSessionTab::Private::reload()
   exportToCsvResource->setReportType(ExportAstroSessionResource::CSV);
   exportToCsv->setLink(exportToCsvResource);
   exportToCsv->setLinkTarget(TargetNewWindow);
-#ifndef PRODUCTION_MODE
   sessionActions->addButton(exportButton);
-#endif
   
   sessionActions->addButton(WW<WPushButton>(WString::tr("buttons_close")).css("btn btn-warning btn-sm").onClick( [=](WMouseEvent){ close.emit(); } ));
   actionsContainer->addWidget(sessionActions);
