@@ -45,6 +45,7 @@
 <message id="printable_version_dialog_add_telescope_suggestion">Please add one or more telescope to see suggestions</message>
 <message id="printable_version_dialog_using_telescope">Using Telescope {1}</message>
 <message id="printable_version_dialog_telescope_combo_label">Telescope: </message>
+<message id="astrosessiontab_export">Export</message>
 <message id="astrosessiontab_moon_phase">Moon Phase: {1}%</message>
 <message id="astrosessiontab_astro_twilight_info">Astronomical twilight: begins at {1}, ends at {2} ({3})</message>
 <message id="astrosessiontab_sun_info">Sun: rising at {1}, setting at {2} ({3})</message>

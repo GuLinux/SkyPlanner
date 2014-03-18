@@ -87,6 +87,7 @@
 <message id="printable_version_dialog_add_telescope_suggestion">Aggiungere uno o più telescopi per vedere suggerimenti</message>
 <message id="printable_version_dialog_using_telescope">Telescopio: {1}</message>
 <message id="printable_version_dialog_telescope_combo_label">Telescopio: </message>
+<message id="astrosessiontab_export">Esporta</message>
 <message id="astrosessiontab_moon_phase">Fase Lunare: {1}%</message>
 <message id="astrosessiontab_astro_twilight_info">Crepuscolo astronomico: inizia alle {1}, finisce alle {2} ({3})</message>
 <message id="astrosessiontab_sun_info">Sole: sorge alle {1}, tramonta alle {2} ({3})</message>
