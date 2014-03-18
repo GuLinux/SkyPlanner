@@ -22,31 +22,32 @@ ${<render-type-html>}
       </style>
   ${</render-type-pdf>}
   <h2 style="text-align: center;">${title}</h2>
-  <p>Time in ${timezone_info}</p>
+  <p>${timezone_info}</p>
+  <p>${sessionDate}, ${moonPhase}, ${objects-number}.</p>
   ${<have-place>}
-  <p>${sessionDate}, Moon Phase: ${moonPhase}%, ${objects-number} objects.</p>
   <div>
-  Sun: rising at ${sunRise}, setting at ${sunSet}<br />
-  Astronomical Twilight: begins at ${astroTwilightBegin}, ends at ${astroTwilightEnd}<br />
-  Moon: rising at ${moonRise}, setting at ${moonSet}</div>
-  ${<have-telescope>}<p>Suggestions for telescope: "${telescope-name}", diameter ${telescope-diameter}mm, focal length ${telescope-focal-length}mm</p>${</have-telescope>}
+  ${astrosessiontab_sun_info}<br />
+  ${astrosessiontab_astro_twilight_info}<br />
+  ${astrosessiontab_moon_info}<br />
+  ${astrosessiontab_darkness_hours}<br />
   ${</have-place>}
+  ${<have-telescope>}<p>${printable_telescope_info}</p>${</have-telescope>}
   <table border="1">
     <thead>
       <tr>
-    <th>Names</th>
-    <th>AR</th>
-    <th>Dec</th>
-    <th>Constellation</th>
-    <th>Size</th>
-    <th>Magn.</th>
-    <th>Type</th>
+    <th>${tr:object_column_names}</th>
+    <th>${tr:object_column_ar}</th>
+    <th>${tr:object_column_dec}</th>
+    <th>${tr:object_column_constellation}</th>
+    <th>${tr:object_column_angular_size_short}</th>
+    <th>${tr:object_column_magnitude_short}</th>
+    <th>${tr:object_column_type}</th>
     ${<have-place>}
-    <th>Highest</th>
-    <th>Max</th>
+    <th>${tr:object_column_highest_time_short}</th>
+    <th>${tr:object_column_max_altitude_short}</th>
     ${</have-place>}
     ${<have-telescope>}
-    <th>Difficulty</th>
+    <th>${tr:object_column_difficulty}</th>
     ${</have-telescope>}
       </tr>
     </thead>

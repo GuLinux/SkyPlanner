@@ -139,6 +139,7 @@ void ExportAstroSessionResource::handleRequest(const Wt::Http::Request &request,
   }
 
   WTemplate printable;
+  printable.addFunction("tr", &WTemplate::Functions::tr);
   printable.setTemplateText(WString::tr("printable-session"), XHTMLUnsafeText);
   printable.setCondition("render-type-html", d->reportType == HTML);
   printable.setCondition("render-type-pdf", d->reportType == PDF);
@@ -146,28 +147,30 @@ void ExportAstroSessionResource::handleRequest(const Wt::Http::Request &request,
   printable.setCondition("have-place", d->astroSession->position());
   printable.setCondition("have-telescope", d->telescope);
   if(d->telescope) {
-    printable.bindString("telescope-name", d->telescope->name());
-    printable.bindInt("telescope-diameter", d->telescope->diameter());
-    printable.bindInt("telescope-focal-length", d->telescope->focalLength());
+    printable.bindString("printable_telescope_info", WString::tr("printable_telescope_info")
+                         .arg(d->telescope->name())
+                         .arg(d->telescope->diameter())
+                         .arg(d->telescope->focalLength())
+                         );
   }
 
-  printable.bindInt("moonPhase", static_cast<int>(ephemeris.moonPhase(d->astroSession->when()).illuminated_fraction*100.));
+  printable.bindString("moonPhase", WString::tr("astrosessiontab_moon_phase").arg(static_cast<int>(ephemeris.moonPhase(d->astroSession->when()).illuminated_fraction*100.)));
   printable.bindString("sessionDate", d->astroSession->wDateWhen().date().toString("dddd dd MMMM yyyy"));
-  printable.bindString("timezone_info", d->timezone.timeZoneName);
+  printable.bindString("timezone_info", WString::tr("printable_timezone_info").arg(d->timezone.timeZoneName));
   if(d->astroSession->position()) {
     auto sun = ephemeris.sun(d->astroSession->when());
     auto twilight = ephemeris.astronomicalTwilight(d->astroSession->when());
     auto moon = ephemeris.moon(d->astroSession->when());
+    auto darkness = ephemeris.darknessHours(d->astroSession->when() );
+
     auto formatTime = [=](const boost::posix_time::ptime &time) { auto t = d->timezone.fix(time); return (format("%02d:%02d") % t.time_of_day().hours() % t.time_of_day().minutes()).str(); };
-    printable.bindString("sunRise",formatTime(sun.rise));
-    printable.bindString("sunSet", formatTime(sun.set));
-    printable.bindString("moonRise", formatTime(moon.rise));
-    printable.bindString("moonSet", formatTime(moon.set));
-    printable.bindString("astroTwilightBegin", formatTime(twilight.rise));
-    printable.bindString("astroTwilightEnd", formatTime(twilight.set));
+    printable.bindString("astrosessiontab_sun_info", WString::tr("astrosessiontab_sun_info").arg(formatTime(sun.rise)).arg(formatTime(sun.set)));
+    printable.bindString("astrosessiontab_astro_twilight_info", WString::tr("astrosessiontab_astro_twilight_info").arg(formatTime(twilight.rise)).arg(formatTime(twilight.set)));
+    printable.bindString("astrosessiontab_moon_info", WString::tr("astrosessiontab_moon_info").arg(formatTime(moon.rise)).arg(formatTime(moon.set)));
+    printable.bindString("astrosessiontab_darkness_hours", WString::tr("astrosessiontab_darkness_hours").arg(formatTime(darkness.begin)).arg(formatTime(darkness.end)).arg(boost::posix_time::to_simple_string(darkness.duration)));
   }
   stringstream tableRows;
-  printable.bindInt("objects-number", sessionObjects.size());
+  printable.bindString("objects-number", WString::tr("objects_number_label").arg(sessionObjects.size()));
   for(auto sessionObject: sessionObjects) {
     WTemplate rowTemplate;
     rowTemplate.setTemplateText(WString::tr("printable-session-row"), XHTMLUnsafeText);

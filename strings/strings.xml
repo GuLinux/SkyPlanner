@@ -47,10 +47,10 @@
 <message id="printable_version_dialog_telescope_combo_label">Telescope: </message>
 <message id="astrosessiontab_export">Export</message>
 <message id="astrosessiontab_moon_phase">Moon Phase: {1}%</message>
-<message id="astrosessiontab_astro_twilight_info">Astronomical twilight: begins at {1}, ends at {2} ({3})</message>
-<message id="astrosessiontab_sun_info">Sun: rising at {1}, setting at {2} ({3})</message>
+<message id="astrosessiontab_astro_twilight_info">Astronomical twilight: begins at {1}, ends at {2}.</message>
+<message id="astrosessiontab_sun_info">Sun: rising at {1}, setting at {2}.</message>
 <message id="astrosessiontab_darkness_hours">Real darkness: begins at {1}, ends at {2}, duration: {3}.</message>
-<message id="astrosessiontab_moon_info">Moon: rising at {1}, setting at {2} ({3})</message>
+<message id="astrosessiontab_moon_info">Moon: rising at {1}, setting at {2}.</message>
 <message id="astrosessiontab_printable_version_dialog_export_as">Export as...</message>
 <message id="astrosessiontab_information_panel">Information</message>
 <message id="astrosessiontab_object_observed">✓ Observed</message>
@@ -61,10 +61,21 @@
 <message id="object_column_type">Type</message>
 <message id="object_column_constellation">Constellation</message>
 <message id="object_column_magnitude">Magnitude</message>
+<message id="object_column_magnitude_short">Magn.</message>
 <message id="object_column_difficulty">Difficulty</message>
 <message id="object_column_highest_time">Highest At</message>
+<message id="object_column_highest_time_short">Highest</message>
 <message id="object_column_max_altitude">Max Altitude</message>
+<message id="object_column_max_altitude_short">Max Alt.</message>
+<message id="object_column_ar">AR</message>
+<message id="object_column_dec">DEC</message>
+<message id="object_column_angular_size">Angular Size</message>
+<message id="object_column_angular_size_short">Size</message>
 <message id="object_row_cataloguedesc"><h5>Catalogues description:</h5></message>
+
+<message id="printable_timezone_info">All time info are for timezone {1}</message>
+<message id="printable_telescope_info">Suggestions for telescope: "{1}", diameter {2} mm, focal length {3} mm</message>
+<message id="objects_number_label">{1} objects</message>
 
 <message id="notification_success_title">Success</message>
 <message id="notification_error_title">Error</message>
@@ -78,9 +89,6 @@
 <message id="select_objects_widget_add_by_catalogue_number">Add By Catalogue Number</message>
 <message id="select_objects_widget_add_by_name">Search By Name</message>
 <message id="select_objects_widget_add_by_name_too_many">Too many result. Please use a more specific search.</message>
-<message id="object_column_ar">AR</message>
-<message id="object_column_dec">DEC</message>
-<message id="object_column_angular_size">Angular Size</message>
 <message id="object_notes">Your notes and description</message>
 <message id="notification_description_saved">Description saved!</message>
 <message id="description">Description</message>

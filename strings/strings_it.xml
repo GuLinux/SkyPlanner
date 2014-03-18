@@ -89,10 +89,10 @@
 <message id="printable_version_dialog_telescope_combo_label">Telescopio: </message>
 <message id="astrosessiontab_export">Esporta</message>
 <message id="astrosessiontab_moon_phase">Fase Lunare: {1}%</message>
-<message id="astrosessiontab_astro_twilight_info">Crepuscolo astronomico: inizia alle {1}, finisce alle {2} ({3})</message>
-<message id="astrosessiontab_sun_info">Sole: sorge alle {1}, tramonta alle {2} ({3})</message>
+<message id="astrosessiontab_astro_twilight_info">Crepuscolo astronomico: inizia alle {1}, finisce alle {2}.</message>
+<message id="astrosessiontab_sun_info">Sole: sorge alle {1}, tramonta alle {2}.</message>
 <message id="astrosessiontab_darkness_hours">Oscurità effettiva: inizio alle {1}, fine alle {2}, durata: {3}.</message>
-<message id="astrosessiontab_moon_info">Luna: sorge alle {1}, tramonta alle {2} ({3})</message>
+<message id="astrosessiontab_moon_info">Luna: sorge alle {1}, tramonta alle {2}.</message>
 <message id="astrosessiontab_printable_version_dialog_export_as">Esporta come...</message>
 <message id="astrosessiontab_information_panel">Informazioni</message>
 <message id="astrosessiontab_object_observed">✓ Osservato</message>
@@ -104,7 +104,18 @@
 <message id="object_column_magnitude">Magnitudine</message>
 <message id="object_column_difficulty">Difficoltà</message>
 <message id="object_column_highest_time">Orario max. altezza</message>
+<message id="object_column_highest_time_short">Transito</message>
 <message id="object_column_max_altitude">Max Altezza</message>
+<message id="object_column_max_altitude_short">Altezza</message>
+<message id="object_column_ar">AR</message>
+<message id="object_column_dec">DEC</message>
+<message id="object_column_angular_size">Dimensione Angolare</message>
+<message id="object_column_angular_size_short">Dimens.</message>
+
+<message id="printable_timezone_info">Tempi indicati per il fuso orario {1}</message>
+<message id="objects_number_label">{1} oggetti</message>
+<message id="printable_telescope_info">Suggerimenti per il telescopio: "{1}", diametro {2} mm, lunghezza focale {3} mm</message>
+
 
 <message id="notification_success_title">Successo</message>
 <message id="notification_warning_title">Attenzione</message>
@@ -118,9 +129,6 @@
 <message id="select_objects_widget_add_by_catalogue_number">Aggiungi per Numero di Catalogo</message>
 <message id="select_objects_widget_add_by_name">Cerca Per Nome</message>
 <message id="select_objects_widget_add_by_name_too_many">Troppi risultati trovati. Per favore usare una ricerca più specifica.</message>
-<message id="object_column_ar">AR</message>
-<message id="object_column_dec">DEC</message>
-<message id="object_column_angular_size">Dimensione Angolare</message>
 <message id="object_row_cataloguedesc"><h5>Descrizione dai cataloghi:</h5></message>
 <message id="object_notes">Le tue annotazioni</message>
 <message id="notification_description_saved">Descrizione Salvata!</message>

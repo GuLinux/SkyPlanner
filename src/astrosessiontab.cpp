@@ -144,7 +144,7 @@ void AstroSessionTab::Private::reload()
   addPanel(WString::tr("astrosessiontab_add_observable_object"), addObjectsTabWidget, true);
   addObjectsTabWidget->objectsListChanged().connect([=](_n6){populate(); });
   q->addWidget(new WText{WString("<h3>{1}</h3>").arg(WString::tr("astrosessiontab_objects_title"))});
-
+  q->addWidget(  new WText(WString::tr("printable_timezone_info").arg(timezone.timeZoneName)));
   q->addWidget(objectsTable = WW<WTable>().addCss("table  table-hover"));
   objectsTable->setHeaderCount(1);
   
@@ -376,22 +376,21 @@ void AstroSessionTab::Private::updatePositionDetails()
   Ephemeris::RiseTransitSet moon = ephemeris.moon(astroSession->when());
 
   auto formatTime = [=](const boost::posix_time::ptime &solarT) { auto t = timezone.fix(solarT); return (format("%02d:%02d") % t.time_of_day().hours() % t.time_of_day().minutes()).str(); };
+  positionDetails->addWidget(new WText{WString::tr("printable_timezone_info").arg(timezone.timeZoneName)});
+  positionDetails->addWidget(new WBreak);
   positionDetails->addWidget(new WText(WString(WString::tr("astrosessiontab_sun_info"))
     .arg(formatTime(sun.rise))
     .arg(formatTime(sun.set))
-    .arg(timezone.timeZoneName)
   ));
   positionDetails->addWidget(new WBreak);
   positionDetails->addWidget(new WText(WString(WString::tr("astrosessiontab_astro_twilight_info"))
     .arg(formatTime(astroTwilight.rise))
     .arg(formatTime(astroTwilight.set))
-    .arg(timezone.timeZoneName)
   ));
   positionDetails->addWidget(new WBreak);
   positionDetails->addWidget(new WText(WString(WString::tr("astrosessiontab_moon_info"))
     .arg(formatTime(moon.rise))
     .arg(formatTime(moon.set))
-    .arg(timezone.timeZoneName)
   ));
   positionDetails->addWidget(new WBreak);
   Ephemeris::LunarPhase lunarPhase = ephemeris.moonPhase(astroSession->when());
