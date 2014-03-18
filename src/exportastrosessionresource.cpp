@@ -110,7 +110,11 @@ void ExportAstroSessionResource::handleRequest(const Wt::Http::Request &request,
   if(d->reportType == CSV) {
     suggestFileName(format("%s.csv") % d->astroSession->name());
     response.setMimeType("text/csv");
-    vector<string> headers{"object_column_names", "object_column_ar", "object_column_dec", "object_column_constellation", "object_column_angular_size", "object_column_magnitude", "object_column_type", "object_column_highest_time", "object_column_max_altitude"};
+    vector<string> headers{"object_column_names", "object_column_ar", "object_column_dec", "object_column_constellation", "object_column_angular_size", "object_column_magnitude", "object_column_type"};
+    if(d->astroSession->position()) {
+      headers.push_back("object_column_highest_time");
+      headers.push_back("object_column_max_altitude");
+    }
     transform(begin(headers), end(headers), begin(headers), [](const std::string &s) { return WString::tr(s).toUTF8(); });
     transform(begin(headers), end(headers), begin(headers), bind(::Utils::csv, placeholders::_1, ','));
     response.out() << boost::algorithm::join(headers, ",") << endl;
@@ -125,13 +129,10 @@ void ExportAstroSessionResource::handleRequest(const Wt::Http::Request &request,
       add(format("%.3f") % object->ngcObject()->angularSize());
       add(format("%.3f") % object->ngcObject()->magnitude());
       add(object->ngcObject()->typeDescription().toUTF8());
-      if(object->coordinates()) {
+      if(d->astroSession->position()) {
         auto bestAltitude = object->bestAltitude(ephemeris, 1);
         add(boost::posix_time::to_simple_string(bestAltitude.when.time_of_day()));
         add(format("%.3f") % bestAltitude.coordinates.altitude.degrees());
-      } else {
-        add("");
-        add("");
       }
       response.out() << boost::algorithm::join(fields, ",") << endl;
     }
