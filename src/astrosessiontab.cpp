@@ -114,6 +114,45 @@ void AstroSessionTab::Private::reload()
   WContainerWidget *actionsContainer = WW<WContainerWidget>().setMargin(10);
   q->addWidget(actionsContainer);
   pastObservation = astroSession->wDateWhen() < WDateTime::currentDateTime();
+
+
+  Dbo::Transaction t(session);
+  WToolBar *sessionActions = WW<WToolBar>();
+
+  sessionActions->addButton(WW<WPushButton>(WString::tr("astrosessiontab_change_name_or_date")).css("btn btn-sm").onClick([=](WMouseEvent){
+    WDialog *changeNameOrDateDialog = new WDialog(WString::tr("astrosessiontab_change_name_or_date"));
+    WLineEdit *sessionName = WW<WLineEdit>(astroSession->name()).css("input-block-level");
+    WDateEdit *sessionDate = WW<WDateEdit>().css("input-block-level");
+    sessionDate->setDate(astroSession->wDateWhen().date());
+    changeNameOrDateDialog->footer()->addWidget(WW<WPushButton>(WString::tr("Wt.WMessageBox.Ok")).css("btn btn-primary").onClick([=](WMouseEvent){
+      Dbo::Transaction t(session);
+      astroSession.modify()->setName(sessionName->text().toUTF8());
+      astroSession.modify()->setDateTime(WDateTime{sessionDate->date()});
+      changeNameOrDateDialog->accept();
+      nameChanged.emit(astroSession->name());
+      reload();
+    }));
+    WTemplate *form = new WTemplate("<form><fieldset><label>Name</label>${sessionName}<label>Date</label>${sessionDate}</fieldset></form>");
+    form->bindWidget("sessionName", sessionName);
+    form->bindWidget("sessionDate", sessionDate);
+    changeNameOrDateDialog->contents()->addWidget(form);
+    changeNameOrDateDialog->show();
+  }));
+  sessionActions->addButton(WW<WPushButton>(WString::tr("astrosessiontab_printable_version")).css("btn btn-info btn-sm").onClick( [=](WMouseEvent){ printableVersion(); } ));
+
+  WPushButton *exportButton = WW<WPushButton>(WString::tr("astrosessiontab_export")).css("btn btn-sm btn-info");
+  WPopupMenu *exportMenu = new WPopupMenu;
+  exportButton->setMenu(exportMenu);
+  WMenuItem *exportToCsv = exportMenu->addItem("CSV");
+  exportToCsvResource = new ExportAstroSessionResource(astroSession, session, timezone, exportToCsv);
+  exportToCsvResource->setReportType(ExportAstroSessionResource::CSV);
+  exportToCsv->setLink(exportToCsvResource);
+  exportToCsv->setLinkTarget(TargetNewWindow);
+  sessionActions->addButton(exportButton);
+
+  sessionActions->addButton(WW<WPushButton>(WString::tr("buttons_close")).css("btn btn-warning btn-sm").onClick( [=](WMouseEvent){ close.emit(); } ));
+  actionsContainer->addWidget(sessionActions);
+
   
   WContainerWidget *sessionInfo = WW<WContainerWidget>();
   sessionInfo->addWidget(new WText{WLocalDateTime(astroSession->wDateWhen().date(), astroSession->wDateWhen().time())
@@ -148,42 +187,7 @@ void AstroSessionTab::Private::reload()
   q->addWidget(objectsTable = WW<WTable>().addCss("table  table-hover"));
   objectsTable->setHeaderCount(1);
   
-  Dbo::Transaction t(session);
-  WToolBar *sessionActions = WW<WToolBar>();
-    
-  sessionActions->addButton(WW<WPushButton>(WString::tr("astrosessiontab_change_name_or_date")).css("btn btn-sm").onClick([=](WMouseEvent){
-    WDialog *changeNameOrDateDialog = new WDialog(WString::tr("astrosessiontab_change_name_or_date"));
-    WLineEdit *sessionName = WW<WLineEdit>(astroSession->name()).css("input-block-level");
-    WDateEdit *sessionDate = WW<WDateEdit>().css("input-block-level");
-    sessionDate->setDate(astroSession->wDateWhen().date());
-    changeNameOrDateDialog->footer()->addWidget(WW<WPushButton>(WString::tr("Wt.WMessageBox.Ok")).css("btn btn-primary").onClick([=](WMouseEvent){
-      Dbo::Transaction t(session);
-      astroSession.modify()->setName(sessionName->text().toUTF8());
-      astroSession.modify()->setDateTime(WDateTime{sessionDate->date()});
-      changeNameOrDateDialog->accept();
-      nameChanged.emit(astroSession->name());
-      reload();
-    }));
-    WTemplate *form = new WTemplate("<form><fieldset><label>Name</label>${sessionName}<label>Date</label>${sessionDate}</fieldset></form>");
-    form->bindWidget("sessionName", sessionName);
-    form->bindWidget("sessionDate", sessionDate);
-    changeNameOrDateDialog->contents()->addWidget(form);
-    changeNameOrDateDialog->show();
-  }));
-  sessionActions->addButton(WW<WPushButton>(WString::tr("astrosessiontab_printable_version")).css("btn btn-info btn-sm").onClick( [=](WMouseEvent){ printableVersion(); } ));
-  
-  WPushButton *exportButton = WW<WPushButton>(WString::tr("astrosessiontab_export")).css("btn btn-sm btn-info");
-  WPopupMenu *exportMenu = new WPopupMenu;
-  exportButton->setMenu(exportMenu);
-  WMenuItem *exportToCsv = exportMenu->addItem("CSV");
-  exportToCsvResource = new ExportAstroSessionResource(astroSession, session, timezone, exportToCsv);
-  exportToCsvResource->setReportType(ExportAstroSessionResource::CSV);
-  exportToCsv->setLink(exportToCsvResource);
-  exportToCsv->setLinkTarget(TargetNewWindow);
-  sessionActions->addButton(exportButton);
-  
-  sessionActions->addButton(WW<WPushButton>(WString::tr("buttons_close")).css("btn btn-warning btn-sm").onClick( [=](WMouseEvent){ close.emit(); } ));
-  actionsContainer->addWidget(sessionActions);
+
   auto telescopes = session.user()->telescopes();
   if(telescopes.size() > 0) {
     WComboBox *telescopeCombo = new WComboBox;
