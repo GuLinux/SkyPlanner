@@ -262,7 +262,8 @@ void AstroSessionTab::Private::updateTimezone()
         try {
           timezone = Timezone::from(data.str(), astroSession->position().latitude.degrees(), astroSession->position().longitude.degrees());
           timezonesCache[key] = timezone;
-          exportToCsvResource->setTimezone(timezone);
+          if(exportToCsvResource)
+            exportToCsvResource->setTimezone(timezone);
           spLog("notice") << "got timezone info: " << timezone;
         } catch(std::exception &e) {
           spLog("notice") << "Unable to parse json response into a timezone object: " << e.what();

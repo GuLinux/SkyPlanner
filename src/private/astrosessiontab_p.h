@@ -58,7 +58,7 @@ public:
     void updateTimezone();
     Wt::WTableRow *selectedRow = 0;
     Wt::Signal<> close;
-    ExportAstroSessionResource *exportToCsvResource;
+    ExportAstroSessionResource *exportToCsvResource = 0;
 private:
     class AstroSessionTab* const q;
 };
