@@ -34,6 +34,7 @@ namespace Wt
 
 class Telescope;
 class Session;
+class PrintableAstroSessionResource;
 class AstroSessionTab::Private
 {
 public:
@@ -57,6 +58,7 @@ public:
     void updateTimezone();
     Wt::WTableRow *selectedRow = 0;
     Wt::Signal<> close;
+    PrintableAstroSessionResource *exportToCsvResource;
 private:
     class AstroSessionTab* const q;
 };

@@ -176,7 +176,7 @@ void AstroSessionTab::Private::reload()
   WPopupMenu *exportMenu = new WPopupMenu;
   exportButton->setMenu(exportMenu);
   WMenuItem *exportToCsv = exportMenu->addItem("CSV");
-  PrintableAstroSessionResource *exportToCsvResource = new PrintableAstroSessionResource(astroSession, session, timezone, exportToCsv);
+  exportToCsvResource = new PrintableAstroSessionResource(astroSession, session, timezone, exportToCsv);
   exportToCsvResource->setReportType(PrintableAstroSessionResource::CSV);
   exportToCsv->setLink(exportToCsvResource);
   exportToCsv->setLinkTarget(TargetNewWindow);
@@ -264,6 +264,7 @@ void AstroSessionTab::Private::updateTimezone()
         try {
           timezone = Timezone::from(data.str(), astroSession->position().latitude.degrees(), astroSession->position().longitude.degrees());
           timezonesCache[key] = timezone;
+          exportToCsvResource->setTimezone(timezone);
           spLog("notice") << "got timezone info: " << timezone;
         } catch(std::exception &e) {
           spLog("notice") << "Unable to parse json response into a timezone object: " << e.what();

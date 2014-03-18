@@ -38,6 +38,7 @@ public:
   void setTelescope(const Wt::Dbo::ptr<Telescope> &telescope);
   void setReportType(ReportType type);
   void setFontScale(double fontScale);
+  void setTimezone(const Timezone &timezone);
 private:
     D_PTR;
 };

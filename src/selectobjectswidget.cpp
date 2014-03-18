@@ -49,7 +49,7 @@
 #include <Wt/WSlider>
 #include <boost/regex.hpp>
 #include <boost/algorithm/string.hpp>
-#include <../../opt/wt-git/include/Wt/WCheckBox>
+#include <Wt/WCheckBox>
 
 using namespace Wt;
 using namespace WtCommons;

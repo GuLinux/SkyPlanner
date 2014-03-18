@@ -86,6 +86,11 @@ void PrintableAstroSessionResource::setFontScale(double fontScale)
   d->fontScale = fontScale;
 }
 
+void PrintableAstroSessionResource::setTimezone(const Timezone &timezone)
+{
+  d->timezone = timezone;
+}
+
 #ifndef DISABLE_LIBHARU
 namespace {
     void error_handler(HPDF_STATUS error_no, HPDF_STATUS detail_no, void *user_data) {
