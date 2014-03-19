@@ -99,8 +99,6 @@ string NgcObject::typeDescriptionKey( NebulaType nebulaType )
 {
   static map<NebulaType, string> descriptions
   {
-    {AllButStars, "ngcobject_type_AllButStars"},
-    {All, "ngcobject_type_All"},
     {NebGx, "ngcobject_type_NebGx"},
     {NebOc, "ngcobject_type_NebOc"},
     {NebGc, "ngcobject_type_NebGc"},
@@ -147,7 +145,7 @@ vector< string > NgcObject::namesByCatalogueImportance( Wt::Dbo::Transaction &tr
   return names;
 }
 
-set< NgcObject::NebulaType > NgcObject::nebulaTypes()
+set< NgcObject::NebulaType > NgcObject::allNebulaTypes()
 {
   static set<NgcObject::NebulaType> nebulaTypes;
   if(nebulaTypes.empty())
@@ -156,6 +154,13 @@ set< NgcObject::NebulaType > NgcObject::nebulaTypes()
   return nebulaTypes;
 }
 
+set< NgcObject::NebulaType > NgcObject::allNebulaTypesButStars()
+{
+  auto nebulaTypes = allNebulaTypes();
+  nebulaTypes.erase(Asterism);
+  nebulaTypes.erase(RedStar);
+  return nebulaTypes;
+}
 
 vector<NgcObject::CatalogueDescription> NgcObject::descriptions() const
 {

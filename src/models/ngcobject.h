@@ -54,8 +54,6 @@ class NgcObject
 public:
     enum NebulaType
     {
-            AllButStars=-2,
-            All=-1,
             NebGx=0x0,     //!< Galaxy
             NebOc=0x1,     //!< Open star cluster
             NebGc=0x2,     //!< Globular star cluster, usually in the Milky Way Galaxy
@@ -70,7 +68,8 @@ public:
             RedStar=0xB,
     };
     static const int NebulaTypeCount = 12;
-    static std::set<NebulaType> nebulaTypes();
+    static std::set<NebulaType> allNebulaTypes();
+    static std::set<NebulaType> allNebulaTypesButStars();
     NgcObject();
     ~NgcObject();
     // CREATE TABLE objects (object_id TEXT PRIMARY KEY, ra REAL, dec REAL, magnitude REAL, angular_size REAL, type INTEGER);

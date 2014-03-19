@@ -11,12 +11,12 @@ using namespace std;
 using namespace Wt;
 using namespace WtCommons;
 
-FilterByTypeWidget::Private::Private(FilterByTypeWidget *q): q(q)
+FilterByTypeWidget::Private::Private(const set<NgcObject::NebulaType> &initialSelection, FilterByTypeWidget *q): nebulaTypeFilters(initialSelection), q(q)
 {
 }
 
-FilterByTypeWidget::FilterByTypeWidget(WContainerWidget *parent)
-  : WCompositeWidget(parent), d(this)
+FilterByTypeWidget::FilterByTypeWidget(const set<NgcObject::NebulaType> &initialSelection, WContainerWidget *parent)
+  : WCompositeWidget(parent), d(initialSelection, this)
 {
   WPushButton *astroTypeButton = WW<WPushButton>(WString::tr("object_column_type"));
   WPopupMenu *astroTypeMenu = new WPopupMenu;
@@ -25,13 +25,10 @@ FilterByTypeWidget::FilterByTypeWidget(WContainerWidget *parent)
 
   astroTypeMenu->addSeparator();
   map<NgcObject::NebulaType, WMenuItem*> menuItems;
-  for(auto type: NgcObject::nebulaTypes())
+  for(auto type: NgcObject::allNebulaTypes())
     menuItems[type] = astroTypeMenu->addItem(NgcObject::typeDescription(type));
 
-  auto selectFilters = [=] (function<bool(NgcObject::NebulaType)> includeFunc) {
-    d->nebulaTypeFilters.clear();
-    for(auto type: NgcObject::nebulaTypes())
-      if(includeFunc(type)) d->nebulaTypeFilters.insert(type);
+  auto syncFilters = [=] {
     for(auto item: menuItems)
       item.second->checkBox()->setChecked(d->nebulaTypeFilters.count(item.first));
   };
@@ -39,24 +36,26 @@ FilterByTypeWidget::FilterByTypeWidget(WContainerWidget *parent)
   for(auto item: menuItems) {
      item.second->setCheckable(true);
      item.second->checkBox()->changed().connect([=](_n1){
-       selectFilters([=](NgcObject::NebulaType t) { return menuItems.at(t)->isChecked(); });
+       if(item.second->isChecked())
+         d->nebulaTypeFilters.insert(item.first);
+       else
+         d->nebulaTypeFilters.erase(item.first);
+       syncFilters();
        d->changed.emit();
      });
   }
 
-  auto selectAllButStars = [](NgcObject::NebulaType t) { return t != NgcObject::RedStar && t != NgcObject::Asterism; };
-
-  astroTypeMenu->insertItem(0, NgcObject::typeDescription(NgcObject::AllButStars))->triggered().connect([=](WMenuItem*, _n5){
-    selectFilters(selectAllButStars);
+  astroTypeMenu->insertItem(0, WString::tr("ngcobject_type_AllButStars"))->triggered().connect([=](WMenuItem*, _n5){
+    d->nebulaTypeFilters = NgcObject::allNebulaTypesButStars();
+    syncFilters();
     d->changed.emit();
   });
-  astroTypeMenu->insertItem(1, NgcObject::typeDescription(NgcObject::All))->triggered().connect([=](WMenuItem*, _n5){
-    d->nebulaTypeFilters.clear();
-    selectFilters([](NgcObject::NebulaType) { return true; });
+  astroTypeMenu->insertItem(1, WString::tr("ngcobject_type_All"))->triggered().connect([=](WMenuItem*, _n5){
+    d->nebulaTypeFilters = NgcObject::allNebulaTypes();
+    syncFilters();
     d->changed.emit();
   });
-
-  selectFilters(selectAllButStars);
+  syncFilters();
   setImplementation(astroTypeButton);
 }
 

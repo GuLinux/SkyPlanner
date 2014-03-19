@@ -8,7 +8,7 @@
 
 class FilterByTypeWidget : public Wt::WCompositeWidget {
 public:
-  explicit FilterByTypeWidget(Wt::WContainerWidget *parent = 0);
+  explicit FilterByTypeWidget(const std::set<NgcObject::NebulaType> &initialSelection, Wt::WContainerWidget *parent = 0);
   ~FilterByTypeWidget();
   Wt::Signal<> &changed() const;
   std::set<NgcObject::NebulaType> selected() const;

@@ -205,9 +205,9 @@ void SelectObjectsWidget::Private::suggestedObjects(Dbo::Transaction& transactio
 
   filterByMinimumMagnitude = new FilterByMagnitudeWidget({WString::tr("not_set"), {}, WString::tr("minimum_magnitude_label")}, {0, 20});
   filterByMinimumMagnitude->changed().connect([=](double, _n5) { q->populateFor(selectedTelescope, timezone); });
-  
-  suggestedObjectsContainer->addWidget(WW<WGroupBox>(WString::tr("filters")).add(WW<WContainerWidget>().css("form-inline").add(filterByTypeWidget = new FilterByTypeWidget()).add(filterByMinimumMagnitude) ));
+  filterByTypeWidget = new FilterByTypeWidget(NgcObject::allNebulaTypesButStars());
   filterByTypeWidget->changed().connect([=](_n6){ q->populateFor(selectedTelescope, timezone); });
+  suggestedObjectsContainer->addWidget(WW<WGroupBox>(WString::tr("filters")).add(WW<WContainerWidget>().css("form-inline").add(filterByTypeWidget).add(filterByMinimumMagnitude) ));
   suggestedObjectsTable = WW<WTable>().addCss("table  table-hover");
   suggestedObjectsTablePagination = WW<WContainerWidget>();
   suggestedObjectsLoaded.connect(this, &SelectObjectsWidget::Private::populateSuggestedObjectsTable);

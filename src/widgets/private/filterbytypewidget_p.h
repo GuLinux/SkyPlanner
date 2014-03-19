@@ -7,7 +7,7 @@
 class FilterByTypeWidget::Private
 {
 public:
-  Private(FilterByTypeWidget *q);
+  Private(const std::set<NgcObject::NebulaType> &initialSelection, FilterByTypeWidget *q);
   Wt::Signal<> changed;
   std::set<NgcObject::NebulaType> nebulaTypeFilters;
 
