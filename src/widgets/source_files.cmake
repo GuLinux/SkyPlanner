@@ -5,5 +5,6 @@ ${CMAKE_SOURCE_DIR}/src/widgets/objectnameswidget.cpp
 ${CMAKE_SOURCE_DIR}/src/widgets/dssimage.cpp
 ${CMAKE_SOURCE_DIR}/src/widgets/dsspage.cpp
 ${CMAKE_SOURCE_DIR}/src/widgets/cataloguesdescriptionwidget.cpp
+${CMAKE_SOURCE_DIR}/src/widgets/filterbytypewidget.cpp
 )
 

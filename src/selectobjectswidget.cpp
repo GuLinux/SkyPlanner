@@ -50,6 +50,7 @@
 #include <boost/regex.hpp>
 #include <boost/algorithm/string.hpp>
 #include <Wt/WCheckBox>
+#include "widgets/filterbytypewidget.h"
 
 using namespace Wt;
 using namespace WtCommons;
@@ -200,46 +201,6 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsTable()
 void SelectObjectsWidget::Private::suggestedObjects(Dbo::Transaction& transaction)
 {
   WContainerWidget *suggestedObjectsContainer = WW<WContainerWidget>();
-  WPushButton *astroTypeButton = WW<WPushButton>(WString::tr("object_column_type"));
-  WPopupMenu *astroTypeMenu = new WPopupMenu; 
-  astroTypeButton->setMenu(astroTypeMenu);
-  
-
-  astroTypeMenu->addSeparator();
-  map<NgcObject::NebulaType, WMenuItem*> menuItems;
-  for(auto type: NgcObject::nebulaTypes())
-    menuItems[type] = astroTypeMenu->addItem(NgcObject::typeDescription(type));
-    
-  auto selectFilters = [=] (function<bool(NgcObject::NebulaType)> includeFunc) {
-    nebulaTypeFilters.clear();
-    for(auto type: NgcObject::nebulaTypes())
-      if(includeFunc(type)) nebulaTypeFilters.insert(type);
-    for(auto item: menuItems)
-      item.second->checkBox()->setChecked(nebulaTypeFilters.count(item.first));
-  };
-  
-  for(auto item: menuItems) {
-     item.second->setCheckable(true);
-     item.second->checkBox()->changed().connect([=](_n1){
-       selectFilters([=](NgcObject::NebulaType t) { return menuItems.at(t)->isChecked(); });
-       q->populateFor(selectedTelescope, timezone);
-     });
-  }
-  
-  auto selectAllButStars = [](NgcObject::NebulaType t) { return t != NgcObject::RedStar && t != NgcObject::Asterism; };
-  
-  astroTypeMenu->insertItem(0, NgcObject::typeDescription(NgcObject::AllButStars))->triggered().connect([=](WMenuItem*, _n5){
-    selectFilters(selectAllButStars);
-    q->populateFor(selectedTelescope, timezone);
-  });
-  astroTypeMenu->insertItem(1, NgcObject::typeDescription(NgcObject::All))->triggered().connect([=](WMenuItem*, _n5){
-    nebulaTypeFilters.clear();
-    selectFilters([](NgcObject::NebulaType) { return true; });
-    q->populateFor(selectedTelescope, timezone);
-  });
-
-  selectFilters(selectAllButStars);
-  
 
   WText *minimumMagnitudeValue = WW<WText>(WString::tr("not_set")).css("badge");
   minimumMagnitudeSlider = WW<WSlider>().css("form-slider");
@@ -258,7 +219,8 @@ void SelectObjectsWidget::Private::suggestedObjects(Dbo::Transaction& transactio
   });
   WContainerWidget *minimumMagnitudeWidget = WW<WContainerWidget>().setInline(true).add(new WText{WString::tr("minimum_magnitude_label")}).add(minimumMagnitudeSlider).add(minimumMagnitudeValue);
   
-  suggestedObjectsContainer->addWidget(WW<WGroupBox>(WString::tr("filters")).add(WW<WContainerWidget>().css("form-inline").add(astroTypeButton).add(minimumMagnitudeWidget) ));
+  suggestedObjectsContainer->addWidget(WW<WGroupBox>(WString::tr("filters")).add(WW<WContainerWidget>().css("form-inline").add(filterByTypeWidget = new FilterByTypeWidget()).add(minimumMagnitudeWidget) ));
+  filterByTypeWidget->changed().connect([=](_n6){ q->populateFor(selectedTelescope, timezone); });
   suggestedObjectsTable = WW<WTable>().addCss("table  table-hover");
   suggestedObjectsTablePagination = WW<WContainerWidget>();
   suggestedObjectsLoaded.connect(this, &SelectObjectsWidget::Private::populateSuggestedObjectsTable);
@@ -288,9 +250,9 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsList( double magnitud
     Session threadSession;
     Dbo::Transaction t(threadSession);
     auto ngcObjectsQuery = threadSession.find<NgcObject>().where("magnitude < ? AND magnitude >= ?").bind(magnitudeLimit).bind(minimumMagnitude);
-    vector<string> filterConditions{nebulaTypeFilters.size(), "?"};
+    vector<string> filterConditions{filterByTypeWidget->selected().size(), "?"};
     ngcObjectsQuery.where(format("\"type\" IN (%s)") % boost::algorithm::join(filterConditions, ", ") );
-    for(auto filter: nebulaTypeFilters)
+    for(auto filter: filterByTypeWidget->selected())
       ngcObjectsQuery.bind(filter);
  
     dbo::collection<NgcObjectPtr> objects = ngcObjectsQuery.resultList();

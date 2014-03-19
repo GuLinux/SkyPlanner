@@ -29,6 +29,7 @@ namespace Wt
 }
 
 class NgcObject;
+class FilterByTypeWidget;
 class SelectObjectsWidget::Private
 {
 public:
@@ -55,7 +56,7 @@ public:
     void append(Wt::WTable *table, const Wt::Dbo::ptr<NgcObject> &ngcObject, const Ephemeris::BestAltitude &bestAltitude);
     boost::thread bgThread;
     bool aborted = false;
-    std::set<NgcObject::NebulaType> nebulaTypeFilters;
+    FilterByTypeWidget *filterByTypeWidget;
     std::string lastSearch;
     Wt::WTableRow *selectedRow = 0;
     double minimumMagnitude;
