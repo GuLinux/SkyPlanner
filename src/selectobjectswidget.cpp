@@ -51,6 +51,7 @@
 #include <boost/algorithm/string.hpp>
 #include <Wt/WCheckBox>
 #include "widgets/filterbytypewidget.h"
+#include "widgets/filterbymagnitudewidget.h"
 
 using namespace Wt;
 using namespace WtCommons;
@@ -202,24 +203,10 @@ void SelectObjectsWidget::Private::suggestedObjects(Dbo::Transaction& transactio
 {
   WContainerWidget *suggestedObjectsContainer = WW<WContainerWidget>();
 
-  WText *minimumMagnitudeValue = WW<WText>(WString::tr("not_set")).css("badge");
-  minimumMagnitudeSlider = WW<WSlider>().css("form-slider");
-  minimumMagnitudeSlider->setNativeControl(false);
-  minimumMagnitude = -500;
-  minimumMagnitudeSlider->setRange(0, 200);
-  minimumMagnitudeSlider->setValue(0);
-  minimumMagnitudeSlider->valueChanged().connect([=](int value, _n5){
-    minimumMagnitude = static_cast<double>(value)/10.;
-    minimumMagnitudeValue->setText(format("%.1f") % minimumMagnitude);
-    if(value == minimumMagnitudeSlider->minimum()) {
-      minimumMagnitudeValue->setText(WString::tr("not_set"));
-      minimumMagnitude = -500;
-    }
-    q->populateFor(selectedTelescope, timezone);
-  });
-  WContainerWidget *minimumMagnitudeWidget = WW<WContainerWidget>().setInline(true).add(new WText{WString::tr("minimum_magnitude_label")}).add(minimumMagnitudeSlider).add(minimumMagnitudeValue);
+  filterByMinimumMagnitude = new FilterByMagnitudeWidget({WString::tr("not_set"), {}, WString::tr("minimum_magnitude_label")}, {0, 20});
+  filterByMinimumMagnitude->changed().connect([=](double, _n5) { q->populateFor(selectedTelescope, timezone); });
   
-  suggestedObjectsContainer->addWidget(WW<WGroupBox>(WString::tr("filters")).add(WW<WContainerWidget>().css("form-inline").add(filterByTypeWidget = new FilterByTypeWidget()).add(minimumMagnitudeWidget) ));
+  suggestedObjectsContainer->addWidget(WW<WGroupBox>(WString::tr("filters")).add(WW<WContainerWidget>().css("form-inline").add(filterByTypeWidget = new FilterByTypeWidget()).add(filterByMinimumMagnitude) ));
   filterByTypeWidget->changed().connect([=](_n6){ q->populateFor(selectedTelescope, timezone); });
   suggestedObjectsTable = WW<WTable>().addCss("table  table-hover");
   suggestedObjectsTablePagination = WW<WContainerWidget>();
@@ -234,7 +221,7 @@ void SelectObjectsWidget::Private::suggestedObjects(Dbo::Transaction& transactio
 
 void SelectObjectsWidget::Private::populateSuggestedObjectsList( double magnitudeLimit )
 {
-  minimumMagnitudeSlider->setMaximum((magnitudeLimit-0.5)*10);
+  filterByMinimumMagnitude->setMaximum(magnitudeLimit-0.5);
   boost::unique_lock<boost::mutex> l1(suggestedObjectsListMutex);
   suggestedObjectsTable->clear();
   suggestedObjectsList.clear();
@@ -249,7 +236,7 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsList( double magnitud
     boost::unique_lock<boost::mutex> lockSession(sessionLockMutex);
     Session threadSession;
     Dbo::Transaction t(threadSession);
-    auto ngcObjectsQuery = threadSession.find<NgcObject>().where("magnitude < ? AND magnitude >= ?").bind(magnitudeLimit).bind(minimumMagnitude);
+    auto ngcObjectsQuery = threadSession.find<NgcObject>().where("magnitude < ? AND magnitude >= ?").bind(magnitudeLimit).bind(filterByMinimumMagnitude->isMinimum() ? -20 : filterByMinimumMagnitude->magnitude());
     vector<string> filterConditions{filterByTypeWidget->selected().size(), "?"};
     ngcObjectsQuery.where(format("\"type\" IN (%s)") % boost::algorithm::join(filterConditions, ", ") );
     for(auto filter: filterByTypeWidget->selected())

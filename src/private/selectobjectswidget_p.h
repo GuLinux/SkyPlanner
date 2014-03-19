@@ -25,11 +25,11 @@
 namespace Wt
 {
   class WTableRow;
-  class WSlider;
 }
 
 class NgcObject;
 class FilterByTypeWidget;
+class FilterByMagnitudeWidget;
 class SelectObjectsWidget::Private
 {
 public:
@@ -57,10 +57,9 @@ public:
     boost::thread bgThread;
     bool aborted = false;
     FilterByTypeWidget *filterByTypeWidget;
+    FilterByMagnitudeWidget *filterByMinimumMagnitude;
     std::string lastSearch;
     Wt::WTableRow *selectedRow = 0;
-    double minimumMagnitude;
-    Wt::WSlider *minimumMagnitudeSlider;
 private:
     class SelectObjectsWidget* const q;
 };
