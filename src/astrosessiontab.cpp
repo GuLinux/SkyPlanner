@@ -541,6 +541,7 @@ void AstroSessionTab::Private::populate()
 WPanel *AstroSessionTab::Private::addPanel( const WString &title, WWidget *widget, bool collapsed, bool collapsible, WContainerWidget *container )
 {
   WPanel *panel = WW<WPanel>(container ? container : q);
+  panel->addStyleClass("panel-compact");
   panel->setTitle(title);
   panel->setCollapsible(collapsible);
   panel->setCollapsed(collapsed);

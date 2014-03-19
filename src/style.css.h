@@ -51,6 +51,9 @@ std::vector<uint8_t> styleCss() {
     .form-slider {
       vertical-align: middle;
     }
+    .panel-compact {
+      margin-bottom: 0px;
+    }
   );
   return std::vector<uint8_t>(css.begin(), css.end());
 }
