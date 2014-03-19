@@ -68,6 +68,8 @@
 #include <Wt/Json/Object>
 #include <Wt/WPopupMenu>
 #include <Wt/WMemoryResource>
+#include "widgets/filterbymagnitudewidget.h"
+#include "widgets/filterbytypewidget.h"
 
 using namespace Wt;
 using namespace WtCommons;
@@ -183,6 +185,13 @@ void AstroSessionTab::Private::reload()
   addPanel(WString::tr("astrosessiontab_add_observable_object"), addObjectsTabWidget, true);
   addObjectsTabWidget->objectsListChanged().connect([=](_n6){populate(); });
   q->addWidget(new WText{WString("<h3>{1}</h3>").arg(WString::tr("astrosessiontab_objects_title"))});
+
+  filterByType = new FilterByTypeWidget(NgcObject::allNebulaTypes());
+  filterByMinimumMagnitude = new FilterByMagnitudeWidget({WString::tr("not_set"), {}, WString::tr("minimum_magnitude_label")}, {0, 20});
+  filterByType->changed().connect([=](_n6){ populate(); });
+  filterByMinimumMagnitude->changed().connect([=](double, _n5){ populate(); });
+  q->addWidget(WW<WContainerWidget>().addCss("form-inline").add(filterByType).add(filterByMinimumMagnitude));
+
   q->addWidget(  new WText(WString::tr("printable_timezone_info").arg(timezone.timeZoneName)));
   q->addWidget(objectsTable = WW<WTable>().addCss("table  table-hover"));
   objectsTable->setHeaderCount(1);
@@ -190,6 +199,7 @@ void AstroSessionTab::Private::reload()
 
   auto telescopes = session.user()->telescopes();
   if(telescopes.size() > 0) {
+
     WComboBox *telescopeCombo = new WComboBox;
     telescopeCombo->setWidth(350);
     WLabel *telescopeComboLabel = WW<WLabel>(WString::tr("astrosessiontab__telescope_label")).setMargin(10);
@@ -205,9 +215,11 @@ void AstroSessionTab::Private::reload()
       model->appendRow(item);
     }
     telescopeCombo->setModel(model);
+    filterByMinimumMagnitude->setMaximum(selectedTelescope->limitMagnitudeGain() + 6.5);
     
     telescopeCombo->activated().connect([=](int index, _n5){
       selectedTelescope = boost::any_cast<Dbo::ptr<Telescope>>(model->item(index)->data());
+      filterByMinimumMagnitude->setMaximum(selectedTelescope->limitMagnitudeGain() + 6.5);
       populate();
       addObjectsTabWidget->populateFor(selectedTelescope, timezone);
     });
@@ -436,12 +448,19 @@ void AstroSessionTab::Private::populate()
   objectsTable->elementAt(0,8)->addWidget(new WText{WString::tr("object_column_max_altitude")});
   objectsTable->elementAt(0,9)->addWidget(new WText{WString::tr("object_column_difficulty")});
   Ephemeris ephemeris({astroSession->position().latitude, astroSession->position().longitude});
-  boost::posix_time::ptime sessionTimeStart = ephemeris.sun(astroSession->when()).set;
-  boost::posix_time::ptime sessionTimeEnd = ephemeris.sun(astroSession->when() + boost::posix_time::hours(24)).rise;
   Dbo::Transaction t(session);
   
   // TODO: optimize
-  auto sessionObjectsDbCollection = astroSession->astroSessionObjects();
+  auto query = session.query<AstroSessionObjectPtr>("select a from astro_session_object a inner join objects on a.objects_id = objects.id")
+      .where("astro_session_id = ?").bind(astroSession.id())
+      .where("objects.magnitude > ?").bind(filterByMinimumMagnitude->isMinimum() ? -200 : filterByMinimumMagnitude->magnitude());
+
+  vector<string> filterByTypeConditionPlaceholders{filterByType->selected().size(), "?"};
+  query.where(format("\"type\" IN (%s)") % boost::algorithm::join(filterByTypeConditionPlaceholders, ", "));
+  for(auto filter: filterByType->selected())
+    query.bind(filter);
+
+  auto sessionObjectsDbCollection = query.resultList();
   typedef pair<dbo::ptr<AstroSessionObject>, Ephemeris::BestAltitude> AstroSessionObjectElement;
   vector<AstroSessionObjectElement> sessionObjects;
   transform(begin(sessionObjectsDbCollection), end(sessionObjectsDbCollection), back_inserter(sessionObjects), [&ephemeris](const dbo::ptr<AstroSessionObject> &o){

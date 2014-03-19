@@ -35,6 +35,8 @@ namespace Wt
 class Telescope;
 class Session;
 class ExportAstroSessionResource;
+class FilterByMagnitudeWidget;
+class FilterByTypeWidget;
 class AstroSessionTab::Private
 {
 public:
@@ -59,6 +61,8 @@ public:
     Wt::WTableRow *selectedRow = 0;
     Wt::Signal<> close;
     ExportAstroSessionResource *exportToCsvResource = 0;
+    FilterByTypeWidget *filterByType;
+    FilterByMagnitudeWidget *filterByMinimumMagnitude;
 private:
     class AstroSessionTab* const q;
 };
