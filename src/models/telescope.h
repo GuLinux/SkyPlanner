@@ -27,15 +27,18 @@ class Telescope
 {
 public:
   explicit Telescope();
-  explicit Telescope(const std::string &name, int diameter, int focalLength);
+  explicit Telescope(const std::string &name, int diameter, int focalLength, bool isDefault = false);
   std::string name() const;
   int diameter() const;
   int focalLength() const;
+  bool isDefault() const;
+  void setDefault(bool _default);
   template<typename Action>
   void persist(Action& a) {
     dbo::field(a, _name, "name");
     dbo::field(a, _diameter, "diameter");
     dbo::field(a, _focalLength, "focal_length");
+    dbo::field(a, _default, "default");
     dbo::belongsTo(a, _user);
   }
   double limitMagnitudeGain() const;
@@ -43,6 +46,7 @@ private:
   std::string _name;
   int _diameter;
   int _focalLength;
+  bool _default;
   dbo::ptr<User> _user;
 };
 

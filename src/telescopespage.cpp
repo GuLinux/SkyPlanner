@@ -31,6 +31,7 @@
 #include <Wt/WLineEdit>
 #include <Wt/WSpinBox>
 #include <Wt/WLabel>
+#include <Wt/WCheckBox>
 #include <Wt-Commons/wform.h>
 #include <boost/format.hpp>
 
@@ -59,13 +60,14 @@ TelescopesPage::TelescopesPage( Session &session, WContainerWidget *parent )
   telescopeNameLabel->setBuddy(telescopeName);
   telescopeDiameterLabel->setBuddy(telescopeDiameter);
   telescopeFocalLengthLabel->setBuddy(telescopeFocalLength);
-  
+  d->isDefault = WW<WCheckBox>(WString::tr("telescope_is_default")).addCss("checkbox-no-form-control");
+
   telescopeName->setEmptyText(WString::tr("telescopes_telescope_name"));
   telescopeDiameter->setEmptyText(WString::tr("telescopes_diameter_mm"));
   telescopeFocalLength->setEmptyText(WString::tr("telescopes_focal_length_mm"));
   WPushButton *addTelescopeButton = WW<WPushButton>(WString::tr("buttons_add")).css("btn btn-primary").onClick([=](WMouseEvent){
     Dbo::Transaction t(d->session);
-    d->session.user().modify()->telescopes().insert(new Telescope(telescopeName->text().toUTF8(), telescopeDiameter->value(), telescopeFocalLength->value()));
+    d->session.user().modify()->telescopes().insert(new Telescope(telescopeName->text().toUTF8(), telescopeDiameter->value(), telescopeFocalLength->value(), d->isDefault->isChecked() ));
     t.commit();
     d->populate();
   });
@@ -73,6 +75,7 @@ TelescopesPage::TelescopesPage( Session &session, WContainerWidget *parent )
     ->add(telescopeName, "telescopes_telescope_name")
     ->add(telescopeDiameter, "telescopes_diameter_mm")
     ->add(telescopeFocalLength, "telescopes_focal_length_mm")
+    ->add(d->isDefault)
     ->addButton(addTelescopeButton)
   );
   d->telescopesTable = WW<WTable>(this).addCss("table table-striped table-hover");
@@ -85,6 +88,9 @@ void TelescopesPage::Private::populate()
 {
   Dbo::Transaction t(session);
   telescopesTable->clear();
+  isDefault->setChecked(session.user()->telescopes().size() == 0);
+  isDefault->setReadOnly(session.user()->telescopes().size() == 0);
+
   telescopesTable->elementAt(0, 0)->addWidget(new WText{WString::tr("telescopes_telescope_name")});
   telescopesTable->elementAt(0, 1)->addWidget(new WText{WString::tr("telescopes_diameter_mm")});
   telescopesTable->elementAt(0, 2)->addWidget(new WText{WString::tr("telescopes_focal_length_mm")});

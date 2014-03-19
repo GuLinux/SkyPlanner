@@ -21,6 +21,10 @@
 #define TELESCOPESPAGE_P_H
 #include "telescopespage.h"
 
+namespace Wt {
+  class WCheckBox;
+}
+
 class TelescopesPage::Private
 {
   public:
@@ -29,6 +33,7 @@ class TelescopesPage::Private
     void loginChanged();
     void populate();
     Wt::WTable *telescopesTable;
+    Wt::WCheckBox *isDefault;
   private:
     class TelescopesPage *const q;
 };

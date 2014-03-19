@@ -26,8 +26,8 @@ Telescope::Telescope()
 
 }
 
-Telescope::Telescope( const string &name, int diameter, int focalLength )
-  : _name(name), _diameter(diameter), _focalLength(focalLength)
+Telescope::Telescope( const string &name, int diameter, int focalLength, bool isDefault )
+  : _name(name), _diameter(diameter), _focalLength(focalLength), _default(isDefault)
 {
   
 }
@@ -52,3 +52,14 @@ string Telescope::name() const
 {
   return _name;
 }
+
+bool Telescope::isDefault() const
+{
+  return _default;
+}
+
+void Telescope::setDefault(bool _default)
+{
+  this->_default = _default;
+}
+

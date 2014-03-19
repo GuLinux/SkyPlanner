@@ -54,6 +54,12 @@ std::vector<uint8_t> styleCss() {
     .panel-compact {
       margin-bottom: 0px;
     }
+
+    .checkbox-no-form-control {
+      border: 0px;
+      box-shadow: inherit;
+      -webkit-box-shadow: inherit;
+    }
   );
   return std::vector<uint8_t>(css.begin(), css.end());
 }
