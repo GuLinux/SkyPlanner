@@ -75,7 +75,7 @@ Signal< NoClass >& SelectObjectsWidget::objectsListChanged() const
 
 
 SelectObjectsWidget::SelectObjectsWidget(const Dbo::ptr< AstroSession >& astroSession, Session& session, WContainerWidget* parent)
-    : d(astroSession, session, this)
+    : WTabWidget(parent), d(astroSession, session, this)
 {
     WTabWidget *addObjectsTabWidget = this;
     boost::unique_lock<boost::mutex> lockSession(d->sessionLockMutex);
@@ -214,6 +214,7 @@ void SelectObjectsWidget::Private::suggestedObjects(Dbo::Transaction& transactio
 
   suggestedObjectsTable->setHeaderCount(1);
   
+  suggestedObjectsContainer->setPadding(10);
   q->addTab(suggestedObjectsContainer, WString::tr("select_objects_widget_best_visible_objects"));
   suggestedObjectsContainer->addWidget(suggestedObjectsTable);
   suggestedObjectsContainer->addWidget(suggestedObjectsTablePagination);
@@ -334,6 +335,8 @@ void SelectObjectsWidget::Private::searchByNameTab(Dbo::Transaction& transaction
 
          ));
   addObjectByName->addWidget(resultsTable);
+
+  addObjectByName->setPadding(10);
   q->addTab(addObjectByName, WString::tr("select_objects_widget_add_by_name"));
 }
 
@@ -378,5 +381,6 @@ void SelectObjectsWidget::Private::searchByCatalogueTab(Dbo::Transaction& transa
   addObjectByCatalogue->addWidget(WW<WContainerWidget>().css("form-inline").add(cataloguesCombo).add(catalogueNumber)
     .add(WW<WPushButton>(WString::tr("search")).css("btn btn-primary").onClick([=](WMouseEvent){ searchByCatalogueNumber(); })));
   addObjectByCatalogue->addWidget(resultsTable);
+  addObjectByCatalogue->setPadding(10);
   q->addTab(addObjectByCatalogue, WString::tr("select_objects_widget_add_by_catalogue_number"));
 }
