@@ -284,6 +284,7 @@ void SelectObjectsWidget::Private::searchByNameTab(Dbo::Transaction& transaction
 {
   WContainerWidget *addObjectByName = WW<WContainerWidget>();
   WLineEdit *name = WW<WLineEdit>();
+  name->setTextSize(0);
   name->setEmptyText(WString::tr("select_objects_widget_add_by_name"));
   WTable *resultsTable = WW<WTable>().addCss("table  table-hover");
   auto searchByName = [=] {
@@ -345,6 +346,7 @@ void SelectObjectsWidget::Private::searchByCatalogueTab(Dbo::Transaction& transa
   cataloguesModel->addColumn("name");
   cataloguesModel->addColumn("id");
   WLineEdit *catalogueNumber = WW<WLineEdit>();
+  catalogueNumber->setTextSize(0);
   catalogueNumber->setEmptyText(WString::tr("catalogue_number"));
   WTable *resultsTable = WW<WTable>().addCss("table  table-hover");
 

@@ -59,7 +59,7 @@ Session::Session()
   d->connection = make_shared<Dbo::backend::Sqlite3>("SkyPlanner.sqlite");
 #endif
   setConnection(*d->connection);
-  d->connection->setProperty("show-queries", "true");
+  d->connection->setProperty("show-queries", "false");
   mapClass<Catalogue>("catalogues");
   mapClass<NgcObject>("objects");
   mapClass<NebulaDenomination>("denominations");
