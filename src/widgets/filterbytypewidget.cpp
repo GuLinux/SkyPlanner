@@ -20,7 +20,9 @@ FilterByTypeWidget::FilterByTypeWidget(const set<NgcObject::NebulaType> &initial
 {
   WPushButton *astroTypeButton = WW<WPushButton>(WString::tr("object_column_type"));
   WPopupMenu *astroTypeMenu = new WPopupMenu;
-  astroTypeButton->setMenu(astroTypeMenu);
+//  astroTypeButton->setMenu(astroTypeMenu);
+  astroTypeButton->clicked().connect([=](const WMouseEvent &e) { astroTypeMenu->popup(e); });
+  astroTypeMenu->setAutoHide(true, 10000);
 
 
   astroTypeMenu->addSeparator();
