@@ -195,7 +195,7 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsTable()
     nextButton->addWidget(WW<WAnchor>("", "&raquo;" ).onClick([=](WMouseEvent){ activatePage(pagesCurrentIndex+1); }));
     paginationWidget->addWidget(previousButton);
     for(int i=0; i*pagesSize <=suggestedObjectsList.size(); i++) {
-      WContainerWidget *page = WW<WContainerWidget>().add(WW<WAnchor>("", boost::lexical_cast<string>(i) ).onClick([=](WMouseEvent){ activatePage(i); }) );
+      WContainerWidget *page = WW<WContainerWidget>().add(WW<WAnchor>("", boost::lexical_cast<string>(i+1) ).onClick([=](WMouseEvent){ activatePage(i); }) );
       pages->push_back(page);
       paginationWidget->addWidget(page);
     }
