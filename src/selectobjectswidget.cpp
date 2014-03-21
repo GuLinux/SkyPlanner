@@ -161,9 +161,14 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsTable()
       for(size_t i=startOffset; i<min(startOffset+size, suggestedObjectsList.size()); i++) {
         // TODO: Why reloading?
         auto objectData = suggestedObjectsList.at(i);
+        NgcObjectPtr ngcObject = objectsCache[objectData.object.id()];
+        if(!ngcObject) {
+          ngcObject = session.find<NgcObject>().where("id = ?").bind(objectData.object.id()).resultValue();
+          objectsCache[ngcObject.id()] = ngcObject;
+        }
 //        NgcObjectPtr ngcObject = session.find<NgcObject>().where("id = ?").bind(suggestedObjectsList.at(i).object.id());
 //        Ephemeris::BestAltitude &bestAltitude = suggestedObjectsList.at(i).bestAltitude;
-        append(suggestedObjectsTable, session.find<NgcObject>().where("id = ?").bind(objectData.object.id()).resultValue(), objectData.bestAltitude);
+        append(suggestedObjectsTable, ngcObject, objectData.bestAltitude);
       }
     };
     static const int pagesSize = 15;
@@ -257,7 +262,6 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsList( double magnitud
       return magnitudeDelta + altitude;
     };
 
-    static map<ObjectSessionData::Key,ObjectSessionData> objectsSessionDataCache;
     for(auto object: objects) {
       if(aborted) return;
       auto cachedData = objectsSessionDataCache[{astroSession->position(), astroSession->when(), object.id() }];

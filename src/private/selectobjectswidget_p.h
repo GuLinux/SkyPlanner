@@ -76,6 +76,8 @@ public:
     FilterByMagnitudeWidget *filterByMinimumMagnitude;
     std::string lastSearch;
     Wt::WTableRow *selectedRow = 0;
+    std::map<ObjectSessionData::Key,ObjectSessionData> objectsSessionDataCache;
+    std::map<int64_t, NgcObjectPtr> objectsCache;
 private:
     class SelectObjectsWidget* const q;
 };
