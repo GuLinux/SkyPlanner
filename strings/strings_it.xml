@@ -123,6 +123,7 @@
 
 <message id="notification_object_already_added">Oggetto già aggiunto a questa sessione.</message>
 <message id="filters">Filtri</message>
+<message id="filter_by_type_title">Filtra Per Tipo</message>
 <message id="select_objects_widget_best_visible_objects">Migliori Oggetti Visibili</message>
 <message id="catalogue_number">Numero Catalogo</message>
 <message id="search">Cerca</message>
