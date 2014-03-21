@@ -109,6 +109,7 @@
 <message id="objectdifficulty_out_of_range">Out of range</message>
 
 <message id="ngcobject_type_All">All</message>
+<message id="ngcobject_type_None">None</message>
 <message id="ngcobject_type_AllButStars">All but stars/asterisms</message>
 <message id="ngcobject_type_NebGx">Galaxy</message>
 <message id="ngcobject_type_NebOc">Open star cluster</message>

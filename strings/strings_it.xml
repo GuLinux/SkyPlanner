@@ -151,6 +151,7 @@
 
 <message id="ngcobject_type_All">Tutti</message>
 <message id="ngcobject_type_AllButStars">Tutti tranne stelle/asterismi</message>
+<message id="ngcobject_type_None">Nessuno</message>
 <message id="ngcobject_type_NebGx">Galassia</message>
 <message id="ngcobject_type_NebOc">Ammasso aperto</message>
 <message id="ngcobject_type_NebGc">Ammasso globulare</message>

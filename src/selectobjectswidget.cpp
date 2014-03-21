@@ -242,6 +242,9 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsList( double magnitud
   bgThread = boost::thread([=]{
     boost::unique_lock<boost::mutex> l2(suggestedObjectsListMutex);
     boost::unique_lock<boost::mutex> lockSession(sessionLockMutex);
+
+    if(filterByTypeWidget->selected().size() == 0)
+      return;
     Session threadSession;
     Dbo::Transaction t(threadSession);
     auto ngcObjectsQuery = threadSession.find<NgcObject>().where("magnitude < ? AND magnitude >= ?").bind(magnitudeLimit).bind(filterByMinimumMagnitude->isMinimum() ? -20 : filterByMinimumMagnitude->magnitude());

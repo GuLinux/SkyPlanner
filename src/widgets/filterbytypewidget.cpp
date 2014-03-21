@@ -55,7 +55,12 @@ FilterByTypeWidget::FilterByTypeWidget(const set<NgcObject::NebulaType> &initial
     syncFilters();
     d->changed.emit();
   });
-  syncFilters();
+   astroTypeMenu->insertItem(2, WString::tr("ngcobject_type_None"))->triggered().connect([=](WMenuItem*, _n5){
+    d->nebulaTypeFilters.clear();
+    syncFilters();
+    d->changed.emit();
+  });
+ syncFilters();
   setImplementation(astroTypeButton);
 }
 
