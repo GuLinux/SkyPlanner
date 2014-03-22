@@ -21,6 +21,7 @@
 #define SELECTOBJECTSWIDGET_P_H
 #include "selectobjectswidget.h"
 #include <boost/thread.hpp>
+#include "utils/format.h"
 
 namespace Wt
 {
@@ -33,6 +34,21 @@ class FilterByMagnitudeWidget;
 class SelectObjectsWidget::Private
 {
 public:
+    struct ObjectSessionData {
+      struct Key {
+        Coordinates::LatLng position;
+        boost::posix_time::ptime when;
+        long objectId;
+        std::string str() const { return format("%.3f-%.3f-%s-%d") % position.latitude.degrees() % position.longitude.degrees() % boost::posix_time::to_simple_string(when) % objectId; }
+        bool operator<(const Key &other) const { return str() < other.str(); }
+      };
+      NgcObjectPtr object;
+      Ephemeris::BestAltitude bestAltitude;
+      double observabilityIndex;
+      operator bool() { return object && bestAltitude.coordinates && bestAltitude.when != boost::posix_time::ptime(); }
+
+    };
+
     Private(const Wt::Dbo::ptr<AstroSession>& astroSession, Session& session, SelectObjectsWidget* q);
     Wt::Dbo::ptr<AstroSession> astroSession;
     Session &session;
@@ -45,7 +61,7 @@ public:
     void populateSuggestedObjectsTable();
     void populateSuggestedObjectsList( double magnitudeLimit );
     Wt::Signal<> suggestedObjectsLoaded;
-    typedef std::vector<std::pair<NgcObjectPtr,Ephemeris::BestAltitude>> NgcObjectsList; 
+    typedef std::vector<ObjectSessionData> NgcObjectsList; 
     NgcObjectsList suggestedObjectsList; 
     boost::mutex sessionLockMutex;
     boost::mutex suggestedObjectsListMutex;
@@ -60,6 +76,8 @@ public:
     FilterByMagnitudeWidget *filterByMinimumMagnitude;
     std::string lastSearch;
     Wt::WTableRow *selectedRow = 0;
+    std::map<ObjectSessionData::Key,ObjectSessionData> objectsSessionDataCache;
+    std::map<int64_t, NgcObjectPtr> objectsCache;
 private:
     class SelectObjectsWidget* const q;
 };

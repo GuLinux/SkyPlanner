@@ -159,9 +159,16 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsTable()
       selectedRow = 0;
       populateHeaders(suggestedObjectsTable);
       for(size_t i=startOffset; i<min(startOffset+size, suggestedObjectsList.size()); i++) {
-        NgcObjectPtr ngcObject = session.find<NgcObject>().where("id = ?").bind(suggestedObjectsList.at(i).first.id());
-	Ephemeris::BestAltitude &bestAltitude = suggestedObjectsList.at(i).second;
-	append(suggestedObjectsTable, ngcObject, bestAltitude);
+        // TODO: Why reloading?
+        auto objectData = suggestedObjectsList.at(i);
+        NgcObjectPtr ngcObject = objectsCache[objectData.object.id()];
+        if(!ngcObject) {
+          ngcObject = session.find<NgcObject>().where("id = ?").bind(objectData.object.id()).resultValue();
+          objectsCache[ngcObject.id()] = ngcObject;
+        }
+//        NgcObjectPtr ngcObject = session.find<NgcObject>().where("id = ?").bind(suggestedObjectsList.at(i).object.id());
+//        Ephemeris::BestAltitude &bestAltitude = suggestedObjectsList.at(i).bestAltitude;
+        append(suggestedObjectsTable, ngcObject, objectData.bestAltitude);
       }
     };
     static const int pagesSize = 15;
@@ -188,7 +195,7 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsTable()
     nextButton->addWidget(WW<WAnchor>("", "&raquo;" ).onClick([=](WMouseEvent){ activatePage(pagesCurrentIndex+1); }));
     paginationWidget->addWidget(previousButton);
     for(int i=0; i*pagesSize <=suggestedObjectsList.size(); i++) {
-      WContainerWidget *page = WW<WContainerWidget>().add(WW<WAnchor>("", boost::lexical_cast<string>(i) ).onClick([=](WMouseEvent){ activatePage(i); }) );
+      WContainerWidget *page = WW<WContainerWidget>().add(WW<WAnchor>("", boost::lexical_cast<string>(i+1) ).onClick([=](WMouseEvent){ activatePage(i); }) );
       pages->push_back(page);
       paginationWidget->addWidget(page);
     }
@@ -235,6 +242,9 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsList( double magnitud
   bgThread = boost::thread([=]{
     boost::unique_lock<boost::mutex> l2(suggestedObjectsListMutex);
     boost::unique_lock<boost::mutex> lockSession(sessionLockMutex);
+
+    if(filterByTypeWidget->selected().size() == 0)
+      return;
     Session threadSession;
     Dbo::Transaction t(threadSession);
     auto ngcObjectsQuery = threadSession.find<NgcObject>().where("magnitude < ? AND magnitude >= ?").bind(magnitudeLimit).bind(filterByMinimumMagnitude->isMinimum() ? -20 : filterByMinimumMagnitude->magnitude());
@@ -244,15 +254,9 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsList( double magnitud
       ngcObjectsQuery.bind(filter);
  
     dbo::collection<NgcObjectPtr> objects = ngcObjectsQuery.resultList();
+
     Ephemeris ephemeris(astroSession->position());
     AstroSession::ObservabilityRange range = astroSession->observabilityRange(ephemeris).delta({1,20,0});
-    for(auto object: objects) {
-      if(aborted) return;
-      auto bestAltitude = ephemeris.findBestAltitude(object->coordinates(), range.begin, range.end);
-      if(bestAltitude.coordinates.altitude.degrees() > 17.)
-        suggestedObjectsList.push_back({object, bestAltitude});
-    }
-
     boost::posix_time::ptime middleRange = range.begin + ((range.end - range.begin) / 2);
     auto observabilityIndex = [&ephemeris,&range,magnitudeLimit,&middleRange] (const NgcObjectPtr &o) {
       double magnitudeDelta = magnitudeLimit - o->magnitude(); // we already know that magnitudeLimit > o->magnitude(), so this is positive
@@ -260,8 +264,27 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsList( double magnitud
       double altitude = ephemeris.arDec2altAz(o->coordinates(), middleRange);
       return magnitudeDelta + altitude;
     };
-    sort(suggestedObjectsList.rbegin(), suggestedObjectsList.rend(), [&observabilityIndex](const pair<NgcObjectPtr,Ephemeris::BestAltitude> &a, const pair<NgcObjectPtr,Ephemeris::BestAltitude> &b){
-      return observabilityIndex(a.first) < observabilityIndex(b.first);
+
+    for(auto object: objects) {
+      if(aborted) return;
+      auto cachedData = objectsSessionDataCache[{astroSession->position(), astroSession->when(), object.id() }];
+      if(cachedData && cachedData.bestAltitude.coordinates.altitude.degrees() > 17.) {
+        suggestedObjectsList.push_back(cachedData);
+      }
+      else {
+      auto bestAltitude = ephemeris.findBestAltitude(object->coordinates(), range.begin, range.end);
+        if(bestAltitude.coordinates.altitude.degrees() > 17.) {
+          ObjectSessionData objectSessionData{object, bestAltitude, observabilityIndex(object)};
+          objectsSessionDataCache[{astroSession->position(), astroSession->when(), object.id() }] = objectSessionData;
+          suggestedObjectsList.push_back(objectSessionData);
+        }
+      }
+    }
+
+
+
+    sort(suggestedObjectsList.rbegin(), suggestedObjectsList.rend(), [](const ObjectSessionData &a, const ObjectSessionData &b){
+      return a.observabilityIndex < b.observabilityIndex;
     });
     if(aborted) return;
     WServer::instance()->post(app->sessionId(), [=]{

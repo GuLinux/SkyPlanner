@@ -6,6 +6,9 @@
 #include "Wt-Commons/wt_helpers.h"
 #include <Wt/WPopupMenu>
 #include <Wt/WPushButton>
+#include <Wt/WDialog>
+#include <Wt/WCheckBox>
+#include <Wt/WToolBar>
 
 using namespace std;
 using namespace Wt;
@@ -19,43 +22,38 @@ FilterByTypeWidget::FilterByTypeWidget(const set<NgcObject::NebulaType> &initial
   : WCompositeWidget(parent), d(initialSelection, this)
 {
   WPushButton *astroTypeButton = WW<WPushButton>(WString::tr("object_column_type"));
-  WPopupMenu *astroTypeMenu = new WPopupMenu;
-  astroTypeButton->setMenu(astroTypeMenu);
+  astroTypeButton->clicked().connect([=](const WMouseEvent &e) {
+    WDialog *dialog = new WDialog(WString::tr("filter_by_type_title"));
+    map<NgcObject::NebulaType, WCheckBox*> items;
+    for(auto type: NgcObject::allNebulaTypes()) {
+      items[type] = WW<WCheckBox>(NgcObject::typeDescription(type));
+      items[type]->setChecked(initialSelection.count(type)>0);
+    }
 
+    dialog->contents()->addWidget(WW<WToolBar>()
+      .addButton(WW<WPushButton>(WString::tr("ngcobject_type_All")).onClick([=](WMouseEvent) { for(auto item: items) item.second->setChecked();  } ) )
+      .addButton(WW<WPushButton>(WString::tr("ngcobject_type_AllButStars")).onClick([=](WMouseEvent){ for(auto item: items) item.second->setChecked( NgcObject::allNebulaTypesButStars().count(item.first)>0 ); }) )
+      .addButton(WW<WPushButton>(WString::tr("ngcobject_type_None")).onClick([=](WMouseEvent) { for(auto item: items) item.second->setUnChecked();  } ) )
+    );
+    for(auto type: NgcObject::allNebulaTypes()) {
+      dialog->contents()->addWidget(WW<WContainerWidget>().css("checkbox").add(items[type]));
+    }
 
-  astroTypeMenu->addSeparator();
-  map<NgcObject::NebulaType, WMenuItem*> menuItems;
-  for(auto type: NgcObject::allNebulaTypes())
-    menuItems[type] = astroTypeMenu->addItem(NgcObject::typeDescription(type));
+    dialog->setClosable(true);
+    dialog->finished().connect([=](WDialog::DialogCode result, _n5) {
+      if(result != WDialog::Accepted) return;
+      d->nebulaTypeFilters.clear();
+      for(auto item: items)
+        if(item.second->isChecked())
+          d->nebulaTypeFilters.insert(item.first);
+      if(d->nebulaTypeFilters != initialSelection)
+        d->changed.emit();
+    });
+    dialog->footer()->addWidget(WW<WPushButton>(WString::tr("Wt.WMessageBox.Cancel")).addCss("btn-danger").onClick([=](WMouseEvent) { dialog->reject(); }));
+    dialog->footer()->addWidget(WW<WPushButton>(WString::tr("Wt.WMessageBox.Ok")).addCss("btn-primary").onClick([=](WMouseEvent) { dialog->accept(); }));
 
-  auto syncFilters = [=] {
-    for(auto item: menuItems)
-      item.second->checkBox()->setChecked(d->nebulaTypeFilters.count(item.first));
-  };
-
-  for(auto item: menuItems) {
-     item.second->setCheckable(true);
-     item.second->checkBox()->changed().connect([=](_n1){
-       if(item.second->isChecked())
-         d->nebulaTypeFilters.insert(item.first);
-       else
-         d->nebulaTypeFilters.erase(item.first);
-       syncFilters();
-       d->changed.emit();
-     });
-  }
-
-  astroTypeMenu->insertItem(0, WString::tr("ngcobject_type_AllButStars"))->triggered().connect([=](WMenuItem*, _n5){
-    d->nebulaTypeFilters = NgcObject::allNebulaTypesButStars();
-    syncFilters();
-    d->changed.emit();
+    dialog->show();
   });
-  astroTypeMenu->insertItem(1, WString::tr("ngcobject_type_All"))->triggered().connect([=](WMenuItem*, _n5){
-    d->nebulaTypeFilters = NgcObject::allNebulaTypes();
-    syncFilters();
-    d->changed.emit();
-  });
-  syncFilters();
   setImplementation(astroTypeButton);
 }
 

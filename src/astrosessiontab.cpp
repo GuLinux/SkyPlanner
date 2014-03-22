@@ -447,6 +447,8 @@ void AstroSessionTab::Private::populate()
   objectsTable->elementAt(0,7)->addWidget(new WText{WString::tr("object_column_highest_time")});
   objectsTable->elementAt(0,8)->addWidget(new WText{WString::tr("object_column_max_altitude")});
   objectsTable->elementAt(0,9)->addWidget(new WText{WString::tr("object_column_difficulty")});
+  if(filterByType->selected().size() == 0)
+    return;
   Ephemeris ephemeris({astroSession->position().latitude, astroSession->position().longitude});
   Dbo::Transaction t(session);
   
