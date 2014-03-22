@@ -32,6 +32,7 @@
 #include <Wt/WSpinBox>
 #include <Wt/WLabel>
 #include <Wt/WCheckBox>
+#include <Wt/WToolBar>
 #include <Wt-Commons/wform.h>
 #include <boost/format.hpp>
 
@@ -60,13 +61,15 @@ TelescopesPage::TelescopesPage( Session &session, WContainerWidget *parent )
   telescopeNameLabel->setBuddy(telescopeName);
   telescopeDiameterLabel->setBuddy(telescopeDiameter);
   telescopeFocalLengthLabel->setBuddy(telescopeFocalLength);
-  d->isDefault = WW<WCheckBox>(WString::tr("telescope_is_default")).addCss("checkbox-no-form-control");
+  d->isDefault = WW<WCheckBox>(WString::tr("buttons_default")).addCss("checkbox-no-form-control");
 
   telescopeName->setEmptyText(WString::tr("telescopes_telescope_name"));
   telescopeDiameter->setEmptyText(WString::tr("telescopes_diameter_mm"));
   telescopeFocalLength->setEmptyText(WString::tr("telescopes_focal_length_mm"));
   WPushButton *addTelescopeButton = WW<WPushButton>(WString::tr("buttons_add")).css("btn btn-primary").onClick([=](WMouseEvent){
     Dbo::Transaction t(d->session);
+    if(d->isDefault->isChecked())
+      d->session.execute(R"(UPDATE telescope set "default" = ? where "user_id" = ?)").bind(false).bind(d->session.user().id());
     d->session.user().modify()->telescopes().insert(new Telescope(telescopeName->text().toUTF8(), telescopeDiameter->value(), telescopeFocalLength->value(), d->isDefault->isChecked() ));
     t.commit();
     d->populate();
@@ -88,8 +91,9 @@ void TelescopesPage::Private::populate()
 {
   Dbo::Transaction t(session);
   telescopesTable->clear();
-  isDefault->setChecked(session.user()->telescopes().size() == 0);
-  isDefault->setReadOnly(session.user()->telescopes().size() == 0);
+  bool isOnlyTelescope = session.user()->telescopes().size() == 0;
+  isDefault->setChecked(isOnlyTelescope);
+  isDefault->setHidden(isOnlyTelescope);
 
   telescopesTable->elementAt(0, 0)->addWidget(new WText{WString::tr("telescopes_telescope_name")});
   telescopesTable->elementAt(0, 1)->addWidget(new WText{WString::tr("telescopes_diameter_mm")});
@@ -97,20 +101,35 @@ void TelescopesPage::Private::populate()
   telescopesTable->elementAt(0, 3)->addWidget(new WText{WString::tr("telescopes_magnitude_gain")});
   telescopesTable->elementAt(0, 4)->addWidget(new WText{WString::tr("telescopes_magnitude_limit_naked")});
   for(auto telescope: session.user()->telescopes()) {
+    WPushButton *defaultButton = WW<WPushButton>("buttons_default").css("btn-xs").setEnabled(!telescope->isDefault()).addCss(telescope->isDefault() ? "" : "btn-primary").onClick([=](WMouseEvent){
+      if(telescope->isDefault()) return;
+        Dbo::Transaction t(session);
+        for(TelescopePtr current: session.user()->telescopes()) {
+          current.modify()->setDefault(telescope.id() == current.id());
+          current.flush();
+        }
+        t.commit();
+        populate();
+    });
+    
     WTableRow *row = telescopesTable->insertRow(telescopesTable->rowCount());
     row->elementAt(0)->addWidget(new WText{telescope->name() });
     row->elementAt(1)->addWidget(new WText{WString("{1}").arg(telescope->diameter()) });
     row->elementAt(2)->addWidget(new WText{WString("{1}").arg(telescope->focalLength()) });
     row->elementAt(3)->addWidget(new WText{ format("%.3f") % telescope->limitMagnitudeGain() });
     row->elementAt(4)->addWidget(new WText{ format("%.3f") % (telescope->limitMagnitudeGain() + 6) });
-    row->elementAt(5)->addWidget(WW<WPushButton>(WString::tr("buttons_remove")).css("btn btn-danger btn-xs").onClick([=](WMouseEvent){
-      Dbo::Transaction t(session);
-      session.user().modify()->telescopes().erase(telescope);
-      Dbo::ptr<Telescope> tel = telescope;
-      tel.remove();
-      t.commit();
-      populate();
-    }) );
+    row->elementAt(5)->addWidget(
+      WW<WToolBar>()
+      .addButton(defaultButton)
+      .addButton(WW<WPushButton>(WString::tr("buttons_remove")).css("btn btn-danger btn-xs").onClick([=](WMouseEvent){
+        Dbo::Transaction t(session);
+        session.user().modify()->telescopes().erase(telescope);
+        Dbo::ptr<Telescope> tel = telescope;
+        tel.remove();
+        t.commit();
+        populate();
+      }) )
+    );
   }
 }
 

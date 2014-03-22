@@ -22,6 +22,8 @@
 <message id="buttons_save">Save</message>
 <message id="buttons_send">Send</message>
 <message id="buttons_invert">Invert</message>
+<message id="buttons_default">Default</message>
+
 <message id="astrosessionspage_sessions_list">Sessions List</message>
 <message id="astrosessionslisttab_name">Name</message>
 <message id="astrosessionslisttab_when">When</message>
