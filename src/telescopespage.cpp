@@ -101,7 +101,7 @@ void TelescopesPage::Private::populate()
   telescopesTable->elementAt(0, 3)->addWidget(new WText{WString::tr("telescopes_magnitude_gain")});
   telescopesTable->elementAt(0, 4)->addWidget(new WText{WString::tr("telescopes_magnitude_limit_naked")});
   for(auto telescope: session.user()->telescopes()) {
-    WPushButton *defaultButton = WW<WPushButton>("buttons_default").css("btn-xs").setEnabled(!telescope->isDefault()).addCss(telescope->isDefault() ? "" : "btn-primary").onClick([=](WMouseEvent){
+    WPushButton *defaultButton = WW<WPushButton>(WString::tr("buttons_default")).css("btn-xs").setEnabled(!telescope->isDefault()).addCss(telescope->isDefault() ? "" : "btn-primary").onClick([=](WMouseEvent){
       if(telescope->isDefault()) return;
         Dbo::Transaction t(session);
         for(TelescopePtr current: session.user()->telescopes()) {
