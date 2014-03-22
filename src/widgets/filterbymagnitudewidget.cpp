@@ -45,8 +45,9 @@ FilterByMagnitudeWidget::FilterByMagnitudeWidget(const Options &options, const R
     checkValue();
     d->changed.emit(magnitude());
   });
-
-//  d->magnitudeSlider->sliderMoved().connect("function(a, b) { console.log(a); console.log(b); console.log(b.args); document.lastSliderMoved = b; }");
+#ifndef PRODUCTION_MODE
+  d->magnitudeSlider->sliderMoved().connect("function(a, b) { console.log(a); console.log(b); console.log(b.args); document.lastSliderMoved = b; }");
+#endif
   setImplementation(WW<WContainerWidget>().setInline(true).add(new WText{options.labelText}).add(d->magnitudeSlider).add(valueLabel));
 }
 
