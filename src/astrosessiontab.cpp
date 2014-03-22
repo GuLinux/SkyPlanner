@@ -207,14 +207,20 @@ void AstroSessionTab::Private::reload()
 
     actionsContainer->addWidget(WW<WContainerWidget>().css("form-inline pull-right").add(telescopeComboLabel).add(telescopeCombo));
     WStandardItemModel *model = new WStandardItemModel(q);
+    WStandardItem *defaultItem = 0;
     for(auto telescope: telescopes) {
-      if(!selectedTelescope)
-        selectedTelescope = telescope;
       WStandardItem *item = new WStandardItem(telescope->name());
+      if(!selectedTelescope || telescope->isDefault()) {
+        selectedTelescope = telescope;
+        spLog("notice") << "Setting telescope " << telescope->name() << " as preselected";
+        defaultItem = item;
+      }
       item->setData(telescope);
       model->appendRow(item);
     }
     telescopeCombo->setModel(model);
+    if(defaultItem)
+      telescopeCombo->setCurrentIndex(model->indexFromItem(defaultItem).row());
     filterByMinimumMagnitude->setMaximum(selectedTelescope->limitMagnitudeGain() + 6.5);
     
     telescopeCombo->activated().connect([=](int index, _n5){
