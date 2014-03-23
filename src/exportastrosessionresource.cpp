@@ -49,6 +49,7 @@
 #warning "Using libharu < 2.3, without UTF-8 support, this might lead to undefined results"
 #endif
 #endif
+#include "skyplanner.h"
 
 using namespace Wt;
 using namespace std;
@@ -229,15 +230,20 @@ void ExportAstroSessionResource::handleRequest(const Wt::Http::Request &request,
   printable.renderTemplate(buffer);
   string b = buffer.str();
   boost::replace_all(b, "°", "&deg;");
-//   cerr << "--------------------" << endl << b << endl << "----------------------" << endl;
-  renderer.render(WString::fromUTF8(b));
-  
-  HPDF_SaveToStream(pdf);
-  unsigned int size = HPDF_GetStreamSize(pdf);
-  HPDF_BYTE *buf = new HPDF_BYTE[size];
-  HPDF_ReadFromStream (pdf, buf, &size);
-  HPDF_Free(pdf);
-  response.out().write((char*)buf, size);
-  delete[] buf;
+
+  try {
+    renderer.render(WString::fromUTF8(b));
+    HPDF_SaveToStream(pdf);
+    unsigned int size = HPDF_GetStreamSize(pdf);
+    HPDF_BYTE *buf = new HPDF_BYTE[size];
+    HPDF_ReadFromStream (pdf, buf, &size);
+    HPDF_Free(pdf);
+    response.out().write((char*)buf, size);
+    delete[] buf;
+  } catch(std::exception &e) {
+    spLog("error") << "error rendering pdf: " << e.what();
+    spLog("error") << b;
+    throw e;
+  }
 #endif
 }
