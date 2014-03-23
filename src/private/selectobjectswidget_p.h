@@ -23,6 +23,7 @@
 #include <boost/thread.hpp>
 #include "utils/format.h"
 
+class FilterByConstellation;
 namespace Wt
 {
   class WTableRow;
@@ -74,6 +75,7 @@ public:
     bool aborted = false;
     FilterByTypeWidget *filterByTypeWidget;
     FilterByMagnitudeWidget *filterByMinimumMagnitude;
+    FilterByConstellation *filterByConstellation;
     std::string lastSearch;
     Wt::WTableRow *selectedRow = 0;
     std::map<ObjectSessionData::Key,ObjectSessionData> objectsSessionDataCache;

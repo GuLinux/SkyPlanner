@@ -70,6 +70,7 @@
 #include <Wt/WMemoryResource>
 #include "widgets/filterbymagnitudewidget.h"
 #include "widgets/filterbytypewidget.h"
+#include "widgets/filterbyconstellation.h"
 
 using namespace Wt;
 using namespace WtCommons;
@@ -190,7 +191,10 @@ void AstroSessionTab::Private::reload()
   filterByMinimumMagnitude = new FilterByMagnitudeWidget({WString::tr("not_set"), {}, WString::tr("minimum_magnitude_label")}, {0, 20});
   filterByType->changed().connect([=](_n6){ populate(); });
   filterByMinimumMagnitude->changed().connect([=](double, _n5){ populate(); });
-  q->addWidget(WW<WContainerWidget>().addCss("form-inline").add(filterByType).add(filterByMinimumMagnitude));
+  
+  filterByConstellation = new FilterByConstellation;
+  filterByConstellation->changed().connect([=](_n6){ populate(); });
+  q->addWidget(WW<WContainerWidget>().addCss("form-inline").add(filterByType).add(filterByMinimumMagnitude).add(filterByConstellation));
 
   q->addWidget(  new WText(WString::tr("printable_timezone_info").arg(timezone.timeZoneName)));
   q->addWidget(objectsTable = WW<WTable>().addCss("table  table-hover"));
@@ -479,6 +483,10 @@ void AstroSessionTab::Private::populate()
   });
   for(auto sessionObjectElement: sessionObjects) {
     dbo::ptr<AstroSessionObject> sessionObject = sessionObjectElement.first;
+    ConstellationFinder::Constellation constellation = ConstellationFinder::getName(sessionObject->coordinates());
+    if(filterByConstellation->selectedConstellation() && filterByConstellation->selectedConstellation() != constellation) {
+      continue;
+    }
     WTableRow *row = objectsTable->insertRow(objectsTable->rowCount());
     row->elementAt(0)->addWidget(WW<ObjectNamesWidget>(new ObjectNamesWidget{sessionObject->ngcObject(), session, astroSession}).setInline(true).onClick([=](WMouseEvent){
       if(selectedRow)
@@ -489,7 +497,7 @@ void AstroSessionTab::Private::populate()
     row->elementAt(1)->addWidget(new WText{sessionObject->ngcObject()->typeDescription() });
     row->elementAt(2)->addWidget(new WText{ Utils::htmlEncode( sessionObject->coordinates().rightAscension.printable(Angle::Hourly) ) });
     row->elementAt(3)->addWidget(new WText{ Utils::htmlEncode( WString::fromUTF8( sessionObject->coordinates().declination.printable() )) });
-    row->elementAt(4)->addWidget(new WText{ WString::fromUTF8(ConstellationFinder::getName(sessionObject->coordinates()).name) });
+    row->elementAt(4)->addWidget(new WText{ WString::fromUTF8(constellation.name) });
     row->elementAt(5)->addWidget(new WText{ Utils::htmlEncode( WString::fromUTF8( Angle::degrees(sessionObject->ngcObject()->angularSize()).printable() )) });
     row->elementAt(6)->addWidget(new WText{ sessionObject->ngcObject()->magnitude() > 90. ? "N/A" : (format("%.1f") % sessionObject->ngcObject()->magnitude()).str() });
     auto bestAltitude = sessionObject->bestAltitude(ephemeris, 1);

@@ -23,6 +23,7 @@
 #include <forecast.h>
 #include "types.h"
 
+class FilterByConstellation;
 namespace Wt
 {
   namespace Http
@@ -63,6 +64,7 @@ public:
     ExportAstroSessionResource *exportToCsvResource = 0;
     FilterByTypeWidget *filterByType;
     FilterByMagnitudeWidget *filterByMinimumMagnitude;
+    FilterByConstellation *filterByConstellation;
 private:
     class AstroSessionTab* const q;
 };

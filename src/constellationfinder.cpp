@@ -21,6 +21,7 @@
 #include <vector>
 #include <cmath>
 #include "constellationfinder.h"
+#include <vector>
 using namespace std;
 namespace {
 struct CoordinatesElement {
@@ -553,5 +554,12 @@ ConstellationFinder::Constellation ConstellationFinder::getName(double ra, doubl
     return abbrev_table[coordinatesTable[i].abbr];
   }
   return {};    // Error!
+}
+
+vector< ConstellationFinder::Constellation > ConstellationFinder::constellations()
+{
+  vector<Constellation> out;
+  std::transform(begin(abbrev_table), end(abbrev_table), back_inserter(out), [](pair<string,Constellation> p){ return p.second; });
+  return out;
 }
 

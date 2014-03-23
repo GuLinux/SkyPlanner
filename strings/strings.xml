@@ -86,6 +86,9 @@
 <message id="notification_object_already_added">Object already added to this session, skipping.</message>
 <message id="filters">Filters</message>
 <message id="filter_by_type_title">Filter By Type</message>
+<message id="filter_by_constellation_all">All Constellations</message>
+<message id="filter_by_constellation">Filter By Constellation</message>
+
 <message id="select_objects_widget_best_visible_objects">Best Visible Objects</message>
 <message id="catalogue_number">Catalogue Number</message>
 <message id="search">Search</message>

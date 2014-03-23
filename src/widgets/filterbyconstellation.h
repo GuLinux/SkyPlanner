@@ -1,6 +1,6 @@
 /*
  * <one line to give the program's name and a brief idea of what it does.>
- * Copyright (C) 2013  <copyright holder> <email>
+ * Copyright (C) 2014  Marco Gulino <email>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,24 +17,22 @@
  *
  */
 
-#ifndef CONSTELLATIONFINDER_H
-#define CONSTELLATIONFINDER_H
+#ifndef FILTERBYCONSTELLATION_H
+#define FILTERBYCONSTELLATION_H
 
-#include <string>
-#include "types.h"
-class ConstellationFinder {
+#include <Wt/WCompositeWidget>
+#include "utils/d_ptr.h"
+#include <constellationfinder.h>
+
+class FilterByConstellation : public Wt::WCompositeWidget
+{
 public:
-  struct Constellation {
-    std::string abbrev;
-    std::string name;
-    std::string genitive;
-    operator bool() { return !abbrev.empty() && !name.empty(); }
-    bool operator==(const Constellation &o) { return o.abbrev == abbrev; }
-    bool operator!=(const Constellation &o) { return o.abbrev != abbrev; }
-  };
-  static Constellation getName(double ra, double dec, double epoch = 2000.0);
-  static Constellation getName(const Coordinates::Equatorial &coordinates, double epoch = 2000.0);
-  static std::vector<Constellation> constellations();
+  FilterByConstellation( Wt::WContainerWidget *parent = 0);
+  virtual ~FilterByConstellation();
+  ConstellationFinder::Constellation selectedConstellation() const;
+  Wt::Signal<> &changed() const;
+private:
+    D_PTR;
 };
 
-#endif
+#endif // FILTERBYCONSTELLATION_H
