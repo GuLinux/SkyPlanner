@@ -472,6 +472,9 @@ void AstroSessionTab::Private::populate()
   for(auto filter: filterByType->selected())
     query.bind(filter);
 
+  if(filterByConstellation->selectedConstellation())
+    query.where("objects.constellation_abbrev = ?").bind(filterByConstellation->selectedConstellation().abbrev);
+
   auto sessionObjectsDbCollection = query.resultList();
   typedef pair<dbo::ptr<AstroSessionObject>, Ephemeris::BestAltitude> AstroSessionObjectElement;
   vector<AstroSessionObjectElement> sessionObjects;
@@ -483,10 +486,6 @@ void AstroSessionTab::Private::populate()
   });
   for(auto sessionObjectElement: sessionObjects) {
     dbo::ptr<AstroSessionObject> sessionObject = sessionObjectElement.first;
-    ConstellationFinder::Constellation constellation = ConstellationFinder::getName(sessionObject->coordinates());
-    if(filterByConstellation->selectedConstellation() && filterByConstellation->selectedConstellation() != constellation) {
-      continue;
-    }
     WTableRow *row = objectsTable->insertRow(objectsTable->rowCount());
     row->elementAt(0)->addWidget(WW<ObjectNamesWidget>(new ObjectNamesWidget{sessionObject->ngcObject(), session, astroSession}).setInline(true).onClick([=](WMouseEvent){
       if(selectedRow)
@@ -497,7 +496,7 @@ void AstroSessionTab::Private::populate()
     row->elementAt(1)->addWidget(new WText{sessionObject->ngcObject()->typeDescription() });
     row->elementAt(2)->addWidget(new WText{ Utils::htmlEncode( sessionObject->coordinates().rightAscension.printable(Angle::Hourly) ) });
     row->elementAt(3)->addWidget(new WText{ Utils::htmlEncode( WString::fromUTF8( sessionObject->coordinates().declination.printable() )) });
-    row->elementAt(4)->addWidget(new WText{ WString::fromUTF8(constellation.name) });
+    row->elementAt(4)->addWidget(new WText{ WString::fromUTF8(sessionObject->ngcObject()->constellation().name) });
     row->elementAt(5)->addWidget(new WText{ Utils::htmlEncode( WString::fromUTF8( Angle::degrees(sessionObject->ngcObject()->angularSize()).printable() )) });
     row->elementAt(6)->addWidget(new WText{ sessionObject->ngcObject()->magnitude() > 90. ? "N/A" : (format("%.1f") % sessionObject->ngcObject()->magnitude()).str() });
     auto bestAltitude = sessionObject->bestAltitude(ephemeris, 1);

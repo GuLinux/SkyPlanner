@@ -100,7 +100,6 @@ void SelectObjectsWidget::Private::populateHeaders(WTable *table)
 
 void SelectObjectsWidget::Private::append(WTable *table, const Dbo::ptr<NgcObject> &ngcObject, const Ephemeris::BestAltitude &bestAltitude)
 {
-  ConstellationFinder::Constellation constellation = ConstellationFinder::getName(ngcObject->coordinates());
   WTableRow *row = table->insertRow(table->rowCount());
   
 
@@ -121,7 +120,7 @@ void SelectObjectsWidget::Private::append(WTable *table, const Dbo::ptr<NgcObjec
   }
   ));
   row->elementAt(1)->addWidget(new WText{ ngcObject->typeDescription() });
-  row->elementAt(2)->addWidget(new WText{ WString::fromUTF8(constellation.name) });
+  row->elementAt(2)->addWidget(new WText{ WString::fromUTF8(ngcObject->constellation().name) });
   row->elementAt(3)->addWidget(new WText{ (ngcObject->magnitude() > 90.) ? "N/A" : (format("%.1f") % ngcObject->magnitude()).str() });
   WDateTime transit = WDateTime::fromPosixTime(timezone.fix(bestAltitude.when));
   row->elementAt(4)->addWidget(new ObjectDifficultyWidget(ngcObject, selectedTelescope, 99 /* TODO: hack, to be replaced */));
@@ -256,6 +255,9 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsList( double magnitud
     ngcObjectsQuery.where(format("\"type\" IN (%s)") % boost::algorithm::join(filterConditions, ", ") );
     for(auto filter: filterByTypeWidget->selected())
       ngcObjectsQuery.bind(filter);
+
+    if(filterByConstellation->selectedConstellation())
+      ngcObjectsQuery.where("constellation_abbrev = ?").bind(filterByConstellation->selectedConstellation().abbrev);
  
     dbo::collection<NgcObjectPtr> objects = ngcObjectsQuery.resultList();
 
@@ -273,20 +275,17 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsList( double magnitud
       if(aborted) return;
       auto cachedData = objectsSessionDataCache[{astroSession->position(), astroSession->when(), object.id() }];
       ConstellationFinder::Constellation objectConstellation = ConstellationFinder::getName(object->coordinates());
-      ConstellationFinder::Constellation selectedConstellation = filterByConstellation->selectedConstellation();
       
       
       if(cachedData && cachedData.bestAltitude.coordinates.altitude.degrees() > 17.) {
-        if(!selectedConstellation || selectedConstellation == objectConstellation)
-          suggestedObjectsList.push_back(cachedData);
+        suggestedObjectsList.push_back(cachedData);
       }
       else {
       auto bestAltitude = ephemeris.findBestAltitude(object->coordinates(), range.begin, range.end);
         if(bestAltitude.coordinates.altitude.degrees() > 17.) {
           ObjectSessionData objectSessionData{object, bestAltitude, observabilityIndex(object)};
           objectsSessionDataCache[{astroSession->position(), astroSession->when(), object.id() }] = objectSessionData;
-          if(!selectedConstellation || selectedConstellation == objectConstellation)
-            suggestedObjectsList.push_back(objectSessionData);
+          suggestedObjectsList.push_back(objectSessionData);
         }
       }
     }
