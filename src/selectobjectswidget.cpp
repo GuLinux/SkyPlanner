@@ -247,6 +247,8 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsList( double magnitud
     .where("astro_session_id = ?").bind(astroSession.id())
     .where("magnitude >= ?").bind(minimumMagnitude);
   objectsCountQuery.where(format("\"type\" IN (%s)") % boost::algorithm::join(filterConditions, ", ") );
+  for(auto filter: filterByTypeWidget->selected())
+    objectsCountQuery.bind(filter);
   if(filterByConstellation->selectedConstellation())
     objectsCountQuery.where("constellation_abbrev = ?").bind(filterByConstellation->selectedConstellation().abbrev);
   
@@ -258,6 +260,8 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsList( double magnitud
     .where("magnitude >= ?").bind(minimumMagnitude)
     .orderBy("magnitude asc");
   ngcObjectsQuery.where(format("\"type\" IN (%s)") % boost::algorithm::join(filterConditions, ", ") );
+  for(auto filter: filterByTypeWidget->selected())
+    ngcObjectsQuery.bind(filter);
   if(filterByConstellation->selectedConstellation())
     ngcObjectsQuery.where("constellation_abbrev = ?").bind(filterByConstellation->selectedConstellation().abbrev);
   ngcObjectsQuery.limit(10);
