@@ -34,6 +34,7 @@ public:
   };
   static Constellation getName(double ra, double dec, double epoch = 2000.0);
   static Constellation getName(const Coordinates::Equatorial &coordinates, double epoch = 2000.0);
+  static Constellation byAbbrev(const std::string &abbrev);
   static std::vector<Constellation> constellations();
 };
 

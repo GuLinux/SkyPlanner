@@ -172,3 +172,16 @@ vector<NgcObject::CatalogueDescription> NgcObject::descriptions() const
   transform(begin(denominations), end(denominations), back_inserter(dbDescriptions), [](const NebulaDenominationPtr &d){ return CatalogueDescription{d->catalogue(), *d->comment()}; });
   return dbDescriptions;
 }
+
+void NgcObject::updateConstellation()
+{
+  ConstellationFinder::Constellation constellation = ConstellationFinder::getName(coordinates());
+  if(constellation)
+      _constellationAbbrev = constellation.abbrev;
+}
+
+ConstellationFinder::Constellation NgcObject::constellation() const
+{
+  if(!_constellationAbbrev) return ConstellationFinder::Constellation{};
+  return ConstellationFinder::byAbbrev(*_constellationAbbrev);
+}

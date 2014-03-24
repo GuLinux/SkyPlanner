@@ -44,6 +44,9 @@
 #include <Wt/WMessageResourceBundle>
 #include <Wt-Commons/whtmltemplateslocalizedstrings.h>
 #include "homepage.h"
+#include <mutex>
+#include <Wt/WProgressBar>
+#include "utils/format.h"
 
 
 using namespace std;
@@ -88,6 +91,26 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
   theme->setVersion(WBootstrapTheme::Version3);
   setTheme( theme );
   requireJQuery("http://codeorigin.jquery.com/jquery-1.8.3.min.js");
+  {
+    Dbo::Transaction t(d->session);
+    long objectsWithoutConstellationSize = d->session.query<long>("select count(*) from objects where constellation_abbrev is null").resultValue();
+    if(objectsWithoutConstellationSize > 0) {
+      spLog("notice") << "Found " << objectsWithoutConstellationSize << " objects without constellation, running update";
+      static mutex updateDatabaseMutex;
+      unique_lock<mutex> lockUpdateDatabase(mutex);
+      long current = 0;
+      int progressPercent = 0;
+      for(auto object: d->session.find<NgcObject>().where("constellation_abbrev is null").resultList()) {
+        object.modify()->updateConstellation();
+        object.flush();
+        int currentProgress = 100. * static_cast<double>(++current) / static_cast<double>(objectsWithoutConstellationSize);
+        if(currentProgress > progressPercent) {
+          spLog("notice") << "Updated object " << current << " of " << objectsWithoutConstellationSize << ", " << currentProgress << "%";
+          progressPercent = currentProgress;
+        }
+      }
+    }
+  }
 
   WNavigationBar *navBar = WW<WNavigationBar>( root() ).addCss( "navbar-inverse" );
   navBar->setResponsive( true );

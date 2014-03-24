@@ -25,6 +25,7 @@
 #include <Wt/Dbo/ptr>
 #include <Wt/WString>
 #include <string>
+#include "constellationfinder.h"
 #include "types.h"
 
 class Telescope;
@@ -95,8 +96,9 @@ public:
         dbo::field(a, _magnitude, "magnitude");
         dbo::field(a, _angularSize, "angular_size");
         dbo::field(a, _type, "type");
-	dbo::hasMany(a, _nebulae, dbo::ManyToOne);
-	dbo::hasMany(a, _astroSessionObjects, dbo::ManyToOne);
+        dbo::field(a, _constellationAbbrev, "constellation_abbrev");
+        dbo::hasMany(a, _nebulae, dbo::ManyToOne);
+        dbo::hasMany(a, _astroSessionObjects, dbo::ManyToOne);
     }
     static std::vector<NebulaDenominationPtr> denominationsByCatalogueImportance(dbo::Transaction &transaction, const NgcObjectPtr &object);
     static std::vector<std::string> namesByCatalogueImportance(dbo::Transaction &transaction, const NgcObjectPtr &object);
@@ -107,6 +109,8 @@ public:
     };
 
     std::vector<CatalogueDescription> descriptions() const;
+    ConstellationFinder::Constellation constellation() const;
+    void updateConstellation();
 private:
     boost::optional<std::string> _objectId;
     float _rightAscension, _declination, _magnitude, _angularSize;
@@ -114,6 +118,7 @@ private:
     dbo::collection<NebulaDenominationPtr> _nebulae;
     dbo::collection<NebulaDenominationPtr> _astroSessionObjects;
     dbo::dbo_traits<NgcObject>::IdType _id;
+    boost::optional<std::string> _constellationAbbrev;
 };
 
 

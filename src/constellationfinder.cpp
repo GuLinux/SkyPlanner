@@ -562,4 +562,9 @@ vector< ConstellationFinder::Constellation > ConstellationFinder::constellations
   std::transform(begin(abbrev_table), end(abbrev_table), back_inserter(out), [](pair<string,Constellation> p){ return p.second; });
   return out;
 }
+  
+ConstellationFinder::Constellation ConstellationFinder::byAbbrev(const string &abbrev)
+{
+  return abbrev_table.count(abbrev) > 0 ? abbrev_table[abbrev] : Constellation{};
+}
 
