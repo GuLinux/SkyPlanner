@@ -71,6 +71,7 @@ Session::Session()
   mapClass<AuthInfo::AuthTokenType>("auth_token");
   mapClass<AstroSession>("astro_session");
   mapClass<AstroSessionObject>("astro_session_object");
+  mapClass<EphemerisCache>("ephemeris_cache");
   d->users = new UserDatabase(*this);
   static bool creationScriptPrinted = false;
   static bool createTablesExecuted = false;

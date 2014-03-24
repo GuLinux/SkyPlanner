@@ -9,4 +9,5 @@
 #include "telescope.h"
 #include "astrosession.h"
 #include "astrosessionobject.h"
+#include "ephemeris_cache.h"
 #endif
