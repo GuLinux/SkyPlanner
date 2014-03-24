@@ -457,8 +457,9 @@ void AstroSessionTab::Private::updatePositionDetails()
 void AstroSessionTab::Private::populate()
 {
   objectsTable->clear();
-  Dbo::Transaction t(session);
 
+  Dbo::Transaction t(session);
+/*
   auto constellations = session.query<string>(R"(select constellation_abbrev from astro_session_object
       inner join objects on objects_id = objects.id
       where astro_session_id = ?
@@ -468,7 +469,7 @@ void AstroSessionTab::Private::populate()
   filterByConstellation->setFilter([=](const ConstellationFinder::Constellation &c){
     return count_if(begin(vConstellations), end(vConstellations), [=](const std::string &abbrev){ return c.abbrev == abbrev; }) > 0; });
   filterByConstellation->changed().connect([=](_n6){ populate(); });
-  
+  */
   selectedRow = 0;
   objectsTable->elementAt(0,0)->addWidget(new WText{WString::tr("object_column_names")});
   objectsTable->elementAt(0,1)->addWidget(new WText{WString::tr("object_column_type")});
