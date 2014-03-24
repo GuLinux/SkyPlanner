@@ -35,21 +35,6 @@ class FilterByMagnitudeWidget;
 class SelectObjectsWidget::Private
 {
 public:
-    struct ObjectSessionData {
-      struct Key {
-        Coordinates::LatLng position;
-        boost::posix_time::ptime when;
-        long objectId;
-        std::string str() const { return format("%.3f-%.3f-%s-%d") % position.latitude.degrees() % position.longitude.degrees() % boost::posix_time::to_simple_string(when) % objectId; }
-        bool operator<(const Key &other) const { return str() < other.str(); }
-      };
-      NgcObjectPtr object;
-      Ephemeris::BestAltitude bestAltitude;
-      double observabilityIndex;
-      operator bool() { return object && bestAltitude.coordinates && bestAltitude.when != boost::posix_time::ptime(); }
-
-    };
-
     Private(const Wt::Dbo::ptr<AstroSession>& astroSession, Session& session, SelectObjectsWidget* q);
     Wt::Dbo::ptr<AstroSession> astroSession;
     Session &session;
@@ -60,8 +45,6 @@ public:
     void searchByNameTab(Wt::Dbo::Transaction &transaction);
     void suggestedObjects(Wt::Dbo::Transaction &transaction);
     void populateSuggestedObjectsList();
-    typedef std::vector<ObjectSessionData> NgcObjectsList; 
-    NgcObjectsList suggestedObjectsList; 
     boost::mutex suggestedObjectsListMutex;
     int pagesCurrentIndex = 0;
     Wt::Dbo::ptr< Telescope > selectedTelescope;

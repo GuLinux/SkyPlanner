@@ -53,6 +53,7 @@
 #include "widgets/filterbytypewidget.h"
 #include "widgets/filterbymagnitudewidget.h"
 #include "widgets/filterbyconstellation.h"
+#include <Wt/WImage>
 
 using namespace Wt;
 using namespace WtCommons;
@@ -146,8 +147,6 @@ void SelectObjectsWidget::Private::append(WTable *table, const Dbo::ptr<NgcObjec
 }
 
 
-
-#define TelescopeMagnitudeLimit (Wt::UserRole + 1)
 void SelectObjectsWidget::Private::suggestedObjects(Dbo::Transaction& transaction)
 {
   WContainerWidget *suggestedObjectsContainer = WW<WContainerWidget>();
@@ -187,7 +186,6 @@ template<typename T> T &SelectObjectsWidget::Private::filterQuery(T &query)
 void SelectObjectsWidget::Private::populateSuggestedObjectsList()
 {
   suggestedObjectsTable->clear();
-  suggestedObjectsList.clear();
   suggestedObjectsTablePagination->clear();
   selectedRow = 0;
   
@@ -253,6 +251,9 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsList()
 
 void SelectObjectsWidget::populateFor(const Dbo::ptr< Telescope > &telescope , Timezone timezone)
 {
+  d->suggestedObjectsTablePagination->clear();
+  d->suggestedObjectsTable->clear();
+  d->suggestedObjectsTablePagination->addWidget(WW<WImage>("http://gulinux.net/loading_animation.gif").addCss("center-block"));
   double magnitudeLimit = (telescope ? telescope->limitMagnitudeGain() + 6.5 : 12);
   d->filterByMinimumMagnitude->setMaximum(magnitudeLimit-0.5);
   d->selectedTelescope = telescope;
