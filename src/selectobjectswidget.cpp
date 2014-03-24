@@ -277,13 +277,16 @@ void SelectObjectsWidget::populateFor(const Dbo::ptr< Telescope > &telescope , T
 
     Ephemeris ephemeris({d->astroSession->position().latitude, d->astroSession->position().longitude});
     AstroSession::ObservabilityRange range = d->astroSession->observabilityRange(ephemeris).delta({1,20,0});
+    long loadedObjects = 0;
     for(auto ngcObject: ephemerisCacheSession.find<NgcObject>().where("magnitude < ?").bind(magnitudeLimit).resultList()) {
       auto bestAltitude = ephemeris.findBestAltitude(ngcObject->coordinates(), range.begin, range.end);
       if(bestAltitude.coordinates.altitude.degrees() > 17.) {
+	loadedObjects++;
         ephemerisCacheSession.add(new EphemerisCache{bestAltitude, ngcObject, d->astroSession});
       }
     }
-    WServer::instance()->log("notice") << "Ephemeris cache calculation ended, elapsed: " << boost::posix_time::to_simple_string(boost::posix_time::microsec_clock::local_time() - start);
+    t.commit();
+    WServer::instance()->log("notice") << "Ephemeris cache calculation ended, elapsed: " << boost::posix_time::to_simple_string(boost::posix_time::microsec_clock::local_time() - start) << ", loaded " << loadedObjects << " objects";
     WServer::instance()->post(app->sessionId(), [=] {
       d->populateSuggestedObjectsList();
       app->triggerUpdate();
