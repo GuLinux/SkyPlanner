@@ -197,8 +197,12 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsList()
   
   auto objectsCountQuery = session.query<long>("select count(*) from objects o, ephemeris_cache");
   long objectsCount = filterQuery(objectsCountQuery).resultValue();
-  
+
   spLog("notice") << "objects count: " << objectsCount;
+  if(objectsCount<=0) {
+    // TODO: messagE?
+    return;
+  }
   
   auto populateTable = [=](long limit, long offset) {
     Dbo::Transaction t(session);
@@ -207,6 +211,7 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsList()
     suggestedObjectsTable->clear();
     populateHeaders(suggestedObjectsTable);
     for(auto ngcObject: ngcObjectsQuery.resultList() ) {
+      wApp->log("notice") << "finding EphemerisCache for astro_session_id=" << astroSession.id() << " and objects_id=" << ngcObject.id();
       auto ephemerisCache = session.find<EphemerisCache>().where("astro_session_id = ?").bind(astroSession.id()).where("objects_id = ?").bind(ngcObject.id()).resultValue();
       append(suggestedObjectsTable, ngcObject, ephemerisCache->bestAltitude());
     }
