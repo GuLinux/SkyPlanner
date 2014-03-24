@@ -110,10 +110,12 @@ void SelectObjectsWidget::Private::append(WTable *table, const Dbo::ptr<NgcObjec
   if(existing > 0)
     row->addStyleClass("success");
   row->elementAt(0)->addWidget(WW<ObjectNamesWidget>(new ObjectNamesWidget{ngcObject, session, astroSession}).setInline(true).onClick([=](WMouseEvent) {
+    /*
     if(selectedRow)
       selectedRow->removeStyleClass("info");
     row->addStyleClass("info");
     selectedRow = row;
+    */
   }
   ));
   row->elementAt(1)->addWidget(new WText{ ngcObject->typeDescription() });
