@@ -65,7 +65,6 @@ public:
     FilterByTypeWidget *filterByType;
     FilterByMagnitudeWidget *filterByMinimumMagnitude;
     FilterByConstellation *filterByConstellation;
-    void populateEphemerisCache();
 private:
     class AstroSessionTab* const q;
 };

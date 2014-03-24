@@ -232,12 +232,44 @@ void SelectObjectsWidget::Private::suggestedObjects(Dbo::Transaction& transactio
 
 void SelectObjectsWidget::Private::populateSuggestedObjectsList( double magnitudeLimit )
 {
-  filterByMinimumMagnitude->setMaximum(magnitudeLimit-0.5);
   boost::unique_lock<boost::mutex> l1(suggestedObjectsListMutex);
   suggestedObjectsTable->clear();
   suggestedObjectsList.clear();
   suggestedObjectsTablePagination->clear();
   selectedRow = 0;
+  
+  if(filterByTypeWidget->selected().size() == 0)
+    return;
+  Dbo::Transaction t(session);
+  double minimumMagnitude = filterByMinimumMagnitude->isMinimum() ? -20 : filterByMinimumMagnitude->magnitude();
+  vector<string> filterConditions{filterByTypeWidget->selected().size(), "?"};
+  auto objectsCountQuery = session.query<long>("select count(*) from objects inner join ephemeris_cache on objects.id = ephemeris_cache.objects_id")
+    .where("astro_session_id = ?").bind(astroSession.id())
+    .where("magnitude >= ?").bind(minimumMagnitude);
+  objectsCountQuery.where(format("\"type\" IN (%s)") % boost::algorithm::join(filterConditions, ", ") );
+  if(filterByConstellation->selectedConstellation())
+    objectsCountQuery.where("constellation_abbrev = ?").bind(filterByConstellation->selectedConstellation().abbrev);
+  
+  spLog("notice") << "objects count: " << objectsCountQuery.resultValue();
+  
+  auto ngcObjectsQuery = session.query<NgcObjectPtr>("select o from objects o, ephemeris_cache")
+    .where("o.id = ephemeris_cache.objects_id")
+    .where("astro_session_id = ?").bind(astroSession.id())
+    .where("magnitude >= ?").bind(minimumMagnitude)
+    .orderBy("magnitude asc");
+  ngcObjectsQuery.where(format("\"type\" IN (%s)") % boost::algorithm::join(filterConditions, ", ") );
+  if(filterByConstellation->selectedConstellation())
+    ngcObjectsQuery.where("constellation_abbrev = ?").bind(filterByConstellation->selectedConstellation().abbrev);
+  ngcObjectsQuery.limit(10);
+  
+  populateHeaders(suggestedObjectsTable);
+  for(auto ngcObject: ngcObjectsQuery.resultList() ) {
+    auto ephemerisCache = session.find<EphemerisCache>().where("astro_session_id = ?").bind(astroSession.id()).where("objects_id = ?").bind(ngcObject.id()).resultValue();
+    append(suggestedObjectsTable, ngcObject, ephemerisCache->bestAltitude());
+  }
+  
+  return;
+  
   WApplication *app = wApp;
   aborted = true;
   bgThread.join();
@@ -307,9 +339,32 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsList( double magnitud
 void SelectObjectsWidget::populateFor(const Dbo::ptr< Telescope > &telescope , Timezone timezone)
 {
   double magnitudeLimit = (telescope ? telescope->limitMagnitudeGain() + 6.5 : 12);
+  d->filterByMinimumMagnitude->setMaximum(magnitudeLimit-0.5);
   d->selectedTelescope = telescope;
   d->timezone = timezone;
-  d->populateSuggestedObjectsList(magnitudeLimit);
+  if(!d->astroSession->position()) return;
+  WApplication *app = wApp;
+  boost::thread( [=] {
+    boost::posix_time::ptime start = boost::posix_time::microsec_clock::local_time();
+    WServer::instance()->log("notice") << "Ephemeris cache calculation started.";
+    Session ephemerisCacheSession;
+    Dbo::Transaction t(ephemerisCacheSession);
+    ephemerisCacheSession.execute("delete from ephemeris_cache WHERE astro_session_id = ?").bind(d->astroSession.id());
+
+    Ephemeris ephemeris({d->astroSession->position().latitude, d->astroSession->position().longitude});
+    AstroSession::ObservabilityRange range = d->astroSession->observabilityRange(ephemeris).delta({1,20,0});
+    for(auto ngcObject: ephemerisCacheSession.find<NgcObject>().where("magnitude < ?").bind(magnitudeLimit).resultList()) {
+      auto bestAltitude = ephemeris.findBestAltitude(ngcObject->coordinates(), range.begin, range.end);
+      if(bestAltitude.coordinates.altitude.degrees() > 17.) {
+        ephemerisCacheSession.add(new EphemerisCache{bestAltitude, ngcObject, d->astroSession});
+      }
+    }
+    WServer::instance()->log("notice") << "Ephemeris cache calculation ended, elapsed: " << boost::posix_time::to_simple_string(boost::posix_time::microsec_clock::local_time() - start);
+    WServer::instance()->post(app->sessionId(), [=] {
+      d->populateSuggestedObjectsList(magnitudeLimit);
+      app->triggerUpdate();
+    });
+  }).detach();
 }
 
 

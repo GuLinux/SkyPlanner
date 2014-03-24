@@ -107,28 +107,6 @@ Signal< NoClass > &AstroSessionTab::close() const
   return d->close;
 }
 
-void AstroSessionTab::Private::populateEphemerisCache()
-{
-  if(!astroSession->position()) return;
-  boost::thread( [=] {
-    boost::posix_time::ptime start = boost::posix_time::microsec_clock::local_time();
-    double magnitudeLimit = (selectedTelescope ? selectedTelescope->limitMagnitudeGain() + 6.5 : 12);
-    WServer::instance()->log("notice") << "Ephemeris cache calculation started.";
-    Session ephemerisCacheSession;
-    Dbo::Transaction t(ephemerisCacheSession);
-    ephemerisCacheSession.execute("delete from ephemeris_cache WHERE astro_session_id = ?").bind(astroSession.id());
-
-    Ephemeris ephemeris({astroSession->position().latitude, astroSession->position().longitude});
-    AstroSession::ObservabilityRange range = astroSession->observabilityRange(ephemeris).delta({1,20,0});
-    for(auto ngcObject: ephemerisCacheSession.find<NgcObject>().where("magnitude < ?").bind(magnitudeLimit).resultList()) {
-      auto bestAltitude = ephemeris.findBestAltitude(ngcObject->coordinates(), range.begin, range.end);
-      if(bestAltitude.coordinates.altitude.degrees() > 17.) {
-        ephemerisCacheSession.add(new EphemerisCache{bestAltitude, ngcObject, astroSession});
-      }
-    }
-    WServer::instance()->log("notice") << "Ephemeris cache calculation ended, elapsed: " << boost::posix_time::to_simple_string(boost::posix_time::microsec_clock::local_time() - start);
-  }).detach();
-}
 
 void AstroSessionTab::Private::reload()
 {
@@ -408,7 +386,6 @@ void AstroSessionTab::Private::printableVersion()
 
 void AstroSessionTab::Private::updatePositionDetails()
 {
-  populateEphemerisCache();
   Dbo::Transaction t(session);
   astroSession.reread();
   positionDetails->clear();
