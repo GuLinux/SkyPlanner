@@ -41,7 +41,6 @@ FilterByConstellation::FilterByConstellation( Wt::WContainerWidget *parent ): WC
 {
   WComboBox *constellationsCombo = WW<WComboBox>();
   d->model = new WStandardItemModel(constellationsCombo);
-  d->model->appendRow(new WStandardItem(WString::tr("filter_by_constellation_all")));
   constellationsCombo->setModel(d->model);
   constellationsCombo->activated().connect([=](int index, _n5){
     d->selected = (index==0) ? ConstellationFinder::Constellation{} : boost::any_cast<ConstellationFinder::Constellation>(d->model->item(index)->data());
@@ -58,6 +57,7 @@ FilterByConstellation::~FilterByConstellation()
 void FilterByConstellation::reload()
 {
   d->model->clear();
+  d->model->appendRow(new WStandardItem(WString::tr("filter_by_constellation_all")));
   auto allConstellations = ConstellationFinder::constellations();
   vector<ConstellationFinder::Constellation> constellations;
   copy_if(begin(allConstellations), end(allConstellations), back_inserter(constellations), d->filter);
