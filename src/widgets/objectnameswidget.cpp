@@ -89,11 +89,9 @@ ObjectNamesWidget::ObjectNamesWidget( const Wt::Dbo::ptr<NgcObject> &object, Ses
         menuItem->setLinkTarget( TargetNewWindow );
     };
     popup->addSectionHeader( WString::tr( "objectnames_more_info" ) )->addStyleClass("dropdown-header");
-spLog("notice") << __PRETTY_FUNCTION__ << ": 1";
     WMenuItem *imagesMenuItem = popup->addItem( WString::tr( "objectnames_digitalized_sky_survey_menu" ) );
     imagesMenuItem->setLink(WLink(WLink::InternalPath, DSSPage::internalPath(object, t)));
 
-spLog("notice") << __PRETTY_FUNCTION__ << ": 2";
     string catName;
     string catNumber;
     auto dboDenominations = NgcObject::denominationsByCatalogueImportance(t, object);
@@ -134,7 +132,6 @@ spLog("notice") << __PRETTY_FUNCTION__ << ": 2";
     }
 
 
-spLog("notice") << __PRETTY_FUNCTION__ << ": 3";
     popup->addSectionHeader( WString::tr( "objectnames_search_menu_title" ) )->addStyleClass("dropdown-header");
     auto searchURL = [ = ]( string url, NebulaDenominationPtr nebulaDenomination )
     {
@@ -143,7 +140,6 @@ spLog("notice") << __PRETTY_FUNCTION__ << ": 3";
 
     if( denominations.size() == 1 )
     {
-spLog("notice") << __PRETTY_FUNCTION__ << ": 4";
       addLink( WString::tr( "objectnames_google_search" ), searchURL( "http://www.google.com/search?q=%s", denominations.front() ) );
       addLink( WString::tr( "objectnames_google_images_search" ), searchURL( "http://www.google.com/images?q=%s", denominations.front() ) );
       addLink( "SIMBAD", searchURL( "http://simbad.u-strasbg.fr/simbad/sim-basic?Ident=%s&submit=SIMBAD+search", denominations.front() ) );
@@ -151,7 +147,6 @@ spLog("notice") << __PRETTY_FUNCTION__ << ": 4";
     }
     else
     {
-spLog("notice") << __PRETTY_FUNCTION__ << ": 5";
       WMenu *googleSearchSubMenu = new WPopupMenu();
       WMenu *googleImagesSearchSubMenu = new WPopupMenu();
       WMenu *simbadSearchSubMenu = new WPopupMenu;
@@ -163,7 +158,6 @@ spLog("notice") << __PRETTY_FUNCTION__ << ": 5";
 
       for( auto name : denominations )
       {
-spLog("notice") << __PRETTY_FUNCTION__ << ": 6";
         addLink( name->search(), searchURL( "http://www.google.com/search?q=%s", name), googleSearchSubMenu );
         addLink( name->search(), searchURL( "http://www.google.com/images?q=%s", name ), googleImagesSearchSubMenu );
         addLink( name->search(), searchURL( "http://simbad.u-strasbg.fr/simbad/sim-basic?Ident=%s&submit=SIMBAD+search", name ), simbadSearchSubMenu );
@@ -171,14 +165,9 @@ spLog("notice") << __PRETTY_FUNCTION__ << ": 6";
       }
     }
 
-spLog("notice") << __PRETTY_FUNCTION__ << ": 7";
     popup->addSectionHeader( WString::tr( "objectnames_feedback_title" ) )->addStyleClass("dropdown-header");
     addLink(WString::tr( "objectnames_feedback_menu" ), WLink(WLink::InternalPath, SendFeedbackPage::internalPath(object, &t)) );
-
-
-spLog("notice") << __PRETTY_FUNCTION__ << ": 8";
     popup->popup(e);
-spLog("notice") << __PRETTY_FUNCTION__ << ": 9";
   } );
 }
 
