@@ -194,6 +194,7 @@ void AstroSessionTab::Private::reload()
   filterByMinimumMagnitude->changed().connect([=](double, _n5){ populate(); });
   
   filterByConstellation = new FilterByConstellation;
+  filterByConstellation->changed().connect([=](_n6){ populate(); });
   q->addWidget(WW<WContainerWidget>().addCss("form-inline").add(filterByType).add(filterByMinimumMagnitude).add(filterByConstellation));
 
   q->addWidget(  new WText(WString::tr("printable_timezone_info").arg(timezone.timeZoneName)));
@@ -468,7 +469,6 @@ void AstroSessionTab::Private::populate()
   vector<string> vConstellations(begin(constellations), end(constellations));
   filterByConstellation->setFilter([=](const ConstellationFinder::Constellation &c){
     return count_if(begin(vConstellations), end(vConstellations), [=](const std::string &abbrev){ return c.abbrev == abbrev; }) > 0; });
-  filterByConstellation->changed().connect([=](_n6){ populate(); });
   */
   selectedRow = 0;
   objectsTable->elementAt(0,0)->addWidget(new WText{WString::tr("object_column_names")});
