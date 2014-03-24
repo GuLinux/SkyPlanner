@@ -355,6 +355,12 @@ void AstroSessionTab::Private::printableVersion()
   printableDialog->contents()->addWidget(WW<WContainerWidget>().add(fontScalingSlider).add(fontScalingValue));
   printableDialog->contents()->addWidget(new WBreak);
   
+  WComboBox *maxNamesCombo = new WComboBox;
+  maxNamesCombo->addItem(WString::tr("max_names_no_limit"));
+  for(int i=1; i<11; i++)
+    maxNamesCombo->addItem(WString("{1}").arg(i));
+  maxNamesCombo->activated().connect([=](int index, _n5){ printableResource->setNamesLimit(index); });
+  printableDialog->contents()->addWidget(WW<WContainerWidget>().add(new WLabel{WString::tr("astrosessiontab_printable_version_max_names")}).add(maxNamesCombo).add(new WBreak));
   Dbo::Transaction t(session);
   auto telescopes = session.user()->telescopes();
   switch(telescopes.size()) {
