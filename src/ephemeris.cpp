@@ -118,10 +118,10 @@ Ephemeris::Darkness Ephemeris::darknessHours( const boost::posix_time::ptime &wh
   return {darkness.set, darkness.rise, darkness.rise - darkness.set};
 }
 
-Ephemeris::BestAltitude Ephemeris::findBestAltitude( const Coordinates::Equatorial &arDec, const boost::posix_time::ptime &rangeStart, const boost::posix_time::ptime &rangeEnd ) const
+Ephemeris::BestAltitude Ephemeris::findBestAltitude( const Coordinates::Equatorial &arDec, const boost::posix_time::ptime &rangeStart, const boost::posix_time::ptime &rangeEnd, const boost::posix_time::time_duration steps) const
 {
   Ephemeris::BestAltitude bestAltitude;
-  for(boost::posix_time::ptime i = rangeStart; i<=rangeEnd; i+= boost::posix_time::time_duration(0, 10, 0)) {
+  for(boost::posix_time::ptime i = rangeStart; i<=rangeEnd; i+= steps) {
     Coordinates::AltAzimuth c = arDec2altAz(arDec, i);
     if( ! bestAltitude.coordinates || c.altitude.degrees() > bestAltitude.coordinates.altitude.degrees() )
       bestAltitude = {c,i};

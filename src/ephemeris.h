@@ -56,7 +56,7 @@ class Ephemeris
     Darkness darknessHours(const boost::posix_time::ptime &when) const;
 
     Coordinates::AltAzimuth arDec2altAz(const Coordinates::Equatorial &equatorial, const boost::posix_time::ptime &when) const;
-    BestAltitude findBestAltitude(const Coordinates::Equatorial &equatorial, const boost::posix_time::ptime &rangeStart, const boost::posix_time::ptime &rangeEnd) const;
+    BestAltitude findBestAltitude(const Coordinates::Equatorial &equatorial, const boost::posix_time::ptime &rangeStart, const boost::posix_time::ptime &rangeEnd, const boost::posix_time::time_duration steps = {0, 10, 0}) const;
   private:
     D_PTR;
 };
