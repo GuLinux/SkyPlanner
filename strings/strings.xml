@@ -29,6 +29,7 @@
 <message id="astrosessionslisttab_when">When</message>
 <message id="astrosessionslisttab_next_nights_without_moon">Next nights without moon: </message>
 <message id="astrosessionslisttab_add_new_label">Add New Session: </message>
+<message id="suggested_objects_empty_list">Objects list is empty for the selected criteria.</message>
 
 <message id="astrosessionslisttab_add_new_name_empty">Session name cannot be empty.</message>
 <message id="astrosessionslisttab_add_new_date_invalid">You must enter a valid session date.</message>

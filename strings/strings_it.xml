@@ -77,6 +77,7 @@
 <message id="astrosessiontab_printable_version">Versione Stampabile</message>
 <message id="astrosessiontab__telescope_label">Telescopio: </message>
 <message id="astrosessiontab_no_telescopes_message">Aggiungi uno o più telescopi nella sezione "I Miei Telescopi" per vedere suggerimenti e dati personalizzati.</message>
+<message id="suggested_objects_empty_list">Lista oggetti vuota per i criteri di ricerca utilizzati.</message>
 
 <message id="astrosessionslisttab_add_new_name_empty">Il nome della sessione non può essere vuoto.</message>
 <message id="astrosessionslisttab_add_new_date_invalid">Devi inserire una data valida per la sessione.</message>

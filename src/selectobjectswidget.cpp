@@ -159,14 +159,14 @@ void SelectObjectsWidget::Private::suggestedObjects(Dbo::Transaction& transactio
   filterByConstellation->changed().connect([=](_n6){ populateSuggestedObjectsList(); });
   suggestedObjectsContainer->addWidget(WW<WGroupBox>(WString::tr("filters")).add(WW<WContainerWidget>().css("form-inline").add(filterByTypeWidget).add(filterByMinimumMagnitude).add(filterByConstellation) ));
   suggestedObjectsTable = WW<WTable>().addCss("table  table-hover");
-  suggestedObjectsTablePagination = WW<WContainerWidget>();
+  suggestedObjectsFooter = WW<WContainerWidget>();
 
   suggestedObjectsTable->setHeaderCount(1);
   
   suggestedObjectsContainer->setPadding(10);
   q->addTab(suggestedObjectsContainer, WString::tr("select_objects_widget_best_visible_objects"));
   suggestedObjectsContainer->addWidget(suggestedObjectsTable);
-  suggestedObjectsContainer->addWidget(suggestedObjectsTablePagination);
+  suggestedObjectsContainer->addWidget(suggestedObjectsFooter);
 }
 
 template<typename T> T &SelectObjectsWidget::Private::filterQuery(T &query)
@@ -186,12 +186,13 @@ template<typename T> T &SelectObjectsWidget::Private::filterQuery(T &query)
 void SelectObjectsWidget::Private::populateSuggestedObjectsList()
 {
   suggestedObjectsTable->clear();
-  suggestedObjectsTablePagination->clear();
+  suggestedObjectsFooter->clear();
   selectedRow = 0;
   
-    // TODO: message?
-  if(filterByTypeWidget->selected().size() == 0)
+  if(filterByTypeWidget->selected().size() == 0) {
+    suggestedObjectsFooter->addWidget(WW<WText>(WString::tr("suggested_objects_empty_list")));
     return;
+  }
   Dbo::Transaction t(session);
   double minimumMagnitude = filterByMinimumMagnitude->isMinimum() ? -20 : filterByMinimumMagnitude->magnitude();
   vector<string> filterConditions{filterByTypeWidget->selected().size(), "?"};
@@ -201,7 +202,7 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsList()
 
   spLog("notice") << "objects count: " << objectsCount;
   if(objectsCount<=0) {
-    // TODO: message?
+    suggestedObjectsFooter->addWidget(WW<WText>(WString::tr("suggested_objects_empty_list")));
     return;
   }
   
@@ -224,7 +225,7 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsList()
   WContainerWidget *paginationWidget = WW<WContainerWidget>().addCss("pagination pagination-sm");
   paginationWidget->setList(true);
   shared_ptr<vector<WContainerWidget*>> pages(new vector<WContainerWidget*>());
-  suggestedObjectsTablePagination->addWidget(paginationWidget);
+  suggestedObjectsFooter->addWidget(paginationWidget);
   
   WContainerWidget *previousButton = WW<WContainerWidget>().css("disabled");
   WContainerWidget *nextButton = WW<WContainerWidget>();
@@ -258,9 +259,9 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsList()
 
 void SelectObjectsWidget::populateFor(const Dbo::ptr< Telescope > &telescope , Timezone timezone)
 {
-  d->suggestedObjectsTablePagination->clear();
+  d->suggestedObjectsFooter->clear();
   d->suggestedObjectsTable->clear();
-  d->suggestedObjectsTablePagination->addWidget(WW<WImage>("http://gulinux.net/loading_animation.gif").addCss("center-block"));
+  d->suggestedObjectsFooter->addWidget(WW<WImage>("http://gulinux.net/loading_animation.gif").addCss("center-block"));
   d->selectedRow = 0;
   double magnitudeLimit = (telescope ? telescope->limitMagnitudeGain() + 6.5 : 12);
   d->filterByMinimumMagnitude->setMaximum(magnitudeLimit-0.5);

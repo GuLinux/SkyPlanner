@@ -40,7 +40,7 @@ public:
     Session &session;
     Wt::Signal<> objectsListChanged;
     Wt::WTable *suggestedObjectsTable;
-    Wt::WContainerWidget *suggestedObjectsTablePagination;
+    Wt::WContainerWidget *suggestedObjectsFooter;
     void searchByCatalogueTab(Wt::Dbo::Transaction &transaction);
     void searchByNameTab(Wt::Dbo::Transaction &transaction);
     void suggestedObjects(Wt::Dbo::Transaction &transaction);

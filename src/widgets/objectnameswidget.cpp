@@ -55,11 +55,14 @@ class ObjectNamesWidget::Private
     ObjectNamesWidget *const q;
 };
 
-ObjectNamesWidget::ObjectNamesWidget( const Wt::Dbo::ptr<NgcObject> &object, Session &session, const Wt::Dbo::ptr<AstroSession> &astroSession, RenderType renderType, WContainerWidget *parent )
+ObjectNamesWidget::ObjectNamesWidget( const Wt::Dbo::ptr<NgcObject> &object, Session &session, const Wt::Dbo::ptr<AstroSession> &astroSession, RenderType renderType, int limitNames, WContainerWidget *parent )
   : WContainerWidget( parent ), d( session, this )
 {
   Dbo::Transaction t(session);
-  WString namesJoined = Utils::htmlEncode( WString::fromUTF8( boost::algorithm::join( NgcObject::namesByCatalogueImportance(t, object), ", " ) ) );
+  auto names = NgcObject::namesByCatalogueImportance(t, object);
+  if(limitNames > 0)
+    names.resize(limitNames);
+  WString namesJoined = Utils::htmlEncode( WString::fromUTF8( boost::algorithm::join( names, ", " ) ) );
 
   if( renderType == Printable )
   {
