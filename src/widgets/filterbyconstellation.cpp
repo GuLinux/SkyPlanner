@@ -40,28 +40,41 @@ FilterByConstellation::Private::Private( FilterByConstellation *q ) : q( q )
 FilterByConstellation::FilterByConstellation( Wt::WContainerWidget *parent ): WCompositeWidget( parent ), d(this)
 {
   WComboBox *constellationsCombo = WW<WComboBox>();
-  WStandardItemModel *model = new WStandardItemModel(constellationsCombo);
-  model->appendRow(new WStandardItem(WString::tr("filter_by_constellation_all")));
-  for(auto constellation: ConstellationFinder::constellations()) {
-    WStandardItem *item = new WStandardItem(WString::fromUTF8(format("%s (%s)") % constellation.name % constellation.abbrev));
-    item->setData(constellation);
-    model->appendRow(item);
-  }
-  constellationsCombo->setModel(model);
+  d->model = new WStandardItemModel(constellationsCombo);
+  d->model->appendRow(new WStandardItem(WString::tr("filter_by_constellation_all")));
+  constellationsCombo->setModel(d->model);
   constellationsCombo->activated().connect([=](int index, _n5){
-    if(index==0)
-      d->selected = ConstellationFinder::Constellation();
-    else {
-      d->selected = boost::any_cast<ConstellationFinder::Constellation>(model->item(index)->data());
-    };
+    d->selected = (index==0) ? ConstellationFinder::Constellation{} : boost::any_cast<ConstellationFinder::Constellation>(d->model->item(index)->data());
     d->changed.emit();
   });
   setImplementation(WW<WContainerWidget>().setInline(true).add(new WLabel(WString::tr("filter_by_constellation"))).add(constellationsCombo));
+  reload();
 }
 
 FilterByConstellation::~FilterByConstellation()
 {
 }
+
+void FilterByConstellation::reload()
+{
+  d->model->clear();
+  auto allConstellations = ConstellationFinder::constellations();
+  vector<ConstellationFinder::Constellation> constellations;
+  copy_if(begin(allConstellations), end(allConstellations), back_inserter(constellations), d->filter);
+  for(auto constellation: constellations) {
+    WStandardItem *item = new WStandardItem(WString::fromUTF8(format("%s (%s)") % constellation.name % constellation.abbrev));
+    item->setData(constellation);
+    d->model->appendRow(item);
+  }
+}
+
+
+void FilterByConstellation::setFilter( const FilterByConstellation::Filter &filter )
+{
+  d->filter = filter;
+  reload();
+}
+
 
 Signal< NoClass > &FilterByConstellation::changed() const
 {

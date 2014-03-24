@@ -27,6 +27,8 @@ class FilterByConstellation::Private
     Private( FilterByConstellation *q );
     Wt::Signal<> changed;
     ConstellationFinder::Constellation selected;
+    Filter filter = [](const ConstellationFinder::Constellation &) { return true; };
+    Wt::WStandardItemModel *model;
   private:
     class FilterByConstellation *const q;
 };

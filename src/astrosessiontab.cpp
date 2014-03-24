@@ -194,7 +194,6 @@ void AstroSessionTab::Private::reload()
   filterByMinimumMagnitude->changed().connect([=](double, _n5){ populate(); });
   
   filterByConstellation = new FilterByConstellation;
-  filterByConstellation->changed().connect([=](_n6){ populate(); });
   q->addWidget(WW<WContainerWidget>().addCss("form-inline").add(filterByType).add(filterByMinimumMagnitude).add(filterByConstellation));
 
   q->addWidget(  new WText(WString::tr("printable_timezone_info").arg(timezone.timeZoneName)));
@@ -244,6 +243,7 @@ void AstroSessionTab::Private::reload()
     addObjectsTabWidget->populateFor(selectedTelescope, timezone);
   });
 }
+
 
 string AstroSessionTab::pathComponent(const AstroSessionPtr &astroSession, Dbo::Transaction &transaction)
 {
@@ -457,6 +457,18 @@ void AstroSessionTab::Private::updatePositionDetails()
 void AstroSessionTab::Private::populate()
 {
   objectsTable->clear();
+  Dbo::Transaction t(session);
+
+  auto constellations = session.query<string>(R"(select constellation_abbrev from astro_session_object
+      inner join objects on objects_id = objects.id
+      where astro_session_id = ?
+      group by constellation_abbrev
+  )").bind(astroSession.id()).resultList();
+  vector<string> vConstellations(begin(constellations), end(constellations));
+  filterByConstellation->setFilter([=](const ConstellationFinder::Constellation &c){
+    return count_if(begin(vConstellations), end(vConstellations), [=](const std::string &abbrev){ return c.abbrev == abbrev; }) > 0; });
+  filterByConstellation->changed().connect([=](_n6){ populate(); });
+  
   selectedRow = 0;
   objectsTable->elementAt(0,0)->addWidget(new WText{WString::tr("object_column_names")});
   objectsTable->elementAt(0,1)->addWidget(new WText{WString::tr("object_column_type")});
@@ -470,8 +482,8 @@ void AstroSessionTab::Private::populate()
   objectsTable->elementAt(0,9)->addWidget(new WText{WString::tr("object_column_difficulty")});
   if(filterByType->selected().size() == 0)
     return;
+  
   Ephemeris ephemeris({astroSession->position().latitude, astroSession->position().longitude});
-  Dbo::Transaction t(session);
   
   // TODO: optimize
   auto query = session.query<AstroSessionObjectPtr>("select a from astro_session_object a inner join objects on a.objects_id = objects.id")

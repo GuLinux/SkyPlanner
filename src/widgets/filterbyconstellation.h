@@ -23,6 +23,7 @@
 #include <Wt/WCompositeWidget>
 #include "utils/d_ptr.h"
 #include <constellationfinder.h>
+#include <functional>
 
 class FilterByConstellation : public Wt::WCompositeWidget
 {
@@ -30,7 +31,10 @@ public:
   FilterByConstellation( Wt::WContainerWidget *parent = 0);
   virtual ~FilterByConstellation();
   ConstellationFinder::Constellation selectedConstellation() const;
+  typedef std::function<bool(const ConstellationFinder::Constellation &constellation)> Filter;
+  void setFilter(const Filter &filter);
   Wt::Signal<> &changed() const;
+  void reload();
 private:
     D_PTR;
 };
