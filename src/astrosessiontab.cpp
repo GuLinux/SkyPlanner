@@ -372,7 +372,7 @@ void AstroSessionTab::Private::printableVersion()
       printableDialog->contents()->addWidget(new WText{WString(WString::tr("printable_version_dialog_using_telescope")).arg(telescopes.front()->name()) });
       break;
     default:
-      printableResource->setTelescope(telescopes.front());
+      printableResource->setTelescope(selectedTelescope);
       printableDialog->contents()->addWidget(new WLabel{WString::tr("printable_version_dialog_telescope_combo_label")});
       WComboBox *telescopesCombo = new WComboBox(printableDialog->contents());
       WStandardItemModel *telescopesModel = new WStandardItemModel(printableDialog);
@@ -381,6 +381,9 @@ void AstroSessionTab::Private::printableVersion()
 	WStandardItem *item = new WStandardItem(telescope->name());
 	item->setData(telescope);
 	telescopesModel->appendRow(item);
+        if(telescope == selectedTelescope) {
+          telescopesCombo->setCurrentIndex(telescopesModel->rowCount()-1);
+        }
       }
       telescopesCombo->activated().connect([=](int i, _n5) {
 	printableResource->setTelescope(boost::any_cast<Dbo::ptr<Telescope>>(telescopesModel->item(i)->data()));
