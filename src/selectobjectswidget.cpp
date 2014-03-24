@@ -224,6 +224,7 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsList()
   WContainerWidget *nextButton = WW<WContainerWidget>();
   
   auto activatePage = [=](int pageNumber) {
+    selectedRow = 0;
     if(pageNumber<0 || pageNumber>=pages->size()) return;
     populateTable(pagesSize, pageNumber*pagesSize);
     
@@ -254,6 +255,7 @@ void SelectObjectsWidget::populateFor(const Dbo::ptr< Telescope > &telescope , T
   d->suggestedObjectsTablePagination->clear();
   d->suggestedObjectsTable->clear();
   d->suggestedObjectsTablePagination->addWidget(WW<WImage>("http://gulinux.net/loading_animation.gif").addCss("center-block"));
+  d->selectedRow = 0;
   double magnitudeLimit = (telescope ? telescope->limitMagnitudeGain() + 6.5 : 12);
   d->filterByMinimumMagnitude->setMaximum(magnitudeLimit-0.5);
   d->selectedTelescope = telescope;
