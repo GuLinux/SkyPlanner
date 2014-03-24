@@ -92,6 +92,11 @@ void ExportAstroSessionResource::setTimezone(const Timezone &timezone)
   d->timezone = timezone;
 }
 
+void ExportAstroSessionResource::setNamesLimit(int namesLimit)
+{
+  d->namesLimit = namesLimit;
+}
+
 #ifndef DISABLE_LIBHARU
 namespace {
     void error_handler(HPDF_STATUS error_no, HPDF_STATUS detail_no, void *user_data) {
@@ -176,7 +181,7 @@ void ExportAstroSessionResource::handleRequest(const Wt::Http::Request &request,
   for(auto sessionObject: sessionObjects) {
     WTemplate rowTemplate;
     rowTemplate.setTemplateText(WString::tr("printable-session-row"), XHTMLUnsafeText);
-    rowTemplate.bindWidget("namesWidget", new ObjectNamesWidget{sessionObject->ngcObject(), d->session, d->astroSession, ObjectNamesWidget::Printable});
+    rowTemplate.bindWidget("namesWidget", new ObjectNamesWidget{sessionObject->ngcObject(), d->session, d->astroSession, ObjectNamesWidget::Printable, d->namesLimit});
     rowTemplate.bindString("ar", sessionObject->coordinates().rightAscension.printable(Angle::Hourly));
     rowTemplate.bindWidget("dec", new WText{WString::fromUTF8( sessionObject->coordinates().declination.printable(Angle::Degrees, Angle::HTML) ) } );
     rowTemplate.bindString("constellation", ConstellationFinder::getName(sessionObject->coordinates()).name);

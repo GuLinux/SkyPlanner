@@ -311,11 +311,12 @@ void AstroSessionTab::Private::printableVersion()
 #ifdef DISABLE_LIBHARU
 #define PDF_INDEX -1
 #warning "libharu Disabled, export to PDF will not be available"
-  printableResource->setReportType(PrintableAstroSessionResource::HTML);
+  printableResource->setReportType(ExportAstroSessionResource::HTML);
 #else
 #define PDF_INDEX 0
   printableResource->setReportType(ExportAstroSessionResource::PDF);
 #endif
+  // TODO printableResource->setNamesLimit(1);
   okButton->setLink(printableResource);
   okButton->setLinkTarget(TargetNewWindow);
   printableDialog->contents()->addWidget(new WLabel(WString::tr("printable_version_dialog_spacing_between_objects")));

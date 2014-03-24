@@ -35,6 +35,7 @@ public:
     int rowsSpacing;
     ReportType reportType = HTML;
     double fontScale = 1.0;
+    int namesLimit = 0;
 private:
     class ExportAstroSessionResource* const q;
 };

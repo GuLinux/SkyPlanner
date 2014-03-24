@@ -39,6 +39,7 @@ public:
   void setReportType(ReportType type);
   void setFontScale(double fontScale);
   void setTimezone(const Timezone &timezone);
+  void setNamesLimit(int namesLimit);
 private:
     D_PTR;
 };
