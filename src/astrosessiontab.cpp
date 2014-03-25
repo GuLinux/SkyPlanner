@@ -396,6 +396,7 @@ void AstroSessionTab::Private::printableVersion()
 
 
 
+
 void AstroSessionTab::Private::updatePositionDetails()
 {
   Dbo::Transaction t(session);
@@ -406,11 +407,11 @@ void AstroSessionTab::Private::updatePositionDetails()
     positionDetails->addWidget(new WBreak);
   };
   if(!astroSession->position()) {
-    addMoonPhaseDetails(Ephemeris({}).moonPhase(astroSession->when()));
+    addMoonPhaseDetails(Ephemeris({}, {}).moonPhase(astroSession->when()));
     return;
   }
 //   forecast.fetch(astroSession->position().longitude, astroSession->position().latitude);
-  Ephemeris ephemeris({astroSession->position().latitude, astroSession->position().longitude});
+  Ephemeris ephemeris({astroSession->position().latitude, astroSession->position().longitude}, timezone);
   Ephemeris::RiseTransitSet sun = ephemeris.sun(astroSession->when());
   Ephemeris::RiseTransitSet astroTwilight = ephemeris.astronomicalTwilight(astroSession->when());
   Ephemeris::RiseTransitSet moon = ephemeris.moon(astroSession->when());
@@ -485,7 +486,7 @@ void AstroSessionTab::Private::populate()
   if(filterByType->selected().size() == 0)
     return;
   
-  Ephemeris ephemeris({astroSession->position().latitude, astroSession->position().longitude});
+  Ephemeris ephemeris({astroSession->position().latitude, astroSession->position().longitude}, timezone);
   
   // TODO: optimize
   auto query = session.query<AstroSessionObjectPtr>("select a from astro_session_object a inner join objects on a.objects_id = objects.id")

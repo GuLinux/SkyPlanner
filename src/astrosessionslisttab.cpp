@@ -94,7 +94,7 @@ AstroSessionsListTab::AstroSessionsListTab(Session &session, Wt::WContainerWidge
   addWidget(WW<WForm>(WForm::Inline).get()->add(newSessionName, "astrosessionslisttab_add_new_label")->add(newSessionDate)->addButton(newSessionAdd));
   
   vector<pair<Ephemeris::LunarPhase,boost::posix_time::ptime>> newMoons;
-  Ephemeris moonPhaseEphemeris{{}};
+  Ephemeris moonPhaseEphemeris{{}, {}};
   for(int i=-0; i<60; i++) {
     auto day = boost::posix_time::second_clock::local_time() + boost::posix_time::time_duration(24*i, 0, 0);
     Ephemeris::LunarPhase phase = moonPhaseEphemeris.moonPhase(day);

@@ -31,7 +31,6 @@ if(Boost_UNIT_TEST_FRAMEWORK_LIBRARY)
   
   
   register_unit_test(simple_test simple_test.cpp)
-  include(${CMAKE_SOURCE_DIR}/src/aaplus/source_files.cmake)
   link_unit_test(simple_test)
   register_unit_test(ephemeris
     ephemeris_test.cpp

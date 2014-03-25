@@ -18,10 +18,10 @@
  */
 
 #include "types.h"
-#include "aaplus/AA+.h"
 #include <string>
 #include <boost/format.hpp>
 #include "utils/format.h"
+#include <libnova/libnova.h>
 #ifndef TESTS_NO_WT
 #include <Wt/Json/Value>
 #include <Wt/Json/Object>
@@ -29,7 +29,6 @@
 using namespace Wt;
 #endif
 using namespace std;
-using namespace AAPlus;
 
 Angle Angle::degrees(double degrees)
 {
@@ -38,12 +37,12 @@ Angle Angle::degrees(double degrees)
 
 Angle Angle::radians(double radians)
 {
-  return Angle::degrees(CAACoordinateTransformation::RadiansToDegrees(radians) );
+  return Angle::degrees( ln_rad_to_deg(radians) );
 }
 
 Angle Angle::hours(double hours)
 {
-  return Angle::degrees(CAACoordinateTransformation::HoursToDegrees(hours));
+  return Angle::degrees(hours*360./24.);
 }
 
 Angle::Angle(double degrees) : _degrees(degrees), _valid(true)
@@ -66,12 +65,12 @@ double Angle::degrees() const
 
 double Angle::radians() const
 {
-  return CAACoordinateTransformation::DegreesToRadians(degrees());
+  return ln_deg_to_rad(degrees());
 }
 
 double Angle::hours() const
 {
-  return CAACoordinateTransformation::DegreesToHours(degrees());
+  return degrees() * 24. / 360.;
 }
 
 Angle::Sexagesimal Angle::sexagesimal() const

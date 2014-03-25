@@ -26,7 +26,7 @@ typedef std::function<double(double, ln_lnlat_posn*,ln_rst_time*)> RiseTransitSe
 class Ephemeris::Private
 {
   public:
-    Private( const Coordinates::LatLng &geoPosition, Ephemeris *q );
+    Private( const Coordinates::LatLng &geoPosition, const Timezone &timezone, Ephemeris *q );
     Coordinates::LatLng geoPosition;
 
     double dateToJulian(const boost::posix_time::ptime &date) const;

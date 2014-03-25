@@ -1,6 +1,5 @@
 include_directories(models)
 
-include(aaplus/source_files.cmake)
 include(widgets/source_files.cmake)
 set(LIBHARU_PREFIX /usr CACHE PATH "LibHaru path prefix")
 include_directories(${LIBHARU_PREFIX}/include/)

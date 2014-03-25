@@ -48,7 +48,7 @@ class Ephemeris
       boost::posix_time::time_duration duration;
     };
 
-    Ephemeris(const Coordinates::LatLng &geoPosition);
+    Ephemeris(const Coordinates::LatLng &geoPosition, const Timezone &timezone);
     ~Ephemeris();
     RiseTransitSet sun(const boost::posix_time::ptime &when, bool nightMode = true) const;
     RiseTransitSet astronomicalTwilight(const boost::posix_time::ptime &when, bool nightMode = true) const;

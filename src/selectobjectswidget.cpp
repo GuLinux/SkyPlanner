@@ -287,13 +287,13 @@ void SelectObjectsWidget::populateFor(const Dbo::ptr< Telescope > &telescope , T
     Dbo::Transaction t(ephemerisCacheSession);
     ephemerisCacheSession.execute("delete from ephemeris_cache WHERE astro_session_id = ?").bind(d->astroSession.id());
 
-    Ephemeris ephemeris({d->astroSession->position().latitude, d->astroSession->position().longitude});
+    Ephemeris ephemeris({d->astroSession->position().latitude, d->astroSession->position().longitude}, d->timezone);
     AstroSession::ObservabilityRange range = d->astroSession->observabilityRange(ephemeris).delta({1,20,0});
     long loadedObjects = 0;
     for(auto ngcObject: ephemerisCacheSession.find<NgcObject>().where("magnitude < ?").bind(magnitudeLimit).resultList()) {
       auto bestAltitude = ephemeris.findBestAltitude(ngcObject->coordinates(), range.begin, range.end);
       if(bestAltitude.coordinates.altitude.degrees() > 17.) {
-	loadedObjects++;
+        loadedObjects++;
         ephemerisCacheSession.add(new EphemerisCache{bestAltitude, ngcObject, d->astroSession});
       }
     }
@@ -344,7 +344,7 @@ void SelectObjectsWidget::Private::searchByNameTab(Dbo::Transaction& transaction
     });
 
     populateHeaders(resultsTable);
-    Ephemeris ephemeris(astroSession->position());
+    Ephemeris ephemeris(astroSession->position(), timezone);
     AstroSession::ObservabilityRange range = astroSession->observabilityRange(ephemeris).delta({1,20,0});
     for(auto nebula: denominations) {
       auto bestAltitude = ephemeris.findBestAltitude(nebula->ngcObject()->coordinates(), range.begin, range.end);
@@ -398,7 +398,7 @@ void SelectObjectsWidget::Private::searchByCatalogueTab(Dbo::Transaction& transa
       return count_if(begin(denominations), end(denominations), [&a](const NebulaDenominationPtr &b){ return a->ngcObject().id() == b->ngcObject().id(); }) == 0;
     });
     populateHeaders(resultsTable);
-    Ephemeris ephemeris(astroSession->position());
+    Ephemeris ephemeris(astroSession->position(), timezone);
     AstroSession::ObservabilityRange range = astroSession->observabilityRange(ephemeris).delta({1,20,0});
     for(auto nebula: denominations) {
       auto bestAltitude = ephemeris.findBestAltitude(nebula->ngcObject()->coordinates(), range.begin, range.end);

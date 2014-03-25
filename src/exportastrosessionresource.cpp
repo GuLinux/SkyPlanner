@@ -106,7 +106,7 @@ namespace {
 #endif
 void ExportAstroSessionResource::handleRequest(const Wt::Http::Request &request, Wt::Http::Response &response) {
   Dbo::Transaction t(d->session);
-  Ephemeris ephemeris(d->astroSession->position());
+  Ephemeris ephemeris(d->astroSession->position(), d->timezone);
   auto sessionObjectsDbCollection = d->astroSession->astroSessionObjects();
   vector<AstroSessionObjectPtr> sessionObjects(sessionObjectsDbCollection.begin(), sessionObjectsDbCollection.end());
   sort(begin(sessionObjects), end(sessionObjects), [&](const dbo::ptr<AstroSessionObject> &a, const dbo::ptr<AstroSessionObject> &b){
