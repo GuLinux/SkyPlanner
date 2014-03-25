@@ -112,11 +112,11 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
     }
   }
 
-  WNavigationBar *navBar = WW<WNavigationBar>( root() ).addCss( "navbar-inverse" );
+  WNavigationBar *navBar = WW<WNavigationBar>( root() ).addCss( "navbar-inverse navbar-fixed-top" );
   navBar->setResponsive( true );
   navBar->setTitle( WString::tr("application_title"), WLink(WLink::InternalPath, HOME_PATH) );
   useStyleSheet( "/skyplanner_style.css" );
-  root()->addWidget(d->notifications = new WContainerWidget);
+  root()->addWidget(d->notifications = WW<WContainerWidget>().addCss("skyplanner-notifications"));
   d->widgets = new WStackedWidget( root() );
   d->widgets->setTransitionAnimation({WAnimation::AnimationEffect::Fade});
   d->widgets->setMargin(10);

@@ -8,7 +8,10 @@
 std::vector<uint8_t> styleCss() {
   std::string css = CSS(
     body {
-    };
+      padding-top: 70px;
+    }
+    .skyplanner-notifications {
+    }
     legend {
     }
     .gm-style img {
