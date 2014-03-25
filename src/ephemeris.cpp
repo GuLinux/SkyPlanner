@@ -114,11 +114,12 @@ Ephemeris::BestAltitude Ephemeris::findBestAltitude( const Coordinates::Equatori
   RiseTransitSet rst = d->rst(rangeStart, [&object](double jd, ln_lnlat_posn* pos,ln_rst_time* rst){
     int result = 0;
     int horizon = 0;
+    result = ln_get_object_rst(jd, pos, &object, rst);
 // TODO: hack, but it works. for now...
-    do {
+    while(result == 1) {
       result = ln_get_object_next_rst_horizon(jd, pos, &object, horizon, rst);
       horizon += 5;
-    } while(result == 1);
+    }
     return result;
   }, false);
   if(rst.transit == boost::posix_time::ptime{})  return {};
