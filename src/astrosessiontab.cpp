@@ -197,7 +197,8 @@ void AstroSessionTab::Private::reload()
   filterByConstellation->changed().connect([=](_n6){ populate(); });
   q->addWidget(WW<WContainerWidget>().addCss("form-inline").add(filterByType).add(filterByMinimumMagnitude).add(filterByConstellation));
 
-  q->addWidget(  new WText(WString::tr("printable_timezone_info").arg(timezone.timeZoneName)));
+  if(timezone)
+    q->addWidget(  new WText(WString::tr("printable_timezone_info").arg(timezone.timeZoneName)));
   q->addWidget(objectsTable = WW<WTable>().addCss("table  table-hover"));
   objectsTable->setHeaderCount(1);
   

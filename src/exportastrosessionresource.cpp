@@ -163,7 +163,7 @@ void ExportAstroSessionResource::handleRequest(const Wt::Http::Request &request,
 
   printable.bindString("moonPhase", WString::tr("astrosessiontab_moon_phase").arg(static_cast<int>(ephemeris.moonPhase(d->astroSession->when()).illuminated_fraction*100.)));
   printable.bindString("sessionDate", d->astroSession->wDateWhen().date().toString("dddd dd MMMM yyyy"));
-  printable.bindString("timezone_info", WString::tr("printable_timezone_info").arg(d->timezone.timeZoneName));
+  printable.bindString("timezone_info", d->timezone ?  WString::tr("printable_timezone_info").arg(d->timezone.timeZoneName) : WString());
   if(d->astroSession->position()) {
     auto sun = ephemeris.sun(d->astroSession->when());
     auto twilight = ephemeris.astronomicalTwilight(d->astroSession->when());

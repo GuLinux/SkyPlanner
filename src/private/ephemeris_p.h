@@ -20,22 +20,22 @@
 #ifndef EPHEMERIS_P_H
 #define EPHEMERIS_P_H
 #include "ephemeris.h"
-#include "aaplus/AA+.h"
+#include <libnova/libnova.h>
 
+typedef std::function<double(double, ln_lnlat_posn*,ln_rst_time*)> RiseTransitSetFunction;
 class Ephemeris::Private
 {
   public:
     Private( const Coordinates::LatLng &geoPosition, Ephemeris *q );
     Coordinates::LatLng geoPosition;
-    void GetSolarRaDecByJulian(double JD, double& RA, double& Dec);
-    void GetLunarRaDecByJulian(double JD, double& RA, double& Dec);
-    AAPlus::CAARiseTransitSetDetails GetSunRiseTransitSet(double JD, double longitude, double latitude, double sunAltitude = -0.8333);
-    AAPlus::CAARiseTransitSetDetails GetMoonRiseTransitSet(double JD, double longitude, double latitude);
-    void GetMoonIllumination(double JD, double& illuminated_fraction, double& position_angle, double& phase_angle);
 
-    AAPlus::CAADate date(const boost::posix_time::ptime &when) const;
-    boost::posix_time::ptime date(const AAPlus::CAADate &when) const;
-    Ephemeris::RiseTransitSet convert(const AAPlus::CAARiseTransitSetDetails &details, const boost::posix_time::ptime &when);
+    double dateToJulian(const boost::posix_time::ptime &date) const;
+    boost::posix_time::ptime julianToDate(double jd) const;
+
+    Ephemeris::RiseTransitSet rst(const boost::posix_time::ptime &when, RiseTransitSetFunction, bool nightMode);
+
+    ln_lnlat_posn lnGeoPosition() const;
+    Timezone timezone;
   private:
     class Ephemeris *const q;
 };

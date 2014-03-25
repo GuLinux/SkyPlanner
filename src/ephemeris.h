@@ -40,6 +40,7 @@ class Ephemeris
     struct BestAltitude {
       Coordinates::AltAzimuth coordinates;
       boost::posix_time::ptime when;
+      operator bool() const;
     };
     struct Darkness {
       boost::posix_time::ptime begin;
@@ -54,8 +55,8 @@ class Ephemeris
     RiseTransitSet moon(const boost::posix_time::ptime &when, bool nightMode = true) const;
     LunarPhase moonPhase(const boost::posix_time::ptime &when) const;
     Darkness darknessHours(const boost::posix_time::ptime &when) const;
+    void setTimezone(const Timezone &timezone);
 
-    Coordinates::AltAzimuth arDec2altAz(const Coordinates::Equatorial &equatorial, const boost::posix_time::ptime &when) const;
     BestAltitude findBestAltitude(const Coordinates::Equatorial &equatorial, const boost::posix_time::ptime &rangeStart, const boost::posix_time::ptime &rangeEnd, const boost::posix_time::time_duration steps = {0, 10, 0}) const;
   private:
     D_PTR;

@@ -77,8 +77,8 @@ namespace Coordinates {
 struct Timezone {
   int dstOffset = 0;
   int rawOffset = 0;
-  std::string timeZoneId = "UTC";
-  std::string timeZoneName = "UTC";
+  std::string timeZoneId;
+  std::string timeZoneName;
   double latitude;
   double longitude;
   std::string key(const boost::posix_time::ptime &when, const std::string &language);
@@ -86,6 +86,7 @@ struct Timezone {
   static Timezone from(const std::string &response, double lat, double lng);
   boost::posix_time::ptime fix(const boost::posix_time::ptime &src) const;
   boost::posix_time::ptime fixUTC(const boost::posix_time::ptime &src) const;
+  operator bool() const { return !timeZoneId.empty(); }
 };
 
 std::ostream &operator<<(std::ostream &o, const Timezone &t);
