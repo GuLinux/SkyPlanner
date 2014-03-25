@@ -269,12 +269,15 @@ void SelectObjectsWidget::populateFor(const Dbo::ptr< Telescope > &telescope , T
   d->clearSelection();
   d->suggestedObjectsFooter->clear();
   d->suggestedObjectsTable->clear();
-  d->suggestedObjectsFooter->addWidget(WW<WImage>("http://gulinux.net/loading_animation.gif").addCss("center-block"));
+
   double magnitudeLimit = (telescope ? telescope->limitMagnitudeGain() + 6.5 : 12);
   d->filterByMinimumMagnitude->setMaximum(magnitudeLimit-0.5);
   d->selectedTelescope = telescope;
   d->timezone = timezone;
   if(!d->astroSession->position()) return;
+
+  d->suggestedObjectsFooter->addWidget(WW<WImage>("http://gulinux.net/loading_animation.gif").addCss("center-block"));
+
   WApplication *app = wApp;
   boost::thread( [=] {
     boost::unique_lock<boost::mutex> lockCachePopulationMutex(d->suggestedObjectsListMutex);
