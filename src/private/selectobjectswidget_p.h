@@ -57,6 +57,7 @@ public:
     std::string lastSearch;
     Wt::WTableRow *selectedRow = 0;
     template<typename T> T &filterQuery(T &query);
+    void clearSelection();
 private:
     class SelectObjectsWidget* const q;
 };

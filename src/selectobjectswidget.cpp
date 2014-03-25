@@ -82,6 +82,14 @@ SelectObjectsWidget::SelectObjectsWidget(const Dbo::ptr< AstroSession >& astroSe
     d->suggestedObjects(t);
     d->searchByCatalogueTab(t);
     d->searchByNameTab(t);
+    addObjectsTabWidget->currentChanged().connect(bind(&SelectObjectsWidget::Private::clearSelection, d.get()));
+}
+
+void SelectObjectsWidget::Private::clearSelection()
+{
+  if(!selectedRow) return;
+  selectedRow->removeStyleClass("info");
+  selectedRow = nullptr;
 }
 
 void SelectObjectsWidget::Private::populateHeaders(WTable *table)
@@ -110,12 +118,9 @@ void SelectObjectsWidget::Private::append(WTable *table, const Dbo::ptr<NgcObjec
   if(existing > 0)
     row->addStyleClass("success");
   row->elementAt(0)->addWidget(WW<ObjectNamesWidget>(new ObjectNamesWidget{ngcObject, session, astroSession}).setInline(true).onClick([=](WMouseEvent) {
-    /*
-    if(selectedRow)
-      selectedRow->removeStyleClass("info");
+    clearSelection();
     row->addStyleClass("info");
     selectedRow = row;
-    */
   }
   ));
   row->elementAt(1)->addWidget(new WText{ ngcObject->typeDescription() });
@@ -187,9 +192,9 @@ template<typename T> T &SelectObjectsWidget::Private::filterQuery(T &query)
 
 void SelectObjectsWidget::Private::populateSuggestedObjectsList()
 {
+  clearSelection();
   suggestedObjectsTable->clear();
   suggestedObjectsFooter->clear();
-  selectedRow = 0;
   
   if(filterByTypeWidget->selected().size() == 0) {
     suggestedObjectsFooter->addWidget(WW<WText>(WString::tr("suggested_objects_empty_list")));
@@ -233,7 +238,7 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsList()
   WContainerWidget *nextButton = WW<WContainerWidget>();
   
   auto activatePage = [=](int pageNumber) {
-    selectedRow = 0;
+    clearSelection();
     if(pageNumber<0 || pageNumber>=pages->size()) return;
     populateTable(pagesSize, pageNumber*pagesSize);
     
@@ -261,10 +266,10 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsList()
 
 void SelectObjectsWidget::populateFor(const Dbo::ptr< Telescope > &telescope , Timezone timezone)
 {
+  d->clearSelection();
   d->suggestedObjectsFooter->clear();
   d->suggestedObjectsTable->clear();
   d->suggestedObjectsFooter->addWidget(WW<WImage>("http://gulinux.net/loading_animation.gif").addCss("center-block"));
-  d->selectedRow = 0;
   double magnitudeLimit = (telescope ? telescope->limitMagnitudeGain() + 6.5 : 12);
   d->filterByMinimumMagnitude->setMaximum(magnitudeLimit-0.5);
   d->selectedTelescope = telescope;
@@ -307,6 +312,7 @@ void SelectObjectsWidget::Private::searchByNameTab(Dbo::Transaction& transaction
   name->setEmptyText(WString::tr("select_objects_widget_add_by_name"));
   WTable *resultsTable = WW<WTable>().addCss("table  table-hover");
   auto searchByName = [=] {
+    clearSelection();
     Dbo::Transaction t(session);
     string nameToSearch = boost::algorithm::trim_copy(name->text().toUTF8());
     boost::replace_all(nameToSearch, "*", "%");
@@ -374,6 +380,7 @@ void SelectObjectsWidget::Private::searchByCatalogueTab(Dbo::Transaction& transa
 
   cataloguesCombo->setModel(cataloguesModel);
   auto searchByCatalogueNumber = [=] {
+    clearSelection();
     Dbo::Transaction t(session);
     string key = string("_bycat: ") + cataloguesCombo->currentText().toUTF8() + catalogueNumber->text().toUTF8();
     if(lastSearch == key)
