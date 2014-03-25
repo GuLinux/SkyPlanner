@@ -111,7 +111,16 @@ Ephemeris::Darkness Ephemeris::darknessHours( const boost::posix_time::ptime &wh
 Ephemeris::BestAltitude Ephemeris::findBestAltitude( const Coordinates::Equatorial &arDec, const boost::posix_time::ptime &rangeStart, const boost::posix_time::ptime &rangeEnd, const boost::posix_time::time_duration steps) const
 {
   ln_equ_posn object{arDec.rightAscension.degrees(), arDec.declination.degrees()};
-  RiseTransitSet rst = d->rst(rangeStart, [&object](double jd, ln_lnlat_posn* pos,ln_rst_time* rst){ return ln_get_object_next_rst(jd, pos, &object, rst); }, false);
+  RiseTransitSet rst = d->rst(rangeStart, [&object](double jd, ln_lnlat_posn* pos,ln_rst_time* rst){
+    int result = 0;
+    int horizon = 0;
+// TODO: hack, but it works. for now...
+    do {
+      result = ln_get_object_next_rst_horizon(jd, pos, &object, horizon, rst);
+      horizon += 5;
+    } while(result == 1);
+    return result;
+  }, false);
   if(rst.transit == boost::posix_time::ptime{})  return {};
 
   ln_lnlat_posn observer = d->lnGeoPosition();
