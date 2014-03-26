@@ -33,6 +33,7 @@ public:
   AstroSessionObject();
   AstroSessionObject(const dbo::ptr<NgcObject> &ngcObject);
   dbo::ptr<NgcObject> ngcObject() const;
+  dbo::ptr<AstroSession> astroSession() const;
   std::string description() const;
   void setDescription(const std::string &description);
   bool observed() const;

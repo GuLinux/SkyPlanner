@@ -41,6 +41,7 @@
 #include <boost/algorithm/string/join.hpp>
 #include "widgets/dsspage.h"
 #include "sendfeedbackpage.hpp"
+#include "widgets/astroobjectwidget.h"
 
 using namespace WtCommons;
 using namespace Wt;
@@ -50,13 +51,27 @@ class ObjectNamesWidget::Private
 {
   public:
     Private( Session &session, ObjectNamesWidget *q ) : session( session ), q( q ) {}
+    AstroSessionObjectPtr astroSessionObject;
     Session &session;
+    void init(const NgcObjectPtr &object, const AstroSessionPtr &astroSession, RenderType renderType, int limitNames);
   private:
     ObjectNamesWidget *const q;
 };
 
-ObjectNamesWidget::ObjectNamesWidget( const Wt::Dbo::ptr<NgcObject> &object, Session &session, const Wt::Dbo::ptr<AstroSession> &astroSession, RenderType renderType, int limitNames, WContainerWidget *parent )
+ObjectNamesWidget::ObjectNamesWidget( const AstroSessionObjectPtr &object, Session &session, RenderType renderType, int limitNames, WContainerWidget *parent )
   : WContainerWidget( parent ), d( session, this )
+{
+  d->astroSessionObject = object;
+  d->init(object->ngcObject(), object->astroSession(), renderType, limitNames);
+}
+
+ObjectNamesWidget::ObjectNamesWidget( const NgcObjectPtr &object, Session &session, const AstroSessionPtr &astroSession, RenderType renderType, int limitNames, WContainerWidget *parent )
+  : WContainerWidget( parent ), d( session, this )
+{
+  d->init(object, astroSession, renderType, limitNames);
+}
+
+void ObjectNamesWidget::Private::init(const NgcObjectPtr &object, const AstroSessionPtr &astroSession, RenderType renderType, int limitNames)
 {
   Dbo::Transaction t(session);
   auto names = NgcObject::namesByCatalogueImportance(t, object);
@@ -66,17 +81,17 @@ ObjectNamesWidget::ObjectNamesWidget( const Wt::Dbo::ptr<NgcObject> &object, Ses
 
   if( renderType == Printable )
   {
-    setInline( true );
-    addWidget( new WText {namesJoined} );
+    q->setInline( true );
+    q->addWidget( new WText {namesJoined} );
     return;
   }
 
   WAnchor *namesText = WW<WAnchor>( "", namesJoined ).css( "link" );
-  addWidget( namesText );
+  q->addWidget( namesText );
 
   namesText->clicked().connect( [ = ]( WMouseEvent e )
   {
-    Dbo::Transaction t( d->session );
+    Dbo::Transaction t( session );
     WPopupMenu *popup = new WPopupMenu();
     auto addLink = [ = ]( const WString & label, const WLink & url, WMenu *menu = 0 )
     {
@@ -167,6 +182,15 @@ ObjectNamesWidget::ObjectNamesWidget( const Wt::Dbo::ptr<NgcObject> &object, Ses
 
     popup->addSectionHeader( WString::tr( "objectnames_feedback_title" ) )->addStyleClass("dropdown-header");
     addLink(WString::tr( "objectnames_feedback_menu" ), WLink(WLink::InternalPath, SendFeedbackPage::internalPath(object, &t)) );
+    if(astroSessionObject) {
+      popup->addItem( WString::tr( "astroobject_widget_dialog" ) )->triggered().connect([=](WMenuItem*, _n5) {
+        WDialog *dialog;
+        dialog->setCaption(namesJoined);
+        dialog->setClosable(true);
+        dialog->contents()->addWidget(new AstroObjectWidget(astroSessionObject, session)); // TODO: we need a double constructor here, or in AstroObjectWidget
+        dialog->show();
+      });
+    }
     popup->popup(e);
   } );
 }
