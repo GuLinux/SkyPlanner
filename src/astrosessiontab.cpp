@@ -185,7 +185,7 @@ void AstroSessionTab::Private::reload()
     updatePositionDetails();
   });
   addPanel(WString::tr("astrosessiontab_add_observable_object"), addObjectsTabWidget, true);
-  addObjectsTabWidget->objectsListChanged().connect([=](_n6){populate(); });
+  addObjectsTabWidget->objectsListChanged().connect( [=](const AstroSessionObjectPtr &o, _n5) { populate(o); } );
   q->addWidget(new WText{WString("<h3>{1}</h3>").arg(WString::tr("astrosessiontab_objects_title"))});
 
   filterByType = new FilterByTypeWidget(NgcObject::allNebulaTypes());
@@ -464,7 +464,7 @@ void AstroSessionTab::Private::updatePositionDetails()
 }
 
 
-void AstroSessionTab::Private::populate()
+void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject)
 {
   objectsTable->clear();
 
@@ -517,12 +517,19 @@ void AstroSessionTab::Private::populate()
   sort(begin(sessionObjects), end(sessionObjects), [&](const AstroSessionObjectElement &a, const AstroSessionObjectElement &b){
     return a.second.when < b.second.when;
   });
+  WTableRow *objectAddedRow = nullptr;
   for(auto sessionObjectElement: sessionObjects) {
     dbo::ptr<AstroSessionObject> sessionObject = sessionObjectElement.first;
     WTableRow *row = objectsTable->insertRow(objectsTable->rowCount());
+    if(addedObject == sessionObject) {
+      objectAddedRow = row;
+      row->addStyleClass("success");
+    }
     row->elementAt(0)->addWidget(WW<ObjectNamesWidget>(new ObjectNamesWidget{sessionObject->ngcObject(), session, astroSession}).setInline(true).onClick([=](WMouseEvent){
       if(selectedRow)
         selectedRow->removeStyleClass("info");
+      if(objectAddedRow)
+        objectAddedRow->removeStyleClass("success");
       row->addStyleClass("info");
       selectedRow = row;
     }));
@@ -601,6 +608,9 @@ void AstroSessionTab::Private::populate()
       setObservedButtonStyle(sessionObject);
       actions->addButton(observedToggleButton);
     }
+  }
+  if(objectAddedRow) {
+    wApp->doJavaScript(format(R"(location.hash = "#" + "%s")") % objectAddedRow->id());
   }
 }
 

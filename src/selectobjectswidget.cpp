@@ -69,7 +69,7 @@ SelectObjectsWidget::~SelectObjectsWidget()
 {
 }
 
-Signal< NoClass >& SelectObjectsWidget::objectsListChanged() const
+Signal< AstroSessionObjectPtr >& SelectObjectsWidget::objectsListChanged() const
 {
   return d->objectsListChanged;
 }
@@ -139,9 +139,11 @@ void SelectObjectsWidget::Private::append(WTable *table, const Dbo::ptr<NgcObjec
       return;
     }
     astroSession.modify()->astroSessionObjects().insert(new AstroSessionObject(ngcObject));
+    auto astroSessionObject = session.find<AstroSessionObject>().where("astro_session_id = ?").bind(astroSession.id()).where("objects_id = ?").bind(ngcObject.id()).resultValue();
     t.commit();
     row->addStyleClass("success");
-    objectsListChanged.emit();
+
+    objectsListChanged.emit(astroSessionObject);
   }));
 
   auto cataloguesDescriptionWidget = CataloguesDescriptionWidget::add(table, 8, ngcObject, true);

@@ -48,7 +48,7 @@ public:
     Session &session;
     Wt::WTable *objectsTable;
     Wt::WContainerWidget *positionDetails;
-    void populate();
+    void populate(const Wt::Dbo::ptr<AstroSessionObject> &astroSessionObject = {});
     Wt::WPanel *addPanel(const Wt::WString &title, Wt::WWidget *widget, bool collapsed = false, bool collapsible = true, Wt::WContainerWidget *container = 0);
     void updatePositionDetails();
     Forecast forecast;

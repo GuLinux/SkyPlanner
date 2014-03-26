@@ -38,7 +38,7 @@ public:
     Private(const Wt::Dbo::ptr<AstroSession>& astroSession, Session& session, SelectObjectsWidget* q);
     Wt::Dbo::ptr<AstroSession> astroSession;
     Session &session;
-    Wt::Signal<> objectsListChanged;
+    Wt::Signal<Wt::Dbo::ptr<AstroSessionObject>> objectsListChanged;
     Wt::WTable *suggestedObjectsTable;
     Wt::WContainerWidget *suggestedObjectsFooter;
     void searchByCatalogueTab(Wt::Dbo::Transaction &transaction);
