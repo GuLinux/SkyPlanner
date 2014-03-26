@@ -153,6 +153,8 @@ void DSSImage::Private::setCacheImage()
 struct CurlProgressHandler {
     WApplication *app;
     WProgressBar *progressBar = nullptr;
+    void finished() { delete progressBar; progressBar = nullptr; }
+    bool is_finished() const { return progressBar == nullptr; }
     std::mutex mutex;
 };
 
@@ -173,7 +175,7 @@ void DSSImage::Private::curlDownload()
         shared_ptr<Curl> curl(new Curl{output});
         curl->setProgressCallback([=](double, double, double percent) {
           std::unique_lock<std::mutex> lock(progressHandler->mutex);
-          if(! progressHandler->progressBar || ! percent > progressHandler->progressBar->value()) return;
+          if( progressHandler->is_finished() || percent > 99 || ! percent > progressHandler->progressBar->value()) return;
           WServer::instance()->post(progressHandler->app->sessionId(), [=]{
             progressHandler->progressBar->setValue(percent);
             progressHandler->app->triggerUpdate();
@@ -183,8 +185,7 @@ void DSSImage::Private::curlDownload()
         WServer::instance()->post(progressHandler->app->sessionId(), [=] {
             Scope triggerUpdate([=]{ progressHandler->app->triggerUpdate(); });
             std::unique_lock<std::mutex> lock(progressHandler->mutex);
-            delete progressHandler->progressBar;
-            progressHandler->progressBar = nullptr;
+            progressHandler->finished();
             if( ! curl->requestOk() || curl->httpResponseCode() != 200 || curl->contentType() != "image/gif" ) {
                 WServer::instance()->log("warning") << "Error downloading data using libCURL: " << curl->lastErrorMessage();
                 boost::filesystem::remove(cacheFile);
