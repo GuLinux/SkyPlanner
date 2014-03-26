@@ -25,7 +25,9 @@ AstroObjectWidget::AstroObjectWidget(const AstroSessionObjectPtr &object, Sessio
     auto names = NgcObject::namesByCatalogueImportance(t, object->ngcObject());
     content->addWidget(WW<WText>(format("<h2>%s</h2>") % boost::join(names, ", ")));
   }
-  auto dssPage = new DSSPage(object->ngcObject(), session, {});
+  DSSPage::Options dssOptions;
+  dssOptions.showClose = false;
+  auto dssPage = new DSSPage(object->ngcObject(), session, dssOptions);
   dssPage->setMaximumSize(400, 400);
   content->addWidget(dssPage);
 }
