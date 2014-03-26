@@ -27,3 +27,10 @@ BOOST_AUTO_TEST_CASE(TestToCSV)
   BOOST_CHECK_EQUAL("\"foo, bla\"", Utils::csv("foo, bla"));
   BOOST_CHECK_EQUAL("\"foo \"\"bla\"\"\"", Utils::csv("foo \"bla\""));
 }
+
+BOOST_AUTO_TEST_CASE(FixMcgNames)
+{
+  BOOST_CHECK_EQUAL("MCG-05-52-038", Utils::mcg_name_fix("MCG-05-52-038"));
+  BOOST_CHECK_EQUAL("MCG-05-52-038", Utils::mcg_name_fix("MCG-5-52-38"));
+  BOOST_CHECK_EQUAL("MCG+05-52-038A", Utils::mcg_name_fix("MCG+5-52-38A"));
+}

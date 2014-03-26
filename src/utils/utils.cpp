@@ -47,3 +47,11 @@ string Utils::csv( const string &value, char separator )
   }
   return value;
 }
+
+string Utils::mcg_name_fix(const string &src)
+{
+  boost::regex r{"MCG([+-])(\\d+)-(\\d+)-(\\d+)(.*)"};
+  boost::smatch what;
+  if(!boost::regex_match(src, what, r)) return src;
+  return format("MCG%s%02d-%02d-%03d%s") % what[1] % what[2] % what[3] % what[4] % what[5];
+}

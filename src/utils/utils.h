@@ -38,6 +38,7 @@ public:
   }
   static std::string sanitizeForURL(const std::string &in, const std::string &replacement = "-");
   static std::string csv(const std::string &value, char separator=',');
+  static std::string mcg_name_fix(const std::string &src);
 };
 
 class Scope {

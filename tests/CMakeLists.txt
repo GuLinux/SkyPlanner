@@ -32,6 +32,8 @@ if(Boost_UNIT_TEST_FRAMEWORK_LIBRARY)
   
   register_unit_test(simple_test simple_test.cpp)
   link_unit_test(simple_test)
+  
+  
   register_unit_test(ephemeris
     ephemeris_test.cpp
     ${CMAKE_SOURCE_DIR}/src/ephemeris.cpp
