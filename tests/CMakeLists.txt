@@ -38,7 +38,7 @@ if(Boost_UNIT_TEST_FRAMEWORK_LIBRARY)
     ${CMAKE_SOURCE_DIR}/src/types.cpp
     ${AAPLUS_SRCS}
   )
-  link_unit_test(ephemeris)
+  link_unit_test(ephemeris nova)
   
   add_definitions(-DTESTS_NO_WT=1)
   register_unit_test(utils utils_test.cpp ${CMAKE_SOURCE_DIR}/src/utils/utils.cpp)
