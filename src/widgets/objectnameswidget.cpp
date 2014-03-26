@@ -184,10 +184,10 @@ void ObjectNamesWidget::Private::init(const NgcObjectPtr &object, const AstroSes
     addLink(WString::tr( "objectnames_feedback_menu" ), WLink(WLink::InternalPath, SendFeedbackPage::internalPath(object, &t)) );
     if(astroSessionObject) {
       popup->addItem( WString::tr( "astroobject_widget_dialog" ) )->triggered().connect([=](WMenuItem*, _n5) {
-        WDialog *dialog;
+        WDialog *dialog = new WDialog;
         dialog->setCaption(namesJoined);
         dialog->setClosable(true);
-        dialog->contents()->addWidget(new AstroObjectWidget(astroSessionObject, session)); // TODO: we need a double constructor here, or in AstroObjectWidget
+        dialog->contents()->addWidget(new AstroObjectWidget(astroSessionObject, session, false)); // TODO: we need a double constructor here, or in AstroObjectWidget
         dialog->show();
       });
     }

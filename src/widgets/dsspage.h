@@ -35,7 +35,13 @@ class Session;
 class DSSPage : public Wt::WContainerWidget
 {
   public:
-    DSSPage(const Wt::Dbo::ptr<NgcObject> &object, Session &session, std::function<void()> runOnClose, Wt::WContainerWidget *parent = 0 );
+    struct Options {
+      std::function<void()> runOnClose = [=]{};
+      bool autoStart = true;
+      bool showClose = true;
+    };
+
+    DSSPage(const Wt::Dbo::ptr<NgcObject> &object, Session &session, const Options &options, Wt::WContainerWidget *parent = 0 );
     ~DSSPage();
     static std::string internalPath(const Wt::Dbo::ptr<NgcObject> &object, Wt::Dbo::Transaction &transaction);
   private:

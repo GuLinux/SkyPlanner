@@ -31,7 +31,7 @@ class DSSPage::Private
     Session &session;
     std::vector<DSSImage::ImageVersion> imageVersions;
     int nextDSSTypeIndex = 1;
-    void setImageType(DSSImage::ImageVersion);
+    void setImageType(DSSImage::ImageVersion, bool autoStart);
     Wt::WContainerWidget *imageContainer;
     Wt::WComboBox *typeCombo;
     Wt::WStandardItemModel *typeModel;

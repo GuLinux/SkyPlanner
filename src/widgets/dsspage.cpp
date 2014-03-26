@@ -52,14 +52,14 @@ DSSPage::~DSSPage()
 {
 }
 
-void DSSPage::Private::setImageType(DSSImage::ImageVersion version)
+void DSSPage::Private::setImageType(DSSImage::ImageVersion version, bool autoStart)
 {
   imageContainer->clear();
   DSSImage *image = new DSSImage(object->coordinates(), Angle::degrees(object->angularSize()), version );
   image->failed().connect([=](_n6) mutable {
     if(nextDSSTypeIndex+1 > imageVersions.size())
       return;
-    setImageType(imageVersions[nextDSSTypeIndex++]);
+    setImageType(imageVersions[nextDSSTypeIndex++], true);
   });
   imageContainer->addWidget(image);
   for(int index=0; index<typeModel->rowCount(); index++)
@@ -67,7 +67,7 @@ void DSSPage::Private::setImageType(DSSImage::ImageVersion version)
       typeCombo->setCurrentIndex(index);
 }
 
-DSSPage::DSSPage(const NgcObjectPtr &object, Session &session, std::function<void()> runOnClose, WContainerWidget *parent )
+DSSPage::DSSPage(const NgcObjectPtr &object, Session &session, const DSSPage::Options &options, WContainerWidget *parent )
   : WContainerWidget(parent), d( object, session, this )
 {
   Dbo::Transaction t(session);
@@ -89,7 +89,7 @@ DSSPage::DSSPage(const NgcObjectPtr &object, Session &session, std::function<voi
     d->typeModel->appendRow(item);
   }
   d->typeCombo->activated().connect([=](int index, _n5){
-    d->setImageType(boost::any_cast<DSSImage::ImageVersion>(d->typeModel->item(index)->data()));
+    d->setImageType(boost::any_cast<DSSImage::ImageVersion>(d->typeModel->item(index)->data()), true);
   });
 
   WPushButton *invertButton = WW<WPushButton>(WString::tr("buttons_invert")).css("btn btn-inverse")
@@ -98,17 +98,17 @@ DSSPage::DSSPage(const NgcObjectPtr &object, Session &session, std::function<voi
   );
 
  
-
-  addWidget(WW<WContainerWidget>().css("form-inline")
+  WContainerWidget *toolbar = WW<WContainerWidget>().css("form-inline")
       .add(WW<WLabel>(WString::tr("dssimage_version_label")).setMargin(10, Wt::Right))
       .add(d->typeCombo)
-      .add(invertButton)
-      .add(WW<WPushButton>(WString::tr("buttons_close")).css("btn btn-danger pull-right").onClick([=](WMouseEvent){
-        runOnClose();
-      })
-      ));
+      .add(invertButton);
+  addWidget(toolbar);
+  if(options.showClose)
+    toolbar->addWidget(WW<WPushButton>(WString::tr("buttons_close")).css("btn btn-danger pull-right").onClick([=](WMouseEvent){
+      options.runOnClose();
+    }));
   addWidget(d->imageContainer);
-  d->setImageType(d->imageVersions[0]);
+  d->setImageType(d->imageVersions[0], options.autoStart);
   addWidget(WW<WContainerWidget>().css("pull-left")
         .add(new WText{"Images Copyright: "})
         .add(WW<WAnchor>("http://archive.stsci.edu/dss/", "The STScI Digitized Sky Survey").setTarget(Wt::TargetNewWindow))

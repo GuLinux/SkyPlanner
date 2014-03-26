@@ -3,6 +3,10 @@
 #include "Wt-Commons/wt_helpers.h"
 
 #include <utils/d_ptr_implementation.h>
+#include "utils/format.h"
+#include <boost/algorithm/string.hpp>
+#include <Wt/WText>
+#include "widgets/dsspage.h"
 
 using namespace std;
 using namespace Wt;
@@ -11,9 +15,19 @@ AstroObjectWidget::Private::Private(const AstroSessionObjectPtr &object, Session
 {
 }
 
-AstroObjectWidget::AstroObjectWidget(const AstroSessionObjectPtr &object, Session &session, WContainerWidget *parent)
+AstroObjectWidget::AstroObjectWidget(const AstroSessionObjectPtr &object, Session &session, bool addTitle, WContainerWidget *parent)
   : WCompositeWidget(parent), d(object, session, this)
 {
+  WContainerWidget *content = new WContainerWidget;
+  setImplementation(content);
+  Dbo::Transaction t(session);
+  if(addTitle) {
+    auto names = NgcObject::namesByCatalogueImportance(t, object->ngcObject());
+    content->addWidget(WW<WText>(format("<h2>%s</h2>") % boost::join(names, ", ")));
+  }
+  auto dssPage = new DSSPage(object->ngcObject(), session, {});
+  dssPage->setMaximumSize(400, 400);
+  content->addWidget(dssPage);
 }
 
 AstroObjectWidget::~AstroObjectWidget()

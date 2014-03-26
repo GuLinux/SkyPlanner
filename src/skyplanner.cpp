@@ -221,11 +221,13 @@ void SkyPlanner::Private::loadDSSPage( const std::string &hexId )
   Dbo::Transaction t(session);
   NgcObjectPtr ngcObject = session.find<NgcObject>().where("id = ?").bind(objectId);
   string previousPath = previousInternalPath;
-  DSSPage *dssPage = new DSSPage(ngcObject, session, [=]{
+  DSSPage::Options dssPageOptions;
+  dssPageOptions.runOnClose = [=]{
     widgets->setCurrentWidget( currentWidget );
     wApp->setInternalPath( previousPath, true );
     dssContainer->clear();
-  });
+  };
+  DSSPage *dssPage = new DSSPage(ngcObject, session, dssPageOptions);
   dssContainer->addWidget( dssPage );
   widgets->setCurrentWidget( dssContainer );
 }
