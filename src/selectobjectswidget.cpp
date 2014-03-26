@@ -20,6 +20,7 @@
 #include "selectobjectswidget.h"
 #include "private/selectobjectswidget_p.h"
 #include "utils/d_ptr_implementation.h"
+#include "utils/utils.h"
 #include "utils/format.h"
 #include "session.h"
 #include "Wt-Commons/wt_helpers.h"
@@ -390,9 +391,15 @@ void SelectObjectsWidget::Private::searchByCatalogueTab(Dbo::Transaction& transa
       return;
     lastSearch = key;
     resultsTable->clear();
-    dbo::collection<dbo::ptr<NebulaDenomination>> dboDenominations = session.find<NebulaDenomination>().where("catalogues_id = ?").where("number = ? ")
-     .bind( cataloguesModel->resultRow(cataloguesCombo->currentIndex()).id() )
-     .bind(boost::algorithm::trim_copy(catalogueNumber->text().toUTF8()));
+    std::string catNumber = boost::algorithm::trim_copy(catalogueNumber->text().toUTF8());
+    auto query = session.find<NebulaDenomination>().where("catalogues_id = ?").bind( cataloguesModel->resultRow(cataloguesCombo->currentIndex()).id() );
+    if( cataloguesCombo->currentText() == "MCG") {
+      catNumber = ::Utils::mcg_name_fix(catNumber);
+      query.where("number like ?||'%'").bind(catNumber);
+    } else {
+      query.where("number = ? ").bind(catNumber );
+    }
+    dbo::collection<dbo::ptr<NebulaDenomination>> dboDenominations = query;
     vector<NebulaDenominationPtr> denominations;
     copy_if(begin(dboDenominations), end(dboDenominations), back_inserter(denominations), [&denominations](const NebulaDenominationPtr &a){
       return count_if(begin(denominations), end(denominations), [&a](const NebulaDenominationPtr &b){ return a->ngcObject().id() == b->ngcObject().id(); }) == 0;
