@@ -457,9 +457,16 @@ void AstroSessionTab::Private::updatePositionDetails()
   auto now = boost::posix_time::second_clock::local_time();
   if(astroSession->when() > now && astroSession->when() - now < boost::posix_time::hours(72)) {
     positionDetails->addWidget(new WBreak);
-    positionDetails->addWidget(new WImage(WLink{format("http://www.7timer.com/v4/bin/astro.php?lon=%f&lat=%f&lang=en&ac=0&unit=metric&tzshift=0")
-      % astroSession->position().longitude.degrees() % astroSession->position().latitude.degrees()
-    } ));
+    WAnchor *_7timerLink = new WAnchor{(format("http://7timer.y234.cn/index.php?product=astro&lon=%f&lat=%f&lang=%s&tzshift=0")
+      % astroSession->position().longitude.degrees()
+      % astroSession->position().latitude.degrees()
+      % wApp->locale().name()).str()
+      , new WImage(WLink{format("http://www.7timer.com/v4/bin/astro.php?lon=%f&lat=%f&lang=%s&ac=0&unit=metric&tzshift=0")
+      % astroSession->position().longitude.degrees() % astroSession->position().latitude.degrees() % wApp->locale().name()
+    } )
+    };
+    _7timerLink->setTarget(TargetNewWindow);
+    positionDetails->addWidget(_7timerLink);
   }
 }
 
