@@ -90,6 +90,9 @@ struct Timezone {
 };
 
 std::ostream &operator<<(std::ostream &o, const Timezone &t);
+std::ostream &operator<<(std::ostream &o, const Coordinates::LatLng &c);
+std::ostream &operator<<(std::ostream &o, const Coordinates::AltAzimuth &c);
+std::ostream &operator<<(std::ostream &o, const Coordinates::Equatorial &c);
 
 #endif
 

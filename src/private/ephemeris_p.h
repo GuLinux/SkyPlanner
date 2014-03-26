@@ -21,6 +21,7 @@
 #define EPHEMERIS_P_H
 #include "ephemeris.h"
 #include <libnova/libnova.h>
+#include <mutex>
 
 typedef std::function<double(double, ln_lnlat_posn*,ln_rst_time*)> RiseTransitSetFunction;
 class Ephemeris::Private
@@ -36,6 +37,7 @@ class Ephemeris::Private
 
     ln_lnlat_posn lnGeoPosition() const;
     Timezone timezone;
+    std::unique_lock<std::mutex> mutexLock;
   private:
     class Ephemeris *const q;
 };

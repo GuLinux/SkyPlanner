@@ -93,10 +93,10 @@
 <message id="printable_version_dialog_telescope_combo_label">Telescopio: </message>
 <message id="astrosessiontab_export">Esporta</message>
 <message id="astrosessiontab_moon_phase">Fase Lunare: {1}%</message>
-<message id="astrosessiontab_astro_twilight_info">Crepuscolo astronomico: inizia alle {1}, finisce alle {2}.</message>
-<message id="astrosessiontab_sun_info">Sole: sorge alle {1}, tramonta alle {2}.</message>
-<message id="astrosessiontab_darkness_hours">Oscurità effettiva: inizio alle {1}, fine alle {2}, durata: {3}.</message>
-<message id="astrosessiontab_moon_info">Luna: sorge alle {1}, tramonta alle {2}.</message>
+<message id="astrosessiontab_astro_twilight_info">Crepuscolo astronomico: inizia {1}, finisce {2}.</message>
+<message id="astrosessiontab_sun_info">Sole: sorge {1}, tramonta {2}.</message>
+<message id="astrosessiontab_darkness_hours">Oscurità effettiva: inizio {1}, fine {2}, durata: {3}.</message>
+<message id="astrosessiontab_moon_info">Luna: sorge {1}, tramonta {2}.</message>
 <message id="astrosessiontab_printable_version_dialog_export_as">Esporta come...</message>
 <message id="astrosessiontab_information_panel">Informazioni</message>
 <message id="astrosessiontab_object_observed">✓ Osservato</message>
