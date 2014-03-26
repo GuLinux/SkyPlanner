@@ -11,6 +11,10 @@ std::vector<uint8_t> styleCss() {
       padding-top: 70px;
     }
     .skyplanner-notifications {
+      position: fixed;
+      width: 100%;
+      top: 55px;
+      z-index: 999;
     }
     legend {
     }

@@ -261,6 +261,7 @@ SkyPlanner::Notification::Notification(const WString &title, const WString &cont
     {Error, "alert-error"},
     {Success, "alert-success"},
     {Information, "alert-info"},
+    {Alert, "alert-warning"},
   };
   addStyleClass("alert");
   addStyleClass("alert-block");
