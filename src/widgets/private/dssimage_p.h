@@ -26,20 +26,20 @@
 class DSSImage::Private
 {
   public:
-    Private( const Coordinates::Equatorial &coordinates, const Angle &size, DSSImage::ImageVersion imageVersion, DSSImage *q );
+    Private( const Coordinates::Equatorial &coordinates, const Angle &size, DSSImage::ImageVersion imageVersion, bool autoStartDownload, DSSImage *q );
     Coordinates::Equatorial coordinates;
     Angle size;
     DSSImage::ImageVersion imageVersion;
     boost::filesystem::path cacheFile;
     std::string imageLink() const;
     std::string cacheKey() const;
-    void startDownload();
     void curlDownload();
     void setCacheImage();
     Wt::WContainerWidget *content;
     int retry = 0;
     static std::map<DSSImage::ImageVersion,std::string> imageVersionStrings;
     Wt::Signal<> failed;
+    bool autoStartDownload;
   private:
     class DSSImage *const q;
 };

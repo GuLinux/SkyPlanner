@@ -55,8 +55,8 @@ std::map<DSSImage::ImageVersion,std::string> DSSImage::Private::imageVersionStri
 };
 
 
-DSSImage::Private::Private( const Coordinates::Equatorial &coordinates, const Angle &size, DSSImage::ImageVersion imageVersion, DSSImage *q ) 
-  : coordinates(coordinates), size(size), imageVersion(imageVersion), q( q )
+DSSImage::Private::Private( const Coordinates::Equatorial &coordinates, const Angle &size, DSSImage::ImageVersion imageVersion, bool autoStartDownload, DSSImage *q ) 
+  : coordinates(coordinates), size(size), imageVersion(imageVersion), autoStartDownload(autoStartDownload), q( q )
 {
   string cacheDir("dss-cache");
   wApp->readConfigurationProperty("dss-cache-dir", cacheDir);
@@ -198,59 +198,33 @@ void DSSImage::Private::curlDownload()
     });
 }
 
-void DSSImage::Private::startDownload()
-{
-  content->clear();
-  content->addWidget(new WText("Downloading image from DSS Website, wait..."));
-  Http::Client *client = new Http::Client(q);
-  client->setTimeout(120);
-  client->setMaximumResponseSize(1024 * 1024 * 50);
-  client->get(imageLink());
-  WApplication *app = wApp;
-  client->done().connect([=](boost::system::error_code err, Http::Message message, _n4){
-    Scope triggerUpdate{[=]{app->triggerUpdate();}};
-    spLog("notice") << __PRETTY_FUNCTION__ << ", download done: err=" << err  << "(" << err.message() << ")" << ", status: " << message.status() << ", retry: " << retry;
-    for(auto header: message.headers()) {
-      spLog("notice") << __PRETTY_FUNCTION__ << " message header: " << header.name() << ", value='" << header.value() << "'";
-    }
-    const string *contentType = message.getHeader("Content-Type");
-    auto isNotAnImage = [=] {
-      return !contentType || contentType->find("image/") == string::npos; 
-    };
-    if( (err  || message.status() != 200 || isNotAnImage() ) && retry < 3 ) {
-      client->get(imageLink());
-      retry++;
-      return;
-    }
-    if( err || message.status() != 200 || isNotAnImage() ) {
-      content->addWidget(
-        new WText{WString("<br />Error retrieving DSS Image: {1}<br />Please try another format, or click the link above to try viewing it in the DSS Archive.")
-        .arg(err ? err.message() : WString("HTTP Status {1}").arg(message.status() ))});
-      failed.emit();
-      return;
-    }
-    ofstream s(cacheFile.string());
-    s << message.body();
-    s.close();
-    setCacheImage();
-  });
-}
 
 Signal<> &DSSImage::failed() const {
   return d->failed;
 }
-DSSImage::DSSImage( const Coordinates::Equatorial &coordinates, const Angle &size, DSSImage::ImageVersion imageVersion, WContainerWidget *parent )
-  : WCompositeWidget(parent), d( coordinates, size, imageVersion, this )
+DSSImage::DSSImage( const Coordinates::Equatorial &coordinates, const Angle &size, DSSImage::ImageVersion imageVersion, bool autoStartDownload, WContainerWidget *parent )
+  : WCompositeWidget(parent), d( coordinates, size, imageVersion, autoStartDownload, this )
 {
   d->content = new WContainerWidget;
   WAnchor *original = new WAnchor(d->imageLink(), "Original DSS Image Link");
   original->setInline(false);
   original->setTarget(Wt::TargetNewWindow);
   setImplementation(WW<WContainerWidget>().add(original).add(d->content));
-  if(fs::exists(d->cacheFile))
+  if(fs::exists(d->cacheFile)) {
+    d->autoStartDownload = true;
     d->setCacheImage();
+  }
   else {
 //    d->startDownload();
-    d->curlDownload();
+    if(autoStartDownload)
+      d->curlDownload();
   }
 }
+
+void DSSImage::startDownload()
+{
+  if(d->autoStartDownload)
+    return; // TODO: force download?
+  d->curlDownload();
+}
+
