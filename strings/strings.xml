@@ -52,10 +52,10 @@
 <message id="printable_version_dialog_telescope_combo_label">Telescope: </message>
 <message id="astrosessiontab_export">Export</message>
 <message id="astrosessiontab_moon_phase">Moon Phase: {1}%</message>
-<message id="astrosessiontab_astro_twilight_info">Astronomical twilight: begins at {1}, ends at {2}.</message>
-<message id="astrosessiontab_sun_info">Sun: rising at {1}, setting at {2}.</message>
-<message id="astrosessiontab_darkness_hours">Real darkness: begins at {1}, ends at {2}, duration: {3}.</message>
-<message id="astrosessiontab_moon_info">Moon: rising at {1}, setting at {2}.</message>
+<message id="astrosessiontab_astro_twilight_info">Astronomical twilight: begins {1}, ends {2}.</message>
+<message id="astrosessiontab_sun_info">Sun: rising {1}, setting {2}.</message>
+<message id="astrosessiontab_darkness_hours">Real darkness: begins {1}, ends {2}, duration: {3}.</message>
+<message id="astrosessiontab_moon_info">Moon: rising {1}, setting {2}.</message>
 <message id="astrosessiontab_printable_version_dialog_export_as">Export as...</message>
 <message id="astrosessiontab_information_panel">Information</message>
 <message id="astrosessiontab_object_observed">✓ Observed</message>

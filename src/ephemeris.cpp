@@ -23,9 +23,12 @@
 #include <libnova/libnova.h>
 
 using namespace std;
-Ephemeris::Private::Private( const Coordinates::LatLng &geoPosition, const Timezone &timezone, Ephemeris *q ) : geoPosition(geoPosition), timezone(timezone), q( q )
+static mutex ephemerisMutex;
+Ephemeris::Private::Private( const Coordinates::LatLng &geoPosition, const Timezone &timezone, Ephemeris *q ) : geoPosition(geoPosition), timezone(timezone), mutexLock(ephemerisMutex), q( q )
 {
 }
+
+
 
 Ephemeris::Ephemeris( const Coordinates::LatLng &geoPosition, const Timezone &timezone )
   : d( geoPosition, timezone, this )
@@ -56,24 +59,6 @@ Ephemeris::RiseTransitSet Ephemeris::sun( const boost::posix_time::ptime &when, 
 Ephemeris::RiseTransitSet Ephemeris::astronomicalTwilight( const boost::posix_time::ptime &when, bool nightMode ) const
 {
   return d->rst(boost::posix_time::ptime{when.date()}, [](double jd, ln_lnlat_posn* pos,ln_rst_time* rst){ return ln_get_solar_rst_horizon(jd, pos, LN_SOLAR_ASTRONOMICAL_HORIZON, rst); }, nightMode);
-}
-
-ln_lnlat_posn Ephemeris::Private::lnGeoPosition() const
-{
-  return {geoPosition.longitude.degrees(), geoPosition.latitude.degrees()};
-}
-
-Ephemeris::RiseTransitSet Ephemeris::Private::rst(const boost::posix_time::ptime &when, RiseTransitSetFunction f, bool nightMode)
-{
-  ln_lnlat_posn where = lnGeoPosition();
-  ln_rst_time rst;
-  f(dateToJulian(when), &where, &rst);
-  if(nightMode && rst.rise < rst.set) {
-    ln_rst_time nextDay_rst;
-    f(dateToJulian(when + boost::posix_time::hours{24}), &where, &nextDay_rst);
-    return {julianToDate(nextDay_rst.rise), julianToDate(rst.transit), julianToDate(rst.set) };
-  }
-  return {julianToDate(rst.rise), julianToDate(rst.transit), julianToDate(rst.set) };
 }
 
 
@@ -175,6 +160,26 @@ boost::posix_time::ptime Ephemeris::Private::julianToDate(double jd) const
     return {};
   }
 }
+
+
+ln_lnlat_posn Ephemeris::Private::lnGeoPosition() const
+{
+  return {geoPosition.longitude.degrees(), geoPosition.latitude.degrees()};
+}
+
+Ephemeris::RiseTransitSet Ephemeris::Private::rst(const boost::posix_time::ptime &when, RiseTransitSetFunction f, bool nightMode)
+{
+  ln_lnlat_posn where = lnGeoPosition();
+  ln_rst_time rst;
+  f(dateToJulian(when), &where, &rst);
+  if(nightMode && rst.rise < rst.set) {
+    ln_rst_time nextDay_rst;
+    f(dateToJulian(when + boost::posix_time::hours{24}), &where, &nextDay_rst);
+    return {julianToDate(nextDay_rst.rise), julianToDate(rst.transit), julianToDate(rst.set) };
+  }
+  return {julianToDate(rst.rise), julianToDate(rst.transit), julianToDate(rst.set) };
+}
+
 
 
 

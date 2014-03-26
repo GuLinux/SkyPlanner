@@ -154,3 +154,23 @@ ostream &operator<<(ostream &o, const Timezone &t)
   o << "{ dstOffset=" << t.dstOffset << ", rawOffset=" << t.rawOffset << ", timeZoneId=" << t.timeZoneId << ", timeZoneName=" << t.timeZoneName << ", latitude=" << t.latitude << ", longitude=" << t.longitude << "}";
   return o;
 }
+
+ostream &operator<<(ostream &o, const Coordinates::LatLng &c)
+{
+  o << "{ latitude=" << c.latitude.printable() << ", longitude: " << c.longitude.printable() << "}";
+  return o;
+}
+
+ostream &operator<<(ostream &o, const Coordinates::AltAzimuth &c)
+{
+  o << "{ altitude=" << c.altitude.printable() << ", longitude: " << c.azimuth.printable() << "}";
+  return o;
+}
+
+ostream &operator<<(ostream &o, const Coordinates::Equatorial &c)
+{
+  o << "{ rightAscension=" << c.rightAscension.printable(Angle::Hourly) << ", declination: " << c.declination.printable() << "}";
+  return o;
+}
+
+
