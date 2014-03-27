@@ -56,10 +56,10 @@ DSSPage::~DSSPage()
 {
 }
 
-void DSSPage::Private::setImageType(DSSImage::ImageVersion version, bool autoStart)
+void DSSPage::Private::setImageType(DSSImage::ImageVersion version, const shared_ptr<mutex> &downloadMutex)
 {
   imageContainer->clear();
-  DSSImage *image = new DSSImage(object->coordinates(), Angle::degrees(object->angularSize()), version, autoStart, !options.optionsAsMenu, !options.optionsAsMenu );
+  DSSImage *image = new DSSImage(object->coordinates(), Angle::degrees(object->angularSize()), version, downloadMutex, !options.optionsAsMenu, !options.optionsAsMenu );
   image->imageClicked().connect([=](const WMouseEvent &e, _n5) {
     WPopupMenu *menu = new WPopupMenu;
     WMenuItem *i = menu->addItem(WString::tr("dss_open_new_window_menu"));
@@ -78,7 +78,7 @@ void DSSPage::Private::setImageType(DSSImage::ImageVersion version, bool autoSta
         typeItem->addStyleClass("disabled");
       else
         typeItem->triggered().connect([=](WMenuItem*, _n5){
-        setImageType(type, true);
+        setImageType(type, downloadMutex);
       });
     }
     menu->addMenu(WString::tr("dss_change_type_menu"), imageTypeSubmenu);
@@ -88,7 +88,7 @@ void DSSPage::Private::setImageType(DSSImage::ImageVersion version, bool autoSta
   image->failed().connect([=](_n6) mutable {
     if(nextDSSTypeIndex+1 > imageVersions.size())
       return;
-    setImageType(imageVersions[nextDSSTypeIndex++], true);
+    setImageType(imageVersions[nextDSSTypeIndex++], downloadMutex);
   });
   imageContainer->addWidget(image);
   if(!options.optionsAsMenu) {
@@ -98,10 +98,10 @@ void DSSPage::Private::setImageType(DSSImage::ImageVersion version, bool autoSta
   }
 }
 
-DSSPage::Options DSSPage::Options::embedded(bool autoload)
+DSSPage::Options DSSPage::Options::embedded(const shared_ptr<mutex> &downloadMutex)
 {
   DSSPage::Options options;
-  options.autoStart = autoload;
+  options.downloadMutex = downloadMutex;
   options.setPath = false;
   options.showClose = false;
   options.showTitle = false;
@@ -143,7 +143,7 @@ DSSPage::DSSPage(const NgcObjectPtr &object, Session &session, const DSSPage::Op
     d->typeModel->appendRow(item);
   }
   d->typeCombo->activated().connect([=](int index, _n5){
-    d->setImageType(boost::any_cast<DSSImage::ImageVersion>(d->typeModel->item(index)->data()), true);
+    d->setImageType(boost::any_cast<DSSImage::ImageVersion>(d->typeModel->item(index)->data()), options.downloadMutex);
   });
 
   WPushButton *invertButton = WW<WPushButton>(WString::tr("buttons_invert")).css("btn btn-inverse")
@@ -165,7 +165,7 @@ DSSPage::DSSPage(const NgcObjectPtr &object, Session &session, const DSSPage::Op
   d->toolbar->setHidden(options.optionsAsMenu);
 
   addWidget(d->imageContainer);
-  d->setImageType(d->imageVersions[0], options.autoStart);
+  d->setImageType(d->imageVersions[0], options.downloadMutex);
   WTemplate *copyright = new WTemplate(R"(
                                        <small>
                                        image copyright:

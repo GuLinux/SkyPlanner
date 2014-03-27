@@ -3,14 +3,14 @@
 
 #include <utils/d_ptr.h>
 #include <Wt/WCompositeWidget>
-
+#include <mutex>
 class AstroSessionObject;
 class Session;
 class Ephemeris;
 class Telescope;
 class AstroObjectWidget : public Wt::WCompositeWidget {
 public:
-  explicit AstroObjectWidget(const Wt::Dbo::ptr<AstroSessionObject> &object, Session &session, const Ephemeris &ephemeris, const Wt::Dbo::ptr<Telescope> &telescope, bool addTitle = true, bool autoloadDSS = false, Wt::WContainerWidget *parent = 0);
+  explicit AstroObjectWidget(const Wt::Dbo::ptr<AstroSessionObject> &object, Session &session, const Ephemeris &ephemeris, const Wt::Dbo::ptr<Telescope> &telescope, bool addTitle = true, const std::shared_ptr<std::mutex> &downloadMutex = {}, Wt::WContainerWidget *parent = 0);
   ~AstroObjectWidget();
 private:
   D_PTR;

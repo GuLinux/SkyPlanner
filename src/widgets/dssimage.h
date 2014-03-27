@@ -23,6 +23,8 @@
 #include <Wt/WCompositeWidget>
 #include "utils/d_ptr.h"
 #include <types.h>
+#include <mutex>
+#include <memory>
 
 class DSSImage : public Wt::WCompositeWidget
 {
@@ -43,7 +45,7 @@ class DSSImage : public Wt::WCompositeWidget
     Wt::Signal<> &failed() const;
     Wt::Signal<Wt::WMouseEvent> &imageClicked() const;
     Wt::Signal<Wt::WLink> &imageLoaded() const;
-    DSSImage( const Coordinates::Equatorial &coordinates, const Angle &size, DSSImage::ImageVersion imageVersion = phase2_gsc2, bool autoStartDownload = true, bool anchor = true, bool showDSSLink = true, Wt::WContainerWidget *parent = 0 );
+    DSSImage( const Coordinates::Equatorial &coordinates, const Angle &size, DSSImage::ImageVersion imageVersion = phase2_gsc2, const std::shared_ptr<std::mutex> &downloadMutex = {}, bool anchor = true, bool showDSSLink = true, Wt::WContainerWidget *parent = 0 );
     ~DSSImage();
     void startDownload();
     Wt::WLink imageLink() const;

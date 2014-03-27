@@ -55,8 +55,8 @@ std::map<DSSImage::ImageVersion,std::string> DSSImage::Private::imageVersionStri
 };
 
 
-DSSImage::Private::Private( const Coordinates::Equatorial &coordinates, const Angle &size, DSSImage::ImageVersion imageVersion, bool autoStartDownload, DSSImage *q ) 
-  : coordinates(coordinates), size(size), imageVersion(imageVersion), autoStartDownload(autoStartDownload), q( q )
+DSSImage::Private::Private( const Coordinates::Equatorial &coordinates, const Angle &size, DSSImage::ImageVersion imageVersion, const shared_ptr<mutex> &downloadMutex, DSSImage *q )
+  : coordinates(coordinates), size(size), imageVersion(imageVersion), downloadMutex(downloadMutex), q( q )
 {
   string cacheDir("dss-cache");
   wApp->readConfigurationProperty("dss-cache-dir", cacheDir);
@@ -179,7 +179,14 @@ void DSSImage::Private::curlDownload()
 
     content->addWidget(progressHandler->progressBar);
     progressHandler->app = wApp;
+
     boost::thread([=] () mutable {
+      unique_lock<mutex> scheduledDownloadLock;
+      if(downloadMutex) {
+        WServer::instance()->log("notice") << "sequential download: waiting for mutex....";
+        scheduledDownloadLock = unique_lock<mutex>(*downloadMutex);
+        WServer::instance()->log("notice") << "sequential download: mutex free, starting";
+      }
         ofstream output(cacheFile.string());
         shared_ptr<Curl> curl(new Curl{output});
         curl->setProgressCallback([=](double, double, double percent) {
@@ -216,8 +223,8 @@ Signal<WLink> &DSSImage::imageLoaded() const {
   return d->_loaded;
 }
 
-DSSImage::DSSImage(const Coordinates::Equatorial &coordinates, const Angle &size, DSSImage::ImageVersion imageVersion, bool autoStartDownload, bool anchor, bool showDSSLink, WContainerWidget *parent )
-  : WCompositeWidget(parent), d( coordinates, size, imageVersion, autoStartDownload, this )
+DSSImage::DSSImage(const Coordinates::Equatorial &coordinates, const Angle &size, DSSImage::ImageVersion imageVersion, const shared_ptr<mutex> &downloadMutex, bool anchor, bool showDSSLink, WContainerWidget *parent )
+  : WCompositeWidget(parent), d( coordinates, size, imageVersion, downloadMutex, this )
 {
   d->content = new WContainerWidget;
   WContainerWidget *container = WW<WContainerWidget>();
@@ -231,13 +238,10 @@ DSSImage::DSSImage(const Coordinates::Equatorial &coordinates, const Angle &size
   setImplementation(container);
   d->showAnchor = anchor;
   if(fs::exists(d->cacheFile)) {
-    d->autoStartDownload = true;
     d->setCacheImage();
   }
   else {
-//    d->startDownload();
-    if(autoStartDownload)
-      d->curlDownload();
+    d->curlDownload();
   }
 }
 
@@ -248,8 +252,6 @@ WLink DSSImage::dssOriginalLink() const
 
 void DSSImage::startDownload()
 {
-  if(d->autoStartDownload)
-    return; // TODO: force download?
   d->curlDownload();
 }
 

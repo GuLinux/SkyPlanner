@@ -20,7 +20,7 @@ AstroObjectWidget::Private::Private(const AstroSessionObjectPtr &object, Session
 {
 }
 
-AstroObjectWidget::AstroObjectWidget(const AstroSessionObjectPtr &object, Session &session, const Ephemeris &ephemeris, const TelescopePtr &telescope, bool addTitle, bool autoloadDSS, WContainerWidget *parent)
+AstroObjectWidget::AstroObjectWidget(const AstroSessionObjectPtr &object, Session &session, const Ephemeris &ephemeris, const TelescopePtr &telescope, bool addTitle, const shared_ptr<mutex> &downloadMutex, WContainerWidget *parent)
   : WCompositeWidget(parent), d(object, session, this)
 {
   WContainerWidget *content = WW<WContainerWidget>().css("container-fluid");
@@ -36,7 +36,7 @@ AstroObjectWidget::AstroObjectWidget(const AstroSessionObjectPtr &object, Sessio
           );
   }
   content->addWidget(row);
-  auto dssPage = new DSSPage(object->ngcObject(), session, DSSPage::Options::embedded(autoloadDSS));
+  auto dssPage = new DSSPage(object->ngcObject(), session, DSSPage::Options::embedded(downloadMutex));
   //dssPage->setMaximumSize(400, 400);
   dssPage->addStyleClass("col-xs-4");
   WTemplate *info = WW<WTemplate>(WString::tr("astroobjectwidget")).css("col-xs-8");
@@ -46,7 +46,7 @@ AstroObjectWidget::AstroObjectWidget(const AstroSessionObjectPtr &object, Sessio
   info->bindString("type", object->ngcObject()->typeDescription());
   info->bindString("constellation", WString::fromUTF8(object->ngcObject()->constellation().name));
   info->bindString("constellation_abbrev", WString::fromUTF8(object->ngcObject()->constellation().abbrev));
-  info->bindString("angular_size", Utils::htmlEncode( WString::fromUTF8( Angle::degrees(object->ngcObject()->angularSize()).printable() )) );
+  info->bindString("angular_size", Angle::degrees(object->ngcObject()->angularSize()).printable() );
   info->bindString("magnitude", Utils::htmlEncode( object->ngcObject()->magnitude() > 90. ? "N/A" : (format("%.1f") % object->ngcObject()->magnitude()).str() ));
   auto bestAltitude = object->bestAltitude(ephemeris, 1);
   info->bindString("best_altitude_when", WDateTime::fromPosixTime( ephemeris.timezone().fix(bestAltitude.when)).time().toString());

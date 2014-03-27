@@ -23,6 +23,7 @@
 #include <Wt/WContainerWidget>
 #include "utils/d_ptr.h"
 #include <functional>
+#include <mutex>
 class NgcObject;
 namespace Wt {
 namespace Dbo {
@@ -37,12 +38,12 @@ class DSSPage : public Wt::WContainerWidget
   public:
     struct Options {
       std::function<void()> runOnClose = [=]{};
-      bool autoStart = true;
+      std::shared_ptr<std::mutex> downloadMutex;
       bool showClose = true;
       bool showTitle = true;
       bool setPath = true;
       bool optionsAsMenu = false;
-      static Options embedded(bool autoload = false);
+      static Options embedded(const std::shared_ptr<std::mutex> &downloadMutex = {});
       static Options standalone(std::function<void()> runOnClose = [=]{});
     };
 

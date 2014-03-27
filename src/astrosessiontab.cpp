@@ -72,6 +72,8 @@
 #include "widgets/filterbytypewidget.h"
 #include "widgets/filterbyconstellation.h"
 #include <boost/thread.hpp>
+#include <Wt/WStackedWidget>
+#include "widgets/astroobjectwidget.h"
 
 using namespace Wt;
 using namespace WtCommons;
@@ -111,12 +113,19 @@ Signal< NoClass > &AstroSessionTab::close() const
 void AstroSessionTab::Private::reload()
 {
   q->clear();
+  WStackedWidget *sessionStacked = new WStackedWidget;
+  WContainerWidget *sessionContainer = new WContainerWidget;
+  WContainerWidget *sessionPreviewContainer = new WContainerWidget;
+  sessionStacked->addWidget(sessionContainer);
+  sessionStacked->addWidget(sessionPreviewContainer);
+
+  q->addWidget(sessionStacked);
   if(!session.user()) {
     wApp->setInternalPath("/login");
     return;
   }
   WContainerWidget *actionsContainer = WW<WContainerWidget>().setMargin(10);
-  q->addWidget(actionsContainer);
+  sessionContainer->addWidget(actionsContainer);
   pastObservation = astroSession->wDateWhen() < WDateTime::currentDateTime();
 
 
@@ -141,6 +150,35 @@ void AstroSessionTab::Private::reload()
     form->bindWidget("sessionDate", sessionDate);
     changeNameOrDateDialog->contents()->addWidget(form);
     changeNameOrDateDialog->show();
+  }));
+  sessionActions->addButton(WW<WPushButton>(WString::tr("astrosessiontab_preview_version")).css("btn-primary btn-sm").onClick([=](WMouseEvent){
+    spLog("notice") << "Switching to preview version..";
+    sessionPreviewContainer->clear();
+    sessionPreviewContainer->addWidget(WW<WPushButton>("preview_back_to_astrosessiontab").css("pull-right").onClick([=](WMouseEvent){
+      sessionStacked->setCurrentWidget(sessionContainer);
+    }));
+
+    Ephemeris ephemeris({astroSession->position().latitude, astroSession->position().longitude}, timezone);
+    shared_ptr<mutex> downloadImagesMutex(new mutex);
+    Dbo::Transaction t(session);
+
+    // TODO: filter this section too?
+    auto query = session.query<AstroSessionObjectPtr>("select a from astro_session_object a inner join objects on a.objects_id = objects.id")
+        .where("astro_session_id = ?").bind(astroSession.id());
+
+    auto sessionObjectsDbCollection = query.resultList();
+    typedef pair<dbo::ptr<AstroSessionObject>, Ephemeris::BestAltitude> AstroSessionObjectElement;
+    vector<AstroSessionObjectElement> sessionObjects;
+    transform(begin(sessionObjectsDbCollection), end(sessionObjectsDbCollection), back_inserter(sessionObjects), [&ephemeris](const dbo::ptr<AstroSessionObject> &o){
+      return AstroSessionObjectElement{o, o->bestAltitude(ephemeris, -3)};
+    });
+    sort(begin(sessionObjects), end(sessionObjects), [&](const AstroSessionObjectElement &a, const AstroSessionObjectElement &b){
+      return a.second.when < b.second.when;
+    });
+    for(auto objectelement: sessionObjects) {
+      sessionPreviewContainer->addWidget(new AstroObjectWidget(objectelement.first, session, ephemeris, selectedTelescope, true, downloadImagesMutex));
+    }
+    sessionStacked->setCurrentWidget(sessionPreviewContainer);
   }));
   sessionActions->addButton(WW<WPushButton>(WString::tr("astrosessiontab_printable_version")).css("btn btn-info btn-sm").onClick( [=](WMouseEvent){ printableVersion(); } ));
 
@@ -167,8 +205,8 @@ void AstroSessionTab::Private::reload()
 
   PlaceWidget *placeWidget = new PlaceWidget(astroSession, session);
 
-  auto locationPanel = addPanel(WString::tr("position_title"), placeWidget ); 
-  addPanel(WString::tr("astrosessiontab_information_panel"), sessionInfo, true);
+  auto locationPanel = addPanel(WString::tr("position_title"), placeWidget, false, true, sessionContainer );
+  addPanel(WString::tr("astrosessiontab_information_panel"), sessionInfo, true, true, sessionContainer);
   if(astroSession->position()) {
     placeWidget->mapReady().connect([=](_n6){ WTimer::singleShot(1500, [=](WMouseEvent){
         locationPanel->collapse();
@@ -184,9 +222,9 @@ void AstroSessionTab::Private::reload()
     addObjectsTabWidget->populateFor(selectedTelescope, timezone);
     updatePositionDetails();
   });
-  addPanel(WString::tr("astrosessiontab_add_observable_object"), addObjectsTabWidget, true);
+  addPanel(WString::tr("astrosessiontab_add_observable_object"), addObjectsTabWidget, true, true, sessionContainer);
   addObjectsTabWidget->objectsListChanged().connect( [=](const AstroSessionObjectPtr &o, _n5) { populate(o); } );
-  q->addWidget(new WText{WString("<h3>{1}</h3>").arg(WString::tr("astrosessiontab_objects_title"))});
+  sessionContainer->addWidget(new WText{WString("<h3>{1}</h3>").arg(WString::tr("astrosessiontab_objects_title"))});
 
   filterByType = new FilterByTypeWidget(NgcObject::allNebulaTypes());
   filterByMinimumMagnitude = new FilterByMagnitudeWidget({WString::tr("not_set"), {}, WString::tr("minimum_magnitude_label")}, {0, 20});
@@ -195,11 +233,11 @@ void AstroSessionTab::Private::reload()
   
   filterByConstellation = new FilterByConstellation;
   filterByConstellation->changed().connect([=](_n6){ populate(); });
-  q->addWidget(WW<WContainerWidget>().addCss("form-inline").add(filterByType).add(filterByMinimumMagnitude).add(filterByConstellation));
+  sessionContainer->addWidget(WW<WContainerWidget>().addCss("form-inline").add(filterByType).add(filterByMinimumMagnitude).add(filterByConstellation));
 
   if(timezone)
-    q->addWidget(  new WText(WString::tr("printable_timezone_info").arg(timezone.timeZoneName)));
-  q->addWidget(objectsTable = WW<WTable>().addCss("table  table-hover"));
+    sessionContainer->addWidget(  new WText(WString::tr("printable_timezone_info").arg(timezone.timeZoneName)));
+  sessionContainer->addWidget(objectsTable = WW<WTable>().addCss("table  table-hover"));
   objectsTable->setHeaderCount(1);
   
 
@@ -212,7 +250,7 @@ void AstroSessionTab::Private::reload()
     telescopeComboLabel->setBuddy(telescopeCombo);
 
     actionsContainer->addWidget(WW<WContainerWidget>().css("form-inline pull-right").add(telescopeComboLabel).add(telescopeCombo));
-    WStandardItemModel *model = new WStandardItemModel(q);
+    WStandardItemModel *model = new WStandardItemModel(sessionContainer);
     WStandardItem *defaultItem = 0;
     for(auto telescope: telescopes) {
       WStandardItem *item = new WStandardItem(telescope->name());

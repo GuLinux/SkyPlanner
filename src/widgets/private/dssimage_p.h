@@ -28,7 +28,7 @@
 class DSSImage::Private
 {
   public:
-    Private( const Coordinates::Equatorial &coordinates, const Angle &size, DSSImage::ImageVersion imageVersion, bool autoStartDownload, DSSImage *q );
+    Private(const Coordinates::Equatorial &coordinates, const Angle &size, DSSImage::ImageVersion imageVersion, const std::shared_ptr<std::mutex> &downloadMutex, DSSImage *q );
     Coordinates::Equatorial coordinates;
     Angle size;
     DSSImage::ImageVersion imageVersion;
@@ -42,7 +42,7 @@ class DSSImage::Private
     static std::map<DSSImage::ImageVersion,std::string> imageVersionStrings;
     Wt::Signal<> failed;
     Wt::Signal<Wt::WLink> _loaded;
-    bool autoStartDownload;
+    std::shared_ptr<std::mutex> downloadMutex;
     Wt::WLink _imageLink;
     bool showAnchor;
     Wt::Signal<Wt::WMouseEvent> imageClicked;
