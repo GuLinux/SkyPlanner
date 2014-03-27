@@ -45,6 +45,7 @@ class DSSImage::Private
     bool autoStartDownload;
     Wt::WLink _imageLink;
     bool showAnchor;
+    Wt::Signal<Wt::WMouseEvent> imageClicked;
   private:
     class DSSImage *const q;
 };

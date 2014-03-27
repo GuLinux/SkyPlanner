@@ -68,6 +68,10 @@ DSSImage::~DSSImage()
 {
 }
 
+Signal<WMouseEvent> &DSSImage::imageClicked() const
+{
+  return d->imageClicked;
+}
 
 DSSImage::ImageVersion DSSImage::imageVersion( const string &version )
 {
@@ -145,8 +149,9 @@ void DSSImage::Private::setCacheImage()
   if(showAnchor) {
     content->addWidget(WW<WAnchor>(_imageLink).setTarget(TargetNewWindow).add(WW<WImage>(_imageLink).addCss("img-responsive")));
   }
-  else
-    content->addWidget(WW<WImage>(_imageLink).addCss("img-responsive"));
+  else {
+    content->addWidget(WW<WImage>(_imageLink).addCss("img-responsive").onClick([=](const WMouseEvent &e){imageClicked.emit(e); }));
+  }
   _loaded.emit(_imageLink);
 }
 
@@ -211,14 +216,19 @@ Signal<WLink> &DSSImage::imageLoaded() const {
   return d->_loaded;
 }
 
-DSSImage::DSSImage(const Coordinates::Equatorial &coordinates, const Angle &size, DSSImage::ImageVersion imageVersion, bool autoStartDownload, bool anchor, WContainerWidget *parent )
+DSSImage::DSSImage(const Coordinates::Equatorial &coordinates, const Angle &size, DSSImage::ImageVersion imageVersion, bool autoStartDownload, bool anchor, bool showDSSLink, WContainerWidget *parent )
   : WCompositeWidget(parent), d( coordinates, size, imageVersion, autoStartDownload, this )
 {
   d->content = new WContainerWidget;
-  WAnchor *original = new WAnchor(d->imageLink(), "Original DSS Image Link");
-  original->setInline(false);
-  original->setTarget(Wt::TargetNewWindow);
-  setImplementation(WW<WContainerWidget>().add(original).add(d->content));
+  WContainerWidget *container = WW<WContainerWidget>();
+  if(showDSSLink) {
+    WAnchor *original = new WAnchor(d->imageLink(), "Original DSS Image Link");
+    original->setInline(false);
+    original->setTarget(Wt::TargetNewWindow);
+    container->addWidget(original);
+  }
+  container->addWidget(d->content);
+  setImplementation(container);
   d->showAnchor = anchor;
   if(fs::exists(d->cacheFile)) {
     d->autoStartDownload = true;
@@ -229,6 +239,11 @@ DSSImage::DSSImage(const Coordinates::Equatorial &coordinates, const Angle &size
     if(autoStartDownload)
       d->curlDownload();
   }
+}
+
+WLink DSSImage::dssOriginalLink() const
+{
+  return d->imageLink();
 }
 
 void DSSImage::startDownload()

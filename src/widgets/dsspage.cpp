@@ -37,6 +37,8 @@
 #include <boost/algorithm/string/join.hpp>
 #include <Wt/WApplication>
 #include <Wt/WEnvironment>
+#include <Wt/WTemplate>
+#include <Wt/WPopupMenu>
 #include "skyplanner.h"
 
 using namespace Wt;
@@ -57,16 +59,44 @@ DSSPage::~DSSPage()
 void DSSPage::Private::setImageType(DSSImage::ImageVersion version, bool autoStart)
 {
   imageContainer->clear();
-  DSSImage *image = new DSSImage(object->coordinates(), Angle::degrees(object->angularSize()), version, autoStart, !options.optionsAsMenu );
+  DSSImage *image = new DSSImage(object->coordinates(), Angle::degrees(object->angularSize()), version, autoStart, !options.optionsAsMenu, !options.optionsAsMenu );
+  image->imageClicked().connect([=](const WMouseEvent &e, _n5) {
+    WPopupMenu *menu = new WPopupMenu;
+    WMenuItem *i = menu->addItem("Open image in a new window");
+    i->setLink(image->imageLink());
+    i->setLinkTarget(TargetNewWindow);
+    i = menu->addItem("Original DSS Image");
+    i->setLink(image->dssOriginalLink());
+    i->setLinkTarget(TargetNewWindow);
+    if(wApp->environment().agentIsWebKit())
+      menu->addItem(WString::tr("buttons_invert"))->triggered().connect([=](WMenuItem*, _n5){ image->toggleStyleClass("image-inverse", !image->hasStyleClass("image-inverse")); });
+    WPopupMenu *imageTypeSubmenu = WW<WPopupMenu>().css("dialog-popup-submenu");
+    for(auto type: DSSImage::versions()) {
+      WString itemName = WString::tr(string{"dssimage_version_"} + DSSImage::imageVersion(type));
+      auto typeItem = imageTypeSubmenu->addItem(itemName);
+      if(type == version)
+        typeItem->addStyleClass("disabled");
+      else
+        typeItem->triggered().connect([=](WMenuItem*, _n5){
+        setImageType(type, true);
+      });
+      spLog("notice") << "added image type submenu: " << itemName << " " << type;
+    }
+    menu->addMenu("Change Type...", imageTypeSubmenu);
+
+    menu->popup(e);
+  });
   image->failed().connect([=](_n6) mutable {
     if(nextDSSTypeIndex+1 > imageVersions.size())
       return;
     setImageType(imageVersions[nextDSSTypeIndex++], true);
   });
   imageContainer->addWidget(image);
-  for(int index=0; index<typeModel->rowCount(); index++)
-    if(boost::any_cast<DSSImage::ImageVersion>(typeModel->item(index)->data()) == version)
-      typeCombo->setCurrentIndex(index);
+  if(!options.optionsAsMenu) {
+    for(int index=0; index<typeModel->rowCount(); index++)
+      if(boost::any_cast<DSSImage::ImageVersion>(typeModel->item(index)->data()) == version)
+        typeCombo->setCurrentIndex(index);
+  }
 }
 
 DSSPage::Options DSSPage::Options::embedded(bool autoload)
@@ -122,23 +152,30 @@ DSSPage::DSSPage(const NgcObjectPtr &object, Session &session, const DSSPage::Op
     .setEnabled(wApp->environment().agentIsWebKit()
   );
 
- 
-  WContainerWidget *toolbar = WW<WContainerWidget>().css("form-inline")
+
+  d->toolbar = WW<WContainerWidget>().css("form-inline")
       .add(WW<WLabel>(WString::tr("dssimage_version_label")).setMargin(10, Wt::Right))
       .add(d->typeCombo)
       .add(invertButton);
-  addWidget(toolbar);
   if(options.showClose)
-    toolbar->addWidget(WW<WPushButton>(WString::tr("buttons_close")).css("btn btn-danger pull-right").onClick([=](WMouseEvent){
+    d->toolbar->addWidget(WW<WPushButton>(WString::tr("buttons_close")).css("btn btn-danger pull-right").onClick([=](WMouseEvent){
       options.runOnClose();
     }));
+
+  addWidget(d->toolbar);
+  d->toolbar->setHidden(options.optionsAsMenu);
+
   addWidget(d->imageContainer);
   d->setImageType(d->imageVersions[0], options.autoStart);
-  addWidget(WW<WContainerWidget>().css("pull-left")
-        .add(new WText{"Images Copyright: "})
-        .add(WW<WAnchor>("http://archive.stsci.edu/dss/", "The STScI Digitized Sky Survey").setTarget(Wt::TargetNewWindow))
-        .add(WW<WAnchor>("http://archive.stsci.edu/dss/acknowledging.html", " (Acknowledgment)").setTarget(Wt::TargetNewWindow))
-  );
+  WTemplate *copyright = new WTemplate(R"(
+                                       <small>
+                                       image copyright:
+                                       <a href="http://archive.stsci.edu/dss/" target="_BLANK">The STScI Digitized Sky Survey</a>
+                                       <a href="http://archive.stsci.edu/dss/acknowledging.html" target="_BLANK">(acknowledgment)</a>
+                                       </small>
+                                       )");
+  copyright->addStyleClass("pull-left");
+  addWidget(copyright);
 }
 
 string DSSPage::internalPath( const Dbo::ptr< NgcObject > &object, Dbo::Transaction &transaction )

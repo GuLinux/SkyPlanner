@@ -37,6 +37,7 @@ class DSSPage::Private
     Wt::WStandardItemModel *typeModel;
     std::function<void()> runOnClose = []{};
     DSSPage::Options options;
+    Wt::WContainerWidget *toolbar;
   private:
     class DSSPage *const q;
 };
