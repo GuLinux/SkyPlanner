@@ -19,9 +19,7 @@ std::vector<uint8_t> styleCss() {
     .dialog-popup-submenu {
       z-index: 1100!important;
     }
-    .astroobjectwidget {
-      page-break-before: auto;
-      page-break-after: auto
+    .astroobjectwidget,print-no-break {
       page-break-inside:avoid;
     }
     .dropdown-menu li {
@@ -32,7 +30,7 @@ std::vector<uint8_t> styleCss() {
         font-size: x-small!important;
       }
       .astroobject_title {
-        font-size: 18px!important;
+        font-size: 15px!important;
       }
     }
     legend {

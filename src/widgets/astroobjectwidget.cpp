@@ -26,13 +26,13 @@ AstroObjectWidget::AstroObjectWidget(const AstroSessionObjectPtr &object, Sessio
   : WCompositeWidget(parent), d(object, session, this)
 {
   WContainerWidget *content = WW<WContainerWidget>().css("container-fluid astroobjectwidget");
-  WContainerWidget *row = WW<WContainerWidget>().css("row");
+  WContainerWidget *row = WW<WContainerWidget>().css("row print-no-break");
   setImplementation(content);
   Dbo::Transaction t(session);
   if(addTitle) {
     auto names = NgcObject::namesByCatalogueImportance(t, object->ngcObject());
     content->addWidget(
-          WW<WContainerWidget>().css("row").add(
+          WW<WContainerWidget>().css("row print-no-break").add(
             WW<WText>(format("<h3>%s</h3>") % boost::join(names, ", ")).css("astroobject_title text-center")
             )
           );
