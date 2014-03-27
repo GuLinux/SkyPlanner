@@ -187,9 +187,7 @@ void DSSImage::Private::curlDownload()
     downloadThread = boost::thread([=] () mutable {
       unique_lock<mutex> scheduledDownloadLock;
       if(downloadMutex) {
-        WServer::instance()->log("notice") << "sequential download: waiting for mutex....";
         scheduledDownloadLock = unique_lock<mutex>(*downloadMutex);
-        WServer::instance()->log("notice") << "sequential download: mutex free, starting";
       }
         ofstream output(cacheFile.string() + "_tmp");
         shared_ptr<Curl> curl(new Curl{output});
