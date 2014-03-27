@@ -25,8 +25,9 @@ std::vector<uint8_t> styleCss() {
     .dropdown-menu li {
       cursor: pointer;
     }
+
     @media print {
-      .astroobject_text {
+      .astroobject_text,.astroobjects-info-widget {
         font-size: x-small!important;
       }
       .astroobject_title {

@@ -50,7 +50,7 @@ public:
     Wt::WContainerWidget *positionDetails;
     void populate(const Wt::Dbo::ptr<AstroSessionObject> &astroSessionObject = {});
     Wt::WPanel *addPanel(const Wt::WString &title, Wt::WWidget *widget, bool collapsed = false, bool collapsible = true, Wt::WContainerWidget *container = 0);
-    void updatePositionDetails();
+    void updatePositionDetails(Wt::WContainerWidget *positionDetails, bool showMeteo = true);
     Forecast forecast;
     Wt::Dbo::ptr<Telescope> selectedTelescope;
     Wt::Signal<std::string> nameChanged;

@@ -154,12 +154,16 @@ void AstroSessionTab::Private::reload()
   sessionActions->addButton(WW<WPushButton>(WString::tr("astrosessiontab_preview_version")).css("btn-primary btn-sm").onClick([=](WMouseEvent){
     spLog("notice") << "Switching to preview version..";
     sessionPreviewContainer->clear();
+    sessionPreviewContainer->addWidget(WW<WText>(WString("<h3>{1}, {2}</h3>").arg(astroSession->name()).arg(astroSession->wDateWhen().toString("dddd d MMMM yyyy") )).css("text-center") );
     sessionPreviewContainer->addWidget(WW<WPushButton>(WString::tr("preview_back_to_astrosessiontab")).css("hidden-print pull-right").onClick([=](WMouseEvent){
       sessionStacked->setCurrentWidget(sessionContainer);
       populate();
       sessionPreviewContainer->clear();
     }));
 
+    WContainerWidget *infoWidget = WW<WContainerWidget>().css("astroobjects-info-widget");
+    updatePositionDetails(infoWidget, false);
+    sessionPreviewContainer->addWidget(infoWidget);
     Ephemeris ephemeris({astroSession->position().latitude, astroSession->position().longitude}, timezone);
     shared_ptr<mutex> downloadImagesMutex(new mutex);
     Dbo::Transaction t(session);
@@ -226,7 +230,7 @@ void AstroSessionTab::Private::reload()
   placeWidget->placeChanged().connect([=](double lat, double lng, _n4) {
     updateTimezone();
     addObjectsTabWidget->populateFor(selectedTelescope, timezone);
-    updatePositionDetails();
+    updatePositionDetails(positionDetails);
   });
   addPanel(WString::tr("astrosessiontab_add_observable_object"), addObjectsTabWidget, true, true, sessionContainer);
   addObjectsTabWidget->objectsListChanged().connect( [=](const AstroSessionObjectPtr &o, _n5) { populate(o); } );
@@ -284,7 +288,7 @@ void AstroSessionTab::Private::reload()
   }
   
   populate();
-  updatePositionDetails();
+  updatePositionDetails(positionDetails);
   WTimer::singleShot(200, [=](WMouseEvent) {
     addObjectsTabWidget->populateFor(selectedTelescope, timezone);
   });
@@ -441,7 +445,7 @@ void AstroSessionTab::Private::printableVersion()
 
 
 
-void AstroSessionTab::Private::updatePositionDetails()
+void AstroSessionTab::Private::updatePositionDetails( WContainerWidget *positionDetails, bool showMeteo )
 {
   Dbo::Transaction t(session);
   astroSession.reread();
@@ -499,7 +503,7 @@ void AstroSessionTab::Private::updatePositionDetails()
   }
 
   auto now = boost::posix_time::second_clock::local_time();
-  if(astroSession->when() > now && astroSession->when() - now < boost::posix_time::hours(72)) {
+  if(showMeteo && astroSession->when() > now && astroSession->when() - now < boost::posix_time::hours(72)) {
     positionDetails->addWidget(new WBreak);
     WAnchor *_7timerLink = new WAnchor{(format("http://7timer.y234.cn/index.php?product=astro&lon=%f&lat=%f&lang=%s&tzshift=0")
       % astroSession->position().longitude.degrees()
