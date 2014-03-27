@@ -191,7 +191,7 @@ void DSSImage::Private::curlDownload()
         scheduledDownloadLock = unique_lock<mutex>(*downloadMutex);
         WServer::instance()->log("notice") << "sequential download: mutex free, starting";
       }
-        ofstream output(cacheFile.string());
+        ofstream output(cacheFile.string() + "_tmp");
         shared_ptr<Curl> curl(new Curl{output});
         curl->setProgressCallback([=](double, double, double percent) {
           return aborted ? 1 : 0;
@@ -211,12 +211,18 @@ void DSSImage::Private::curlDownload()
 //            progressHandler->finished();
             if( ! curl->requestOk() || curl->httpResponseCode() != 200 || curl->contentType() != "image/gif" ) {
                 WServer::instance()->log("warning") << "Error downloading data using libCURL: " << curl->lastErrorMessage();
-                boost::filesystem::remove(cacheFile);
+                boost::filesystem::remove(cacheFile + "_tmp");
                 content->addWidget(new WText(WString::tr("dss_download_error")));
                 if(!aborted) failed.emit();
                 return;
             }
-            setCacheImage();
+            try {
+              boost::filesystem::rename(cacheFile.string() + "_tmp", cacheFile.string());
+              setCacheImage();
+            } catch(std::exception &e) {
+              WServer::instance()->log("error") << "Error moving temp download file " << cacheFile.string() + "_tmp to " << cacheFile.string() << ": " << e.what();
+            }
+
         });
     });
     downloadThread.detach();

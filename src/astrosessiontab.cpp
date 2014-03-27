@@ -156,6 +156,7 @@ void AstroSessionTab::Private::reload()
     sessionPreviewContainer->clear();
     sessionPreviewContainer->addWidget(WW<WPushButton>(WString::tr("preview_back_to_astrosessiontab")).css("pull-right").onClick([=](WMouseEvent){
       sessionStacked->setCurrentWidget(sessionContainer);
+      sessionPreviewContainer->clear();
     }));
 
     Ephemeris ephemeris({astroSession->position().latitude, astroSession->position().longitude}, timezone);
