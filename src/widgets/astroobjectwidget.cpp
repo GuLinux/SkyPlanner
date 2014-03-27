@@ -42,11 +42,11 @@ AstroObjectWidget::AstroObjectWidget(const AstroSessionObjectPtr &object, Sessio
   WTemplate *info = WW<WTemplate>(WString::tr("astroobjectwidget")).css("col-xs-8");
   info->addFunction( "tr", &WTemplate::Functions::tr);
   info->bindString("ar", object->coordinates().rightAscension.printable(Angle::Hourly));
-  info->bindString("dec", object->coordinates().declination.printable());
+  info->bindString("dec", Utils::htmlEncode( WString::fromUTF8(object->coordinates().declination.printable()) ));
   info->bindString("type", object->ngcObject()->typeDescription());
   info->bindString("constellation", WString::fromUTF8(object->ngcObject()->constellation().name));
   info->bindString("constellation_abbrev", WString::fromUTF8(object->ngcObject()->constellation().abbrev));
-  info->bindString("angular_size", Angle::degrees(object->ngcObject()->angularSize()).printable() );
+  info->bindString("angular_size", Utils::htmlEncode( WString::fromUTF8( Angle::degrees(object->ngcObject()->angularSize()).printable() )) );
   info->bindString("magnitude", Utils::htmlEncode( object->ngcObject()->magnitude() > 90. ? "N/A" : (format("%.1f") % object->ngcObject()->magnitude()).str() ));
   auto bestAltitude = object->bestAltitude(ephemeris, 1);
   info->bindString("best_altitude_when", WDateTime::fromPosixTime( ephemeris.timezone().fix(bestAltitude.when)).time().toString());

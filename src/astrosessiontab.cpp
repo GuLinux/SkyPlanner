@@ -154,7 +154,7 @@ void AstroSessionTab::Private::reload()
   sessionActions->addButton(WW<WPushButton>(WString::tr("astrosessiontab_preview_version")).css("btn-primary btn-sm").onClick([=](WMouseEvent){
     spLog("notice") << "Switching to preview version..";
     sessionPreviewContainer->clear();
-    sessionPreviewContainer->addWidget(WW<WPushButton>("preview_back_to_astrosessiontab").css("pull-right").onClick([=](WMouseEvent){
+    sessionPreviewContainer->addWidget(WW<WPushButton>(WString::tr("preview_back_to_astrosessiontab")).css("pull-right").onClick([=](WMouseEvent){
       sessionStacked->setCurrentWidget(sessionContainer);
     }));
 

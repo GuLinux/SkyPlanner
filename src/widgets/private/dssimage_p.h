@@ -23,7 +23,7 @@
 #include <Wt/WFileResource>
 #include <boost/filesystem/path.hpp>
 #include <Wt/WLink>
-
+#include <boost/thread.hpp>
 
 class DSSImage::Private
 {
@@ -46,6 +46,8 @@ class DSSImage::Private
     Wt::WLink _imageLink;
     bool showAnchor;
     Wt::Signal<Wt::WMouseEvent> imageClicked;
+    boost::thread downloadThread;
+    bool aborted = false;
   private:
     class DSSImage *const q;
 };

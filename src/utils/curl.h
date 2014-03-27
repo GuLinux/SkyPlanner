@@ -27,7 +27,7 @@
 class Curl
 {
   public:
-    typedef std::function<void(double progress, double total, double percent)> ProgressFunc;
+    typedef std::function<int(double progress, double total, double percent)> ProgressFunc;
     Curl(std::ostream &output);
     ~Curl();
     

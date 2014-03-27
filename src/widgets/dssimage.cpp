@@ -66,6 +66,8 @@ DSSImage::Private::Private( const Coordinates::Equatorial &coordinates, const An
 
 DSSImage::~DSSImage()
 {
+  d->aborted = true;
+  d->downloadThread.join();
 }
 
 Signal<WMouseEvent> &DSSImage::imageClicked() const
@@ -173,14 +175,16 @@ void DSSImage::Private::curlDownload()
     content->clear();
     content->addWidget(new WText(WString::tr("dss_downloading_message")));
     shared_ptr<CurlProgressHandler> progressHandler{new CurlProgressHandler};
-    progressHandler->progressBar = new WProgressBar();
+    /*progressHandler->progressBar = new WProgressBar();
     progressHandler->progressBar->setMaximum(100);
+    */
     content->addWidget(new WBreak);
+    content->addWidget(WW<WImage>("http://gulinux.net/loading_animation.gif").addCss("center-block"));
 
-    content->addWidget(progressHandler->progressBar);
+    //content->addWidget(progressHandler->progressBar);
     progressHandler->app = wApp;
 
-    boost::thread([=] () mutable {
+    downloadThread = boost::thread([=] () mutable {
       unique_lock<mutex> scheduledDownloadLock;
       if(downloadMutex) {
         WServer::instance()->log("notice") << "sequential download: waiting for mutex....";
@@ -190,12 +194,15 @@ void DSSImage::Private::curlDownload()
         ofstream output(cacheFile.string());
         shared_ptr<Curl> curl(new Curl{output});
         curl->setProgressCallback([=](double, double, double percent) {
+          return aborted ? 1 : 0;
+          /*
           std::unique_lock<std::mutex> lock(progressHandler->mutex);
           if( progressHandler->is_finished() || percent > 99 || ! percent > progressHandler->progressBar->value()) return;
           WServer::instance()->post(progressHandler->app->sessionId(), [=]{
             progressHandler->progressBar->setValue(percent);
             progressHandler->app->triggerUpdate();
           });
+            */
         });
         curl->get(imageLink());
         WServer::instance()->post(progressHandler->app->sessionId(), [=] {
@@ -212,6 +219,7 @@ void DSSImage::Private::curlDownload()
             setCacheImage();
         });
     });
+    downloadThread.detach();
 }
 
 

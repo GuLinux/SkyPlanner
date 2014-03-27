@@ -127,6 +127,5 @@ int Curl::Private::curlProgress(void *clientp, double dltotal, double dlnow, dou
     if(dltotal <= 0 ) return 0;
     Curl::Private *d = static_cast<Curl::Private*>(clientp);
     double currentPercent = dlnow*100./dltotal;
-    d->progress(dlnow, dltotal, currentPercent);
-    return 0;
+    return d->progress(dlnow, dltotal, currentPercent);
 }

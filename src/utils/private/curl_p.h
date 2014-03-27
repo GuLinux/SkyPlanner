@@ -33,7 +33,7 @@ class Curl::Private
     static size_t WriteHeadersCallback(void *contents, size_t size, size_t nmemb, void *userp);
     static size_t WriteToFileCallback(void *contents, size_t size, size_t nmemb, void *userp);
     static int curlProgress(void *clientp, double dltotal, double dlnow, double ultotal, double ulnow);
-    ProgressFunc progress = [](double, double, double) {};
+    ProgressFunc progress = [](double, double, double) { return 0; };
     CURLcode res;
     long responseCode = 0;
     std::map<std::string,std::string> parsedHeaders;
