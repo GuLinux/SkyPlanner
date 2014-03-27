@@ -37,14 +37,16 @@
 #include <boost/algorithm/string/join.hpp>
 #include <Wt/WApplication>
 #include <Wt/WEnvironment>
+#include "skyplanner.h"
+
 using namespace Wt;
 using namespace WtCommons;
 using namespace std;
 
 
 
-DSSPage::Private::Private(const NgcObjectPtr &object, Session &session, DSSPage *q )
-  : object(object), session(session), q( q )
+DSSPage::Private::Private(const NgcObjectPtr &object, Session &session, const DSSPage::Options &options, DSSPage *q )
+  : object(object), session(session), options(options), q( q )
 {
 }
 
@@ -55,7 +57,7 @@ DSSPage::~DSSPage()
 void DSSPage::Private::setImageType(DSSImage::ImageVersion version, bool autoStart)
 {
   imageContainer->clear();
-  DSSImage *image = new DSSImage(object->coordinates(), Angle::degrees(object->angularSize()), version );
+  DSSImage *image = new DSSImage(object->coordinates(), Angle::degrees(object->angularSize()), version, autoStart, !options.optionsAsMenu );
   image->failed().connect([=](_n6) mutable {
     if(nextDSSTypeIndex+1 > imageVersions.size())
       return;
@@ -67,18 +69,41 @@ void DSSPage::Private::setImageType(DSSImage::ImageVersion version, bool autoSta
       typeCombo->setCurrentIndex(index);
 }
 
+DSSPage::Options DSSPage::Options::embedded(bool autoload)
+{
+  DSSPage::Options options;
+  options.autoStart = autoload;
+  options.setPath = false;
+  options.showClose = false;
+  options.showTitle = false;
+  options.optionsAsMenu = true;
+  return options;
+}
+
+DSSPage::Options DSSPage::Options::standalone(function<void()> runOnClose)
+{
+  DSSPage::Options options;
+  options.runOnClose = runOnClose;
+  return options;
+}
+
+
 DSSPage::DSSPage(const NgcObjectPtr &object, Session &session, const DSSPage::Options &options, WContainerWidget *parent )
-  : WContainerWidget(parent), d( object, session, this )
+  : WContainerWidget(parent), d( object, session, options, this )
 {
   Dbo::Transaction t(session);
-  wApp->setInternalPath(DSSPage::internalPath(object, t));
-  wApp->setInternalPathValid(true);
+  if(options.setPath) {
+    wApp->setInternalPath(DSSPage::internalPath(object, t));
+    wApp->setInternalPathValid(true);
+  }
   d->imageVersions = {DSSImage::poss2ukstu_red, DSSImage::poss2ukstu_blue, DSSImage::poss1_red, DSSImage::poss1_blue, DSSImage::phase2_gsc2};
   if(object->type() == NgcObject::NebGx || object->type() == NgcObject::NebGx)
     d->imageVersions = {DSSImage::poss2ukstu_blue, DSSImage::poss1_blue, DSSImage::poss2ukstu_red, DSSImage::poss1_red, DSSImage::phase2_gsc2};
   d->imageContainer = WW<WContainerWidget>();
-  WString namesJoined = Utils::htmlEncode(WString::fromUTF8( boost::algorithm::join(NgcObject::namesByCatalogueImportance(t, object), ", ") ));
-  addWidget(new WText{WString("<h4>{1}</h4>").arg(namesJoined)});
+  if(options.showTitle) {
+    WString namesJoined = Utils::htmlEncode(WString::fromUTF8( boost::algorithm::join(NgcObject::namesByCatalogueImportance(t, object), ", ") ));
+    addWidget(new WText{WString("<h4>{1}</h4>").arg(namesJoined)});
+  }
   d->typeCombo = WW<WComboBox>().setMargin(10, Wt::Right);
   d->typeModel = new WStandardItemModel(d->typeCombo);
   d->typeCombo->setModel(d->typeModel);

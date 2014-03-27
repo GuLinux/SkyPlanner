@@ -15,21 +15,30 @@ AstroObjectWidget::Private::Private(const AstroSessionObjectPtr &object, Session
 {
 }
 
-AstroObjectWidget::AstroObjectWidget(const AstroSessionObjectPtr &object, Session &session, bool addTitle, WContainerWidget *parent)
+AstroObjectWidget::AstroObjectWidget(const AstroSessionObjectPtr &object, Session &session, bool addTitle, bool autoloadDSS, WContainerWidget *parent)
   : WCompositeWidget(parent), d(object, session, this)
 {
-  WContainerWidget *content = new WContainerWidget;
+  WContainerWidget *content = WW<WContainerWidget>().css("container-fluid");
+  WContainerWidget *row = WW<WContainerWidget>().css("row");
   setImplementation(content);
   Dbo::Transaction t(session);
   if(addTitle) {
     auto names = NgcObject::namesByCatalogueImportance(t, object->ngcObject());
-    content->addWidget(WW<WText>(format("<h2>%s</h2>") % boost::join(names, ", ")));
+    content->addWidget(
+          WW<WContainerWidget>().css("row").add(
+            WW<WText>(format("<h2>%s</h2>") % boost::join(names, ", ")).css("text-center")
+            )
+          );
   }
-  DSSPage::Options dssOptions;
-  dssOptions.showClose = false;
-  auto dssPage = new DSSPage(object->ngcObject(), session, dssOptions);
-  dssPage->setMaximumSize(400, 400);
-  content->addWidget(dssPage);
+  content->addWidget(row);
+  auto dssPage = new DSSPage(object->ngcObject(), session, DSSPage::Options::embedded(autoloadDSS));
+  //dssPage->setMaximumSize(400, 400);
+  dssPage->addStyleClass("col-xs-5");
+  WContainerWidget *info = WW<WContainerWidget>().css("col-xs-7");
+
+  row->addWidget(dssPage);
+  row->addWidget(info);
+  info->addWidget(WW<WText>("hello world"));
 }
 
 AstroObjectWidget::~AstroObjectWidget()

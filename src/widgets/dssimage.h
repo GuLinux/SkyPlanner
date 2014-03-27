@@ -41,9 +41,11 @@ class DSSImage : public Wt::WCompositeWidget
     static std::string imageVersion(const ImageVersion &version);
     static std::vector<ImageVersion> versions();
     Wt::Signal<> &failed() const;
-    DSSImage( const Coordinates::Equatorial &coordinates, const Angle &size, DSSImage::ImageVersion imageVersion = phase2_gsc2, bool autoStartDownload = true, Wt::WContainerWidget *parent = 0 );
+    Wt::Signal<Wt::WLink> &imageLoaded() const;
+    DSSImage( const Coordinates::Equatorial &coordinates, const Angle &size, DSSImage::ImageVersion imageVersion = phase2_gsc2, bool autoStartDownload = true, bool anchor = true, Wt::WContainerWidget *parent = 0 );
     ~DSSImage();
     void startDownload();
+    Wt::WLink imageLink() const;
   private:
     D_PTR;
 };

@@ -137,17 +137,17 @@ string DSSImage::Private::imageLink() const
 void DSSImage::Private::setCacheImage()
 {
   content->clear();
-  WLink imageLink;
   string deployPath;
   if(wApp->readConfigurationProperty("dsscache_deploy_path", deployPath )) {
-    imageLink.setUrl(format("%s/%s") % deployPath % boost::filesystem::path(cacheFile).filename().string());
+    _imageLink.setUrl(format("%s/%s") % deployPath % boost::filesystem::path(cacheFile).filename().string());
   } else
-    imageLink.setResource(new WFileResource(cacheFile.string(), q));
-  auto anchor = new WAnchor();
-  anchor->setLink(imageLink);
-  anchor->setTarget(Wt::TargetNewWindow);
-  anchor->addWidget(WW<WImage>(imageLink).addCss("img-responsive"));
-  content->addWidget(anchor);
+    _imageLink.setResource(new WFileResource(cacheFile.string(), q));
+  if(showAnchor) {
+    content->addWidget(WW<WAnchor>(_imageLink).setTarget(TargetNewWindow).add(WW<WImage>(_imageLink).addCss("img-responsive")));
+  }
+  else
+    content->addWidget(WW<WImage>(_imageLink).addCss("img-responsive"));
+  _loaded.emit(_imageLink);
 }
 
 struct CurlProgressHandler {
@@ -158,6 +158,10 @@ struct CurlProgressHandler {
     std::mutex mutex;
 };
 
+WLink DSSImage::imageLink() const
+{
+  return d->_imageLink;
+}
 
 void DSSImage::Private::curlDownload()
 {
@@ -202,7 +206,12 @@ void DSSImage::Private::curlDownload()
 Signal<> &DSSImage::failed() const {
   return d->failed;
 }
-DSSImage::DSSImage( const Coordinates::Equatorial &coordinates, const Angle &size, DSSImage::ImageVersion imageVersion, bool autoStartDownload, WContainerWidget *parent )
+
+Signal<WLink> &DSSImage::imageLoaded() const {
+  return d->_loaded;
+}
+
+DSSImage::DSSImage(const Coordinates::Equatorial &coordinates, const Angle &size, DSSImage::ImageVersion imageVersion, bool autoStartDownload, bool anchor, WContainerWidget *parent )
   : WCompositeWidget(parent), d( coordinates, size, imageVersion, autoStartDownload, this )
 {
   d->content = new WContainerWidget;
@@ -210,6 +219,7 @@ DSSImage::DSSImage( const Coordinates::Equatorial &coordinates, const Angle &siz
   original->setInline(false);
   original->setTarget(Wt::TargetNewWindow);
   setImplementation(WW<WContainerWidget>().add(original).add(d->content));
+  d->showAnchor = anchor;
   if(fs::exists(d->cacheFile)) {
     d->autoStartDownload = true;
     d->setCacheImage();

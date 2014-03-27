@@ -187,7 +187,8 @@ void ObjectNamesWidget::Private::init(const NgcObjectPtr &object, const AstroSes
         WDialog *dialog = new WDialog;
         dialog->setCaption(namesJoined);
         dialog->setClosable(true);
-        dialog->contents()->addWidget(new AstroObjectWidget(astroSessionObject, session, false)); // TODO: we need a double constructor here, or in AstroObjectWidget
+        dialog->contents()->addWidget(new AstroObjectWidget(astroSessionObject, session, false, true)); // TODO: we need a double constructor here, or in AstroObjectWidget
+        dialog->resize(800, 600);
         dialog->show();
       });
     }

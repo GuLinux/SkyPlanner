@@ -26,7 +26,7 @@
 class DSSPage::Private
 {
   public:
-    Private(const Wt::Dbo::ptr<NgcObject> &object, Session &session, DSSPage *q );
+    Private(const Wt::Dbo::ptr<NgcObject> &object, Session &session, const DSSPage::Options &options, DSSPage *q );
     Wt::Dbo::ptr<NgcObject> object;
     Session &session;
     std::vector<DSSImage::ImageVersion> imageVersions;
@@ -36,6 +36,7 @@ class DSSPage::Private
     Wt::WComboBox *typeCombo;
     Wt::WStandardItemModel *typeModel;
     std::function<void()> runOnClose = []{};
+    DSSPage::Options options;
   private:
     class DSSPage *const q;
 };

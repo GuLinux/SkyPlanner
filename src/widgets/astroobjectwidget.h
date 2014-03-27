@@ -8,7 +8,7 @@ class AstroSessionObject;
 class Session;
 class AstroObjectWidget : public Wt::WCompositeWidget {
 public:
-  explicit AstroObjectWidget(const Wt::Dbo::ptr<AstroSessionObject> &object, Session &session, bool addTitle = true, Wt::WContainerWidget *parent = 0);
+  explicit AstroObjectWidget(const Wt::Dbo::ptr<AstroSessionObject> &object, Session &session, bool addTitle = true, bool autoloadDSS = false, Wt::WContainerWidget *parent = 0);
   ~AstroObjectWidget();
 private:
   D_PTR;

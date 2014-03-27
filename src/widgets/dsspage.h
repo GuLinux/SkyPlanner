@@ -39,6 +39,11 @@ class DSSPage : public Wt::WContainerWidget
       std::function<void()> runOnClose = [=]{};
       bool autoStart = true;
       bool showClose = true;
+      bool showTitle = true;
+      bool setPath = true;
+      bool optionsAsMenu = false;
+      static Options embedded(bool autoload = false);
+      static Options standalone(std::function<void()> runOnClose = [=]{});
     };
 
     DSSPage(const Wt::Dbo::ptr<NgcObject> &object, Session &session, const Options &options, Wt::WContainerWidget *parent = 0 );

@@ -22,6 +22,8 @@
 #include "widgets/dssimage.h"
 #include <Wt/WFileResource>
 #include <boost/filesystem/path.hpp>
+#include <Wt/WLink>
+
 
 class DSSImage::Private
 {
@@ -39,7 +41,10 @@ class DSSImage::Private
     int retry = 0;
     static std::map<DSSImage::ImageVersion,std::string> imageVersionStrings;
     Wt::Signal<> failed;
+    Wt::Signal<Wt::WLink> _loaded;
     bool autoStartDownload;
+    Wt::WLink _imageLink;
+    bool showAnchor;
   private:
     class DSSImage *const q;
 };
