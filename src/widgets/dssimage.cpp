@@ -208,12 +208,12 @@ void DSSImage::Private::curlDownload()
         WServer::instance()->post(progressHandler->app->sessionId(), [=] {
             Scope triggerUpdate([=]{ progressHandler->app->triggerUpdate(); });
             std::unique_lock<std::mutex> lock(progressHandler->mutex);
-            progressHandler->finished();
+//            progressHandler->finished();
             if( ! curl->requestOk() || curl->httpResponseCode() != 200 || curl->contentType() != "image/gif" ) {
                 WServer::instance()->log("warning") << "Error downloading data using libCURL: " << curl->lastErrorMessage();
                 boost::filesystem::remove(cacheFile);
                 content->addWidget(new WText(WString::tr("dss_download_error")));
-                failed.emit();
+                if(!aborted) failed.emit();
                 return;
             }
             setCacheImage();
