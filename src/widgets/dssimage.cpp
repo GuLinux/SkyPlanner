@@ -211,7 +211,7 @@ void DSSImage::Private::curlDownload()
 //            progressHandler->finished();
             if( ! curl->requestOk() || curl->httpResponseCode() != 200 || curl->contentType() != "image/gif" ) {
                 WServer::instance()->log("warning") << "Error downloading data using libCURL: " << curl->lastErrorMessage();
-                boost::filesystem::remove(cacheFile + "_tmp");
+                boost::filesystem::remove(cacheFile.string() + "_tmp");
                 content->addWidget(new WText(WString::tr("dss_download_error")));
                 if(!aborted) failed.emit();
                 return;
