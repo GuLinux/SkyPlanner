@@ -69,6 +69,7 @@
 <message id="astroobject_best_altitude">Best Altitude</message>
 <message id="astroobject_best_altitude_when">Best Altitude Time</message>
 <message id="astroobject_remove_from_session">Remove from session</message>
+<message id="astroobject_actions_label">Actions</message>
 
 <message id="object_more_info">More...</message>
 <message id="object_column_names">Names</message>
