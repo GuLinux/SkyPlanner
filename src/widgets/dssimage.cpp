@@ -35,6 +35,8 @@
 #include <boost/thread.hpp>
 #include <Wt/WProgressBar>
 #include <mutex>
+#include <GraphicsMagick/Magick++.h>
+
 
 
 using namespace Wt;
@@ -55,13 +57,14 @@ std::map<DSSImage::ImageVersion,std::string> DSSImage::Private::imageVersionStri
 };
 
 
-DSSImage::Private::Private( const Coordinates::Equatorial &coordinates, const Angle &size, DSSImage::ImageVersion imageVersion, const shared_ptr<mutex> &downloadMutex, DSSImage *q )
-  : coordinates(coordinates), size(size), imageVersion(imageVersion), downloadMutex(downloadMutex), q( q )
+DSSImage::Private::Private( const Coordinates::Equatorial &coordinates, const Angle &size, DSSImage::ImageVersion imageVersion, const shared_ptr<mutex> &downloadMutex, DSSImage::ImageSize imageSize, DSSImage *q )
+  : coordinates(coordinates), size(size), imageVersion(imageVersion), downloadMutex(downloadMutex), imageSize(imageSize), q( q )
 {
   string cacheDir("dss-cache");
   wApp->readConfigurationProperty("dss-cache-dir", cacheDir);
   fs::create_directories(cacheDir);
   cacheFile = fs::path(cacheDir) / cacheKey();
+  cacheFileMid = fs::path(cacheDir) / cacheKey(Mid);
 }
 
 DSSImage::~DSSImage()
@@ -98,9 +101,15 @@ vector< DSSImage::ImageVersion > DSSImage::versions()
 
 
 
-string DSSImage::Private::cacheKey() const
+string DSSImage::Private::cacheKey( DSSImage::ImageSize imageSize) const
 {
-  return format("%s-ar_%d-%d-%.1f_dec_%d-%d-%.1f_size_%d-%d-%.1f.gif")
+  static map<DSSImage::ImageSize, string> sizeString {
+    { DSSImage::Full, "" },
+    { DSSImage::Mid, "mid_" },
+    { DSSImage::Thumb, "thumb_" },
+  };
+  return format("%s%s-ar_%d-%d-%.1f_dec_%d-%d-%.1f_size_%d-%d-%.1f.gif")
+  % sizeString[imageSize]
   % imageVersionStrings[imageVersion]
   % coordinates.rightAscension.sexagesimalHours().hours
   % coordinates.rightAscension.sexagesimalHours().minutes
@@ -142,12 +151,22 @@ string DSSImage::Private::imageLink() const
 
 void DSSImage::Private::setCacheImage()
 {
+  // resize: 600x600
+  boost::filesystem::path file = cacheFile;
+  if(imageSize == Mid) {
+    file = cacheFileMid;
+    if(! boost::filesystem::exists(file)) {
+      Magick::Image image(cacheFile.string());
+      image.scale({600,600});
+      image.write(file.string());
+    }
+  }
   content->clear();
   string deployPath;
   if(wApp->readConfigurationProperty("dsscache_deploy_path", deployPath )) {
-    _imageLink.setUrl(format("%s/%s") % deployPath % boost::filesystem::path(cacheFile).filename().string());
+    _imageLink.setUrl(format("%s/%s") % deployPath % boost::filesystem::path(file).filename().string());
   } else
-    _imageLink.setResource(new WFileResource(cacheFile.string(), q));
+    _imageLink.setResource(new WFileResource(file.string(), q));
   if(showAnchor) {
     content->addWidget(WW<WAnchor>(_imageLink).setTarget(TargetNewWindow).add(WW<WImage>(_imageLink).addCss("img-responsive")));
   }
@@ -165,10 +184,19 @@ struct CurlProgressHandler {
     std::mutex mutex;
 };
 
-WLink DSSImage::imageLink() const
+WLink DSSImage::fullImageLink() const
 {
-  return d->_imageLink;
+  if(d->imageSize == Full)
+    return d->_imageLink;
+  string deployPath;
+  WLink imageLink;
+  if(wApp->readConfigurationProperty("dsscache_deploy_path", deployPath )) {
+    imageLink.setUrl(format("%s/%s") % deployPath % boost::filesystem::path(d->cacheFile).filename().string());
+  } else
+    imageLink.setResource(new WFileResource(d->cacheFile.string(), (WObject*)(this)));
+  return imageLink;
 }
+
 
 void DSSImage::Private::curlDownload()
 {
@@ -237,8 +265,8 @@ Signal<WLink> &DSSImage::imageLoaded() const {
   return d->_loaded;
 }
 
-DSSImage::DSSImage(const Coordinates::Equatorial &coordinates, const Angle &size, DSSImage::ImageVersion imageVersion, const shared_ptr<mutex> &downloadMutex, bool anchor, bool showDSSLink, WContainerWidget *parent )
-  : WCompositeWidget(parent), d( coordinates, size, imageVersion, downloadMutex, this )
+DSSImage::DSSImage(const Coordinates::Equatorial &coordinates, const Angle &size, DSSImage::ImageVersion imageVersion, const shared_ptr<mutex> &downloadMutex, bool anchor, bool showDSSLink, ImageSize imageSize, WContainerWidget *parent )
+  : WCompositeWidget(parent), d( coordinates, size, imageVersion, downloadMutex, imageSize, this )
 {
   d->content = new WContainerWidget;
   WContainerWidget *container = WW<WContainerWidget>();

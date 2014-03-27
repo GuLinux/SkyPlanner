@@ -59,11 +59,11 @@ DSSPage::~DSSPage()
 void DSSPage::Private::setImageType(DSSImage::ImageVersion version, const shared_ptr<mutex> &downloadMutex)
 {
   imageContainer->clear();
-  DSSImage *image = new DSSImage(object->coordinates(), Angle::degrees(object->angularSize()), version, downloadMutex, !options.optionsAsMenu, !options.optionsAsMenu );
+  DSSImage *image = new DSSImage(object->coordinates(), Angle::degrees(object->angularSize()), version, downloadMutex, !options.optionsAsMenu, !options.optionsAsMenu, options.imageSize );
   image->imageClicked().connect([=](const WMouseEvent &e, _n5) {
     WPopupMenu *menu = new WPopupMenu;
     WMenuItem *i = menu->addItem(WString::tr("dss_open_new_window_menu"));
-    i->setLink(image->imageLink());
+    i->setLink(image->fullImageLink());
     i->setLinkTarget(TargetNewWindow);
     i = menu->addItem(WString::tr("dss_original_menu"));
     i->setLink(image->dssOriginalLink());
@@ -106,6 +106,7 @@ DSSPage::Options DSSPage::Options::embedded(const shared_ptr<mutex> &downloadMut
   options.showClose = false;
   options.showTitle = false;
   options.optionsAsMenu = true;
+  options.imageSize = DSSImage::Mid;
   return options;
 }
 

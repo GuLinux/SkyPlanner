@@ -22,6 +22,7 @@
 
 #include <Wt/WContainerWidget>
 #include "utils/d_ptr.h"
+#include "dssimage.h"
 #include <functional>
 #include <mutex>
 class NgcObject;
@@ -43,6 +44,7 @@ class DSSPage : public Wt::WContainerWidget
       bool showTitle = true;
       bool setPath = true;
       bool optionsAsMenu = false;
+      DSSImage::ImageSize imageSize = DSSImage::Full;
       static Options embedded(const std::shared_ptr<std::mutex> &downloadMutex = {});
       static Options standalone(std::function<void()> runOnClose = [=]{});
     };

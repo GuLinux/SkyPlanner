@@ -28,13 +28,15 @@
 class DSSImage::Private
 {
   public:
-    Private(const Coordinates::Equatorial &coordinates, const Angle &size, DSSImage::ImageVersion imageVersion, const std::shared_ptr<std::mutex> &downloadMutex, DSSImage *q );
+    Private(const Coordinates::Equatorial &coordinates, const Angle &size, DSSImage::ImageVersion imageVersion, const std::shared_ptr<std::mutex> &downloadMutex, ImageSize imageSize, DSSImage *q );
     Coordinates::Equatorial coordinates;
     Angle size;
     DSSImage::ImageVersion imageVersion;
     boost::filesystem::path cacheFile;
+    boost::filesystem::path cacheFileMid;
     std::string imageLink() const;
-    std::string cacheKey() const;
+    std::string cacheKey(DSSImage::ImageSize imageSize = Full) const;
+    void startDownload();
     void curlDownload();
     void setCacheImage();
     Wt::WContainerWidget *content;
@@ -48,6 +50,7 @@ class DSSImage::Private
     Wt::Signal<Wt::WMouseEvent> imageClicked;
     boost::thread downloadThread;
     bool aborted = false;
+    ImageSize imageSize;
   private:
     class DSSImage *const q;
 };

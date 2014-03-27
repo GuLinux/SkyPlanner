@@ -1,9 +1,12 @@
 cmake_minimum_required(VERSION 2.8)
 enable_testing()
 project(SkyPlanner)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
+
 enable_testing()
 find_package(Wt 3.3.1 REQUIRED)
 find_package(Qt4 REQUIRED)
+find_package(GraphicsMagick REQUIRED)
 
 include(${QT_USE_FILE})
 add_definitions(${QT_DEFINITIONS} -DWT_NO_SLOT_MACROS)
