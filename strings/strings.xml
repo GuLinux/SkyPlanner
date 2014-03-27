@@ -61,6 +61,11 @@
 <message id="astrosessiontab_object_observed">✓ Observed</message>
 <message id="astrosessiontab_object_not_observed">✗ Observed</message>
 
+<message id="astroobject_widget_dialog">Details</message>
+<message id="astroobject_coordinates_label">Coordinates</message>
+<message id="astroobject_best_altitude">Best Altitude</message>
+<message id="astroobject_best_altitude_when">Best Altitude Time</message>
+
 <message id="object_more_info">More...</message>
 <message id="object_column_names">Names</message>
 <message id="object_column_type">Type</message>
@@ -132,6 +137,10 @@
 <message id="ngcobject_type_NebUnknown">Unknown</message>
 <message id="ngcobject_type_Asterism">Asterism</message>
 <message id="ngcobject_type_RedStar">Red Star</message>
+
+<message id="dss_open_new_window_menu">Open in a new window</message>
+<message id="dss_change_type_menu">Change type...</message>
+<message id="dss_original_menu">Open original image</message>
 
 <message id="dssimage_version_label">DSS Image Type: </message>
 <message id="dssimage_version_poss2ukstu_red">POSS2/UKSTU Red</message>

@@ -102,6 +102,13 @@
 <message id="astrosessiontab_object_observed">✓ Osservato</message>
 <message id="astrosessiontab_object_not_observed">✗ Osservato</message>
 <message id="object_more_info">Altro...</message>
+
+<message id="astroobject_coordinates_label">Coordinate</message>
+<message id="astroobject_best_altitude">Altezza Ottimale</message>
+<message id="astroobject_best_altitude_when">Orario Altezza Ottimale</message>
+<message id="astroobject_widget_dialog">Dettagli</message>
+
+
 <message id="object_column_names">Nomi</message>
 <message id="object_column_type">Tipo</message>
 <message id="object_column_constellation">Costellazione</message>
@@ -173,6 +180,10 @@
 <message id="ngcobject_type_RedStar">Stella Rossa</message>
 
 <message id="dssimage_version_label">Tipo Immagine DSS: </message>
+
+<message id="dss_open_new_window_menu">Apri in una nuova finestra</message>
+<message id="dss_change_type_menu">Cambia tipo...</message>
+<message id="dss_original_menu">Apri immagine originale</message>
 
 <message id="user_settings_change_password">Cambia Password</message>
 <message id="user_settings_old_password">Password Corrente</message>

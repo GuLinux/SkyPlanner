@@ -19,6 +19,9 @@ std::vector<uint8_t> styleCss() {
     .dialog-popup-submenu {
       z-index: 1100!important;
     }
+    .dropdown-menu li {
+      cursor: pointer;
+    }
     legend {
     }
     .gm-style img {

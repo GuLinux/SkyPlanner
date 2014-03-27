@@ -53,15 +53,19 @@ class ObjectNamesWidget::Private
     Private( Session &session, ObjectNamesWidget *q ) : session( session ), q( q ) {}
     AstroSessionObjectPtr astroSessionObject;
     Session &session;
+    Timezone timezone;
+    TelescopePtr telescope;
     void init(const NgcObjectPtr &object, const AstroSessionPtr &astroSession, RenderType renderType, int limitNames);
   private:
     ObjectNamesWidget *const q;
 };
 
-ObjectNamesWidget::ObjectNamesWidget( const AstroSessionObjectPtr &object, Session &session, RenderType renderType, int limitNames, WContainerWidget *parent )
+ObjectNamesWidget::ObjectNamesWidget( const AstroSessionObjectPtr &object, const Timezone &timezone, const TelescopePtr &telescope, Session &session, RenderType renderType, int limitNames, WContainerWidget *parent )
   : WContainerWidget( parent ), d( session, this )
 {
   d->astroSessionObject = object;
+  d->timezone = timezone;
+  d->telescope = telescope;
   d->init(object->ngcObject(), object->astroSession(), renderType, limitNames);
 }
 
@@ -187,8 +191,10 @@ void ObjectNamesWidget::Private::init(const NgcObjectPtr &object, const AstroSes
         WDialog *dialog = new WDialog;
         dialog->setCaption(namesJoined);
         dialog->setClosable(true);
-        dialog->contents()->addWidget(new AstroObjectWidget(astroSessionObject, session, false, true)); // TODO: we need a double constructor here, or in AstroObjectWidget
-        dialog->resize(800, 600);
+        Ephemeris ephemeris(astroSessionObject->astroSession()->position(), timezone);
+        dialog->contents()->addWidget(new AstroObjectWidget(astroSessionObject, session, ephemeris, telescope, false, true)); // TODO: we need a double constructor here, or in AstroObjectWidget
+        dialog->resize(850, 500);
+        dialog->setResizable(true);
         dialog->show();
       });
     }

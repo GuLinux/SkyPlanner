@@ -93,6 +93,11 @@ Ephemeris::Darkness Ephemeris::darknessHours( const boost::posix_time::ptime &wh
   return {darkness.set, darkness.rise, darkness.rise - darkness.set};
 }
 
+Timezone Ephemeris::timezone() const
+{
+  return d->timezone;
+}
+
 Ephemeris::BestAltitude Ephemeris::findBestAltitude( const Coordinates::Equatorial &arDec, const boost::posix_time::ptime &rangeStart, const boost::posix_time::ptime &rangeEnd, const boost::posix_time::time_duration steps) const
 {
   ln_equ_posn object{arDec.rightAscension.degrees(), arDec.declination.degrees()};

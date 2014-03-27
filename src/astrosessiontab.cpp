@@ -532,7 +532,7 @@ void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject
       objectAddedRow = row;
       row->addStyleClass("success");
     }
-    row->elementAt(0)->addWidget(WW<ObjectNamesWidget>(new ObjectNamesWidget{sessionObject, session}).setInline(true).onClick([=](WMouseEvent){
+    row->elementAt(0)->addWidget(WW<ObjectNamesWidget>(new ObjectNamesWidget{sessionObject, timezone, selectedTelescope, session}).setInline(true).onClick([=](WMouseEvent){
       if(selectedRow)
         selectedRow->removeStyleClass("info");
       if(objectAddedRow)

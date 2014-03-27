@@ -62,10 +62,10 @@ void DSSPage::Private::setImageType(DSSImage::ImageVersion version, bool autoSta
   DSSImage *image = new DSSImage(object->coordinates(), Angle::degrees(object->angularSize()), version, autoStart, !options.optionsAsMenu, !options.optionsAsMenu );
   image->imageClicked().connect([=](const WMouseEvent &e, _n5) {
     WPopupMenu *menu = new WPopupMenu;
-    WMenuItem *i = menu->addItem("Open image in a new window");
+    WMenuItem *i = menu->addItem(WString::tr("dss_open_new_window_menu"));
     i->setLink(image->imageLink());
     i->setLinkTarget(TargetNewWindow);
-    i = menu->addItem("Original DSS Image");
+    i = menu->addItem(WString::tr("dss_original_menu"));
     i->setLink(image->dssOriginalLink());
     i->setLinkTarget(TargetNewWindow);
     if(wApp->environment().agentIsWebKit())
@@ -80,9 +80,8 @@ void DSSPage::Private::setImageType(DSSImage::ImageVersion version, bool autoSta
         typeItem->triggered().connect([=](WMenuItem*, _n5){
         setImageType(type, true);
       });
-      spLog("notice") << "added image type submenu: " << itemName << " " << type;
     }
-    menu->addMenu("Change Type...", imageTypeSubmenu);
+    menu->addMenu(WString::tr("dss_change_type_menu"), imageTypeSubmenu);
 
     menu->popup(e);
   });
