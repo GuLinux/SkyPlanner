@@ -33,7 +33,7 @@ AstroObjectWidget::AstroObjectWidget(const AstroSessionObjectPtr &object, Sessio
     auto names = NgcObject::namesByCatalogueImportance(t, object->ngcObject());
     content->addWidget(
           WW<WContainerWidget>().css("row").add(
-            WW<WText>(format("<h2>%s</h2>") % boost::join(names, ", ")).css("astroobject_title text-center")
+            WW<WText>(format("<h3>%s</h3>") % boost::join(names, ", ")).css("astroobject_title text-center")
             )
           );
   }
