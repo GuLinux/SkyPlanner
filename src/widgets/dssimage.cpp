@@ -185,10 +185,11 @@ void DSSImage::Private::curlDownload()
     progressHandler->app = wApp;
 
     downloadThread = boost::thread([=] () mutable {
-      unique_lock<mutex> scheduledDownloadLock;
+      unique_ptr<unique_lock<mutex>> scheduledDownloadLock;
       if(downloadMutex) {
-        scheduledDownloadLock = unique_lock<mutex>(*downloadMutex);
+        scheduledDownloadLock.reset(new unique_lock<mutex>(*downloadMutex));
       }
+        if(aborted) return;
         ofstream output(cacheFile.string() + "_tmp");
         shared_ptr<Curl> curl(new Curl{output});
         curl->setProgressCallback([=](double, double, double percent) {
@@ -208,10 +209,11 @@ void DSSImage::Private::curlDownload()
             std::unique_lock<std::mutex> lock(progressHandler->mutex);
 //            progressHandler->finished();
             if( ! curl->requestOk() || curl->httpResponseCode() != 200 || curl->contentType() != "image/gif" ) {
+                if(aborted) return;
                 WServer::instance()->log("warning") << "Error downloading data using libCURL: " << curl->lastErrorMessage();
                 boost::filesystem::remove(cacheFile.string() + "_tmp");
                 content->addWidget(new WText(WString::tr("dss_download_error")));
-                if(!aborted) failed.emit();
+                failed.emit();
                 return;
             }
             try {
