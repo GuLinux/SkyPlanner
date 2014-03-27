@@ -12,6 +12,8 @@
 #include "ephemeris.h"
 #include "widgets/cataloguesdescriptionwidget.h"
 #include "widgets/objectdifficultywidget.h"
+#include <Wt/WToolBar>
+#include <Wt/WPushButton>
 
 using namespace std;
 using namespace Wt;
@@ -20,7 +22,7 @@ AstroObjectWidget::Private::Private(const AstroSessionObjectPtr &object, Session
 {
 }
 
-AstroObjectWidget::AstroObjectWidget(const AstroSessionObjectPtr &object, Session &session, const Ephemeris &ephemeris, const TelescopePtr &telescope, bool addTitle, const shared_ptr<mutex> &downloadMutex, WContainerWidget *parent)
+AstroObjectWidget::AstroObjectWidget(const AstroSessionObjectPtr &object, Session &session, const Ephemeris &ephemeris, const TelescopePtr &telescope, bool addTitle, const shared_ptr<mutex> &downloadMutex, const vector<AstroObjectWidget::ActionButton> &actionButtons, WContainerWidget *parent)
   : WCompositeWidget(parent), d(object, session, this)
 {
   WContainerWidget *content = WW<WContainerWidget>().css("container-fluid");
@@ -61,7 +63,15 @@ AstroObjectWidget::AstroObjectWidget(const AstroSessionObjectPtr &object, Sessio
     info->bindString("custom-description", object->description());
   }
 
-  row->addWidget(dssPage);
+  info->setCondition("have-actions", actionButtons.size() > 0);
+  if(info->conditionValue("have-actions")) {
+    WToolBar *toolbar = new WToolBar;
+    for(auto btn: actionButtons)
+      toolbar->addButton(WW<WPushButton>(btn.text).css("btn-xs").addCss(btn.cssClass).onClick([=](WMouseEvent){ btn.onClick(); }));
+    
+    info->bindWidget("actions", toolbar);
+  }
+ row->addWidget(dssPage);
   row->addWidget(info);
 }
 

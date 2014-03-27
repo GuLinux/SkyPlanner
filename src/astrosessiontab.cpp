@@ -156,6 +156,7 @@ void AstroSessionTab::Private::reload()
     sessionPreviewContainer->clear();
     sessionPreviewContainer->addWidget(WW<WPushButton>(WString::tr("preview_back_to_astrosessiontab")).css("pull-right").onClick([=](WMouseEvent){
       sessionStacked->setCurrentWidget(sessionContainer);
+      populate();
       sessionPreviewContainer->clear();
     }));
 
@@ -177,7 +178,11 @@ void AstroSessionTab::Private::reload()
       return a.second.when < b.second.when;
     });
     for(auto objectelement: sessionObjects) {
-      sessionPreviewContainer->addWidget(new AstroObjectWidget(objectelement.first, session, ephemeris, selectedTelescope, true, downloadImagesMutex));
+      WContainerWidget *astroObjectContainer = new WContainerWidget;
+      sessionPreviewContainer->addWidget(astroObjectContainer);
+      astroObjectContainer->addWidget(new AstroObjectWidget(objectelement.first, session, ephemeris, selectedTelescope, true, downloadImagesMutex, {
+        {WString::tr("astroobject_remove_from_session"), "btn-danger", [=]{ remove(objectelement.first, [=] {astroObjectContainer->clear();}); } },
+      }));
     }
     sessionStacked->setCurrentWidget(sessionPreviewContainer);
   }));
@@ -509,6 +514,24 @@ void AstroSessionTab::Private::updatePositionDetails()
   }
 }
 
+void AstroSessionTab::Private::remove(const AstroSessionObjectPtr &sessionObject, function<void()> runAfterRemove)
+{
+      WMessageBox *confirmation = new WMessageBox(WString::tr("messagebox_confirm_removal_title"), WString::tr("messagebox_confirm_removal_message"), Wt::Question, Wt::Ok | Wt::Cancel);
+      confirmation->buttonClicked().connect([=](StandardButton b, _n5) {
+        if(b != Wt::Ok) {
+          confirmation->reject();
+          return;
+        }
+        confirmation->accept();
+        Dbo::Transaction t(session);
+        astroSession.modify()->astroSessionObjects().erase(sessionObject);
+        Dbo::ptr<AstroSessionObject> o = sessionObject;
+        o.remove();
+        t.commit();
+        runAfterRemove();
+      });
+      confirmation->show();
+}
 
 void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject)
 {
@@ -618,23 +641,7 @@ void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject
     actions->addButton(WW<WPushButton>(WString::tr("description")).css("btn btn-xs").onClick([=](WMouseEvent){
       descriptionCell->setHidden(!descriptionCell->isHidden());
     }));
-    actions->addButton(WW<WPushButton>(WString::tr("buttons_remove")).css("btn btn-danger btn-xs").onClick([=](WMouseEvent){
-      WMessageBox *confirmation = new WMessageBox(WString::tr("messagebox_confirm_removal_title"), WString::tr("messagebox_confirm_removal_message"), Wt::Question, Wt::Ok | Wt::Cancel);
-      confirmation->buttonClicked().connect([=](StandardButton b, _n5) {
-        if(b != Wt::Ok) {
-          confirmation->reject();
-          return;
-        }
-        confirmation->accept();
-        Dbo::Transaction t(session);
-        astroSession.modify()->astroSessionObjects().erase(sessionObject);
-        Dbo::ptr<AstroSessionObject> o = sessionObject;
-        o.remove();
-        t.commit();
-        populate();
-      });
-      confirmation->show();
-    }));
+    actions->addButton(WW<WPushButton>(WString::tr("buttons_remove")).css("btn btn-danger btn-xs").onClick([=](WMouseEvent){ remove(sessionObject, [=] { populate(); }); }));
 
     if(pastObservation) {
       WPushButton *observedToggleButton = WW<WPushButton>().css("btn btn-xs");

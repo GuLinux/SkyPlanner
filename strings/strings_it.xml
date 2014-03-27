@@ -107,6 +107,7 @@
 <message id="preview_back_to_astrosessiontab">Torna alla versione lista</message>
 
 <message id="astroobject_coordinates_label">Coordinate</message>
+<message id="astroobject_remove_from_session">Rimuovi dalla sessione</message>
 <message id="astroobject_best_altitude">Altezza Ottimale</message>
 <message id="astroobject_best_altitude_when">Orario Altezza Ottimale</message>
 <message id="astroobject_widget_dialog">Dettagli</message>
