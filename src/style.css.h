@@ -27,6 +27,14 @@ std::vector<uint8_t> styleCss() {
     .dropdown-menu li {
       cursor: pointer;
     }
+    @media print {
+      .astroobject_text {
+        font-size: x-small!important;
+      }
+      .astroobject_title {
+        font-size: 18px!important;
+      }
+    }
     legend {
     }
     .gm-style img {

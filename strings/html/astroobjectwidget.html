@@ -1,17 +1,17 @@
 <table class="table table-condensed">
-<tr><td><small>${tr:object_column_type}:</small></td><td><small>${type}</small></td></tr>
-<tr><td><small>${tr:object_column_constellation}:</small></td><td><small>${constellation} (${constellation_abbrev})</small></td></tr>
-<tr><td><small>${tr:astroobject_coordinates_label}:</small></td><td><small>AR ${ar}, DEC ${dec}</small></td></tr>
-<tr><td><small>${tr:object_column_angular_size}:</small></td><td><small>${angular_size}</small></td></tr>
-<tr><td><small>${tr:object_column_magnitude}:</small></td><td><small>${magnitude}</small></td></tr>
-<tr><td><small>${tr:astroobject_best_altitude}:</small></td><td><small>${best_altitude}</small></td></tr>
-<tr><td><small>${tr:astroobject_best_altitude_when}:</small></td><td><small>${best_altitude_when}</small></td></tr>
-<tr><td><small>${tr:object_column_difficulty}:</small></td><td><small>${difficulty}</small></td></tr>
-<tr class="hidden-print"><td><small>${tr:astroobject_actions_label}:</small></td><td><small>${actions}</small></td></tr>
+<tr><td><small class="astroobject_text">${tr:object_column_type}:</small></td><td><small class="astroobject_text">${type}</small></td></tr>
+<tr><td><small class="astroobject_text">${tr:object_column_constellation}:</small></td><td><small class="astroobject_text">${constellation} (${constellation_abbrev})</small></td></tr>
+<tr><td><small class="astroobject_text">${tr:astroobject_coordinates_label}:</small></td><td><small class="astroobject_text">AR ${ar}, DEC ${dec}</small></td></tr>
+<tr><td><small class="astroobject_text">${tr:object_column_angular_size}:</small></td><td><small class="astroobject_text">${angular_size}</small></td></tr>
+<tr><td><small class="astroobject_text">${tr:object_column_magnitude}:</small></td><td><small class="astroobject_text">${magnitude}</small></td></tr>
+<tr><td><small class="astroobject_text">${tr:astroobject_best_altitude}:</small></td><td><small class="astroobject_text">${best_altitude}</small></td></tr>
+<tr><td><small class="astroobject_text">${tr:astroobject_best_altitude_when}:</small></td><td><small class="astroobject_text">${best_altitude_when}</small></td></tr>
+<tr><td><small class="astroobject_text">${tr:object_column_difficulty}:</small></td><td><small class="astroobject_text">${difficulty}</small></td></tr>
+<tr class="hidden-print"><td><small class="astroobject_text">${tr:astroobject_actions_label}:</small></td><td><small class="astroobject_text">${actions}</small></td></tr>
 ${<has-catalogues-descriptions>}
-<tr><td colspan="2"><small>${catalogues-description}</small></td></tr>
+<tr><td colspan="2"><small class="astroobject_text">${catalogues-description}</small></td></tr>
 ${</has-catalogues-descriptions>}
 ${<has-custom-description>}
-<tr><td colspan="2"><small>${custom-description}</small></td></tr>
+<tr><td colspan="2"><small class="astroobject_text">${custom-description}</small></td></tr>
 ${</has-custom-description>}
 </table>
