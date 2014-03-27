@@ -25,7 +25,7 @@ AstroObjectWidget::Private::Private(const AstroSessionObjectPtr &object, Session
 AstroObjectWidget::AstroObjectWidget(const AstroSessionObjectPtr &object, Session &session, const Ephemeris &ephemeris, const TelescopePtr &telescope, bool addTitle, const shared_ptr<mutex> &downloadMutex, const vector<AstroObjectWidget::ActionButton> &actionButtons, WContainerWidget *parent)
   : WCompositeWidget(parent), d(object, session, this)
 {
-  WContainerWidget *content = WW<WContainerWidget>().css("container-fluid");
+  WContainerWidget *content = WW<WContainerWidget>().css("container-fluid astroobjectwidget");
   WContainerWidget *row = WW<WContainerWidget>().css("row");
   setImplementation(content);
   Dbo::Transaction t(session);

@@ -55,6 +55,7 @@ AstroSessionsPage::AstroSessionsPage(Session &session, WContainerWidget* parent)
   });
 
   WMenuItem *listMenuItem = d->tabWidget->addTab(d->astroSessionsListTab, WString::tr("astrosessionspage_sessions_list"));
+  listMenuItem->addStyleClass("hidden-print");
   listMenuItem->setPathComponent("list/");
   d->tabWidget->tabClosed().connect([=](int tabNumber, _n5){
     spLog("notice") << __PRETTY_FUNCTION__ << ": tabNumber=" << tabNumber;
@@ -109,6 +110,7 @@ void AstroSessionsPage::open(const string &tabName)
   }
   auto astroSessionTab = new AstroSessionTab(astroSession, d->session);
   WMenuItem *newTab = d->tabWidget->addTab(astroSessionTab, WString::fromUTF8(astroSession->name()));
+  newTab->addStyleClass("hidden-print");
   //newTab->setPathComponent( AstroSessionTab::pathComponent(astroSession, t) );
   astroSessionTab->nameChanged().connect([=](const string &newName,_n5){
     newTab->setText(WString::fromUTF8(newName));

@@ -174,7 +174,7 @@ DSSPage::DSSPage(const NgcObjectPtr &object, Session &session, const DSSPage::Op
                                        <a href="http://archive.stsci.edu/dss/acknowledging.html" target="_BLANK">(acknowledgment)</a>
                                        </small>
                                        )");
-  copyright->addStyleClass("pull-left");
+  copyright->addStyleClass("pull-left hidden-print");
   addWidget(copyright);
 }
 

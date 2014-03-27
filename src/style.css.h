@@ -19,6 +19,11 @@ std::vector<uint8_t> styleCss() {
     .dialog-popup-submenu {
       z-index: 1100!important;
     }
+    .astroobjectwidget {
+      page-break-before: auto;
+      page-break-after: auto
+      page-break-inside:avoid;
+    }
     .dropdown-menu li {
       cursor: pointer;
     }
