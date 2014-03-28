@@ -155,11 +155,14 @@ void AstroSessionTab::Private::reload()
     spLog("notice") << "Switching to preview version..";
     sessionPreviewContainer->clear();
     sessionPreviewContainer->addWidget(WW<WText>(WString("<h3>{1}, {2}</h3>").arg(astroSession->name()).arg(astroSession->wDateWhen().toString("dddd d MMMM yyyy") )).css("text-center") );
-    sessionPreviewContainer->addWidget(WW<WPushButton>(WString::tr("preview_back_to_astrosessiontab")).css("hidden-print pull-right").onClick([=](WMouseEvent){
+    WPushButton *printButton = WW<WPushButton>(WString::tr("buttons_print")).css("btn-info btn-sm");
+    printButton->setLink("javascript:window.print()");
+    WPushButton *backButton = WW<WPushButton>(WString::tr("preview_back_to_astrosessiontab")).css("btn-warning btn-sm").onClick([=](WMouseEvent){
       sessionStacked->setCurrentWidget(sessionContainer);
       populate();
       sessionPreviewContainer->clear();
-    }));
+    });
+    sessionPreviewContainer->addWidget(WW<WToolBar>().css("hidden-print pull-right").addButton(backButton));
 
     WContainerWidget *infoWidget = WW<WContainerWidget>().css("astroobjects-info-widget");
     updatePositionDetails(infoWidget, false);

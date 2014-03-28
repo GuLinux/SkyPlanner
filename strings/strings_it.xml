@@ -56,6 +56,7 @@
 <message id="telescopes_magnitude_gain">Guadagno Magnitudini</message>
 <message id="telescopes_magnitude_limit_naked">Magnitudine Limite (occhio nudo=6)</message>
 <message id="buttons_close">Chiudi</message>
+<message id="buttons_print">Stampa</message>
 <message id="buttons_add">Aggiungi</message>
 <message id="buttons_save">Salva</message>
 <message id="buttons_remove">Cancella</message>
