@@ -48,6 +48,13 @@ class DSSImage::Private
     Wt::WContainerWidget *content;
     int retry = 0;
 
+
+    boost::filesystem::path file(DSSImage::ImageSize imageSize) const;
+    boost::filesystem::path file() const { return file(imageOptions.imageSize); }
+    boost::filesystem::path fullFile() const { return file(Full); }
+
+    
+
     Wt::Signal<> failed;
     Wt::Signal<Wt::WLink> _loaded;
     std::shared_ptr<std::mutex> downloadMutex;

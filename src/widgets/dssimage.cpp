@@ -172,11 +172,10 @@ void DSSImage::Private::setCacheImage()
 {
   content->clear();
   string deployPath;
-  fs::path file = imageSizeMap[imageOptions.imageSize].file(imageOptions);
   if(wApp->readConfigurationProperty("dsscache_deploy_path", deployPath )) {
-    _imageLink.setUrl(format("%s/%s") % deployPath % file.filename().string());
+    _imageLink.setUrl(format("%s/%s") % deployPath % file().filename().string());
   } else
-    _imageLink.setResource(new WFileResource(file.string(), q));
+    _imageLink.setResource(new WFileResource(file().string(), q));
   if(showAnchor) {
     content->addWidget(WW<WAnchor>(_imageLink).setTarget(TargetNewWindow).add(WW<WImage>(_imageLink).addCss("img-responsive")));
   }
@@ -184,6 +183,13 @@ void DSSImage::Private::setCacheImage()
     content->addWidget(WW<WImage>(_imageLink).addCss("img-responsive").onClick([=](const WMouseEvent &e){imageClicked.emit(e); }));
   }
   _loaded.emit(_imageLink);
+}
+
+
+
+fs::path DSSImage::Private::file(DSSImage::ImageSize imageSize) const
+{
+  return imageSizeMap[imageSize].file(imageOptions);
 }
 
 struct CurlProgressHandler {
@@ -201,11 +207,10 @@ WLink DSSImage::fullImageLink() const
   string deployPath;
   WLink imageLink;
 
-  fs::path file = Private::imageSizeMap[Full].file(d->imageOptions);
   if(wApp->readConfigurationProperty("dsscache_deploy_path", deployPath )) {
-    imageLink.setUrl(format("%s/%s") % deployPath % file.filename().string());
+    imageLink.setUrl(format("%s/%s") % deployPath % d->fullFile().filename().string());
   } else
-    imageLink.setResource(new WFileResource(file.string(), (WObject*)(this)));
+    imageLink.setResource(new WFileResource(d->fullFile().string(), (WObject*)(this)));
   return imageLink;
 }
 
@@ -223,7 +228,7 @@ void DSSImage::Private::curlDownload()
 
     //content->addWidget(progressHandler->progressBar);
     progressHandler->app = wApp;
-    fs::path downloadFile = imageSizeMap[Full].file(imageOptions);
+    fs::path downloadFile = fullFile();
 
     downloadThread = boost::thread([=] () mutable {
       unique_ptr<unique_lock<mutex>> scheduledDownloadLock;
@@ -292,7 +297,7 @@ DSSImage::DSSImage(const ImageOptions &imageOptions, const shared_ptr<mutex> &do
   container->addWidget(d->content);
   setImplementation(container);
   d->showAnchor = anchor;
-  if(fs::exists(Private::imageSizeMap[Full].file(imageOptions))) {
+  if(fs::exists(d->fullFile() )) {
     d->setCacheImage();
   }
   else {
