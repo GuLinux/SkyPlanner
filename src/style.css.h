@@ -27,6 +27,12 @@ std::vector<uint8_t> styleCss() {
     }
 
     @media print {
+      .nav-tabs {
+        display: none!important;
+      }
+      body {
+        padding-top: 70px;
+      }
       .astroobject_text,.astroobjects-info-widget {
         font-size: x-small!important;
       }
