@@ -57,14 +57,9 @@ std::map<DSSImage::ImageVersion,std::string> DSSImage::Private::imageVersionStri
 };
 
 
-DSSImage::Private::Private( const Coordinates::Equatorial &coordinates, const Angle &size, DSSImage::ImageVersion imageVersion, const shared_ptr<mutex> &downloadMutex, DSSImage::ImageSize imageSize, DSSImage *q )
-  : coordinates(coordinates), size(size), imageVersion(imageVersion), downloadMutex(downloadMutex), imageSize(imageSize), q( q )
+DSSImage::Private::Private( const DSSImage::ImageOptions &imageOptions, const shared_ptr<mutex> &downloadMutex, DSSImage *q )
+  : imageOptions(imageOptions), downloadMutex(downloadMutex), q( q )
 {
-  string cacheDir("dss-cache");
-  wApp->readConfigurationProperty("dss-cache-dir", cacheDir);
-  fs::create_directories(cacheDir);
-  cacheFile = fs::path(cacheDir) / cacheKey();
-  cacheFileMid = fs::path(cacheDir) / cacheKey(Mid);
 }
 
 DSSImage::~DSSImage()
@@ -99,31 +94,55 @@ vector< DSSImage::ImageVersion > DSSImage::versions()
   return v;
 }
 
+map<DSSImage::ImageSize,DSSImage::Private::Image> DSSImage::Private::imageSizeMap {
+    {DSSImage::Full, { 0, "" } },
+    {DSSImage::Mid, { 650, "mid_" } },
+    {DSSImage::Thumb, { 100, "thumb_" } },
+};
 
-
-string DSSImage::Private::cacheKey( DSSImage::ImageSize imageSize) const
+boost::filesystem::path DSSImage::Private::Image::file(const DSSImage::ImageOptions &imageOptions)
 {
-  static map<DSSImage::ImageSize, string> sizeString {
-    { DSSImage::Full, "" },
-    { DSSImage::Mid, "mid_" },
-    { DSSImage::Thumb, "thumb_" },
-  };
-  return format("%s%s-ar_%d-%d-%.1f_dec_%d-%d-%.1f_size_%d-%d-%.1f.gif")
-  % sizeString[imageSize]
-  % imageVersionStrings[imageVersion]
-  % coordinates.rightAscension.sexagesimalHours().hours
-  % coordinates.rightAscension.sexagesimalHours().minutes
-  % coordinates.rightAscension.sexagesimalHours().seconds
-  % coordinates.declination.sexagesimal().degrees
-  % coordinates.declination.sexagesimal().minutes
-  % coordinates.declination.sexagesimal().seconds
-  % size.sexagesimal().degrees
-  % size.sexagesimal().minutes
-  % size.sexagesimal().seconds;
+  fs::path p;
+  static string cacheDir("dss-cache");
+  if(cacheDir.empty()) {
+    bool success = wApp->readConfigurationProperty("dss-cache-dir", cacheDir);
+    if(!success)
+      throw runtime_error("Error reading dss-cache-dir property!");
+    fs::create_directories(cacheDir);
+  }
+
+  string cacheKey = format("%s%s-ar_%d-%d-%.1f_dec_%d-%d-%.1f_size_%d-%d-%.1f.gif")
+  % prefix
+  % imageVersionStrings[imageOptions.imageVersion]
+  % imageOptions.coordinates.rightAscension.sexagesimalHours().hours
+  % imageOptions.coordinates.rightAscension.sexagesimalHours().minutes
+  % imageOptions.coordinates.rightAscension.sexagesimalHours().seconds
+  % imageOptions.coordinates.declination.sexagesimal().degrees
+  % imageOptions.coordinates.declination.sexagesimal().minutes
+  % imageOptions.coordinates.declination.sexagesimal().seconds
+  % imageOptions.size.sexagesimal().degrees
+  % imageOptions.size.sexagesimal().minutes
+  % imageOptions.size.sexagesimal().seconds;
+
+  p = fs::path(cacheDir) / cacheKey;
+  if(!fs::exists(p))
+    resize(p, imageOptions);
+  return p;
 }
+
+void DSSImage::Private::Image::resize(const fs::path &destination, const DSSImage::ImageOptions &imageOptions)
+{
+  if(pixels == 0) return;
+  Magick::Image image(imageSizeMap[DSSImage::Full].file(imageOptions).string());
+  image.scale({pixels,pixels});
+  image.write(destination.string());
+}
+
+
 string DSSImage::Private::imageLink() const
 {
-  Angle::Sexagesimal objectSize = size.sexagesimal();
+  // TODO: move field enlargement elsewhere
+  Angle::Sexagesimal objectSize = imageOptions.size.sexagesimal();
   double objectRect = static_cast<double>(objectSize.degrees * 60) + static_cast<double>(objectSize.minutes) + (objectSize.seconds/60);
   double multiplyFactor = 3.0;
   if(objectRect < 20)
@@ -139,32 +158,23 @@ string DSSImage::Private::imageLink() const
   objectRect = objectRect <= 0 ? 75.0:objectRect; // objects without angular size (-1), showing max possible field...
 
   return format("http://archive.stsci.edu/cgi-bin/dss_search?v=%s&r=%d+%d+%.1f&d=%d+%d+%.1f&e=J2000&h=%d&w=%df&f=gif&c=none&fov=SM97&v3=")
-  % imageVersionStrings[imageVersion]
-  % coordinates.rightAscension.sexagesimalHours().hours
-  % coordinates.rightAscension.sexagesimalHours().minutes
-  % coordinates.rightAscension.sexagesimalHours().seconds
-  % coordinates.declination.sexagesimal().degrees
-  % coordinates.declination.sexagesimal().minutes
-  % coordinates.declination.sexagesimal().seconds
+  % imageVersionStrings[imageOptions.imageVersion]
+  % imageOptions.coordinates.rightAscension.sexagesimalHours().hours
+  % imageOptions.coordinates.rightAscension.sexagesimalHours().minutes
+  % imageOptions.coordinates.rightAscension.sexagesimalHours().seconds
+  % imageOptions.coordinates.declination.sexagesimal().degrees
+  % imageOptions.coordinates.declination.sexagesimal().minutes
+  % imageOptions.coordinates.declination.sexagesimal().seconds
   % objectRect % objectRect;
 }
 
 void DSSImage::Private::setCacheImage()
 {
-  // resize: 600x600
-  boost::filesystem::path file = cacheFile;
-  if(imageSize == Mid) {
-    file = cacheFileMid;
-    if(! boost::filesystem::exists(file)) {
-      Magick::Image image(cacheFile.string());
-      image.scale({600,600});
-      image.write(file.string());
-    }
-  }
   content->clear();
   string deployPath;
+  fs::path file = imageSizeMap[imageOptions.imageSize].file(imageOptions);
   if(wApp->readConfigurationProperty("dsscache_deploy_path", deployPath )) {
-    _imageLink.setUrl(format("%s/%s") % deployPath % boost::filesystem::path(file).filename().string());
+    _imageLink.setUrl(format("%s/%s") % deployPath % file.filename().string());
   } else
     _imageLink.setResource(new WFileResource(file.string(), q));
   if(showAnchor) {
@@ -186,14 +196,16 @@ struct CurlProgressHandler {
 
 WLink DSSImage::fullImageLink() const
 {
-  if(d->imageSize == Full)
+  if(d->imageOptions.imageSize == Full)
     return d->_imageLink;
   string deployPath;
   WLink imageLink;
+
+  fs::path file = Private::imageSizeMap[Full].file(d->imageOptions);
   if(wApp->readConfigurationProperty("dsscache_deploy_path", deployPath )) {
-    imageLink.setUrl(format("%s/%s") % deployPath % boost::filesystem::path(d->cacheFile).filename().string());
+    imageLink.setUrl(format("%s/%s") % deployPath % file.filename().string());
   } else
-    imageLink.setResource(new WFileResource(d->cacheFile.string(), (WObject*)(this)));
+    imageLink.setResource(new WFileResource(file.string(), (WObject*)(this)));
   return imageLink;
 }
 
@@ -211,6 +223,7 @@ void DSSImage::Private::curlDownload()
 
     //content->addWidget(progressHandler->progressBar);
     progressHandler->app = wApp;
+    fs::path downloadFile = imageSizeMap[Full].file(imageOptions);
 
     downloadThread = boost::thread([=] () mutable {
       unique_ptr<unique_lock<mutex>> scheduledDownloadLock;
@@ -218,7 +231,7 @@ void DSSImage::Private::curlDownload()
         scheduledDownloadLock.reset(new unique_lock<mutex>(*downloadMutex));
       }
         if(aborted) return;
-        ofstream output(cacheFile.string() + "_tmp");
+        ofstream output( downloadFile.string() + "_tmp");
         shared_ptr<Curl> curl(new Curl{output});
         curl->setProgressCallback([=](double, double, double percent) {
           return aborted ? 1 : 0;
@@ -239,16 +252,16 @@ void DSSImage::Private::curlDownload()
             if( ! curl->requestOk() || curl->httpResponseCode() != 200 || curl->contentType() != "image/gif" ) {
                 if(aborted) return;
                 WServer::instance()->log("warning") << "Error downloading data using libCURL: " << curl->lastErrorMessage();
-                boost::filesystem::remove(cacheFile.string() + "_tmp");
+                boost::filesystem::remove(downloadFile.string() + "_tmp");
                 content->addWidget(new WText(WString::tr("dss_download_error")));
                 failed.emit();
                 return;
             }
             try {
-              boost::filesystem::rename(cacheFile.string() + "_tmp", cacheFile.string());
+              boost::filesystem::rename(downloadFile.string() + "_tmp", downloadFile.string());
               setCacheImage();
             } catch(std::exception &e) {
-              WServer::instance()->log("error") << "Error moving temp download file " << cacheFile.string() + "_tmp to " << cacheFile.string() << ": " << e.what();
+              WServer::instance()->log("error") << "Error moving temp download file " << downloadFile.string() + "_tmp to " << downloadFile.string() << ": " << e.what();
             }
 
         });
@@ -265,8 +278,8 @@ Signal<WLink> &DSSImage::imageLoaded() const {
   return d->_loaded;
 }
 
-DSSImage::DSSImage(const Coordinates::Equatorial &coordinates, const Angle &size, DSSImage::ImageVersion imageVersion, const shared_ptr<mutex> &downloadMutex, bool anchor, bool showDSSLink, ImageSize imageSize, WContainerWidget *parent )
-  : WCompositeWidget(parent), d( coordinates, size, imageVersion, downloadMutex, imageSize, this )
+DSSImage::DSSImage(const ImageOptions &imageOptions, const shared_ptr<mutex> &downloadMutex, bool anchor, bool showDSSLink, WContainerWidget *parent )
+  : WCompositeWidget(parent), d( imageOptions, downloadMutex, this )
 {
   d->content = new WContainerWidget;
   WContainerWidget *container = WW<WContainerWidget>();
@@ -279,7 +292,7 @@ DSSImage::DSSImage(const Coordinates::Equatorial &coordinates, const Angle &size
   container->addWidget(d->content);
   setImplementation(container);
   d->showAnchor = anchor;
-  if(fs::exists(d->cacheFile)) {
+  if(fs::exists(Private::imageSizeMap[Full].file(imageOptions))) {
     d->setCacheImage();
   }
   else {

@@ -28,20 +28,26 @@
 class DSSImage::Private
 {
   public:
-    Private(const Coordinates::Equatorial &coordinates, const Angle &size, DSSImage::ImageVersion imageVersion, const std::shared_ptr<std::mutex> &downloadMutex, ImageSize imageSize, DSSImage *q );
-    Coordinates::Equatorial coordinates;
-    Angle size;
-    DSSImage::ImageVersion imageVersion;
-    boost::filesystem::path cacheFile;
-    boost::filesystem::path cacheFileMid;
+    struct Image {
+      uint32_t pixels;
+      std::string prefix;
+      boost::filesystem::path file(const DSSImage::ImageOptions &imageOptions);
+      private:
+      void resize(const boost::filesystem::path &destination, const DSSImage::ImageOptions &imageOptions);
+    };
+    static std::map<DSSImage::ImageSize, Image> imageSizeMap;
+    static std::map<DSSImage::ImageVersion,std::string> imageVersionStrings;
+
+    Private(const DSSImage::ImageOptions &imageOptions, const std::shared_ptr<std::mutex> &downloadMutex, DSSImage *q );
+    DSSImage::ImageOptions imageOptions;
+
     std::string imageLink() const;
-    std::string cacheKey(DSSImage::ImageSize imageSize = Full) const;
     void startDownload();
     void curlDownload();
     void setCacheImage();
     Wt::WContainerWidget *content;
     int retry = 0;
-    static std::map<DSSImage::ImageVersion,std::string> imageVersionStrings;
+
     Wt::Signal<> failed;
     Wt::Signal<Wt::WLink> _loaded;
     std::shared_ptr<std::mutex> downloadMutex;
@@ -50,7 +56,7 @@ class DSSImage::Private
     Wt::Signal<Wt::WMouseEvent> imageClicked;
     boost::thread downloadThread;
     bool aborted = false;
-    ImageSize imageSize;
+
   private:
     class DSSImage *const q;
 };

@@ -42,13 +42,21 @@ class DSSImage : public Wt::WCompositeWidget
     enum ImageSize {
       Full, Mid, Thumb
     };
+    struct ImageOptions {
+      ImageOptions(const Coordinates::Equatorial &coordinates, const Angle &size, ImageVersion imageVersion, ImageSize imageSize)
+      : coordinates(coordinates), size(size), imageVersion(imageVersion), imageSize(imageSize) {}
+      Coordinates::Equatorial coordinates;
+      Angle size;
+      ImageVersion imageVersion = phase2_gsc2;
+      ImageSize imageSize = Full;
+    };
     static ImageVersion imageVersion(const std::string &version);
     static std::string imageVersion(const ImageVersion &version);
     static std::vector<ImageVersion> versions();
     Wt::Signal<> &failed() const;
     Wt::Signal<Wt::WMouseEvent> &imageClicked() const;
     Wt::Signal<Wt::WLink> &imageLoaded() const;
-    DSSImage( const Coordinates::Equatorial &coordinates, const Angle &size, DSSImage::ImageVersion imageVersion = phase2_gsc2, const std::shared_ptr<std::mutex> &downloadMutex = {}, bool anchor = true, bool showDSSLink = true, ImageSize imageSize = Full, Wt::WContainerWidget *parent = 0 );
+    DSSImage( const ImageOptions &imageOptions, const std::shared_ptr<std::mutex> &downloadMutex = {}, bool anchor = true, bool showDSSLink = true, Wt::WContainerWidget *parent = 0 );
     ~DSSImage();
     void startDownload();
     Wt::WLink fullImageLink() const;
