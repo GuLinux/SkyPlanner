@@ -54,6 +54,8 @@ class Angle {
     bool operator>(const Angle &other) const { return degrees() > other.degrees(); }
     bool operator<(const Angle &other) const { return degrees() < other.degrees(); }
     bool operator==(const Angle &other) const { return degrees() == other.degrees(); }
+    bool operator<=(const Angle &other) const { return (*this == other) || (*this < other); }
+    bool operator>=(const Angle &other) const { return (*this == other) || (*this > other); }
     bool operator!=(const Angle &other) const { return ! (*this == other); }
   private:
     Angle(double degrees);

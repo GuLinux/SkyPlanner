@@ -59,9 +59,21 @@ DSSPage::~DSSPage()
 void DSSPage::Private::setImageType(DSSImage::ImageVersion version, const shared_ptr<mutex> &downloadMutex)
 {
   imageContainer->clear();
-  DSSImage::ImageOptions dssImageOptions{object->coordinates(), Angle::degrees(object->angularSize()), version, options.imageSize};
 
-
+  Angle size = Angle::degrees(object->angularSize());
+  double multiplyFactor = 3.0;
+  if(size < Angle::arcMinutes(20))
+    multiplyFactor = 5.0;
+  if(size < Angle::arcMinutes(10))
+    multiplyFactor = 6.5;
+  if(size < Angle::arcMinutes(5) )
+    multiplyFactor = 10.;
+  if(size < Angle::arcMinutes(1) )
+    multiplyFactor = 20.;
+  size = min(Angle::arcMinutes(75.0), size * multiplyFactor);
+  size = (size <= Angle::degrees(0)) ? Angle::arcMinutes(75.0) : size; // objects without angular size (-1), showing max possible field...
+  
+  DSSImage::ImageOptions dssImageOptions{object->coordinates(), size, version, options.imageSize};
 
   DSSImage *image = new DSSImage(dssImageOptions, downloadMutex, !options.optionsAsMenu, !options.optionsAsMenu );
   image->imageClicked().connect([=](const WMouseEvent &e, _n5) {

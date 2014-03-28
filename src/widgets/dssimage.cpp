@@ -143,20 +143,6 @@ string DSSImage::Private::imageLink() const
 {
   // TODO: move field enlargement elsewhere
   double objectRect = imageOptions.size.arcMinutes();
-  double multiplyFactor = 3.0;
-  
-  if(objectRect < 20)
-    multiplyFactor = 5.0;
-  if(objectRect < 10)
-    multiplyFactor = 6.5;
-  if(objectRect < 5 )
-    multiplyFactor = 10.;
-  if(objectRect < 1 )
-    multiplyFactor = 20.;
-  
-  objectRect = min(75.0, objectRect * multiplyFactor);
-  objectRect = objectRect <= 0 ? 75.0:objectRect; // objects without angular size (-1), showing max possible field...
-
   return format("http://archive.stsci.edu/cgi-bin/dss_search?v=%s&r=%d+%d+%.1f&d=%d+%d+%.1f&e=J2000&h=%d&w=%df&f=gif&c=none&fov=SM97&v3=")
   % imageVersionStrings[imageOptions.imageVersion]
   % imageOptions.coordinates.rightAscension.sexagesimalHours().hours
