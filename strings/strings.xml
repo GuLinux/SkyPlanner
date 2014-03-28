@@ -22,8 +22,10 @@
 <message id="buttons_save">Save</message>
 <message id="buttons_send">Send</message>
 <message id="buttons_invert">Invert</message>
+<message id="buttons_invert_all">Invert All</message>
 <message id="buttons_default">Default</message>
 <message id="buttons_print">Print</message>
+<message id="buttons_hide">Hide</message>
 
 <message id="astrosessionspage_sessions_list">Sessions List</message>
 <message id="astrosessionslisttab_name">Name</message>
@@ -214,7 +216,7 @@ After you added a session, click it to add new objects.
 <message id="dss_downloading_message">Downloading image from DSS Website, please wait.</message>
 <message id="dss_download_error">Error downloading image from DSS Website. Please retry later, or try another image format.</message>
 <message id="image_controller_title">Image Control</message>
-<message id="imagecontrol-zoom-label">Image Size</message>
+<message id="imagecontrol-zoom-label">Field Size</message>
 <message id="imagecontrol-move-factor-label">Movement Steps</message>
 <message id="imagecontrol-menu">Move/resize</message>
 

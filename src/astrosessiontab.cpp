@@ -162,7 +162,8 @@ void AstroSessionTab::Private::reload()
       populate();
       sessionPreviewContainer->clear();
     });
-    sessionPreviewContainer->addWidget(WW<WToolBar>().css("hidden-print pull-right").addButton(backButton));
+    WPushButton *invertAllButton = WW<WPushButton>(WString::tr("buttons_invert_all"));
+    sessionPreviewContainer->addWidget(WW<WToolBar>().css("hidden-print pull-right").addButton(backButton).add(invertAllButton));
 
     WContainerWidget *infoWidget = WW<WContainerWidget>().css("astroobjects-info-widget");
     updatePositionDetails(infoWidget, false);
@@ -184,13 +185,18 @@ void AstroSessionTab::Private::reload()
     sort(begin(sessionObjects), end(sessionObjects), [&](const AstroSessionObjectElement &a, const AstroSessionObjectElement &b){
       return a.second.when < b.second.when;
     });
+    vector<AstroObjectWidget*> astroObjectWidgets;
     for(auto objectelement: sessionObjects) {
       WContainerWidget *astroObjectContainer = new WContainerWidget;
       sessionPreviewContainer->addWidget(astroObjectContainer);
-      astroObjectContainer->addWidget(new AstroObjectWidget(objectelement.first, session, ephemeris, selectedTelescope, true, downloadImagesMutex, {
-        {WString::tr("astroobject_remove_from_session"), "btn-danger", [=]{ remove(objectelement.first, [=] {astroObjectContainer->clear();}); } },
-      }));
+      AstroObjectWidget *astroObjectWidget = new AstroObjectWidget(objectelement.first, session, ephemeris, selectedTelescope, true, downloadImagesMutex, {
+         {WString::tr("buttons_hide"), "btn-warning", [=]{ astroObjectContainer->clear(); } },
+         {WString::tr("astroobject_remove_from_session"), "btn-danger", [=]{ remove(objectelement.first, [=] {astroObjectContainer->clear();}); } },
+      });
+      astroObjectWidgets.push_back(astroObjectWidget);
+      astroObjectContainer->addWidget(astroObjectWidget);
     }
+    invertAllButton->clicked().connect([=](WMouseEvent){ for(auto a: astroObjectWidgets) a->toggleInvert(); } );
     sessionStacked->setCurrentWidget(sessionPreviewContainer);
   }));
   sessionActions->addButton(WW<WPushButton>(WString::tr("astrosessiontab_printable_version")).css("btn btn-info btn-sm").onClick( [=](WMouseEvent){ printableVersion(); } ));

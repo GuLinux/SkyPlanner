@@ -168,7 +168,7 @@ DSSPage::DSSPage(const NgcObjectPtr &object, Session &session, const DSSPage::Op
   });
 
   WPushButton *invertButton = WW<WPushButton>(WString::tr("buttons_invert")).css("btn btn-inverse")
-    .onClick([=](WMouseEvent) { d->imageContainer->toggleStyleClass("image-inverse", !d->imageContainer->hasStyleClass("image-inverse")); } )
+    .onClick([=](WMouseEvent) { toggleInvert(); } )
     .setEnabled(wApp->environment().agentIsWebKit()
   );
 
@@ -199,6 +199,11 @@ DSSPage::DSSPage(const NgcObjectPtr &object, Session &session, const DSSPage::Op
                                        )");
   copyright->addStyleClass("pull-left hidden-print");
   addWidget(copyright);
+}
+
+void DSSPage::toggleInvert()
+{
+  d->imageContainer->toggleStyleClass("image-inverse", !d->imageContainer->hasStyleClass("image-inverse")); 
 }
 
 string DSSPage::internalPath( const Dbo::ptr< NgcObject > &object, Dbo::Transaction &transaction )

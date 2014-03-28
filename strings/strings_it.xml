@@ -62,7 +62,9 @@
 <message id="buttons_remove">Cancella</message>
 <message id="buttons_send">Invia</message>
 <message id="buttons_invert">Inverti</message>
+<message id="buttons_invert_all">Inverti Tutte</message>
 <message id="buttons_default">Predefinito</message>
+<message id="buttons_hide">Nascondi</message>
 
 <message id="astrosessionspage_sessions_list">Elenco Osservazioni</message>
 <message id="astrosessionslisttab_name">Nome</message>
@@ -234,7 +236,7 @@ Dopo aver aggiunto una nuova sessione, clicca sul suo nome per aggiungere oggett
 <message id="dss_downloading_message">Download immagine dal sito DSS, si prega di attendere.</message>
 <message id="dss_download_error">Errore durante il download dell'immagine dal sito DSS. Si prega di riprovare più tardi, o di cambiare formato di immagine.</message>
 <message id="image_controller_title">Controllo Immagine</message>
-<message id="imagecontrol-zoom-label">Dimensioni</message>
+<message id="imagecontrol-zoom-label">Dimensioni Campo</message>
 <message id="imagecontrol-move-factor-label">Movimento</message>
 <message id="imagecontrol-menu">Sposta/ridimensiona</message>
 

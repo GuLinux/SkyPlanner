@@ -38,9 +38,9 @@ AstroObjectWidget::AstroObjectWidget(const AstroSessionObjectPtr &object, Sessio
           );
   }
   content->addWidget(row);
-  auto dssPage = new DSSPage(object->ngcObject(), session, DSSPage::Options::embedded(downloadMutex));
+  d->dssPage = new DSSPage(object->ngcObject(), session, DSSPage::Options::embedded(downloadMutex));
   //dssPage->setMaximumSize(400, 400);
-  dssPage->addStyleClass("col-xs-4");
+  d->dssPage->addStyleClass("col-xs-4");
   WTemplate *info = WW<WTemplate>(WString::tr("astroobjectwidget")).css("col-xs-8");
   info->addFunction( "tr", &WTemplate::Functions::tr);
   info->bindString("ar", object->coordinates().rightAscension.printable(Angle::Hourly));
@@ -71,8 +71,13 @@ AstroObjectWidget::AstroObjectWidget(const AstroSessionObjectPtr &object, Sessio
     
     info->bindWidget("actions", toolbar);
   }
- row->addWidget(dssPage);
+ row->addWidget(d->dssPage);
   row->addWidget(info);
+}
+
+void AstroObjectWidget::toggleInvert()
+{
+  d->dssPage->toggleInvert();
 }
 
 AstroObjectWidget::~AstroObjectWidget()
