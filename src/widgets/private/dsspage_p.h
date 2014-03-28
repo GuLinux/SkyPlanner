@@ -38,6 +38,7 @@ class DSSPage::Private
     std::function<void()> runOnClose = []{};
     DSSPage::Options options;
     Wt::WContainerWidget *toolbar;
+    DSSImage *dssImage = nullptr;
   private:
     class DSSPage *const q;
 };

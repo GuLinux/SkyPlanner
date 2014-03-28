@@ -61,21 +61,23 @@ void DSSPage::Private::setImageType(DSSImage::ImageVersion version, const shared
   imageContainer->clear();
 
   Angle size = Angle::degrees(object->angularSize());
-  double multiplyFactor = 3.0;
+  double multiplyFactor = 2.0;
   if(size < Angle::arcMinutes(20))
-    multiplyFactor = 5.0;
+    multiplyFactor = 3.5;
   if(size < Angle::arcMinutes(10))
-    multiplyFactor = 6.5;
+    multiplyFactor = 4.5;
   if(size < Angle::arcMinutes(5) )
-    multiplyFactor = 10.;
+    multiplyFactor = 7.;
   if(size < Angle::arcMinutes(1) )
-    multiplyFactor = 20.;
+    multiplyFactor = 90.;
   size = min(Angle::arcMinutes(75.0), size * multiplyFactor);
   size = (size <= Angle::degrees(0)) ? Angle::arcMinutes(75.0) : size; // objects without angular size (-1), showing max possible field...
+
   
   DSSImage::ImageOptions dssImageOptions{object->coordinates(), size, version, options.imageSize};
 
   DSSImage *image = new DSSImage(dssImageOptions, downloadMutex, !options.optionsAsMenu, !options.optionsAsMenu );
+  dssImage = image;
   image->imageClicked().connect([=](const WMouseEvent &e, _n5) {
     WPopupMenu *menu = new WPopupMenu;
     WMenuItem *i = menu->addItem(WString::tr("dss_open_new_window_menu"));
@@ -98,10 +100,12 @@ void DSSPage::Private::setImageType(DSSImage::ImageVersion version, const shared
       });
     }
     menu->addMenu(WString::tr("dss_change_type_menu"), imageTypeSubmenu);
+    menu->addItem(WString::tr("imagecontrol-menu"))->triggered().connect([=](WMenuItem*, _n5){ if(dssImage) dssImage->showImageControls(); });
 
     menu->popup(e);
   });
   image->failed().connect([=](_n6) mutable {
+    dssImage = nullptr;
     if(nextDSSTypeIndex+1 > imageVersions.size())
       return;
     setImageType(imageVersions[nextDSSTypeIndex++], downloadMutex);
@@ -168,11 +172,14 @@ DSSPage::DSSPage(const NgcObjectPtr &object, Session &session, const DSSPage::Op
     .setEnabled(wApp->environment().agentIsWebKit()
   );
 
+  WPushButton *imageControls = WW<WPushButton>(WString::tr("imagecontrol-menu")).onClick([=](WMouseEvent){ if(d->dssImage) d->dssImage->showImageControls(); });
+
 
   d->toolbar = WW<WContainerWidget>().css("form-inline")
       .add(WW<WLabel>(WString::tr("dssimage_version_label")).setMargin(10, Wt::Right))
       .add(d->typeCombo)
-      .add(invertButton);
+      .add(invertButton)
+      .add(imageControls);
   if(options.showClose)
     d->toolbar->addWidget(WW<WPushButton>(WString::tr("buttons_close")).css("btn btn-danger pull-right").onClick([=](WMouseEvent){
       options.runOnClose();

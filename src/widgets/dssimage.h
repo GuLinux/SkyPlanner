@@ -61,6 +61,7 @@ class DSSImage : public Wt::WCompositeWidget
     void startDownload();
     Wt::WLink fullImageLink() const;
     Wt::WLink dssOriginalLink() const;
+    void showImageControls();
   private:
     D_PTR;
 };

@@ -55,6 +55,10 @@ class DSSImage::Private
 
     Wt::WLink linkFor(const boost::filesystem::path &file) const;
 
+    void showImageController();
+    void reload();
+    Wt::WContainerWidget *container;
+    bool showDSSLink;
     
 
     Wt::Signal<> failed;

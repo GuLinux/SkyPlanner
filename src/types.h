@@ -51,6 +51,7 @@ class Angle {
     std::string printable(Format format = Degrees, PrintFormat printFormat = UTF8 ) const;
     bool valid() const;
     Angle operator*(double coefficient) const;
+    Angle &operator+=(const Angle &other) { _degrees += other.degrees(); return *this; }
     bool operator>(const Angle &other) const { return degrees() > other.degrees(); }
     bool operator<(const Angle &other) const { return degrees() < other.degrees(); }
     bool operator==(const Angle &other) const { return degrees() == other.degrees(); }

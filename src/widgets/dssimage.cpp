@@ -33,7 +33,11 @@
 #include <Wt-Commons/wt_helpers.h>
 #include "utils/curl.h"
 #include <boost/thread.hpp>
-#include <Wt/WProgressBar>
+#include <Wt/WSlider>
+#include <Wt/WTemplate>
+#include <Wt/WDialog>
+#include <Wt/WPushButton>
+#include <Wt/WSlider>
 #include <mutex>
 #include <GraphicsMagick/Magick++.h>
 
@@ -125,7 +129,7 @@ boost::filesystem::path DSSImage::Private::Image::file(const DSSImage::ImageOpti
   % imageOptions.size.sexagesimal().seconds;
 
   p = fs::path(cacheDir) / cacheKey;
-  if(!fs::exists(p))
+  if( !fs::exists(p)  )
     resize(p, imageOptions);
   return p;
 }
@@ -133,7 +137,9 @@ boost::filesystem::path DSSImage::Private::Image::file(const DSSImage::ImageOpti
 void DSSImage::Private::Image::resize(const fs::path &destination, const DSSImage::ImageOptions &imageOptions)
 {
   if(pixels == 0) return;
-  Magick::Image image(imageSizeMap[DSSImage::Full].file(imageOptions).string());
+  auto fullImage = imageSizeMap[DSSImage::Full].file(imageOptions).string();
+  if(! fs::exists(fullImage)) return;
+  Magick::Image image(fullImage);
   image.scale({pixels,pixels});
   image.write(destination.string());
 }
@@ -141,7 +147,6 @@ void DSSImage::Private::Image::resize(const fs::path &destination, const DSSImag
 
 string DSSImage::Private::imageLink() const
 {
-  // TODO: move field enlargement elsewhere
   double objectRect = imageOptions.size.arcMinutes();
   return format("http://archive.stsci.edu/cgi-bin/dss_search?v=%s&r=%d+%d+%.1f&d=%d+%d+%.1f&e=J2000&h=%d&w=%df&f=gif&c=none&fov=SM97&v3=")
   % imageVersionStrings[imageOptions.imageVersion]
@@ -190,7 +195,7 @@ fs::path DSSImage::Private::file(DSSImage::ImageSize imageSize) const
 
 struct CurlProgressHandler {
     WApplication *app;
-    WProgressBar *progressBar = nullptr;
+    WSlider *progressBar = nullptr;
     void finished() { delete progressBar; progressBar = nullptr; }
     bool is_finished() const { return progressBar == nullptr; }
     std::mutex mutex;
@@ -204,13 +209,74 @@ WLink DSSImage::fullImageLink() const
   return d->linkFor(d->fullFile());
 }
 
+void DSSImage::showImageControls()
+{
+  d->showImageController();
+}
+
+void DSSImage::Private::showImageController()
+{
+  WDialog *dialog = new WDialog(WString::tr("image_controller_title"));
+  dialog->setModal(false);
+  dialog->setClosable(true);
+  WTemplate *content = new WTemplate(R"(
+    <div class="row">
+      <table class="col-xs-2">
+        <tr><td /><td>${up-button}</td><td /></tr>
+        <tr><td>${left-button}</td><td /><td>${right-button}</td></tr>
+        <tr><td /><td>${down-button}</td><td /></tr>
+      </table>
+      <div class="col-xs-8">
+        ${tr:imagecontrol-zoom-label}<br />
+        ${zoom}<br />
+        ${tr:imagecontrol-move-factor-label}<br />
+        ${move-factor}<br />
+      </div>
+    </div>
+  )");
+
+  content->addFunction("tr", &WTemplate::Functions::tr);
+
+  WSlider *moveFactor = new WSlider;
+  WSlider *zoomLevel = new WSlider;
+  moveFactor->setRange(0, 100);
+  zoomLevel->setRange(0, 750);
+  
+  auto sliderValue = [=](WSlider* s) {
+    double v = static_cast<double>(s->value()) / 10.;
+    s->setValueText(format("%.1f") % v);
+    return v;
+  };
+
+  auto moveBy = [=](int ar, int dec) {
+    double ratio = static_cast<double>(moveFactor->value()) / 100.;
+    double arcMinMove = imageOptions.size.arcMinutes() * ratio;
+    imageOptions.coordinates.rightAscension += Angle::arcMinutes(static_cast<double>(ar) * arcMinMove);
+    imageOptions.coordinates.declination += Angle::arcMinutes(static_cast<double>(dec) * arcMinMove);
+    reload();
+  };
+  zoomLevel->setValue(imageOptions.size.arcMinutes() * 10);
+  moveFactor->setValue(20);
+  sliderValue(zoomLevel);
+  sliderValue(moveFactor);
+  zoomLevel->valueChanged().connect([=](int, _n5) { imageOptions.size = Angle::arcMinutes(sliderValue(zoomLevel)); cerr << "new zoom level: " << imageOptions.size.printable() << endl; reload(); });
+  moveFactor->valueChanged().connect([=](int, _n5) { sliderValue(zoomLevel); });
+  content->bindWidget("move-factor", moveFactor);
+  content->bindWidget("zoom", zoomLevel);
+  content->bindWidget("up-button", WW<WPushButton>("DEC+").css("btn-sm btn-block").onClick([=](WMouseEvent) { moveBy(0, 1 ); }) );
+  content->bindWidget("down-button", WW<WPushButton>("DEC-").css("btn-sm btn-block").onClick([=](WMouseEvent) { moveBy(0, -1. ) ; }) );
+  content->bindWidget("left-button", WW<WPushButton>("AR-").css("btn-sm btn-block").onClick([=](WMouseEvent) { moveBy(-1. , 0); }) );
+  content->bindWidget("right-button", WW<WPushButton>("AR+").css("btn-sm btn-block").onClick([=](WMouseEvent) { moveBy(1 , 0); }) );
+  dialog->contents()->addWidget(content);
+  dialog->show();
+}
 
 void DSSImage::Private::curlDownload()
 {
     content->clear();
     content->addWidget(new WText(WString::tr("dss_downloading_message")));
     shared_ptr<CurlProgressHandler> progressHandler{new CurlProgressHandler};
-    /*progressHandler->progressBar = new WProgressBar();
+    /*progressHandler->progressBar = new WSlider();
     progressHandler->progressBar->setMaximum(100);
     */
     content->addWidget(new WBreak);
@@ -276,23 +342,33 @@ Signal<WLink> &DSSImage::imageLoaded() const {
 DSSImage::DSSImage(const ImageOptions &imageOptions, const shared_ptr<mutex> &downloadMutex, bool anchor, bool showDSSLink, WContainerWidget *parent )
   : WCompositeWidget(parent), d( imageOptions, downloadMutex, this )
 {
-  d->content = new WContainerWidget;
-  WContainerWidget *container = WW<WContainerWidget>();
+  d->container = WW<WContainerWidget>();
+  d->showAnchor = anchor;
+  d->showDSSLink = showDSSLink;
+  setImplementation(d->container);
+
+  d->reload();
+}
+
+void DSSImage::Private::reload()
+{
+  container->clear();
+  content = new WContainerWidget;
   if(showDSSLink) {
-    WAnchor *original = new WAnchor(d->imageLink(), "Original DSS Image Link");
+    WAnchor *original = new WAnchor(imageLink(), "Original DSS Image Link");
     original->setInline(false);
     original->setTarget(Wt::TargetNewWindow);
     container->addWidget(original);
   }
-  container->addWidget(d->content);
-  setImplementation(container);
-  d->showAnchor = anchor;
-  if(fs::exists(d->fullFile() )) {
-    d->setCacheImage();
+  container->addWidget(content);
+
+  if(fs::exists(fullFile() )) {
+    setCacheImage();
   }
   else {
-    d->curlDownload();
+    curlDownload();
   }
+
 }
 
 WLink DSSImage::dssOriginalLink() const
