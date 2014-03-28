@@ -172,10 +172,8 @@ void DSSImage::Private::setCacheImage()
 {
   content->clear();
   string deployPath;
-  if(wApp->readConfigurationProperty("dsscache_deploy_path", deployPath )) {
-    _imageLink.setUrl(format("%s/%s") % deployPath % file().filename().string());
-  } else
-    _imageLink.setResource(new WFileResource(file().string(), q));
+  _imageLink = linkFor(file());
+
   if(showAnchor) {
     content->addWidget(WW<WAnchor>(_imageLink).setTarget(TargetNewWindow).add(WW<WImage>(_imageLink).addCss("img-responsive")));
   }
@@ -185,6 +183,18 @@ void DSSImage::Private::setCacheImage()
   _loaded.emit(_imageLink);
 }
 
+
+
+Wt::WLink DSSImage::Private::linkFor(const boost::filesystem::path &file) const
+{
+  WLink link;
+  string deployPath;
+  if(wApp->readConfigurationProperty("dsscache_deploy_path", deployPath )) {
+    link.setUrl(format("%s/%s") % deployPath % file.filename().string());
+  } else
+    link.setResource(new WFileResource(file.string(), q));
+  return link;
+}
 
 
 fs::path DSSImage::Private::file(DSSImage::ImageSize imageSize) const
@@ -204,14 +214,8 @@ WLink DSSImage::fullImageLink() const
 {
   if(d->imageOptions.imageSize == Full)
     return d->_imageLink;
-  string deployPath;
-  WLink imageLink;
 
-  if(wApp->readConfigurationProperty("dsscache_deploy_path", deployPath )) {
-    imageLink.setUrl(format("%s/%s") % deployPath % d->fullFile().filename().string());
-  } else
-    imageLink.setResource(new WFileResource(d->fullFile().string(), (WObject*)(this)));
-  return imageLink;
+  return d->linkFor(d->fullFile());
 }
 
 

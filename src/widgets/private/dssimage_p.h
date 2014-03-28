@@ -53,6 +53,8 @@ class DSSImage::Private
     boost::filesystem::path file() const { return file(imageOptions.imageSize); }
     boost::filesystem::path fullFile() const { return file(Full); }
 
+    Wt::WLink linkFor(const boost::filesystem::path &file) const;
+
     
 
     Wt::Signal<> failed;
