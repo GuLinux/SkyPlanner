@@ -22,7 +22,7 @@ AstroObjectWidget::Private::Private(const AstroSessionObjectPtr &object, Session
 {
 }
 
-AstroObjectWidget::AstroObjectWidget(const AstroSessionObjectPtr &object, Session &session, const Ephemeris &ephemeris, const TelescopePtr &telescope, bool addTitle, const shared_ptr<mutex> &downloadMutex, const vector<AstroObjectWidget::ActionButton> &actionButtons, WContainerWidget *parent)
+AstroObjectWidget::AstroObjectWidget(const AstroSessionObjectPtr &object, Session &session, const Ephemeris &ephemeris, const TelescopePtr &telescope, bool addTitle, const shared_ptr<mutex> &downloadMutex, const vector<Wt::WPushButton*> &actionButtons, WContainerWidget *parent)
   : WCompositeWidget(parent), d(object, session, this)
 {
   WContainerWidget *content = WW<WContainerWidget>().css("container-fluid astroobjectwidget");
@@ -67,7 +67,7 @@ AstroObjectWidget::AstroObjectWidget(const AstroSessionObjectPtr &object, Sessio
   if(info->conditionValue("have-actions")) {
     WToolBar *toolbar = new WToolBar;
     for(auto btn: actionButtons)
-      toolbar->addButton(WW<WPushButton>(btn.text).css("btn-xs").addCss(btn.cssClass).onClick([=](WMouseEvent){ btn.onClick(); }));
+      toolbar->addButton(btn);
     
     info->bindWidget("actions", toolbar);
   }
