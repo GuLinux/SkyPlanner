@@ -40,6 +40,7 @@ class Angle {
     static Angle radians(double radians);
     static Angle hours(double hours);
     double degrees() const;
+    double arcMinutes() const;
     Sexagesimal sexagesimal() const;
     Hours sexagesimalHours() const;
     double radians() const;
@@ -48,6 +49,11 @@ class Angle {
     enum PrintFormat{ UTF8, HTML};
     std::string printable(Format format = Degrees, PrintFormat printFormat = UTF8 ) const;
     bool valid() const;
+    Angle operator*(double coefficient) const;
+    bool operator>(const Angle &other) const { return degrees() > other.degrees(); }
+    bool operator<(const Angle &other) const { return degrees() < other.degrees(); }
+    bool operator==(const Angle &other) const { return degrees() == other.degrees(); }
+    bool operator!=(const Angle &other) const { return ! (*this == other); }
   private:
     Angle(double degrees);
     double _degrees;

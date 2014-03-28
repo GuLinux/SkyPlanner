@@ -142,9 +142,9 @@ void DSSImage::Private::Image::resize(const fs::path &destination, const DSSImag
 string DSSImage::Private::imageLink() const
 {
   // TODO: move field enlargement elsewhere
-  Angle::Sexagesimal objectSize = imageOptions.size.sexagesimal();
-  double objectRect = static_cast<double>(objectSize.degrees * 60) + static_cast<double>(objectSize.minutes) + (objectSize.seconds/60);
+  double objectRect = imageOptions.size.arcMinutes();
   double multiplyFactor = 3.0;
+  
   if(objectRect < 20)
     multiplyFactor = 5.0;
   if(objectRect < 10)

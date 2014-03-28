@@ -58,9 +58,20 @@ bool Angle::valid() const
   return _valid;
 }
 
+
+Angle Angle::operator*(double coefficient) const
+{
+  return Angle::degrees(degrees() * coefficient);
+}
+
 double Angle::degrees() const
 {
   return _degrees;
+}
+
+double Angle::arcMinutes() const
+{
+  return degrees() * 60.;
 }
 
 double Angle::radians() const
