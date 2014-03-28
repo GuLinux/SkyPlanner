@@ -208,7 +208,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
   }
   handlePath(internalPath());
 
-  root()->addWidget(WW<WContainerWidget>().css("alert blog-link-cell hidden-print").add(
+  root()->addWidget(WW<WContainerWidget>().css("alert alert-warning blog-link-cell hidden-print").add(
                         WW<WAnchor>("http://blog.gulinux.net", "Blog: gulinux.net").setTarget(TargetNewWindow)
                         ));
 }
