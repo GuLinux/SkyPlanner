@@ -60,21 +60,13 @@ void DSSPage::Private::setImageType(DSSImage::ImageVersion version, const shared
 {
   imageContainer->clear();
 
-  Angle size = Angle::degrees(object->angularSize());
-  double multiplyFactor = 2.0;
-  if(size < Angle::arcMinutes(20))
-    multiplyFactor = 3.5;
-  if(size < Angle::arcMinutes(10))
-    multiplyFactor = 4.5;
-  if(size < Angle::arcMinutes(5) )
-    multiplyFactor = 7.;
-  if(size < Angle::arcMinutes(1) )
-    multiplyFactor = 90.;
-  size = min(Angle::arcMinutes(75.0), size * multiplyFactor);
-  size = (size <= Angle::degrees(0)) ? Angle::arcMinutes(75.0) : size; // objects without angular size (-1), showing max possible field...
-
-  
-  DSSImage::ImageOptions dssImageOptions{object->coordinates(), size, version, options.imageSize};
+  Dbo::Transaction t(session);
+  ViewPort viewPort = ViewPort::findOrCreate(object, session.user(), t);
+  DSSImage::ImageOptions dssImageOptions{viewPort.coordinates(), viewPort.angularSize(), version, options.imageSize};
+  dssImageOptions.onViewPortChanged = [=](const Coordinates::Equatorial &coordinates, const Angle &angularsize) {
+    Dbo::Transaction t(session);
+    ViewPort::save(coordinates, angularsize, object, session.user(), t);
+  };
 
   DSSImage *image = new DSSImage(dssImageOptions, downloadMutex, !options.optionsAsMenu, !options.optionsAsMenu );
   dssImage = image;

@@ -10,4 +10,5 @@
 #include "astrosession.h"
 #include "astrosessionobject.h"
 #include "ephemeris_cache.h"
+#include "viewport.h"
 #endif

@@ -248,11 +248,16 @@ void DSSImage::Private::showImageController()
     double arcMinMove = imageOptions.size.arcMinutes() * ratio;
     imageOptions.coordinates.rightAscension += Angle::arcMinutes(static_cast<double>(ar) * arcMinMove);
     imageOptions.coordinates.declination += Angle::arcMinutes(static_cast<double>(dec) * arcMinMove);
+    imageOptions.onViewPortChanged(imageOptions.coordinates, imageOptions.size);
     reload();
   };
   zoomLevel->setValue(imageOptions.size.arcMinutes() * 10);
   moveFactor->setValue(20);
-  zoomLevel->valueChanged().connect([=](int, _n5) { imageOptions.size = Angle::arcMinutes( static_cast<double>(zoomLevel->value() )/10. ); reload(); });
+  zoomLevel->valueChanged().connect([=](int, _n5) {
+    imageOptions.size = Angle::arcMinutes( static_cast<double>(zoomLevel->value() )/10. ); 
+    imageOptions.onViewPortChanged(imageOptions.coordinates, imageOptions.size);
+    reload();
+  });
   content->bindWidget("move-factor", moveFactor);
   content->bindWidget("zoom", zoomLevel);
   content->bindWidget("up-button", WW<WPushButton>("DEC+").css("btn-sm btn-block").onClick([=](WMouseEvent) { moveBy(0, 1 ); }) );

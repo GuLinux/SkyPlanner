@@ -72,6 +72,7 @@ Session::Session()
   mapClass<AstroSession>("astro_session");
   mapClass<AstroSessionObject>("astro_session_object");
   mapClass<EphemerisCache>("ephemeris_cache");
+  mapClass<ViewPort>("objects_viewport");
   d->users = new UserDatabase(*this);
   static bool creationScriptPrinted = false;
   static bool createTablesExecuted = false;

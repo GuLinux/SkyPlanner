@@ -49,6 +49,7 @@ class DSSImage : public Wt::WCompositeWidget
       Angle size;
       ImageVersion imageVersion = phase2_gsc2;
       ImageSize imageSize = Full;
+      std::function<void(const Coordinates::Equatorial&, const Angle &size)> onViewPortChanged = [](const Coordinates::Equatorial&, const Angle &size){};
     };
     static ImageVersion imageVersion(const std::string &version);
     static std::string imageVersion(const ImageVersion &version);

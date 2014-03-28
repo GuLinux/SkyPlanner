@@ -38,6 +38,7 @@ set(SkyPlanner_MODELS_SRCS
   models/nebuladenomination.cpp
   models/ngcobject.cpp
   models/usersetting.cpp
+  models/viewport.cpp
 )
 
 
