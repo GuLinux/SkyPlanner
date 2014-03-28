@@ -35,6 +35,11 @@ Angle Angle::degrees(double degrees)
   return Angle(degrees);
 }
 
+Angle Angle::arcMinutes(double arcMinutes)
+{
+  return Angle( arcMinutes / 60. );
+}
+
 Angle Angle::radians(double radians)
 {
   return Angle::degrees( ln_rad_to_deg(radians) );

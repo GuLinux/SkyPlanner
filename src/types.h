@@ -37,6 +37,7 @@ class Angle {
       double seconds;
     };
     static Angle degrees(double degrees);
+    static Angle arcMinutes(double arcMinutes);
     static Angle radians(double radians);
     static Angle hours(double hours);
     double degrees() const;

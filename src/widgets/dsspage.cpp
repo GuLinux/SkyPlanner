@@ -60,6 +60,9 @@ void DSSPage::Private::setImageType(DSSImage::ImageVersion version, const shared
 {
   imageContainer->clear();
   DSSImage::ImageOptions dssImageOptions{object->coordinates(), Angle::degrees(object->angularSize()), version, options.imageSize};
+
+
+
   DSSImage *image = new DSSImage(dssImageOptions, downloadMutex, !options.optionsAsMenu, !options.optionsAsMenu );
   image->imageClicked().connect([=](const WMouseEvent &e, _n5) {
     WPopupMenu *menu = new WPopupMenu;
