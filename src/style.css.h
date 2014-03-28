@@ -31,7 +31,7 @@ std::vector<uint8_t> styleCss() {
         display: none!important;
       }
       body {
-        padding-top: 70px;
+        padding-top: 0px!important;
       }
       .astroobject_text,.astroobjects-info-widget {
         font-size: x-small!important;
