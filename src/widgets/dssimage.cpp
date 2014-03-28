@@ -41,7 +41,7 @@
 #include <mutex>
 #include <GraphicsMagick/Magick++.h>
 
-
+#define logD() WServer::instance()->log("notice") << __PRETTY_FUNCTION__ << ": "
 
 using namespace Wt;
 using namespace WtCommons;
@@ -161,6 +161,7 @@ string DSSImage::Private::imageLink() const
 
 void DSSImage::Private::setCacheImage()
 {
+  logD() << "file: " << file();
   content->clear();
   string deployPath;
   _imageLink = linkFor(file());
@@ -242,12 +243,6 @@ void DSSImage::Private::showImageController()
   moveFactor->setRange(0, 100);
   zoomLevel->setRange(0, 750);
   
-  auto sliderValue = [=](WSlider* s) {
-    double v = static_cast<double>(s->value()) / 10.;
-    s->setValueText(format("%.1f") % v);
-    return v;
-  };
-
   auto moveBy = [=](int ar, int dec) {
     double ratio = static_cast<double>(moveFactor->value()) / 100.;
     double arcMinMove = imageOptions.size.arcMinutes() * ratio;
@@ -257,10 +252,7 @@ void DSSImage::Private::showImageController()
   };
   zoomLevel->setValue(imageOptions.size.arcMinutes() * 10);
   moveFactor->setValue(20);
-  sliderValue(zoomLevel);
-  sliderValue(moveFactor);
-  zoomLevel->valueChanged().connect([=](int, _n5) { imageOptions.size = Angle::arcMinutes(sliderValue(zoomLevel)); cerr << "new zoom level: " << imageOptions.size.printable() << endl; reload(); });
-  moveFactor->valueChanged().connect([=](int, _n5) { sliderValue(zoomLevel); });
+  zoomLevel->valueChanged().connect([=](int, _n5) { imageOptions.size = Angle::arcMinutes( static_cast<double>(zoomLevel->value() )/10. ); reload(); });
   content->bindWidget("move-factor", moveFactor);
   content->bindWidget("zoom", zoomLevel);
   content->bindWidget("up-button", WW<WPushButton>("DEC+").css("btn-sm btn-block").onClick([=](WMouseEvent) { moveBy(0, 1 ); }) );
@@ -285,6 +277,7 @@ void DSSImage::Private::curlDownload()
     //content->addWidget(progressHandler->progressBar);
     progressHandler->app = wApp;
     fs::path downloadFile = fullFile();
+    logD() << "full file path: " << downloadFile;
 
     downloadThread = boost::thread([=] () mutable {
       unique_ptr<unique_lock<mutex>> scheduledDownloadLock;
@@ -352,6 +345,7 @@ DSSImage::DSSImage(const ImageOptions &imageOptions, const shared_ptr<mutex> &do
 
 void DSSImage::Private::reload()
 {
+  logD();
   container->clear();
   content = new WContainerWidget;
   if(showDSSLink) {
@@ -363,9 +357,11 @@ void DSSImage::Private::reload()
   container->addWidget(content);
 
   if(fs::exists(fullFile() )) {
+    logD() << "file exists: setting from cache";
     setCacheImage();
   }
   else {
+    logD() << "file not found, downloading";
     curlDownload();
   }
 
