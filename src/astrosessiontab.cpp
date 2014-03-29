@@ -242,7 +242,9 @@ void AstroSessionTab::Private::reload()
   });
   addPanel(WString::tr("astrosessiontab_add_observable_object"), addObjectsTabWidget, true, true, sessionContainer);
   addObjectsTabWidget->objectsListChanged().connect( [=](const AstroSessionObjectPtr &o, _n5) { populate(o); } );
-  sessionContainer->addWidget(new WText{WString("<h3>{1}</h3>").arg(WString::tr("astrosessiontab_objects_title"))});
+  WTemplate *title = new WTemplate("<h3>${tr:astrosessiontab_objects_title} ${counter}</h3>", sessionContainer);
+  title->addFunction("tr", &WTemplate::Functions::tr);
+  title->bindWidget("counter", objectsCounter = WW<WText>("0").css("badge"));
 
   filterByType = new FilterByTypeWidget(NgcObject::allNebulaTypes());
   filterByMinimumMagnitude = new FilterByMagnitudeWidget({WString::tr("not_set"), {}, WString::tr("minimum_magnitude_label")}, {0, 20});
@@ -598,6 +600,7 @@ void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject
   sort(begin(sessionObjects), end(sessionObjects), [&](const AstroSessionObjectElement &a, const AstroSessionObjectElement &b){
     return a.second.when < b.second.when;
   });
+  objectsCounter->setText(format("%d") % sessionObjects.size());
   WTableRow *objectAddedRow = nullptr;
   for(auto sessionObjectElement: sessionObjects) {
     dbo::ptr<AstroSessionObject> sessionObject = sessionObjectElement.first;

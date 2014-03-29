@@ -66,6 +66,7 @@ public:
     FilterByMagnitudeWidget *filterByMinimumMagnitude;
     FilterByConstellation *filterByConstellation;
     void remove(const Wt::Dbo::ptr<AstroSessionObject> &sessionObject, std::function<void()> runAfterRemove);
+    Wt::WText *objectsCounter;
 private:
     class AstroSessionTab* const q;
 };
