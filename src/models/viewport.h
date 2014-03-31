@@ -21,7 +21,7 @@
 #define VIEWPORT_H
 #include <Wt/Dbo/Dbo>
 #include "types.h"
-#include "widgets/dssimage.h"
+#include "dss.h"
 
 namespace dbo = Wt::Dbo;
 class User;
@@ -31,10 +31,9 @@ class ViewPort
 {
 public:
     explicit ViewPort() = default;
-    explicit ViewPort(const Coordinates::Equatorial &coordinates, const Angle &angle, DSSImage::ImageVersion imageVersion, const dbo::ptr<NgcObject> &ngcObject, const dbo::ptr<User> &user);
+    explicit ViewPort(const Coordinates::Equatorial &coordinates, const Angle &angle, DSS::ImageVersion imageVersion, const dbo::ptr<NgcObject> &ngcObject, const dbo::ptr<User> &user);
 
 
-//  explicit Telescope(const std::string &name, int diameter, int focalLength, bool isDefault = false);
   template<typename Action>
   void persist(Action& a) {
     dbo::field(a, ar, "ar");
@@ -46,15 +45,17 @@ public:
   }
   Angle angularSize() const;
   Coordinates::Equatorial coordinates() const;
-  static ViewPort findOrCreate(DSSImage::ImageVersion imageVersion, const dbo::ptr<NgcObject> &ngcObject, const dbo::ptr<User> &user, dbo::Transaction &transaction);
-  static void setImageVersion(DSSImage::ImageVersion imageVersion, const dbo::ptr<NgcObject> &ngcObject, const dbo::ptr<User> &user, dbo::Transaction &transaction);
-  static void save(const Coordinates::Equatorial &coordinates, const Angle &angularSize, DSSImage::ImageVersion imageVersion, const dbo::ptr<NgcObject> &ngcObject, const dbo::ptr<User> &user, dbo::Transaction &transaction);
-  DSSImage::ImageVersion imageVersion() const;
+  static Angle defaultAngle(const dbo::ptr<NgcObject> &ngcObject, dbo::Transaction &transaction);
+  static ViewPort findOrCreate(DSS::ImageVersion imageVersion, const dbo::ptr<NgcObject> &ngcObject, const dbo::ptr<User> &user, dbo::Transaction &transaction);
+  static void setImageVersion(DSS::ImageVersion imageVersion, const dbo::ptr<NgcObject> &ngcObject, const dbo::ptr<User> &user, dbo::Transaction &transaction);
+  static void save(const Coordinates::Equatorial &coordinates, const Angle &angularSize, DSS::ImageVersion imageVersion, const dbo::ptr<NgcObject> &ngcObject, const dbo::ptr<User> &user, dbo::Transaction &transaction);
+  DSS::ImageVersion imageVersion() const;
+  void reset(const dbo::ptr<NgcObject> &ngcObject, dbo::Transaction &transaction);
 private:
   double arcminutes;
   double ar;
   double dec;
-  DSSImage::ImageVersion _imageVersion;
+  DSS::ImageVersion _imageVersion;
   dbo::ptr<NgcObject> _ngcObject;
   dbo::ptr<User> _user;
 };

@@ -36,7 +36,7 @@ class DSSImage::Private
       void resize(const boost::filesystem::path &destination, const DSSImage::ImageOptions &imageOptions);
     };
     static std::map<DSSImage::ImageSize, Image> imageSizeMap;
-    static std::map<DSSImage::ImageVersion,std::string> imageVersionStrings;
+    static std::map<DSS::ImageVersion,std::string> imageVersionStrings;
 
     Private(const DSSImage::ImageOptions &imageOptions, const std::shared_ptr<std::mutex> &downloadMutex, DSSImage *q );
     DSSImage::ImageOptions imageOptions;

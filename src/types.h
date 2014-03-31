@@ -69,6 +69,7 @@ namespace Coordinates {
     Angle rightAscension;
     Angle declination;
     operator bool() { return rightAscension.valid() && declination.valid(); }
+    std::string toString() const;
   };
 
   struct AltAzimuth {

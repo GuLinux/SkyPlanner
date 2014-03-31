@@ -40,6 +40,7 @@
 #include <Wt/WSlider>
 #include <mutex>
 #include <GraphicsMagick/Magick++.h>
+#include "models/Models"
 
 #define logD() WServer::instance()->log("notice") << __PRETTY_FUNCTION__ << ": "
 
@@ -47,18 +48,6 @@ using namespace Wt;
 using namespace WtCommons;
 using namespace std;
 namespace fs = boost::filesystem;
-
-
-std::map<DSSImage::ImageVersion,std::string> DSSImage::Private::imageVersionStrings{
-  { poss2ukstu_red, "poss2ukstu_red" },
-  { poss2ukstu_blue, "poss2ukstu_blue" },
-  { poss2ukstu_ir, "poss2ukstu_ir" },
-  { poss1_red, "poss1_red" },
-  { poss1_blue, "poss1_blue" },
-  { quickv, "quickv" },
-  { phase2_gsc2, "phase2_gsc2" },
-  { phase2_gsc1, "phase2_gsc1" },
-};
 
 
 DSSImage::Private::Private( const DSSImage::ImageOptions &imageOptions, const shared_ptr<mutex> &downloadMutex, DSSImage *q )
@@ -75,27 +64,6 @@ DSSImage::~DSSImage()
 Signal<WMouseEvent> &DSSImage::imageClicked() const
 {
   return d->imageClicked;
-}
-
-DSSImage::ImageVersion DSSImage::imageVersion( const string &version )
-{
-  for(auto v: Private::imageVersionStrings) {
-    if(version == v.second)
-      return v.first;
-  }
-  return phase2_gsc2;
-}
-
-string DSSImage::imageVersion( const DSSImage::ImageVersion &version )
-{
-  return Private::imageVersionStrings[version];
-}
-
-vector< DSSImage::ImageVersion > DSSImage::versions()
-{
-  vector<ImageVersion> v;
-  transform(begin(Private::imageVersionStrings), end(Private::imageVersionStrings), back_inserter(v), [](pair<ImageVersion,string> p) { return p.first; });
-  return v;
 }
 
 map<DSSImage::ImageSize,DSSImage::Private::Image> DSSImage::Private::imageSizeMap {
@@ -117,7 +85,7 @@ boost::filesystem::path DSSImage::Private::Image::file(const DSSImage::ImageOpti
 
   string cacheKey = format("%s%s-ar_%d-%d-%.1f_dec_%d-%d-%.1f_size_%d-%d-%.1f.gif")
   % prefix
-  % imageVersionStrings[imageOptions.imageVersion]
+  % DSS::imageVersion(imageOptions.imageVersion)
   % imageOptions.coordinates.rightAscension.sexagesimalHours().hours
   % imageOptions.coordinates.rightAscension.sexagesimalHours().minutes
   % imageOptions.coordinates.rightAscension.sexagesimalHours().seconds
@@ -149,7 +117,7 @@ string DSSImage::Private::imageLink() const
 {
   double objectRect = imageOptions.size.arcMinutes();
   return format("http://archive.stsci.edu/cgi-bin/dss_search?v=%s&r=%d+%d+%.1f&d=%d+%d+%.1f&e=J2000&h=%d&w=%df&f=gif&c=none&fov=SM97&v3=")
-  % imageVersionStrings[imageOptions.imageVersion]
+  % DSS::imageVersion(imageOptions.imageVersion)
   % imageOptions.coordinates.rightAscension.sexagesimalHours().hours
   % imageOptions.coordinates.rightAscension.sexagesimalHours().minutes
   % imageOptions.coordinates.rightAscension.sexagesimalHours().seconds
@@ -232,6 +200,7 @@ void DSSImage::Private::showImageController()
         ${zoom}<br />
         ${tr:imagecontrol-move-factor-label}<br />
         ${move-factor}<br />
+        ${restore-default}<br />
       </div>
     </div>
   )");
@@ -252,7 +221,7 @@ void DSSImage::Private::showImageController()
     reload();
   };
   zoomLevel->setValue(imageOptions.size.arcMinutes() * 10);
-  moveFactor->setValue(20);
+  moveFactor->setValue(10);
   zoomLevel->valueChanged().connect([=](int, _n5) {
     imageOptions.size = Angle::arcMinutes( static_cast<double>(zoomLevel->value() )/10. ); 
     imageOptions.onViewPortChanged(imageOptions.coordinates, imageOptions.size);
@@ -264,6 +233,12 @@ void DSSImage::Private::showImageController()
   content->bindWidget("down-button", WW<WPushButton>("DEC-").css("btn-sm btn-block").onClick([=](WMouseEvent) { moveBy(0, -1. ) ; }) );
   content->bindWidget("left-button", WW<WPushButton>("AR-").css("btn-sm btn-block").onClick([=](WMouseEvent) { moveBy(-1. , 0); }) );
   content->bindWidget("right-button", WW<WPushButton>("AR+").css("btn-sm btn-block").onClick([=](WMouseEvent) { moveBy(1 , 0); }) );
+  content->bindWidget("restore-default", WW<WPushButton>(WString::tr("restore_default_viewport")).css("btn-sm btn-block").onClick([=](WMouseEvent) {
+    imageOptions.coordinates = imageOptions.originalCoordinates.coordinates;
+    imageOptions.size = imageOptions.originalCoordinates.size;
+    imageOptions.onViewPortChanged(imageOptions.coordinates, imageOptions.size);
+    reload();
+  }) );
   dialog->contents()->addWidget(content);
   dialog->show();
 }
@@ -337,7 +312,7 @@ Signal<WLink> &DSSImage::imageLoaded() const {
   return d->_loaded;
 }
 
-DSSImage::ImageVersion DSSImage::imageVersion() const
+DSS::ImageVersion DSSImage::imageVersion() const
 {
   return d->imageOptions.imageVersion;
 }

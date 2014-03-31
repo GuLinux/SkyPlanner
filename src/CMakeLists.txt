@@ -27,6 +27,7 @@ set(SkyPlanner_SRCS
   Wt-Commons/whtmltemplateslocalizedstrings.cpp
   Wt-Commons/wform.cpp
   homepage.cpp
+  dss.cpp
 )
 
 set(SkyPlanner_MODELS_SRCS

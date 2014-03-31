@@ -25,36 +25,30 @@
 #include <types.h>
 #include <mutex>
 #include <memory>
+#include "dss.h"
 
+class ViewPort;
 class DSSImage : public Wt::WCompositeWidget
 {
   public:
-    enum ImageVersion {
-      poss2ukstu_red,
-      poss2ukstu_blue,
-      poss2ukstu_ir,
-      poss1_red,
-      poss1_blue,
-      quickv,
-      phase2_gsc2,
-      phase2_gsc1,
-    };
     enum ImageSize {
       Full, Mid, Thumb
     };
     struct ImageOptions {
-      ImageOptions(const Coordinates::Equatorial &coordinates, const Angle &size, ImageVersion imageVersion, ImageSize imageSize)
+      ImageOptions(const Coordinates::Equatorial &coordinates, const Angle &size, DSS::ImageVersion imageVersion, ImageSize imageSize)
       : coordinates(coordinates), size(size), imageVersion(imageVersion), imageSize(imageSize) {}
       Coordinates::Equatorial coordinates;
       Angle size;
-      ImageVersion imageVersion = phase2_gsc2;
+      DSS::ImageVersion imageVersion = DSS::phase2_gsc2;
       ImageSize imageSize = Full;
       std::function<void(const Coordinates::Equatorial&, const Angle &size)> onViewPortChanged = [](const Coordinates::Equatorial&, const Angle &size){};
+      struct OriginalCoordinates {
+        Coordinates::Equatorial coordinates;
+        Angle size;
+      };
+      OriginalCoordinates originalCoordinates;
     };
-    static ImageVersion imageVersion(const std::string &version);
-    static std::string imageVersion(const ImageVersion &version);
-    static std::vector<ImageVersion> versions();
-    ImageVersion imageVersion() const;
+    DSS::ImageVersion imageVersion() const;
     Wt::Signal<> &failed() const;
     Wt::Signal<Wt::WMouseEvent> &imageClicked() const;
     Wt::Signal<Wt::WLink> &imageLoaded() const;

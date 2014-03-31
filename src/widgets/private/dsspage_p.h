@@ -29,9 +29,9 @@ class DSSPage::Private
     Private(const Wt::Dbo::ptr<NgcObject> &object, Session &session, const DSSPage::Options &options, DSSPage *q );
     Wt::Dbo::ptr<NgcObject> object;
     Session &session;
-    std::vector<DSSImage::ImageVersion> imageVersions;
+    std::vector<DSS::ImageVersion> imageVersions;
     int nextDSSTypeIndex = 1;
-    void setImageType(DSSImage::ImageVersion, const std::shared_ptr<std::mutex> &downloadMutex);
+    void setImageType(DSS::ImageVersion, const std::shared_ptr<std::mutex> &downloadMutex);
     Wt::WContainerWidget *imageContainer;
     Wt::WComboBox *typeCombo;
     Wt::WStandardItemModel *typeModel;

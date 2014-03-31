@@ -56,13 +56,16 @@ DSSPage::~DSSPage()
 {
 }
 
-void DSSPage::Private::setImageType(DSSImage::ImageVersion version, const shared_ptr<mutex> &downloadMutex)
+void DSSPage::Private::setImageType(DSS::ImageVersion version, const shared_ptr<mutex> &downloadMutex)
 {
   imageContainer->clear();
 
   Dbo::Transaction t(session);
   ViewPort viewPort = ViewPort::findOrCreate(version, object, session.user(), t);
   DSSImage::ImageOptions dssImageOptions{viewPort.coordinates(), viewPort.angularSize(), viewPort.imageVersion(), options.imageSize};
+  dssImageOptions.originalCoordinates.coordinates = object->coordinates();
+  dssImageOptions.originalCoordinates.size = ViewPort::defaultAngle(object, t);
+
 
   DSSImage *image = new DSSImage(dssImageOptions, downloadMutex, !options.optionsAsMenu, !options.optionsAsMenu );
 
@@ -84,8 +87,8 @@ void DSSPage::Private::setImageType(DSSImage::ImageVersion version, const shared
     if(wApp->environment().agentIsWebKit())
       menu->addItem(WString::tr("buttons_invert"))->triggered().connect([=](WMenuItem*, _n5){ image->toggleStyleClass("image-inverse", !image->hasStyleClass("image-inverse")); });
     WPopupMenu *imageTypeSubmenu = WW<WPopupMenu>().css("dialog-popup-submenu");
-    for(auto type: DSSImage::versions()) {
-      WString itemName = WString::tr(string{"dssimage_version_"} + DSSImage::imageVersion(type));
+    for(auto type: DSS::versions()) {
+      WString itemName = WString::tr(string{"dssimage_version_"} + DSS::imageVersion(type));
       auto typeItem = imageTypeSubmenu->addItem(itemName);
       if(type == viewPort.imageVersion() )
         typeItem->addStyleClass("disabled");
@@ -113,7 +116,7 @@ void DSSPage::Private::setImageType(DSSImage::ImageVersion version, const shared
   imageContainer->addWidget(image);
   if(!options.optionsAsMenu) {
     for(int index=0; index<typeModel->rowCount(); index++)
-      if(boost::any_cast<DSSImage::ImageVersion>(typeModel->item(index)->data()) == viewPort.imageVersion() )
+      if(boost::any_cast<DSS::ImageVersion>(typeModel->item(index)->data()) == viewPort.imageVersion() )
         typeCombo->setCurrentIndex(index);
   }
 }
@@ -146,9 +149,9 @@ DSSPage::DSSPage(const NgcObjectPtr &object, Session &session, const DSSPage::Op
     wApp->setInternalPath(DSSPage::internalPath(object, t));
     wApp->setInternalPathValid(true);
   }
-  d->imageVersions = {DSSImage::poss2ukstu_red, DSSImage::poss2ukstu_blue, DSSImage::poss1_red, DSSImage::poss1_blue, DSSImage::phase2_gsc2};
+  d->imageVersions = {DSS::poss2ukstu_red, DSS::poss2ukstu_blue, DSS::poss1_red, DSS::poss1_blue, DSS::phase2_gsc2};
   if(object->type() == NgcObject::NebGx || object->type() == NgcObject::NebGx)
-    d->imageVersions = {DSSImage::poss2ukstu_blue, DSSImage::poss1_blue, DSSImage::poss2ukstu_red, DSSImage::poss1_red, DSSImage::phase2_gsc2};
+    d->imageVersions = {DSS::poss2ukstu_blue, DSS::poss1_blue, DSS::poss2ukstu_red, DSS::poss1_red, DSS::phase2_gsc2};
   d->imageContainer = WW<WContainerWidget>();
   if(options.showTitle) {
     WString namesJoined = Utils::htmlEncode(WString::fromUTF8( boost::algorithm::join(NgcObject::namesByCatalogueImportance(t, object), ", ") ));
@@ -158,14 +161,14 @@ DSSPage::DSSPage(const NgcObjectPtr &object, Session &session, const DSSPage::Op
   d->typeModel = new WStandardItemModel(d->typeCombo);
   d->typeCombo->setModel(d->typeModel);
 
-  for(auto type: DSSImage::versions()) {
-    auto item = new WStandardItem(WString::tr(string{"dssimage_version_"} + DSSImage::imageVersion(type)));
+  for(auto type: DSS::versions()) {
+    auto item = new WStandardItem(WString::tr(string{"dssimage_version_"} + DSS::imageVersion(type)));
     item->setData(type);
     d->typeModel->appendRow(item);
   }
   d->typeCombo->activated().connect([=](int index, _n5){
     Dbo::Transaction t(d->session);
-    auto type = boost::any_cast<DSSImage::ImageVersion>(d->typeModel->item(index)->data());
+    auto type = boost::any_cast<DSS::ImageVersion>(d->typeModel->item(index)->data());
     ViewPort::setImageVersion(type, object, d->session.user(), t);
     d->setImageType(type, options.downloadMutex);
   });

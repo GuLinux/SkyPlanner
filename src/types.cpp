@@ -183,9 +183,16 @@ ostream &operator<<(ostream &o, const Coordinates::AltAzimuth &c)
   return o;
 }
 
+string Coordinates::Equatorial::toString() const
+{
+  stringstream o;
+  o << "rightAscension=" << rightAscension.printable(Angle::Hourly) << ", declination: " << declination.printable();
+  return o.str();
+}
+
 ostream &operator<<(ostream &o, const Coordinates::Equatorial &c)
 {
-  o << "{ rightAscension=" << c.rightAscension.printable(Angle::Hourly) << ", declination: " << c.declination.printable() << "}";
+  o << "{ " << c.toString() << " }";
   return o;
 }
 
