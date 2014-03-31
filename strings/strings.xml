@@ -217,7 +217,7 @@ After you added a session, click it to add new objects.
 <message id="dss_downloading_message">Downloading image from DSS Website, please wait.</message>
 <message id="dss_download_error">Error downloading image from DSS Website. Please retry later, or try another image format.</message>
 <message id="image_controller_title">Image Control</message>
-<message id="imagecontrol-zoom-label">Field Size</message>
+<message id="imagecontrol-zoom-label">Field Size (arcminutes)</message>
 <message id="imagecontrol-move-factor-label">Movement Steps</message>
 <message id="imagecontrol-menu">Move/resize</message>
 

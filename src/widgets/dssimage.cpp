@@ -41,6 +41,7 @@
 #include <mutex>
 #include <GraphicsMagick/Magick++.h>
 #include "models/Models"
+#include <Wt/WDoubleSpinBox>
 
 #define logD() WServer::instance()->log("notice") << __PRETTY_FUNCTION__ << ": "
 
@@ -208,9 +209,10 @@ void DSSImage::Private::showImageController()
   content->addFunction("tr", &WTemplate::Functions::tr);
 
   WSlider *moveFactor = new WSlider;
-  WSlider *zoomLevel = new WSlider;
+  WDoubleSpinBox *zoomLevel = new WDoubleSpinBox();
+  zoomLevel->setRange(0, 75);
+  zoomLevel->setDecimals(1);
   moveFactor->setRange(0, 100);
-  zoomLevel->setRange(0, 750);
   
   auto moveBy = [=](int ar, int dec) {
     double ratio = static_cast<double>(moveFactor->value()) / 100.;
@@ -220,10 +222,11 @@ void DSSImage::Private::showImageController()
     imageOptions.onViewPortChanged(imageOptions.coordinates, imageOptions.size);
     reload();
   };
-  zoomLevel->setValue(imageOptions.size.arcMinutes() * 10);
+  zoomLevel->setValue(imageOptions.size.arcMinutes());
   moveFactor->setValue(10);
-  zoomLevel->valueChanged().connect([=](int, _n5) {
-    imageOptions.size = Angle::arcMinutes( static_cast<double>(zoomLevel->value() )/10. ); 
+  zoomLevel->valueChanged().connect([=](double v, _n5) {
+    imageOptions.size = Angle::arcMinutes( v ); 
+    spLog("notice") << __PRETTY_FUNCTION__ << ": reloading with zoom level: " << imageOptions.size.arcMinutes() << " arcminutes";
     imageOptions.onViewPortChanged(imageOptions.coordinates, imageOptions.size);
     reload();
   });
