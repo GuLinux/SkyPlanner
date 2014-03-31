@@ -4,8 +4,8 @@
 using namespace Wt;
 using namespace std;
 
-ViewPort::ViewPort(const Coordinates::Equatorial &coordinates, const Angle &angle, const NgcObjectPtr &ngcObject, const UserPtr &user)
-  : arcminutes(angle.arcMinutes()), ar(coordinates.rightAscension.degrees()), dec(coordinates.declination.degrees()), _ngcObject(ngcObject), _user(user)
+ViewPort::ViewPort(const Coordinates::Equatorial &coordinates, const Angle &angle, DSSImage::ImageVersion imageVersion, const NgcObjectPtr &ngcObject, const UserPtr &user)
+  : arcminutes(angle.arcMinutes()), ar(coordinates.rightAscension.degrees()), dec(coordinates.declination.degrees()), _imageVersion(imageVersion), _ngcObject(ngcObject), _user(user)
 {
 }
 
@@ -20,7 +20,12 @@ Coordinates::Equatorial ViewPort::coordinates() const
   return {Angle::degrees(ar), Angle::degrees(dec) };
 }
 
-ViewPort ViewPort::findOrCreate( const Dbo::ptr< NgcObject > &ngcObject, const Dbo::ptr< User > &user, Dbo::Transaction &transaction )
+void ViewPort::setImageVersion( DSSImage::ImageVersion imageVersion, const Dbo::ptr< NgcObject > &ngcObject, const Dbo::ptr< User > &user, Dbo::Transaction &transaction )
+{
+  if(!user) return;
+  transaction.session().execute("UPDATE objects_viewport SET image_version = ? WHERE user_id = ? AND objects_id = ?").bind(imageVersion).bind(user.id()).bind(ngcObject.id());
+}
+ViewPort ViewPort::findOrCreate( DSSImage::ImageVersion imageVersion, const Dbo::ptr< NgcObject > &ngcObject, const Dbo::ptr< User > &user, Dbo::Transaction &transaction )
 {
   Angle size = Angle::degrees(ngcObject->angularSize());
   double multiplyFactor = 2.0;
@@ -36,19 +41,24 @@ ViewPort ViewPort::findOrCreate( const Dbo::ptr< NgcObject > &ngcObject, const D
   size = (size <= Angle::degrees(0)) ? Angle::arcMinutes(75.0) : size; // objects without angular size (-1), showing max possible field...
   
   if(!user)
-    return ViewPort{ngcObject->coordinates(), size, ngcObject, user};
+    return ViewPort{ngcObject->coordinates(), size, imageVersion, ngcObject, user};
   ViewPortPtr viewPort = transaction.session().find<ViewPort>().where("objects_id = ?").bind(ngcObject.id()).where("user_id = ?").bind(user.id());
   if(!viewPort) {
-    viewPort = transaction.session().add(new ViewPort{ngcObject->coordinates(), size, ngcObject, user});
+    viewPort = transaction.session().add(new ViewPort{ngcObject->coordinates(), size, imageVersion, ngcObject, user});
   }
   return *viewPort;
   
 }
 
-void ViewPort::save(const Coordinates::Equatorial &coordinates, const Angle &angularSize, const NgcObjectPtr &ngcObject, const UserPtr &user, Dbo::Transaction &transaction)
+void ViewPort::save(const Coordinates::Equatorial &coordinates, const Angle &angularSize, DSSImage::ImageVersion imageVersion, const NgcObjectPtr &ngcObject, const UserPtr &user, Dbo::Transaction &transaction)
 {
   if(!user)
     return;
   transaction.session().execute("delete from objects_viewport where objects_id = ? and user_id = ?").bind(ngcObject.id()).bind(user.id());
-  transaction.session().add(new ViewPort{coordinates, angularSize, ngcObject, user});
+  transaction.session().add(new ViewPort{coordinates, angularSize, imageVersion, ngcObject, user});
+}
+
+DSSImage::ImageVersion ViewPort::imageVersion() const
+{
+  return _imageVersion;
 }

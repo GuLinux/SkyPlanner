@@ -337,6 +337,11 @@ Signal<WLink> &DSSImage::imageLoaded() const {
   return d->_loaded;
 }
 
+DSSImage::ImageVersion DSSImage::imageVersion() const
+{
+  return d->imageOptions.imageVersion;
+}
+
 DSSImage::DSSImage(const ImageOptions &imageOptions, const shared_ptr<mutex> &downloadMutex, bool anchor, bool showDSSLink, WContainerWidget *parent )
   : WCompositeWidget(parent), d( imageOptions, downloadMutex, this )
 {

@@ -61,14 +61,17 @@ void DSSPage::Private::setImageType(DSSImage::ImageVersion version, const shared
   imageContainer->clear();
 
   Dbo::Transaction t(session);
-  ViewPort viewPort = ViewPort::findOrCreate(object, session.user(), t);
-  DSSImage::ImageOptions dssImageOptions{viewPort.coordinates(), viewPort.angularSize(), version, options.imageSize};
-  dssImageOptions.onViewPortChanged = [=](const Coordinates::Equatorial &coordinates, const Angle &angularsize) {
-    Dbo::Transaction t(session);
-    ViewPort::save(coordinates, angularsize, object, session.user(), t);
-  };
+  ViewPort viewPort = ViewPort::findOrCreate(version, object, session.user(), t);
+  DSSImage::ImageOptions dssImageOptions{viewPort.coordinates(), viewPort.angularSize(), viewPort.imageVersion(), options.imageSize};
 
   DSSImage *image = new DSSImage(dssImageOptions, downloadMutex, !options.optionsAsMenu, !options.optionsAsMenu );
+
+  dssImageOptions.onViewPortChanged = [=](const Coordinates::Equatorial &coordinates, const Angle &angularsize) {
+    Dbo::Transaction t(session);
+    ViewPort::save(coordinates, angularsize, image->imageVersion() , object, session.user(), t);
+  };
+
+
   dssImage = image;
   image->imageClicked().connect([=](const WMouseEvent &e, _n5) {
     WPopupMenu *menu = new WPopupMenu;
@@ -84,10 +87,12 @@ void DSSPage::Private::setImageType(DSSImage::ImageVersion version, const shared
     for(auto type: DSSImage::versions()) {
       WString itemName = WString::tr(string{"dssimage_version_"} + DSSImage::imageVersion(type));
       auto typeItem = imageTypeSubmenu->addItem(itemName);
-      if(type == version)
+      if(type == viewPort.imageVersion() )
         typeItem->addStyleClass("disabled");
       else
         typeItem->triggered().connect([=](WMenuItem*, _n5){
+        Dbo::Transaction t(session);
+        ViewPort::setImageVersion(type, object, session.user(), t);
         setImageType(type, downloadMutex);
       });
     }
@@ -100,12 +105,15 @@ void DSSPage::Private::setImageType(DSSImage::ImageVersion version, const shared
     dssImage = nullptr;
     if(nextDSSTypeIndex+1 > imageVersions.size())
       return;
-    setImageType(imageVersions[nextDSSTypeIndex++], downloadMutex);
+    Dbo::Transaction t(session);
+    auto nextVersion = imageVersions[nextDSSTypeIndex++];
+    ViewPort::setImageVersion(nextVersion, object, session.user(), t);
+    setImageType(nextVersion, downloadMutex);
   });
   imageContainer->addWidget(image);
   if(!options.optionsAsMenu) {
     for(int index=0; index<typeModel->rowCount(); index++)
-      if(boost::any_cast<DSSImage::ImageVersion>(typeModel->item(index)->data()) == version)
+      if(boost::any_cast<DSSImage::ImageVersion>(typeModel->item(index)->data()) == viewPort.imageVersion() )
         typeCombo->setCurrentIndex(index);
   }
 }
@@ -156,7 +164,10 @@ DSSPage::DSSPage(const NgcObjectPtr &object, Session &session, const DSSPage::Op
     d->typeModel->appendRow(item);
   }
   d->typeCombo->activated().connect([=](int index, _n5){
-    d->setImageType(boost::any_cast<DSSImage::ImageVersion>(d->typeModel->item(index)->data()), options.downloadMutex);
+    Dbo::Transaction t(d->session);
+    auto type = boost::any_cast<DSSImage::ImageVersion>(d->typeModel->item(index)->data());
+    ViewPort::setImageVersion(type, object, d->session.user(), t);
+    d->setImageType(type, options.downloadMutex);
   });
 
   WPushButton *invertButton = WW<WPushButton>(WString::tr("buttons_invert")).css("btn btn-inverse")

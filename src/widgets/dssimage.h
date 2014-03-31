@@ -54,6 +54,7 @@ class DSSImage : public Wt::WCompositeWidget
     static ImageVersion imageVersion(const std::string &version);
     static std::string imageVersion(const ImageVersion &version);
     static std::vector<ImageVersion> versions();
+    ImageVersion imageVersion() const;
     Wt::Signal<> &failed() const;
     Wt::Signal<Wt::WMouseEvent> &imageClicked() const;
     Wt::Signal<Wt::WLink> &imageLoaded() const;
