@@ -192,6 +192,7 @@
 <message id="dss_open_new_window_menu">Apri in una nuova finestra</message>
 <message id="dss_change_type_menu">Cambia tipo...</message>
 <message id="dss_original_menu">Apri immagine originale</message>
+<message id="restore_default_viewport">Ripristina predefinite</message>
 
 <message id="user_settings_change_password">Cambia Password</message>
 <message id="user_settings_old_password">Password Corrente</message>

@@ -149,6 +149,7 @@
 <message id="dss_open_new_window_menu">Open in a new window</message>
 <message id="dss_change_type_menu">Change type...</message>
 <message id="dss_original_menu">Open original image</message>
+<message id="restore_default_viewport">Restore default</message>
 
 <message id="dssimage_version_label">DSS Image Type: </message>
 <message id="dssimage_version_poss2ukstu_red">POSS2/UKSTU Red</message>

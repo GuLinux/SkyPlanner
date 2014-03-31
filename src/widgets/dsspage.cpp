@@ -66,13 +66,14 @@ void DSSPage::Private::setImageType(DSS::ImageVersion version, const shared_ptr<
   dssImageOptions.originalCoordinates.coordinates = object->coordinates();
   dssImageOptions.originalCoordinates.size = ViewPort::defaultAngle(object, t);
 
-
-  DSSImage *image = new DSSImage(dssImageOptions, downloadMutex, !options.optionsAsMenu, !options.optionsAsMenu );
-
   dssImageOptions.onViewPortChanged = [=](const Coordinates::Equatorial &coordinates, const Angle &angularsize) {
     Dbo::Transaction t(session);
-    ViewPort::save(coordinates, angularsize, image->imageVersion() , object, session.user(), t);
+    ViewPort currentViewPort = ViewPort::findOrCreate(version, object, session.user(), t);
+    ViewPort::save(coordinates, angularsize, currentViewPort.imageVersion() , object, session.user(), t);
   };
+  DSSImage *image = new DSSImage(dssImageOptions, downloadMutex, !options.optionsAsMenu, !options.optionsAsMenu );
+
+
 
 
   dssImage = image;
