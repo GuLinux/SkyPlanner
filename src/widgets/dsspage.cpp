@@ -70,6 +70,7 @@ void DSSPage::Private::setImageType(DSS::ImageVersion version, const shared_ptr<
     Dbo::Transaction t(session);
     ViewPort currentViewPort = ViewPort::findOrCreate(version, object, session.user(), t);
     ViewPort::save(coordinates, angularsize, currentViewPort.imageVersion() , object, session.user(), t);
+    t.commit();
   };
   DSSImage *image = new DSSImage(dssImageOptions, downloadMutex, !options.optionsAsMenu, !options.optionsAsMenu );
 
