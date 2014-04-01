@@ -155,15 +155,14 @@ void AstroSessionTab::Private::reload()
     spLog("notice") << "Switching to preview version..";
     sessionPreviewContainer->clear();
     sessionPreviewContainer->addWidget(WW<WText>(WString("<h3>{1}, {2}</h3>").arg(astroSession->name()).arg(astroSession->wDateWhen().toString("dddd d MMMM yyyy") )).css("text-center") );
-    WPushButton *printButton = WW<WPushButton>(WString::tr("buttons_print")).css("btn-info btn-sm");
-    printButton->setLink("javascript:window.print()");
+    WPushButton *printButton = WW<WPushButton>(WString::tr("buttons_print")).css("btn-info btn-sm").onClick([=](WMouseEvent){ wApp->doJavaScript("window.print();", false);  }); // TODO: workaround?
     WPushButton *backButton = WW<WPushButton>(WString::tr("preview_back_to_astrosessiontab")).css("btn-warning btn-sm").onClick([=](WMouseEvent){
       sessionStacked->setCurrentWidget(sessionContainer);
       populate();
       sessionPreviewContainer->clear();
     });
     WPushButton *invertAllButton = WW<WPushButton>(WString::tr("buttons_invert_all")).css("btn-sm");
-    sessionPreviewContainer->addWidget(WW<WToolBar>().css("hidden-print pull-right").addButton(backButton).addButton(invertAllButton));
+    sessionPreviewContainer->addWidget(WW<WToolBar>().addCss("hidden-print pull-right").addButton(backButton).addButton(invertAllButton).addButton(printButton));
 
     WContainerWidget *infoWidget = WW<WContainerWidget>().css("astroobjects-info-widget");
     updatePositionDetails(infoWidget, false);
