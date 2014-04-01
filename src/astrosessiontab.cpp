@@ -155,7 +155,14 @@ void AstroSessionTab::Private::reload()
     spLog("notice") << "Switching to preview version..";
     sessionPreviewContainer->clear();
     sessionPreviewContainer->addWidget(WW<WText>(WString("<h3>{1}, {2}</h3>").arg(astroSession->name()).arg(astroSession->wDateWhen().toString("dddd d MMMM yyyy") )).css("text-center") );
-    WPushButton *printButton = WW<WPushButton>(WString::tr("buttons_print")).css("btn-info btn-sm").onClick([=](WMouseEvent){ wApp->doJavaScript("window.print();", false);  }); // TODO: workaround?
+    WPushButton *printButton = WW<WPushButton>(WString::tr("buttons_print")).css("btn-info btn-sm");
+    printButton->clicked().connect([=](WMouseEvent){
+      wApp->doJavaScript("window.print();", false);
+      printButton->disable();
+      WTimer::singleShot(500, [=](WMouseEvent) {
+        printButton->enable();
+      });
+    });
     WPushButton *backButton = WW<WPushButton>(WString::tr("preview_back_to_astrosessiontab")).css("btn-warning btn-sm").onClick([=](WMouseEvent){
       sessionStacked->setCurrentWidget(sessionContainer);
       populate();
