@@ -60,7 +60,7 @@ AstroObjectWidget::AstroObjectWidget(const AstroSessionObjectPtr &object, Sessio
   }
   info->setCondition("has-custom-description", object->ngcObject()->descriptions().size() > 0);
   if(info->conditionValue("has-custom-description")) {
-    info->bindString("custom-description", object->description());
+    info->bindString("custom-description", WString::fromUTF8(object->description()));
   }
 
   info->setCondition("have-actions", actionButtons.size() > 0);
