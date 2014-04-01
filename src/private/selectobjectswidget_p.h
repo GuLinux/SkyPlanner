@@ -22,6 +22,7 @@
 #include "selectobjectswidget.h"
 #include <boost/thread.hpp>
 #include "utils/format.h"
+#include "widgets/filterbycatalogue.h"
 
 class FilterByConstellation;
 namespace Wt
@@ -32,6 +33,7 @@ namespace Wt
 class NgcObject;
 class FilterByTypeWidget;
 class FilterByMagnitudeWidget;
+class FilterByCatalogue;
 class SelectObjectsWidget::Private
 {
 public:
@@ -54,6 +56,7 @@ public:
     FilterByTypeWidget *filterByTypeWidget;
     FilterByMagnitudeWidget *filterByMinimumMagnitude;
     FilterByConstellation *filterByConstellation;
+    FilterByCatalogue *filterByCatalogue;
     std::string lastSearch;
     Wt::WTableRow *selectedRow = 0;
     template<typename T> Wt::Dbo::Query<T> filterQuery(const std::string &query);

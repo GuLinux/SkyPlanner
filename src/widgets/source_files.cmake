@@ -9,5 +9,6 @@ ${CMAKE_SOURCE_DIR}/src/widgets/filterbytypewidget.cpp
 ${CMAKE_SOURCE_DIR}/src/widgets/filterbymagnitudewidget.cpp
 ${CMAKE_SOURCE_DIR}/src/widgets/filterbyconstellation.cpp
 ${CMAKE_SOURCE_DIR}/src/widgets/astroobjectwidget.cpp
+${CMAKE_SOURCE_DIR}/src/widgets/filterbycatalogue.cpp
 )
 

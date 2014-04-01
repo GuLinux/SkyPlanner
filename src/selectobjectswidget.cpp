@@ -167,7 +167,10 @@ void SelectObjectsWidget::Private::suggestedObjects(Dbo::Transaction& transactio
   filterByTypeWidget->changed().connect([=](_n6){ populateSuggestedObjectsList(); });
   filterByConstellation = new FilterByConstellation;
   filterByConstellation->changed().connect([=](_n6){ populateSuggestedObjectsList(); });
-  suggestedObjectsContainer->addWidget(WW<WGroupBox>(WString::tr("filters")).add(WW<WContainerWidget>().css("form-inline").add(filterByTypeWidget).add(filterByMinimumMagnitude).add(filterByConstellation) ));
+
+  filterByCatalogue = new FilterByCatalogue(session);
+  filterByCatalogue->changed().connect([=](_n6) { populateSuggestedObjectsList(); });
+  suggestedObjectsContainer->addWidget(WW<WGroupBox>(WString::tr("filters")).add(WW<WContainerWidget>().css("form-inline").add(filterByTypeWidget).add(filterByMinimumMagnitude).add(filterByConstellation).add(filterByCatalogue) ));
   suggestedObjectsTable = WW<WTable>().addCss("table  table-hover");
   suggestedObjectsFooter = WW<WContainerWidget>();
 
@@ -181,11 +184,16 @@ void SelectObjectsWidget::Private::suggestedObjects(Dbo::Transaction& transactio
 
 template<typename T> Dbo::Query<T> SelectObjectsWidget::Private::filterQuery(const std::string &queryString)
 {
-  Dbo::Query<T> query = session.query<T>(queryString);
+  CataloguePtr catalogue = filterByCatalogue->selectedCatalogue();
+  Dbo::Query<T> query = session.query<T>( catalogue ? queryString + ", denominations d" : queryString);
   vector<string> filterConditions{filterByTypeWidget->selected().size(), "?"};
   query.where("o.id = ephemeris_cache.objects_id")
     .where("astro_session_id = ?").bind(astroSession.id())
     .where("magnitude >= ?").bind(filterByMinimumMagnitude->isMinimum() ? -20 : filterByMinimumMagnitude->magnitude());
+  if(catalogue) {
+    query.where("o.id = d.objects_id")
+         .where("d.catalogues_id = ?").bind(catalogue.id());
+  }
   query.where(format("\"type\" IN (%s)") % boost::algorithm::join(filterConditions, ", ") );
   for(auto filter: filterByTypeWidget->selected())
     query.bind(filter);
