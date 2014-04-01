@@ -42,9 +42,8 @@ class DSSImage::Private
     DSSImage::ImageOptions imageOptions;
 
     std::string imageLink() const;
-    void startDownload();
     void curlDownload();
-    void setCacheImage();
+    void setImageFromCache();
     Wt::WContainerWidget *content;
     int retry = 0;
 

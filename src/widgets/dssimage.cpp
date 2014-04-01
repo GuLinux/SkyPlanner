@@ -128,7 +128,7 @@ string DSSImage::Private::imageLink() const
   % objectRect % objectRect;
 }
 
-void DSSImage::Private::setCacheImage()
+void DSSImage::Private::setImageFromCache()
 {
   logD() << "file: " << file();
   content->clear();
@@ -296,7 +296,7 @@ void DSSImage::Private::curlDownload()
             }
             try {
               boost::filesystem::rename(downloadFile.string() + "_tmp", downloadFile.string());
-              setCacheImage();
+              setImageFromCache();
             } catch(std::exception &e) {
               WServer::instance()->log("error") << "Error moving temp download file " << downloadFile.string() + "_tmp to " << downloadFile.string() << ": " << e.what();
             }
@@ -346,7 +346,7 @@ void DSSImage::Private::reload()
 
   if(fs::exists(fullFile() )) {
     logD() << "file exists: setting from cache";
-    setCacheImage();
+    setImageFromCache();
   }
   else {
     logD() << "file not found, downloading";
