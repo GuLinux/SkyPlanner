@@ -26,6 +26,10 @@ std::vector<uint8_t> styleCss() {
       cursor: pointer;
     }
 
+   .astroobjects-list {
+     counter-reset: astroobjects 0;
+   }
+
     @media print {
       .nav-tabs {
         display: none!important;
@@ -39,7 +43,12 @@ std::vector<uint8_t> styleCss() {
       .astroobject_title {
         font-size: 15px!important;
       }
+     .astroobjects-list .astroobject_title h4:before {
+       counter-increment:astroobjects;
+       content: counter(astroobjects) ". ";
+     }
     }
+
     legend {
     }
     .gm-style img {
