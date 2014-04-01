@@ -650,7 +650,7 @@ void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject
     WTableCell *descriptionCell = descriptionRow->elementAt(0);
     descriptionCell->setHidden(true);
     descriptionCell->setColumnSpan(11);
-    WTextArea *descriptionTextArea = WW<WTextArea>(sessionObject->description()).css("input-block-level");
+    WTextArea *descriptionTextArea = WW<WTextArea>(WString::fromUTF8(sessionObject->description())).css("input-block-level");
     WContainerWidget *descriptionContainer = WW<WContainerWidget>()
       .add(new WLabel{WString::tr("object_notes")})
       .add(descriptionTextArea)
