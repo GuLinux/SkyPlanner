@@ -162,12 +162,13 @@ void AstroSessionTab::Private::reload()
       populate();
       sessionPreviewContainer->clear();
     });
-    WPushButton *invertAllButton = WW<WPushButton>(WString::tr("buttons_invert_all"));
-    sessionPreviewContainer->addWidget(WW<WToolBar>().css("hidden-print pull-right").addButton(backButton).add(invertAllButton));
+    WPushButton *invertAllButton = WW<WPushButton>(WString::tr("buttons_invert_all")).css("btn-sm");
+    sessionPreviewContainer->addWidget(WW<WToolBar>().css("hidden-print pull-right").addButton(backButton).addButton(invertAllButton));
 
     WContainerWidget *infoWidget = WW<WContainerWidget>().css("astroobjects-info-widget");
     updatePositionDetails(infoWidget, false);
     sessionPreviewContainer->addWidget(infoWidget);
+    sessionPreviewContainer->addWidget(WW<WText>(WString::tr("dss-embed-menu-info-message")).css("hidden-print"));
     Ephemeris ephemeris({astroSession->position().latitude, astroSession->position().longitude}, timezone);
     shared_ptr<mutex> downloadImagesMutex(new mutex);
     Dbo::Transaction t(session);
