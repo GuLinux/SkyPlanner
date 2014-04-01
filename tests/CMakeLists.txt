@@ -30,9 +30,15 @@ if(Boost_UNIT_TEST_FRAMEWORK_LIBRARY)
   endfunction()
   
   
-  register_unit_test(simple_test simple_test.cpp)
-  link_unit_test(simple_test)
+  register_unit_test(simple_test simple_test.cpp
+    ${CMAKE_SOURCE_DIR}/src/types.cpp
+  )
+  link_unit_test(simple_test nova)
   
+  register_unit_test(angles_test angles_test.cpp
+    ${CMAKE_SOURCE_DIR}/src/types.cpp
+  )
+  link_unit_test(angles_test nova)
   
   register_unit_test(ephemeris
     ephemeris_test.cpp

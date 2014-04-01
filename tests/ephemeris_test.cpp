@@ -19,7 +19,7 @@ BOOST_AUTO_TEST_CASE(TestSunRiseSet)
   auto darkness = ephemeris.darknessHours(when );
   Ephemeris::LunarPhase phase = ephemeris.moonPhase(when);
   double firstFraction = phase.illuminated_fraction;
-  for(int i=0; i<1000; i++) {
+  for(int i=0; i<100; i++) {
     phase = ephemeris.moonPhase(when);
     BOOST_REQUIRE_CLOSE(firstFraction, phase.illuminated_fraction, 0.0001);
   }

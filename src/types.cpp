@@ -118,14 +118,15 @@ Angle::Hours Angle::sexagesimalHours() const
 
 string Angle::printable(Format format, PrintFormat printFormat) const
 {
+  string signFix = degrees() < 0 ? "-" : "";
   if(format == Hourly) {
     auto sHours = sexagesimalHours();
-    return (boost::format("%dh %2dm %.1fs") % sHours.hours % sHours.minutes % sHours.seconds ).str();
+    return (boost::format("%s%dh %2dm %.1fs") % ( sHours.hours == 0 ? signFix : "" ) % sHours.hours % sHours.minutes % sHours.seconds ).str();
 
   }
 
   Sexagesimal asSexagesimal = sexagesimal();
-  return (boost::format("%d%s %2d' %.1f\"") % asSexagesimal.degrees % (printFormat == HTML ? "&deg;" : "\302\260") % asSexagesimal.minutes % asSexagesimal.seconds ).str();
+  return (boost::format("%s%d%s %2d' %.1f\"") % ( asSexagesimal.degrees == 0 ? signFix : "" ) % asSexagesimal.degrees % (printFormat == HTML ? "&deg;" : "\302\260") % asSexagesimal.minutes % asSexagesimal.seconds ).str();
 }
 
  
