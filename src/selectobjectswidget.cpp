@@ -179,8 +179,9 @@ void SelectObjectsWidget::Private::suggestedObjects(Dbo::Transaction& transactio
   suggestedObjectsContainer->addWidget(suggestedObjectsFooter);
 }
 
-template<typename T> T &SelectObjectsWidget::Private::filterQuery(T &query)
+template<typename T> Dbo::Query<T> SelectObjectsWidget::Private::filterQuery(const std::string &queryString)
 {
+  Dbo::Query<T> query = session.query<T>(queryString);
   vector<string> filterConditions{filterByTypeWidget->selected().size(), "?"};
   query.where("o.id = ephemeris_cache.objects_id")
     .where("astro_session_id = ?").bind(astroSession.id())
@@ -207,8 +208,7 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsList()
   double minimumMagnitude = filterByMinimumMagnitude->isMinimum() ? -20 : filterByMinimumMagnitude->magnitude();
   vector<string> filterConditions{filterByTypeWidget->selected().size(), "?"};
   
-  auto objectsCountQuery = session.query<long>("select count(*) from objects o, ephemeris_cache");
-  long objectsCount = filterQuery(objectsCountQuery).resultValue();
+  long objectsCount = filterQuery<long>("select count(*) from objects o, ephemeris_cache").resultValue();
 
   spLog("notice") << "objects count: " << objectsCount;
   if(objectsCount<=0) {
@@ -218,8 +218,7 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsList()
   
   auto populateTable = [=](long limit, long offset) {
     Dbo::Transaction t(session);
-    auto ngcObjectsQuery = session.query<NgcObjectPtr>("select o from objects o, ephemeris_cache");
-    filterQuery(ngcObjectsQuery).orderBy("magnitude asc").limit(limit).offset(offset);
+    auto ngcObjectsQuery = filterQuery<NgcObjectPtr>("select o from objects o, ephemeris_cache").orderBy("magnitude asc").limit(limit).offset(offset);
     suggestedObjectsTable->clear();
     populateHeaders(suggestedObjectsTable);
     for(auto ngcObject: ngcObjectsQuery.resultList() ) {

@@ -56,7 +56,7 @@ public:
     FilterByConstellation *filterByConstellation;
     std::string lastSearch;
     Wt::WTableRow *selectedRow = 0;
-    template<typename T> T &filterQuery(T &query);
+    template<typename T> Wt::Dbo::Query<T> filterQuery(const std::string &query);
     void clearSelection();
 private:
     class SelectObjectsWidget* const q;
