@@ -54,12 +54,49 @@ namespace fs = boost::filesystem;
 DSSImage::Private::Private( const DSSImage::ImageOptions &imageOptions, const shared_ptr<mutex> &downloadMutex, DSSImage *q )
   : imageOptions(imageOptions), downloadMutex(downloadMutex), q( q )
 {
+  httpClient.setTimeout(120);
+  httpClient.setMaximumResponseSize(1024*1024*40);
+  httpClient.done().connect(bind(&DSSImage::Private::save, this, placeholders::_1, placeholders::_2));
 }
 
 DSSImage::~DSSImage()
 {
   d->aborted = true;
+  d->httpClient.abort();
   d->downloadThread.join();
+}
+
+
+void DSSImage::Private::save(const boost::system::error_code &errorCode, const Http::Message &httpMessage)
+{
+  if(errorCode != boost::system::errc::success) {
+    WServer::instance()->log(aborted ? "notice" : "error") << "Download failed for " << imageLink() << ": " << errorCode.message(); 
+    if(!aborted) failed.emit();
+    return;
+  } 
+  if(httpMessage.status() != 200) {
+    WServer::instance()->log(aborted ? "notice" : "error") << "Wrong http status for " << imageLink() << ": " << httpMessage.status(); 
+    if(!aborted) failed.emit();
+    return;
+  }
+  string contentType;
+  if(httpMessage.getHeader("Content-Type")) contentType = *httpMessage.getHeader("Content-Type");
+  if(contentType != "image/gif") {
+    WServer::instance()->log(aborted ? "notice" : "error") << "Wrong content type for " << imageLink() << ": expected image/gif, got " << contentType; 
+    if(!aborted) failed.emit();
+    return;
+  }
+  WServer::instance()->log("notice") << imageLink() << " correctly downloaded, saving to " << fullFile();
+  ofstream out(fullFile().string() );
+  out << httpMessage.body();
+  out.flush();
+  out.close();
+  if(aborted)
+    return;
+  
+  WServer::instance()->log("notice") << " download successfully finished, calling setImageFromCache";
+  setImageFromCache();
+  wApp->triggerUpdate();
 }
 
 Signal<WMouseEvent> &DSSImage::imageClicked() const
@@ -246,18 +283,30 @@ void DSSImage::Private::showImageController()
   dialog->show();
 }
 
+void DSSImage::Private::wtDownload()
+{
+  httpClient.abort();
+  httpClient.get(imageLink()); 
+}
+
+void DSSImage::Private::download()
+{
+  content->clear();
+  content->addWidget(new WText(WString::tr("dss_downloading_message")));
+  content->addWidget(new WBreak);
+  content->addWidget(WW<WImage>("http://gulinux.net/loading_animation.gif").addCss("center-block"));
+
+  wtDownload();
+}
+
 void DSSImage::Private::curlDownload()
 {
-    content->clear();
-    content->addWidget(new WText(WString::tr("dss_downloading_message")));
-    shared_ptr<CurlProgressHandler> progressHandler{new CurlProgressHandler};
     /*progressHandler->progressBar = new WSlider();
     progressHandler->progressBar->setMaximum(100);
     */
-    content->addWidget(new WBreak);
-    content->addWidget(WW<WImage>("http://gulinux.net/loading_animation.gif").addCss("center-block"));
+      //content->addWidget(progressHandler->progressBar);
 
-    //content->addWidget(progressHandler->progressBar);
+    shared_ptr<CurlProgressHandler> progressHandler{new CurlProgressHandler};
     progressHandler->app = wApp;
     fs::path downloadFile = fullFile();
     logD() << "full file path: " << downloadFile;
@@ -350,7 +399,7 @@ void DSSImage::Private::reload()
   }
   else {
     logD() << "file not found, downloading";
-    curlDownload();
+    download();
   }
 
 }
@@ -362,6 +411,6 @@ WLink DSSImage::dssOriginalLink() const
 
 void DSSImage::startDownload()
 {
-  d->curlDownload();
+  d->download();
 }
 

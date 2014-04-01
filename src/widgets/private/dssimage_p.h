@@ -24,6 +24,7 @@
 #include <boost/filesystem/path.hpp>
 #include <Wt/WLink>
 #include <boost/thread.hpp>
+#include <Wt/Http/Client>
 
 class DSSImage::Private
 {
@@ -42,7 +43,10 @@ class DSSImage::Private
     DSSImage::ImageOptions imageOptions;
 
     std::string imageLink() const;
+    void download();
     void curlDownload();
+    void wtDownload();
+    void save(const boost::system::error_code &errorCode, const Wt::Http::Message &httpMessage);
     void setImageFromCache();
     Wt::WContainerWidget *content;
     int retry = 0;
@@ -68,7 +72,7 @@ class DSSImage::Private
     Wt::Signal<Wt::WMouseEvent> imageClicked;
     boost::thread downloadThread;
     bool aborted = false;
-
+    Wt::Http::Client httpClient;
   private:
     class DSSImage *const q;
 };
