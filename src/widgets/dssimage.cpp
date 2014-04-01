@@ -121,12 +121,16 @@ boost::filesystem::path DSSImage::Private::Image::file(const DSSImage::ImageOpti
     fs::create_directories(cacheDir);
   }
 
-  string cacheKey = format("%s%s-ar_%d-%d-%.1f_dec_%d-%d-%.1f_size_%d-%d-%.1f.gif")
+  string arSignFix = imageOptions.coordinates.rightAscension.degrees() < 0 ? "-" : "";
+  string decSignFix = imageOptions.coordinates.declination.degrees() < 0 ? "-" : "";
+  string cacheKey = format("%s%s-ar_%s%d-%d-%.1f_dec_%s%d-%d-%.1f_size_%d-%d-%.1f.gif")
   % prefix
   % DSS::imageVersion(imageOptions.imageVersion)
+  % (imageOptions.coordinates.rightAscension.sexagesimalHours().hours == 0 ? arSignFix : "")
   % imageOptions.coordinates.rightAscension.sexagesimalHours().hours
   % imageOptions.coordinates.rightAscension.sexagesimalHours().minutes
   % imageOptions.coordinates.rightAscension.sexagesimalHours().seconds
+  % (imageOptions.coordinates.declination.sexagesimal().degrees == 0 ? decSignFix : "")
   % imageOptions.coordinates.declination.sexagesimal().degrees
   % imageOptions.coordinates.declination.sexagesimal().minutes
   % imageOptions.coordinates.declination.sexagesimal().seconds
@@ -154,11 +158,16 @@ void DSSImage::Private::Image::resize(const fs::path &destination, const DSSImag
 string DSSImage::Private::imageLink() const
 {
   double objectRect = imageOptions.size.arcMinutes();
-  return format("http://archive.stsci.edu/cgi-bin/dss_search?v=%s&r=%d+%d+%.1f&d=%d+%d+%.1f&e=J2000&h=%d&w=%df&f=gif&c=none&fov=SM97&v3=")
+  string arSignFix = imageOptions.coordinates.rightAscension.degrees() < 0 ? "-" : "";
+  string decSignFix = imageOptions.coordinates.declination.degrees() < 0 ? "-" : "";
+
+  return format("http://archive.stsci.edu/cgi-bin/dss_search?v=%s&r=%s%d+%d+%.1f&d=%s%d+%d+%.1f&e=J2000&h=%d&w=%df&f=gif&c=none&fov=SM97&v3=")
   % DSS::imageVersion(imageOptions.imageVersion)
+  % (imageOptions.coordinates.rightAscension.sexagesimalHours().hours == 0 ? arSignFix : "")
   % imageOptions.coordinates.rightAscension.sexagesimalHours().hours
   % imageOptions.coordinates.rightAscension.sexagesimalHours().minutes
   % imageOptions.coordinates.rightAscension.sexagesimalHours().seconds
+  % (imageOptions.coordinates.declination.sexagesimal().degrees == 0 ? decSignFix : "")
   % imageOptions.coordinates.declination.sexagesimal().degrees
   % imageOptions.coordinates.declination.sexagesimal().minutes
   % imageOptions.coordinates.declination.sexagesimal().seconds
