@@ -43,7 +43,6 @@
 #include "models/Models"
 #include <Wt/WDoubleSpinBox>
 
-#define logD() WServer::instance()->log("notice") << __PRETTY_FUNCTION__ << ": "
 
 using namespace Wt;
 using namespace WtCommons;
@@ -176,7 +175,6 @@ string DSSImage::Private::imageLink() const
 
 void DSSImage::Private::setImageFromCache()
 {
-  logD() << "file: " << file();
   content->clear();
   string deployPath;
   _imageLink = linkFor(file());
@@ -318,7 +316,6 @@ void DSSImage::Private::curlDownload()
     shared_ptr<CurlProgressHandler> progressHandler{new CurlProgressHandler};
     progressHandler->app = wApp;
     fs::path downloadFile = fullFile();
-    logD() << "full file path: " << downloadFile;
 
     downloadThread = boost::thread([=] () mutable {
       unique_ptr<unique_lock<mutex>> scheduledDownloadLock;
@@ -391,7 +388,6 @@ DSSImage::DSSImage(const ImageOptions &imageOptions, const shared_ptr<mutex> &do
 
 void DSSImage::Private::reload()
 {
-  logD();
   container->clear();
   content = new WContainerWidget;
   if(showDSSLink) {
@@ -403,11 +399,9 @@ void DSSImage::Private::reload()
   container->addWidget(content);
 
   if(fs::exists(fullFile() )) {
-    logD() << "file exists: setting from cache";
     setImageFromCache();
   }
   else {
-    logD() << "file not found, downloading";
     download();
   }
 
