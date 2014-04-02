@@ -26,9 +26,25 @@ std::vector<uint8_t> styleCss() {
       cursor: pointer;
     }
 
+   .astroobject-list-item {
+//     margin-top: 5px;
+     padding: 5px;
+     border: 1px;
+     border-color: grey;
+     border-style: solid;
+     margin-bottom: -1px;
+   }  
+
+   .astroobject-last-list-item {
+     margin-bottom: 0px;
+   }
+
    .astroobjects-list {
      counter-reset: astroobjects 0;
    }
+     .astroobjectwidget-dialog .astroobject_title {
+       display:none;
+     }
 
     @media print {
       .nav-tabs {
@@ -41,10 +57,15 @@ std::vector<uint8_t> styleCss() {
         font-size: x-small!important;
       }
       .astroobject_title {
-        font-size: 15px!important;
+//        font-size: 15px!important;
       }
-     .astroobjects-list .astroobject_title h4:before {
+    .astroobjectwidget {
        counter-increment:astroobjects;
+    }
+    .astroobjects-list .astroobject_title h4:before {
+       content: counter(astroobjects) ". ";
+     }
+    .astroobjects-list .astroobject_title strong:before {
        content: counter(astroobjects) ". ";
      }
     }

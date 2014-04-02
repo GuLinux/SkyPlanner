@@ -106,7 +106,7 @@ Signal<WMouseEvent> &DSSImage::imageClicked() const
 
 map<DSSImage::ImageSize,DSSImage::Private::Image> DSSImage::Private::imageSizeMap {
     {DSSImage::Full, { 0, "" } },
-    {DSSImage::Mid, { 650, "mid_" } },
+    {DSSImage::Mid, { 700, "mid_" } },
     {DSSImage::Thumb, { 100, "thumb_" } },
 };
 

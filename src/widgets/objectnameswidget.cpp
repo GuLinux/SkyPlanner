@@ -191,11 +191,10 @@ void ObjectNamesWidget::Private::init(const NgcObjectPtr &object, const AstroSes
       dialog->setCaption(namesJoined);
       dialog->setClosable(true);
       Ephemeris ephemeris(astroSession->position(), timezone);
-      dialog->contents()->addWidget(
-        astroSessionObject ?
-        new AstroObjectWidget(astroSessionObject, session, ephemeris, telescope, false, {}) :
-        new AstroObjectWidget(object, astroSession, session, ephemeris, telescope, false, {}) 
-      );
+      AstroObjectWidget *astroObjectWidget = astroSessionObject ? new AstroObjectWidget(astroSessionObject, session, ephemeris, telescope, {}) : new AstroObjectWidget(object, astroSession, session, ephemeris, telescope, {});
+      astroObjectWidget->addStyleClass("astroobjectwidget-dialog");
+
+      dialog->contents()->addWidget(astroObjectWidget);
       dialog->resize(850, 500);
       dialog->setResizable(true);
       dialog->show();
