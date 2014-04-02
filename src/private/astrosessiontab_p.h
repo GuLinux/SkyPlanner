@@ -37,6 +37,7 @@ class Telescope;
 class Session;
 class ExportAstroSessionResource;
 class FilterByMagnitudeWidget;
+class FilterByCatalogue;
 class FilterByTypeWidget;
 class AstroSessionTab::Private
 {
@@ -65,6 +66,7 @@ public:
     FilterByTypeWidget *filterByType;
     FilterByMagnitudeWidget *filterByMinimumMagnitude;
     FilterByConstellation *filterByConstellation;
+    FilterByCatalogue *filterByCatalogue;
     void remove(const Wt::Dbo::ptr<AstroSessionObject> &sessionObject, std::function<void()> runAfterRemove);
     Wt::WText *objectsCounter;
 private:

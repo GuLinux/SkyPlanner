@@ -70,6 +70,7 @@
 #include <Wt/WMemoryResource>
 #include "widgets/filterbymagnitudewidget.h"
 #include "widgets/filterbytypewidget.h"
+#include "widgets/filterbycatalogue.h"
 #include "widgets/filterbyconstellation.h"
 #include <boost/thread.hpp>
 #include <Wt/WStackedWidget>
@@ -259,10 +260,13 @@ void AstroSessionTab::Private::reload()
   filterByMinimumMagnitude = new FilterByMagnitudeWidget({WString::tr("not_set"), {}, WString::tr("minimum_magnitude_label")}, {0, 20});
   filterByType->changed().connect([=](_n6){ populate(); });
   filterByMinimumMagnitude->changed().connect([=](double, _n5){ populate(); });
+
+  filterByCatalogue = new FilterByCatalogue(session);
+  filterByCatalogue->changed().connect([=](_n6){ populate(); });
   
   filterByConstellation = new FilterByConstellation;
   filterByConstellation->changed().connect([=](_n6){ populate(); });
-  sessionContainer->addWidget(WW<WContainerWidget>().addCss("form-inline").add(filterByType).add(filterByMinimumMagnitude).add(filterByConstellation));
+  sessionContainer->addWidget(WW<WContainerWidget>().addCss("form-inline").add(filterByType).add(filterByMinimumMagnitude).add(filterByConstellation).add(filterByCatalogue));
 
   if(timezone)
     sessionContainer->addWidget(  new WText(WString::tr("printable_timezone_info").arg(timezone.timeZoneName)));
@@ -587,11 +591,14 @@ void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject
   
   Ephemeris ephemeris({astroSession->position().latitude, astroSession->position().longitude}, timezone);
   
-  // TODO: optimize
-  auto query = session.query<AstroSessionObjectPtr>("select a from astro_session_object a inner join objects on a.objects_id = objects.id")
+  auto query = session.query<AstroSessionObjectPtr>(format("select a from astro_session_object a inner join objects on a.objects_id = objects.id %s")
+         % ( filterByCatalogue->selectedCatalogue() ? "inner join denominations on objects.id = denominations.objects_id" : "")
+       )
       .where("astro_session_id = ?").bind(astroSession.id())
       .where("objects.magnitude > ?").bind(filterByMinimumMagnitude->isMinimum() ? -200 : filterByMinimumMagnitude->magnitude());
 
+  if(filterByCatalogue->selectedCatalogue() )
+    query.where("denominations.catalogues_id = ?").bind(filterByCatalogue->selectedCatalogue().id());
   vector<string> filterByTypeConditionPlaceholders{filterByType->selected().size(), "?"};
   query.where(format("\"type\" IN (%s)") % boost::algorithm::join(filterByTypeConditionPlaceholders, ", "));
   for(auto filter: filterByType->selected())
