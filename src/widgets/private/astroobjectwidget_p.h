@@ -14,6 +14,7 @@ public:
   DSSPage *dssPage;
   Wt::WContainerWidget *expanded;
   Wt::WWidget *collapsed;
+  Wt::WTemplate *info;
 private:
   AstroObjectWidget *q;
 };
