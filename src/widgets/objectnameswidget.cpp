@@ -192,11 +192,11 @@ void ObjectNamesWidget::Private::init(const NgcObjectPtr &object, const AstroSes
       dialog->setClosable(true);
       Ephemeris ephemeris(astroSession->position(), timezone);
       AstroObjectWidget *astroObjectWidget = astroSessionObject ? new AstroObjectWidget(astroSessionObject, session, ephemeris, telescope, {}) : new AstroObjectWidget(object, astroSession, session, ephemeris, telescope, {});
-      astroObjectWidget->addStyleClass("astroobjectwidget-dialog");
+      astroObjectWidget->addStyleClass("astroobjectwidget-dialog container");
+      astroObjectWidget->removeStyleClass("container-fluid");
 
       dialog->contents()->addWidget(astroObjectWidget);
-      dialog->resize(850, 500);
-      dialog->setResizable(true);
+      dialog->setResizable(false);
       dialog->show();
     });
     popup->popup(e);
