@@ -48,10 +48,14 @@ Coordinates::Equatorial AstroSessionObject::coordinates() const
   return _ngcObject->coordinates();
 }
 
+Ephemeris::BestAltitude AstroSessionObject::bestAltitude(const AstroSessionPtr &astroSession, const NgcObjectPtr &ngcObject, const Ephemeris &ephemeris, int rangeDeltaInHours)
+{
+  AstroSession::ObservabilityRange range = astroSession->observabilityRange(ephemeris).delta({rangeDeltaInHours, 0, 0});
+  return ephemeris.findBestAltitude( ngcObject->coordinates(), range.begin, range.end );
+} 
 Ephemeris::BestAltitude AstroSessionObject::bestAltitude(const Ephemeris &ephemeris, int rangeDeltaInHours) const
 {
-  AstroSession::ObservabilityRange range = _astroSession->observabilityRange(ephemeris).delta({rangeDeltaInHours, 0, 0});
-  return ephemeris.findBestAltitude( coordinates(), range.begin, range.end );
+  return bestAltitude(_astroSession, _ngcObject, ephemeris, rangeDeltaInHours);
 }
 
 

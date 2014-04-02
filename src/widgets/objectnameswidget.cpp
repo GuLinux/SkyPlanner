@@ -186,18 +186,20 @@ void ObjectNamesWidget::Private::init(const NgcObjectPtr &object, const AstroSes
 
     popup->addSectionHeader( WString::tr( "objectnames_feedback_title" ) )->addStyleClass("dropdown-header");
     addLink(WString::tr( "objectnames_feedback_menu" ), WLink(WLink::InternalPath, SendFeedbackPage::internalPath(object, &t)) );
-    if(astroSessionObject) {
-      popup->addItem( WString::tr( "astroobject_widget_dialog" ) )->triggered().connect([=](WMenuItem*, _n5) {
-        WDialog *dialog = new WDialog;
-        dialog->setCaption(namesJoined);
-        dialog->setClosable(true);
-        Ephemeris ephemeris(astroSessionObject->astroSession()->position(), timezone);
-        dialog->contents()->addWidget(new AstroObjectWidget(astroSessionObject, session, ephemeris, telescope, false, {})); // TODO: we need a double constructor here, or in AstroObjectWidget
-        dialog->resize(850, 500);
-        dialog->setResizable(true);
-        dialog->show();
-      });
-    }
+    popup->addItem( WString::tr( "astroobject_widget_dialog" ) )->triggered().connect([=](WMenuItem*, _n5) {
+      WDialog *dialog = new WDialog;
+      dialog->setCaption(namesJoined);
+      dialog->setClosable(true);
+      Ephemeris ephemeris(astroSession->position(), timezone);
+      dialog->contents()->addWidget(
+        astroSessionObject ?
+        new AstroObjectWidget(astroSessionObject, session, ephemeris, telescope, false, {}) :
+        new AstroObjectWidget(object, astroSession, session, ephemeris, telescope, false, {}) 
+      );
+      dialog->resize(850, 500);
+      dialog->setResizable(true);
+      dialog->show();
+    });
     popup->popup(e);
   } );
 }
