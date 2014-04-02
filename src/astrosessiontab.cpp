@@ -565,16 +565,6 @@ void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject
   objectsTable->clear();
 
   Dbo::Transaction t(session);
-/*
-  auto constellations = session.query<string>(R"(select constellation_abbrev from astro_session_object
-      inner join objects on objects_id = objects.id
-      where astro_session_id = ?
-      group by constellation_abbrev
-  )").bind(astroSession.id()).resultList();
-  vector<string> vConstellations(begin(constellations), end(constellations));
-  filterByConstellation->setFilter([=](const ConstellationFinder::Constellation &c){
-    return count_if(begin(vConstellations), end(vConstellations), [=](const std::string &abbrev){ return c.abbrev == abbrev; }) > 0; });
-  */
   selectedRow = 0;
   objectsTable->elementAt(0,0)->addWidget(new WText{WString::tr("object_column_names")});
   objectsTable->elementAt(0,1)->addWidget(new WText{WString::tr("object_column_type")});
@@ -593,6 +583,7 @@ void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject
   
   auto query = session.query<AstroSessionObjectPtr>(format("select a from astro_session_object a inner join objects on a.objects_id = objects.id %s")
          % ( filterByCatalogue->selectedCatalogue() ? "inner join denominations on objects.id = denominations.objects_id" : "")
+
        )
       .where("astro_session_id = ?").bind(astroSession.id())
       .where("objects.magnitude > ?").bind(filterByMinimumMagnitude->isMinimum() ? -200 : filterByMinimumMagnitude->magnitude());
