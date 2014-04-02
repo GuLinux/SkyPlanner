@@ -197,11 +197,11 @@ void AstroSessionTab::Private::reload()
     shared_ptr<set<AstroObjectWidget*>> astroObjectWidgets(new set<AstroObjectWidget*>());
     AstroObjectWidget *astroObjectWidget = nullptr;
     for(auto objectelement: sessionObjects) {
-      WPushButton *hideButton = WW<WPushButton>(WString::tr("buttons_hide")).css("btn-xs");
+      WPushButton *hideButton = WW<WPushButton>(WString::tr("buttons_hide")).css("btn-xs btn-warning");
       WPushButton *collapseButton = WW<WPushButton>(WString::tr("buttons_collapse")).css("btn-xs");
       WPushButton *hideDSSButton = WW<WPushButton>(WString::tr("buttons_hide_dss")).css("btn-xs");
       WPushButton *deleteButton = WW<WPushButton>(WString::tr("astroobject_remove_from_session")).css("btn-xs btn-danger");
-      astroObjectWidget = new AstroObjectWidget(objectelement.first, session, ephemeris, selectedTelescope, downloadImagesMutex, { collapseButton, hideButton, hideDSSButton, deleteButton });
+      astroObjectWidget = new AstroObjectWidget(objectelement.first, session, ephemeris, selectedTelescope, downloadImagesMutex, { collapseButton, hideDSSButton, hideButton, deleteButton });
       astroObjectWidget->addStyleClass("astroobject-list-item");
       hideButton->clicked().connect([=](WMouseEvent){astroObjectWidgets->erase(astroObjectWidget); delete astroObjectWidget; });
       deleteButton->clicked().connect([=](WMouseEvent){ astroObjectWidgets->erase(astroObjectWidget); remove(objectelement.first, [=] { delete astroObjectWidget; }); } );
