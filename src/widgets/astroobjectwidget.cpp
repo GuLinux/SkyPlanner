@@ -51,8 +51,8 @@ void AstroObjectWidget::Private::init(const AstroSessionObjectPtr &astroSessionO
   content->addWidget(row);
   dssPage = new DSSPage(ngcObject, session, DSSPage::Options::embedded(downloadMutex));
   //dssPage->setMaximumSize(400, 400);
-  dssPage->addStyleClass("col-xs-6");
-  WTemplate *info = WW<WTemplate>(WString::tr("astroobjectwidget")).css("col-xs-6");
+  dssPage->addStyleClass("col-xs-6 col-lg-5");
+  WTemplate *info = WW<WTemplate>(WString::tr("astroobjectwidget")).css("col-xs-6 col-lg-7");
   info->addFunction( "tr", &WTemplate::Functions::tr);
   info->bindString("title", WString::fromUTF8(boost::join(names, ", ")));
   info->bindString("ar", ngcObject->coordinates().rightAscension.printable(Angle::Hourly));
