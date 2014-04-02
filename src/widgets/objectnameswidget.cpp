@@ -196,7 +196,7 @@ void ObjectNamesWidget::Private::init(const NgcObjectPtr &object, const AstroSes
       astroObjectWidget->removeStyleClass("container-fluid");
 
       dialog->contents()->addWidget(astroObjectWidget);
-      dialog->setResizable(false);
+      dialog->setResizable(true);
       dialog->show();
     });
     popup->popup(e);
