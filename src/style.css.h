@@ -65,7 +65,7 @@ std::vector<uint8_t> styleCss() {
     .astroobjects-list .astroobject_title h4:before {
        content: counter(astroobjects) ". ";
      }
-    .astroobjects-list .astroobject_title strong:before {
+    .astroobjects-list .astroobject_title b:before {
        content: counter(astroobjects) ". ";
      }
     }
