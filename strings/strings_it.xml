@@ -65,6 +65,11 @@
 <message id="buttons_invert_all">Inverti Tutte</message>
 <message id="buttons_default">Predefinito</message>
 <message id="buttons_hide">Nascondi</message>
+<message id="buttons_collapse">Comprimi</message>
+<message id="buttons_expand">Espandi</message>
+<message id="buttons_hide_dss">Nascondi immagine</message>
+<message id="buttons_show_dss">Mostra immagine</message>
+
 
 <message id="astrosessionspage_sessions_list">Elenco Osservazioni</message>
 <message id="astrosessionslisttab_name">Nome</message>

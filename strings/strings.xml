@@ -26,6 +26,10 @@
 <message id="buttons_default">Default</message>
 <message id="buttons_print">Print</message>
 <message id="buttons_hide">Hide</message>
+<message id="buttons_collapse">Collapse</message>
+<message id="buttons_expand">Expand</message>
+<message id="buttons_hide_dss">Hide image</message>
+<message id="buttons_show_dss">Show image</message>
 
 <message id="astrosessionspage_sessions_list">Sessions List</message>
 <message id="astrosessionslisttab_name">Name</message>

@@ -16,6 +16,10 @@ public:
   explicit AstroObjectWidget(const Wt::Dbo::ptr<NgcObject> &object, const Wt::Dbo::ptr<AstroSession> &astroSession, Session &session, const Ephemeris &ephemeris, const Wt::Dbo::ptr<Telescope> &telescope, const std::shared_ptr<std::mutex> &downloadMutex = {}, const std::vector<Wt::WPushButton*> &actionButtons = {}, Wt::WContainerWidget *parent = 0);
   ~AstroObjectWidget();
   void toggleInvert();
+  void setDSSVisible(bool visible);
+  bool isDSSVisible() const;
+  void setCollapsed(bool collapsed);
+  bool isCollapsed() const;
 private:
   D_PTR;
 };

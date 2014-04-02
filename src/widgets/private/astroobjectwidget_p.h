@@ -12,6 +12,8 @@ public:
 
   void init(const AstroSessionObjectPtr &astroSessionObject, const AstroSessionPtr &astroSession, const NgcObjectPtr &ngcObject, Session &session, const Ephemeris &ephemeris, const TelescopePtr &telescope, const std::shared_ptr<std::mutex> &downloadMutex, const std::vector<Wt::WPushButton*> &actionButtons);
   DSSPage *dssPage;
+  Wt::WContainerWidget *expanded;
+  Wt::WWidget *collapsed;
 private:
   AstroObjectWidget *q;
 };

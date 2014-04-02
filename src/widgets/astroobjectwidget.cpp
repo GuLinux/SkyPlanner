@@ -14,6 +14,7 @@
 #include "widgets/objectdifficultywidget.h"
 #include <Wt/WToolBar>
 #include <Wt/WPushButton>
+#include "widgets/objectnameswidget.h"
 
 using namespace std;
 using namespace Wt;
@@ -39,22 +40,23 @@ AstroObjectWidget::AstroObjectWidget(const NgcObjectPtr &ngcObject, const AstroS
 void AstroObjectWidget::Private::init(const AstroSessionObjectPtr &astroSessionObject, const AstroSessionPtr &astroSession, const NgcObjectPtr &ngcObject, Session &session, const Ephemeris &ephemeris, const TelescopePtr &telescope, const std::shared_ptr<std::mutex> &downloadMutex, const std::vector<Wt::WPushButton*> &actionButtons)
 {
   WContainerWidget *content = WW<WContainerWidget>().css("container-fluid astroobjectwidget");
+
   WContainerWidget *row = WW<WContainerWidget>().css("row print-no-break");
+  expanded = WW<WContainerWidget>();
+  auto names = [=, &session] { return new ObjectNamesWidget(ngcObject, session, astroSession, ObjectNamesWidget::Printable); }; 
+  collapsed = WW<WTemplate>("<small class=\"text-center astroobject_title\"><b>${title-widget} ${expand}</b></small>").setHidden(true).bindWidget("title-widget", names() ).bindWidget("expand", WW<WPushButton>(WString::tr("buttons_expand")).css("btn-xs hidden-print pull-right").onClick([=](WMouseEvent){ q->setCollapsed(false); }));
   q->setImplementation(content);
   Dbo::Transaction t(session);
-  auto names = NgcObject::namesByCatalogueImportance(t, ngcObject);
-  content->addWidget(
-    WW<WContainerWidget>().css("row print-no-break hidden-print").add(
-    WW<WText>(format("<h4>%s</h4>") % boost::join(names, ", ")).css("astroobject_title text-center")
-   )
-  );
-  content->addWidget(row);
+  expanded->addWidget(WW<WTemplate>("<h4 class=\"row print-no-break hidden-print astroobject_title text-center\">${title-widget}</h4>").bindWidget("title-widget", names()) );
+  expanded->addWidget(row);
+  content->addWidget(collapsed);
+  content->addWidget(expanded);
   dssPage = new DSSPage(ngcObject, session, DSSPage::Options::embedded(downloadMutex));
   //dssPage->setMaximumSize(400, 400);
   dssPage->addStyleClass("col-xs-6 col-lg-5");
   WTemplate *info = WW<WTemplate>(WString::tr("astroobjectwidget")).css("col-xs-6 col-lg-7");
   info->addFunction( "tr", &WTemplate::Functions::tr);
-  info->bindString("title", WString::fromUTF8(boost::join(names, ", ")));
+  info->bindWidget("title", names());
   info->bindString("ar", ngcObject->coordinates().rightAscension.printable(Angle::Hourly));
   info->bindString("dec", Utils::htmlEncode( WString::fromUTF8(ngcObject->coordinates().declination.printable()) ));
   info->bindString("type", ngcObject->typeDescription());
@@ -88,7 +90,7 @@ void AstroObjectWidget::Private::init(const AstroSessionObjectPtr &astroSessionO
     
     info->bindWidget("actions", toolbar);
   }
- row->addWidget(dssPage);
+  row->addWidget(dssPage);
   row->addWidget(info);
 }
 
@@ -96,6 +98,28 @@ void AstroObjectWidget::toggleInvert()
 {
   d->dssPage->toggleInvert();
 }
+
+void AstroObjectWidget::setDSSVisible(bool visible)
+{
+  d->dssPage->setHidden(!visible);
+}
+
+bool AstroObjectWidget::isDSSVisible() const
+{
+  return d->dssPage->isVisible();
+}
+
+void AstroObjectWidget::setCollapsed(bool collapsed)
+{
+  d->collapsed->setHidden(!collapsed);
+  d->expanded->setHidden(collapsed);
+}
+
+bool AstroObjectWidget::isCollapsed() const
+{
+  return d->collapsed->isVisible();
+}
+
 
 AstroObjectWidget::~AstroObjectWidget()
 {
