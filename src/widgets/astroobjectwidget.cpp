@@ -41,6 +41,8 @@ AstroObjectWidget::AstroObjectWidget(const NgcObjectPtr &ngcObject, const AstroS
 
 void AstroObjectWidget::reload()
 {
+  for(auto actionButton: d->actionButtons)
+    d->actionsToolbar->removeWidget(actionButton);
   d->init();
 }
 
@@ -90,11 +92,11 @@ void AstroObjectWidget::Private::init()
 
   info->setCondition("have-actions", actionButtons.size() > 0);
   if(info->conditionValue("have-actions")) {
-    WToolBar *toolbar = new WToolBar;
+    actionsToolbar = WW<WContainerWidget>().css("btn-group");
     for(auto btn: actionButtons)
-      toolbar->addButton(btn);
+      actionsToolbar->addWidget(btn);
     
-    info->bindWidget("actions", toolbar);
+    info->bindWidget("actions", actionsToolbar);
   }
   row->addWidget(WW<WContainerWidget>().css("col-xs-6 col-lg-5").add(dssPage));
   row->addWidget(info);

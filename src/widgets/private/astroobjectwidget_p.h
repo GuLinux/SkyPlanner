@@ -27,6 +27,7 @@ public:
   Wt::WContainerWidget *expanded;
   Wt::WWidget *collapsed;
   Wt::WTemplate *info;
+  Wt::WContainerWidget *actionsToolbar;
 private:
   AstroObjectWidget *q;
 };

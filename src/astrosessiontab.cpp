@@ -204,13 +204,30 @@ void AstroSessionTab::Private::reload()
       WPushButton *collapseButton = WW<WPushButton>(WString::tr("buttons_collapse")).css("btn-xs");
       WPushButton *hideDSSButton = WW<WPushButton>(WString::tr("buttons_hide_dss")).css("btn-xs");
       WPushButton *deleteButton = WW<WPushButton>(WString::tr("astroobject_remove_from_session")).css("btn-xs btn-danger");
-      WPushButton *editDescriptionButton = WW<WPushButton>(WString::tr("astroobject_actions_edit_description")).css("btn xs");
+      WPushButton *editDescriptionButton = WW<WPushButton>(WString::tr("astroobject_actions_edit_description")).css("btn-xs");
       astroObjectWidget = new AstroObjectWidget(objectelement.first, session, timezone, selectedTelescope, downloadImagesMutex, { editDescriptionButton, collapseButton, hideDSSButton, hideButton, deleteButton });
       astroObjectWidget->addStyleClass("astroobject-list-item");
       hideButton->clicked().connect([=](WMouseEvent){astroObjectWidgets->erase(astroObjectWidget); delete astroObjectWidget; });
       deleteButton->clicked().connect([=](WMouseEvent){ astroObjectWidgets->erase(astroObjectWidget); remove(objectelement.first, [=] { delete astroObjectWidget; }); } );
       hideDSSButton->clicked().connect([=](WMouseEvent){ astroObjectWidget->setDSSVisible(!astroObjectWidget->isDSSVisible()); hideDSSButton->setText(WString::tr( astroObjectWidget->isDSSVisible() ? "buttons_hide_dss" : "buttons_show_dss" ));  });
       collapseButton->clicked().connect([=](WMouseEvent) { astroObjectWidget->setCollapsed(!astroObjectWidget->isCollapsed()); });
+      editDescriptionButton->clicked().connect([=](WMouseEvent) {
+        Dbo::Transaction t(session);
+        WDialog *dialog = new WDialog(WString::tr("astroobject_actions_edit_description"));
+        WTextArea *description = WW<WTextArea>(WString::fromUTF8(objectelement.first->description()));
+        dialog->contents()->addStyleClass("container");
+        dialog->contents()->addWidget(description);
+        dialog->setClosable(true);
+        dialog->footer()->addWidget(WW<WPushButton>(WString::tr("buttons_save")).onClick([=](WMouseEvent){dialog->accept(); }));
+        dialog->finished().connect([=](WDialog::DialogCode r, _n5) {
+          if(r != WDialog::Accepted) return;
+          Dbo::Transaction t(session);
+          objectelement.first.modify()->setDescription(description->text().toUTF8());
+          t.commit();
+          astroObjectWidget->reload();
+        });
+        dialog->show();
+      });
       astroObjectWidgets->insert(astroObjectWidget);
       sessionPreviewContainer->addWidget(astroObjectWidget);
     }
