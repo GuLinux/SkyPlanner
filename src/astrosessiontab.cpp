@@ -201,7 +201,8 @@ void AstroSessionTab::Private::reload()
       WPushButton *collapseButton = WW<WPushButton>(WString::tr("buttons_collapse")).css("btn-xs");
       WPushButton *hideDSSButton = WW<WPushButton>(WString::tr("buttons_hide_dss")).css("btn-xs");
       WPushButton *deleteButton = WW<WPushButton>(WString::tr("astroobject_remove_from_session")).css("btn-xs btn-danger");
-      astroObjectWidget = new AstroObjectWidget(objectelement.first, session, ephemeris, selectedTelescope, downloadImagesMutex, { collapseButton, hideDSSButton, hideButton, deleteButton });
+      WPushButton *editDescriptionButton = WW<WPushButton>(WString::tr("astroobject_actions_edit_description")).css("btn xs");
+      astroObjectWidget = new AstroObjectWidget(objectelement.first, session, timezone, selectedTelescope, downloadImagesMutex, { editDescriptionButton, collapseButton, hideDSSButton, hideButton, deleteButton });
       astroObjectWidget->addStyleClass("astroobject-list-item");
       hideButton->clicked().connect([=](WMouseEvent){astroObjectWidgets->erase(astroObjectWidget); delete astroObjectWidget; });
       deleteButton->clicked().connect([=](WMouseEvent){ astroObjectWidgets->erase(astroObjectWidget); remove(objectelement.first, [=] { delete astroObjectWidget; }); } );
@@ -687,8 +688,7 @@ void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject
       }
       astroObjectCell->setHidden(false);
       astroObjectCell->clear();
-      Ephemeris ephemeris(sessionObject->astroSession()->position(), timezone);
-      astroObjectCell->addWidget(new AstroObjectWidget(sessionObject, session, ephemeris, selectedTelescope, {}, {WW<WPushButton>(WString::tr("buttons_close")).css("btn-xs").onClick([=](WMouseEvent){ astroObjectCell->clear(); astroObjectCell->setHidden(true); }) } ));
+      astroObjectCell->addWidget(new AstroObjectWidget(sessionObject, session, timezone, selectedTelescope, {}, {WW<WPushButton>(WString::tr("buttons_close")).css("btn-xs").onClick([=](WMouseEvent){ astroObjectCell->clear(); astroObjectCell->setHidden(true); }) } ));
     });
 
 

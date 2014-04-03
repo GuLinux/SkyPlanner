@@ -22,7 +22,7 @@
 
 #include "d_ptr.h"
 
-namespace PandoricaPrivate {
+namespace Private {
 
 template <typename T>
 d_ptr<T>::d_ptr() : d(new T())

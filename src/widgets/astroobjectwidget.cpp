@@ -19,25 +19,30 @@
 using namespace std;
 using namespace Wt;
 using namespace WtCommons;
-AstroObjectWidget::Private::Private(AstroObjectWidget *q): q(q)
+AstroObjectWidget::Private::Private(const AstroSessionObjectPtr &astroSessionObject, const AstroSessionPtr &astroSession, const NgcObjectPtr &ngcObject, Session &session, const Timezone &timezone, const TelescopePtr &telescope, const shared_ptr<mutex> &downloadMutex, const std::vector<WPushButton*> &actionButtons, AstroObjectWidget *q)
+  : astroSessionObject(astroSessionObject), astroSession(astroSession), ngcObject(ngcObject), session(session), ephemeris(astroSession->position(), timezone), telescope(telescope), downloadMutex(downloadMutex), actionButtons(actionButtons), q(q)
 {
 }
 
-AstroObjectWidget::AstroObjectWidget(const AstroSessionObjectPtr &object, Session &session, const Ephemeris &ephemeris, const TelescopePtr &telescope, const shared_ptr<mutex> &downloadMutex, const vector<Wt::WPushButton*> &actionButtons, WContainerWidget *parent)
-  : WCompositeWidget(parent), d(this)
+AstroObjectWidget::AstroObjectWidget(const AstroSessionObjectPtr &object, Session &session, const Timezone &timezone, const TelescopePtr &telescope, const shared_ptr<mutex> &downloadMutex, const vector<Wt::WPushButton*> &actionButtons, WContainerWidget *parent)
+  : WCompositeWidget(parent), d(object, object->astroSession(), object->ngcObject(), session, timezone, telescope, downloadMutex, actionButtons, this)
 {
-  d->init(object, object->astroSession(), object->ngcObject(), session, ephemeris, telescope, downloadMutex, actionButtons);
+  d->init();
 }
 
-AstroObjectWidget::AstroObjectWidget(const NgcObjectPtr &ngcObject, const AstroSessionPtr &astroSession, Session &session, const Ephemeris &ephemeris, const TelescopePtr &telescope, const shared_ptr<mutex> &downloadMutex, const vector<Wt::WPushButton*> &actionButtons, WContainerWidget *parent)
-  : WCompositeWidget(parent), d(this)
+AstroObjectWidget::AstroObjectWidget(const NgcObjectPtr &ngcObject, const AstroSessionPtr &astroSession, Session &session, const Timezone &timezone, const TelescopePtr &telescope, const shared_ptr<mutex> &downloadMutex, const vector<Wt::WPushButton*> &actionButtons, WContainerWidget *parent)
+  : WCompositeWidget(parent), d({}, astroSession, ngcObject, session, timezone, telescope, downloadMutex, actionButtons, this)
 {
-  d->init({}, astroSession, ngcObject, session, ephemeris, telescope, downloadMutex, actionButtons);
+  d->init();
 }
 
 
+void AstroObjectWidget::reload()
+{
+}
 
-void AstroObjectWidget::Private::init(const AstroSessionObjectPtr &astroSessionObject, const AstroSessionPtr &astroSession, const NgcObjectPtr &ngcObject, Session &session, const Ephemeris &ephemeris, const TelescopePtr &telescope, const std::shared_ptr<std::mutex> &downloadMutex, const std::vector<Wt::WPushButton*> &actionButtons)
+
+void AstroObjectWidget::Private::init()
 {
   WContainerWidget *content = WW<WContainerWidget>().css("container-fluid astroobjectwidget");
 

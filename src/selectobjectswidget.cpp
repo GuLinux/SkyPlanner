@@ -162,8 +162,7 @@ void SelectObjectsWidget::Private::append(WTable *table, const Dbo::ptr<NgcObjec
     }
     astroObjectCell->setHidden(false);
     astroObjectCell->clear();
-    Ephemeris ephemeris(astroSession->position(), timezone);
-    astroObjectCell->addWidget(new AstroObjectWidget(ngcObject, astroSession, session, ephemeris, selectedTelescope, {}, {WW<WPushButton>(WString::tr("buttons_close")).css("btn-xs").onClick([=](WMouseEvent){ astroObjectCell->clear(); astroObjectCell->setHidden(true); }) } ));
+    astroObjectCell->addWidget(new AstroObjectWidget(ngcObject, astroSession, session, timezone, selectedTelescope, {}, {WW<WPushButton>(WString::tr("buttons_close")).css("btn-xs").onClick([=](WMouseEvent){ astroObjectCell->clear(); astroObjectCell->setHidden(true); }) } ));
 
   });
 
