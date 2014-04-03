@@ -108,7 +108,7 @@
 <message id="notification_warning_title">Warning</message>
 
 <message id="notification_object_already_added">Object already added to this session, skipping.</message>
-<message id="notification_object_added">Object successfully added to this session.<br /><a class="link" onclick="location.hash = '#' + '{1}'"><strong>Jump to added object</strong></a></message>
+<message id="notification_object_added">Object successfully added to this session.<br /><a class="link" onclick="location.hash = '#' + '{1}'; window.scrollBy(0, -80)"><strong>Jump to added object</strong></a>.</message>
 
 <message id="filters">Filters</message>
 <message id="filter_by_type_title">Filter By Type</message>
