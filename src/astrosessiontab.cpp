@@ -681,11 +681,14 @@ void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject
     WContainerWidget *descriptionContainer = WW<WContainerWidget>()
       .add(new WLabel{WString::tr("object_notes")})
       .add(descriptionTextArea)
-      .add(WW<WPushButton>(WString::tr("buttons_save")).css("btn btn-xs btn-primary pull-right").onClick([=](WMouseEvent){
-        Dbo::Transaction t(session);
-        sessionObject.modify()->setDescription(descriptionTextArea->text().toUTF8());
-    SkyPlanner::instance()->notification(WString::tr("notification_success_title"), WString::tr("notification_description_saved"), SkyPlanner::Notification::Success, 5);
-      }));
+      .add(WW<WToolBar>().css("pull-right").addButton(
+        WW<WPushButton>(WString::tr("buttons_save")).css("btn btn-xs btn-primary").onClick([=](WMouseEvent){
+          Dbo::Transaction t(session);
+          sessionObject.modify()->setDescription(descriptionTextArea->text().toUTF8());
+          SkyPlanner::instance()->notification(WString::tr("notification_success_title"), WString::tr("notification_description_saved"), SkyPlanner::Notification::Success, 5);
+        }))
+        .addButton(WW<WPushButton>(WString::tr("buttons_close")).css("btn-xs").onClick([=](WMouseEvent){ descriptionCell->setHidden(true); }))
+    );
     descriptionCell->addWidget(descriptionContainer);
     WPopupMenu *actionsMenu = new WPopupMenu;
     WPushButton *actionsButton = WW<WPushButton>(WString::tr("buttons_actions")).css("btn-xs");
