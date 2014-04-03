@@ -54,6 +54,7 @@
 #include "widgets/filterbytypewidget.h"
 #include "widgets/filterbymagnitudewidget.h"
 #include "widgets/filterbyconstellation.h"
+#include "widgets/astroobjectwidget.h"
 #include <Wt/WImage>
 
 using namespace Wt;
@@ -131,7 +132,9 @@ void SelectObjectsWidget::Private::append(WTable *table, const Dbo::ptr<NgcObjec
   row->elementAt(4)->addWidget(new ObjectDifficultyWidget(ngcObject, selectedTelescope, 99 /* TODO: hack, to be replaced */));
   row->elementAt(5)->addWidget(new WText{transit.time().toString()});
   row->elementAt(6)->addWidget(new WText{Utils::htmlEncode(WString::fromUTF8(bestAltitude.coordinates.altitude.printable()))});
-  row->elementAt(7)->addWidget(WW<WPushButton>(WString::tr("buttons_add")).css("btn btn-primary btn-xs").onClick([=](WMouseEvent){
+
+
+  WPushButton *addToSessionButton = WW<WPushButton>(WString::tr("buttons_add")).css("btn btn-primary btn-xs").onClick([=](WMouseEvent){
     Dbo::Transaction t(session);
     int existing = session.query<int>("select count(*) from astro_session_object where astro_session_id = ? AND objects_id = ? ").bind(astroSession.id() ).bind(ngcObject.id() );
     if(existing>0) {
@@ -144,7 +147,27 @@ void SelectObjectsWidget::Private::append(WTable *table, const Dbo::ptr<NgcObjec
     row->addStyleClass("success");
 
     objectsListChanged.emit(astroSessionObject);
-  }));
+  });
+
+  WTableRow *astroObjectRow = table->insertRow(table->rowCount());
+  WTableCell *astroObjectCell = astroObjectRow->elementAt(0);
+  astroObjectCell->setHidden(true);
+  astroObjectCell->setColumnSpan(8);
+
+  WPushButton *extendedInfoButton = WW<WPushButton>(WString::tr("buttons_extended_info")).css("btn-xs").onClick([=](WMouseEvent){
+    if(astroObjectCell->isVisible()) {
+      astroObjectCell->clear();
+      astroObjectCell->setHidden(true);
+      return;
+    }
+    astroObjectCell->setHidden(false);
+    astroObjectCell->clear();
+    Ephemeris ephemeris(astroSession->position(), timezone);
+    astroObjectCell->addWidget(new AstroObjectWidget(ngcObject, astroSession, session, ephemeris, selectedTelescope, {}, {WW<WPushButton>(WString::tr("buttons_close")).css("btn-xs").onClick([=](WMouseEvent){ astroObjectCell->clear(); astroObjectCell->setHidden(true); }) } ));
+
+  });
+
+  row->elementAt(7)->addWidget(WW<WToolBar>().addButton(addToSessionButton).addButton(extendedInfoButton));
 
   auto cataloguesDescriptionWidget = CataloguesDescriptionWidget::add(table, 8, ngcObject, true);
   if(cataloguesDescriptionWidget) {

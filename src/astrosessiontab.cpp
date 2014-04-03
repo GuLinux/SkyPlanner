@@ -683,6 +683,7 @@ void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject
       if(astroObjectCell->isVisible()) {
         astroObjectCell->clear();
         astroObjectCell->setHidden(true);
+        return;
       }
       astroObjectCell->setHidden(false);
       astroObjectCell->clear();
