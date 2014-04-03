@@ -35,6 +35,10 @@ std::vector<uint8_t> styleCss() {
      margin-bottom: -1px;
    }  
 
+   .astroobjects-table span{
+     font-size: 0.9em;
+   }
+
    .astroobject-last-list-item {
      margin-bottom: 0px;
    }

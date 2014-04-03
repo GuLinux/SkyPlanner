@@ -195,7 +195,7 @@ void SelectObjectsWidget::Private::suggestedObjects(Dbo::Transaction& transactio
   filterByCatalogue = new FilterByCatalogue(session);
   filterByCatalogue->changed().connect([=](_n6) { populateSuggestedObjectsList(); });
   suggestedObjectsContainer->addWidget(WW<WGroupBox>(WString::tr("filters")).add(WW<WContainerWidget>().css("form-inline").add(filterByTypeWidget).add(filterByMinimumMagnitude).add(filterByConstellation).add(filterByCatalogue) ));
-  suggestedObjectsTable = WW<WTable>().addCss("table  table-hover");
+  suggestedObjectsTable = WW<WTable>().addCss("table table-hover astroobjects-table");
   suggestedObjectsFooter = WW<WContainerWidget>();
 
   suggestedObjectsTable->setHeaderCount(1);

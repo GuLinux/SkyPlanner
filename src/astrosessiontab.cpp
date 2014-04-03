@@ -298,7 +298,7 @@ void AstroSessionTab::Private::reload()
 
   if(timezone)
     sessionContainer->addWidget(  new WText(WString::tr("printable_timezone_info").arg(timezone.timeZoneName)));
-  sessionContainer->addWidget(objectsTable = WW<WTable>().addCss("table  table-hover"));
+  sessionContainer->addWidget(objectsTable = WW<WTable>().addCss("table table-hover astroobjects-table"));
   objectsTable->setHeaderCount(1);
   
 
