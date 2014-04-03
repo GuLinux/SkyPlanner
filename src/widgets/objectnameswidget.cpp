@@ -186,19 +186,6 @@ void ObjectNamesWidget::Private::init(const NgcObjectPtr &object, const AstroSes
 
     popup->addSectionHeader( WString::tr( "objectnames_feedback_title" ) )->addStyleClass("dropdown-header");
     addLink(WString::tr( "objectnames_feedback_menu" ), WLink(WLink::InternalPath, SendFeedbackPage::internalPath(object, &t)) );
-    popup->addItem( WString::tr( "astroobject_widget_dialog" ) )->triggered().connect([=](WMenuItem*, _n5) {
-      WDialog *dialog = new WDialog;
-      dialog->setCaption(namesJoined);
-      dialog->setClosable(true);
-      Ephemeris ephemeris(astroSession->position(), timezone);
-      AstroObjectWidget *astroObjectWidget = astroSessionObject ? new AstroObjectWidget(astroSessionObject, session, ephemeris, telescope, {}) : new AstroObjectWidget(object, astroSession, session, ephemeris, telescope, {});
-      astroObjectWidget->addStyleClass("astroobjectwidget-dialog container");
-      astroObjectWidget->removeStyleClass("container-fluid");
-
-      dialog->contents()->addWidget(astroObjectWidget);
-      dialog->setResizable(true);
-      dialog->show();
-    });
     popup->popup(e);
   } );
 }
