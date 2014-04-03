@@ -20,38 +20,41 @@ using namespace std;
 using namespace Wt;
 using namespace WtCommons;
 AstroObjectWidget::Private::Private(const AstroSessionObjectPtr &astroSessionObject, const AstroSessionPtr &astroSession, const NgcObjectPtr &ngcObject, Session &session, const Timezone &timezone, const TelescopePtr &telescope, const shared_ptr<mutex> &downloadMutex, const std::vector<WPushButton*> &actionButtons, AstroObjectWidget *q)
-  : astroSessionObject(astroSessionObject), astroSession(astroSession), ngcObject(ngcObject), session(session), ephemeris(astroSession->position(), timezone), telescope(telescope), downloadMutex(downloadMutex), actionButtons(actionButtons), q(q)
+  : astroSessionObject(astroSessionObject), astroSession(astroSession), ngcObject(ngcObject), session(session), timezone(timezone), telescope(telescope), downloadMutex(downloadMutex), actionButtons(actionButtons), q(q)
 {
 }
 
 AstroObjectWidget::AstroObjectWidget(const AstroSessionObjectPtr &object, Session &session, const Timezone &timezone, const TelescopePtr &telescope, const shared_ptr<mutex> &downloadMutex, const vector<Wt::WPushButton*> &actionButtons, WContainerWidget *parent)
   : WCompositeWidget(parent), d(object, object->astroSession(), object->ngcObject(), session, timezone, telescope, downloadMutex, actionButtons, this)
 {
+  setImplementation(d->content = WW<WContainerWidget>());
   d->init();
 }
 
 AstroObjectWidget::AstroObjectWidget(const NgcObjectPtr &ngcObject, const AstroSessionPtr &astroSession, Session &session, const Timezone &timezone, const TelescopePtr &telescope, const shared_ptr<mutex> &downloadMutex, const vector<Wt::WPushButton*> &actionButtons, WContainerWidget *parent)
-  : WCompositeWidget(parent), d({}, astroSession, ngcObject, session, timezone, telescope, downloadMutex, actionButtons, this)
+  : WCompositeWidget(parent), d(AstroSessionObjectPtr{}, astroSession, ngcObject, session, timezone, telescope, downloadMutex, actionButtons, this)
 {
+  setImplementation(d->content = WW<WContainerWidget>());
   d->init();
 }
 
 
 void AstroObjectWidget::reload()
 {
+  d->init();
 }
 
 
 void AstroObjectWidget::Private::init()
 {
-  WContainerWidget *content = WW<WContainerWidget>().css("container-fluid astroobjectwidget");
-
+  content->clear();
+  content->addStyleClass("container-fluid astroobjectwidget");
   WContainerWidget *row = WW<WContainerWidget>().css("row print-no-break");
   expanded = WW<WContainerWidget>();
-  auto names = [=, &session] { return new ObjectNamesWidget(ngcObject, session, astroSession, ObjectNamesWidget::Printable); }; 
+  auto names = [=] { return new ObjectNamesWidget(ngcObject, session, astroSession, ObjectNamesWidget::Printable); }; 
   collapsed = WW<WTemplate>("<small class=\"text-center astroobject_title\"><b>${title-widget} ${expand}</b></small>").setHidden(true).bindWidget("title-widget", names() ).bindWidget("expand", WW<WPushButton>(WString::tr("buttons_expand")).css("btn-xs hidden-print pull-right").onClick([=](WMouseEvent){ q->setCollapsed(false); }));
-  q->setImplementation(content);
   Dbo::Transaction t(session);
+  Ephemeris ephemeris(astroSession->position(), timezone);
   expanded->addWidget(WW<WTemplate>("<h4 class=\"row print-no-break hidden-print astroobject_title text-center\">${title-widget}</h4>").bindWidget("title-widget", names()) );
   expanded->addWidget(row);
   content->addWidget(collapsed);

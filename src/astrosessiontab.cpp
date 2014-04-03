@@ -177,7 +177,7 @@ void AstroSessionTab::Private::reload()
     updatePositionDetails(infoWidget, false);
     sessionPreviewContainer->addWidget(infoWidget);
     sessionPreviewContainer->addWidget(WW<WText>(WString::tr("dss-embed-menu-info-message")).css("hidden-print"));
-    Ephemeris ephemeris({astroSession->position().latitude, astroSession->position().longitude}, timezone);
+
     shared_ptr<mutex> downloadImagesMutex(new mutex);
     Dbo::Transaction t(session);
 
@@ -188,9 +188,12 @@ void AstroSessionTab::Private::reload()
     auto sessionObjectsDbCollection = query.resultList();
     typedef pair<dbo::ptr<AstroSessionObject>, Ephemeris::BestAltitude> AstroSessionObjectElement;
     vector<AstroSessionObjectElement> sessionObjects;
-    transform(begin(sessionObjectsDbCollection), end(sessionObjectsDbCollection), back_inserter(sessionObjects), [&ephemeris](const dbo::ptr<AstroSessionObject> &o){
-      return AstroSessionObjectElement{o, o->bestAltitude(ephemeris, -3)};
-    });
+    {
+      Ephemeris ephemeris({astroSession->position().latitude, astroSession->position().longitude}, timezone);
+      transform(begin(sessionObjectsDbCollection), end(sessionObjectsDbCollection), back_inserter(sessionObjects), [&ephemeris](const dbo::ptr<AstroSessionObject> &o){
+        return AstroSessionObjectElement{o, o->bestAltitude(ephemeris, -3)};
+      });
+    }
     sort(begin(sessionObjects), end(sessionObjects), [&](const AstroSessionObjectElement &a, const AstroSessionObjectElement &b){
       return a.second.when < b.second.when;
     });
