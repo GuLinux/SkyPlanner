@@ -707,7 +707,7 @@ void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject
     }
   }
   if(objectAddedRow) {
-    wApp->doJavaScript(format(R"(location.hash = "#" + "%s")") % objectAddedRow->id());
+    SkyPlanner::instance()->notification(WString::tr("notification_success_title"), WString::tr("notification_object_added").arg(objectAddedRow->id()), SkyPlanner::Notification::Information, 5);
   }
 }
 
