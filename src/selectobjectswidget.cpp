@@ -110,6 +110,11 @@ void SelectObjectsWidget::Private::append(WTable *table, const Dbo::ptr<NgcObjec
 {
   WTableRow *row = table->insertRow(table->rowCount());
 
+  auto selectRow = [=] {
+    clearSelection();
+    row->addStyleClass("info");
+    selectedRow = row;
+  };
   stringstream names;
   string separator = "";
   for(auto denomination: ngcObject->nebulae()) {
@@ -119,12 +124,7 @@ void SelectObjectsWidget::Private::append(WTable *table, const Dbo::ptr<NgcObjec
   int existing = session.query<int>("select count(*) from astro_session_object where astro_session_id = ? AND objects_id = ? ").bind(astroSession.id() ).bind(ngcObject.id() );
   if(existing > 0)
     row->addStyleClass("success");
-  row->elementAt(0)->addWidget(WW<ObjectNamesWidget>(new ObjectNamesWidget{ngcObject, session, astroSession}).setInline(true).onClick([=](WMouseEvent) {
-    clearSelection();
-    row->addStyleClass("info");
-    selectedRow = row;
-  }
-  ));
+  row->elementAt(0)->addWidget(WW<ObjectNamesWidget>(new ObjectNamesWidget{ngcObject, session, astroSession}).setInline(true).onClick(bind(selectRow)));
   row->elementAt(1)->addWidget(new WText{ ngcObject->typeDescription() });
   row->elementAt(2)->addWidget(new WText{ WString::fromUTF8(ngcObject->constellation().name) });
   row->elementAt(3)->addWidget(new WText{ (ngcObject->magnitude() > 90.) ? "N/A" : (format("%.1f") % ngcObject->magnitude()).str() });
@@ -144,6 +144,7 @@ void SelectObjectsWidget::Private::append(WTable *table, const Dbo::ptr<NgcObjec
     astroSession.modify()->astroSessionObjects().insert(new AstroSessionObject(ngcObject));
     auto astroSessionObject = session.find<AstroSessionObject>().where("astro_session_id = ?").bind(astroSession.id()).where("objects_id = ?").bind(ngcObject.id()).resultValue();
     t.commit();
+    clearSelection();
     row->addStyleClass("success");
 
     objectsListChanged.emit(astroSessionObject);
@@ -155,6 +156,7 @@ void SelectObjectsWidget::Private::append(WTable *table, const Dbo::ptr<NgcObjec
   astroObjectCell->setColumnSpan(8);
 
   WPushButton *extendedInfoButton = WW<WPushButton>(WString::tr("buttons_extended_info")).css("btn-xs").onClick([=](WMouseEvent){
+    selectRow();
     if(astroObjectCell->isVisible()) {
       astroObjectCell->clear();
       astroObjectCell->setHidden(true);
