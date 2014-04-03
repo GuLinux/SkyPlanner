@@ -49,7 +49,7 @@ FilterByMagnitudeWidget::FilterByMagnitudeWidget(const Options &options, const R
 #warning Logging magnitudeSlider sliderMoved
   d->magnitudeSlider->sliderMoved().connect("function(a, b) { console.log(a); console.log(b); var lastSliderMoved = b; }");
 #endif
-  setImplementation(WW<WContainerWidget>().setInline(true).add(new WText{options.labelText}).add(d->magnitudeSlider).add(valueLabel));
+  setImplementation(WW<WContainerWidget>().setInline(true).add(new WText{WString("<small>{1}</small>").arg(options.labelText)}).add(d->magnitudeSlider).add(valueLabel));
 }
 
 FilterByMagnitudeWidget::~FilterByMagnitudeWidget()

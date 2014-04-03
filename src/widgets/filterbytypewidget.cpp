@@ -21,7 +21,7 @@ FilterByTypeWidget::Private::Private(const set<NgcObject::NebulaType> &initialSe
 FilterByTypeWidget::FilterByTypeWidget(const set<NgcObject::NebulaType> &initialSelection, WContainerWidget *parent)
   : WCompositeWidget(parent), d(initialSelection, this)
 {
-  WPushButton *astroTypeButton = WW<WPushButton>(WString::tr("object_column_type"));
+  WPushButton *astroTypeButton = WW<WPushButton>(WString::tr("object_column_type")).css("btn-sm");
   astroTypeButton->clicked().connect([=](const WMouseEvent &e) {
     WDialog *dialog = new WDialog(WString::tr("filter_by_type_title"));
     map<NgcObject::NebulaType, WCheckBox*> items;

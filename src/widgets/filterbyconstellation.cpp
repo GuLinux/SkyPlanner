@@ -39,14 +39,14 @@ FilterByConstellation::Private::Private( FilterByConstellation *q ) : q( q )
 
 FilterByConstellation::FilterByConstellation( Wt::WContainerWidget *parent ): WCompositeWidget( parent ), d(this)
 {
-  WComboBox *constellationsCombo = WW<WComboBox>();
+  WComboBox *constellationsCombo = WW<WComboBox>().css("input-sm");
   d->model = new WStandardItemModel(constellationsCombo);
   constellationsCombo->setModel(d->model);
   constellationsCombo->activated().connect([=](int index, _n5){
     d->selected = (index==0) ? ConstellationFinder::Constellation{} : boost::any_cast<ConstellationFinder::Constellation>(d->model->item(index)->data());
     d->changed.emit();
   });
-  setImplementation(WW<WContainerWidget>().setInline(true).add(new WLabel(WString::tr("filter_by_constellation"))).add(constellationsCombo));
+  setImplementation(WW<WContainerWidget>().setInline(true).add(new WLabel(WString("<small>{1}</small>").arg(WString::tr("filter_by_constellation")))).add(constellationsCombo));
   reload();
 }
 

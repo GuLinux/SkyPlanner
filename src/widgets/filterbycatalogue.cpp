@@ -39,7 +39,7 @@ FilterByCatalogue::Private::Private( Session &session, FilterByCatalogue *q ) : 
 
 FilterByCatalogue::FilterByCatalogue( Session &session, Wt::WContainerWidget *parent ): WCompositeWidget( parent ), d(session, this)
 {
-  WComboBox *cataloguesCombo = WW<WComboBox>();
+  WComboBox *cataloguesCombo = WW<WComboBox>().css("input-sm");
   d->model = new WStandardItemModel(cataloguesCombo);
   cataloguesCombo->setModel(d->model);
   cataloguesCombo->activated().connect([=](int index, _n5){
@@ -56,7 +56,7 @@ FilterByCatalogue::FilterByCatalogue( Session &session, Wt::WContainerWidget *pa
     d->model->appendRow(item);
   }
 
-  setImplementation(WW<WContainerWidget>().setInline(true).add(new WLabel(WString::tr("filter_by_catalogue"))).add(cataloguesCombo));
+  setImplementation(WW<WContainerWidget>().setInline(true).add(new WLabel(WString("<small>{1}</small>").arg(WString::tr("filter_by_catalogue")))).add(cataloguesCombo));
 }
 
 FilterByCatalogue::~FilterByCatalogue()
