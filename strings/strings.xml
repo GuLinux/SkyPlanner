@@ -30,6 +30,8 @@
 <message id="buttons_expand">Expand</message>
 <message id="buttons_hide_dss">Hide image</message>
 <message id="buttons_show_dss">Show image</message>
+<message id="buttons_extended_info">Extended Information</message>
+<message id="buttons_actions">Actions</message>
 
 <message id="astrosessionspage_sessions_list">Sessions List</message>
 <message id="astrosessionslisttab_name">Name</message>
@@ -65,6 +67,7 @@
 <message id="astrosessiontab_moon_info">Moon: rising {1}, setting {2}.</message>
 <message id="astrosessiontab_printable_version_dialog_export_as">Export as...</message>
 <message id="astrosessiontab_information_panel">Information</message>
+<message id="astrosessiontab_object_observed_menu">Observed</message>
 <message id="astrosessiontab_object_observed">✓ Observed</message>
 <message id="astrosessiontab_object_not_observed">✗ Observed</message>
 

@@ -651,10 +651,11 @@ void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject
       });
     }
     
+    #define OBJECTS_TABLE_COLS 11
     WTableRow *descriptionRow = objectsTable->insertRow(objectsTable->rowCount());
     WTableCell *descriptionCell = descriptionRow->elementAt(0);
     descriptionCell->setHidden(true);
-    descriptionCell->setColumnSpan(11);
+    descriptionCell->setColumnSpan(OBJECTS_TABLE_COLS);
     WTextArea *descriptionTextArea = WW<WTextArea>(WString::fromUTF8(sessionObject->description())).css("input-block-level");
     WContainerWidget *descriptionContainer = WW<WContainerWidget>()
       .add(new WLabel{WString::tr("object_notes")})
@@ -665,30 +666,43 @@ void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject
     SkyPlanner::instance()->notification(WString::tr("notification_success_title"), WString::tr("notification_description_saved"), SkyPlanner::Notification::Success, 5);
       }));
     descriptionCell->addWidget(descriptionContainer);
-    WToolBar *actions = new WToolBar;
-    row->elementAt(10)->addWidget(actions);
-    actions->addButton(WW<WPushButton>(WString::tr("description")).css("btn btn-xs").onClick([=](WMouseEvent){
+    WPopupMenu *actionsMenu = new WPopupMenu;
+    WPushButton *actionsButton = WW<WPushButton>(WString::tr("buttons_actions")).css("btn-xs");
+    actionsButton->setMenu(actionsMenu);
+    row->elementAt(10)->addWidget(actionsButton);
+    actionsMenu->addItem(WString::tr("description"))->triggered().connect([=](WMenuItem*, _n5){
       descriptionCell->setHidden(!descriptionCell->isHidden());
-    }));
-    actions->addButton(WW<WPushButton>(WString::tr("buttons_remove")).css("btn btn-danger btn-xs").onClick([=](WMouseEvent){ remove(sessionObject, [=] { populate(); }); }));
+    });
 
+
+    WTableRow *astroObjectRow = objectsTable->insertRow(objectsTable->rowCount());
+    WTableCell *astroObjectCell = astroObjectRow->elementAt(0);
+    astroObjectCell->setHidden(true);
+    astroObjectCell->setColumnSpan(OBJECTS_TABLE_COLS);
+    actionsMenu->addItem(WString::tr("buttons_extended_info"))->triggered().connect([=](WMenuItem*,_n5){
+      if(astroObjectCell->isVisible()) {
+        astroObjectCell->clear();
+        astroObjectCell->setHidden(true);
+      }
+      astroObjectCell->setHidden(false);
+      astroObjectCell->clear();
+      Ephemeris ephemeris(sessionObject->astroSession()->position(), timezone);
+      astroObjectCell->addWidget(new AstroObjectWidget(sessionObject, session, ephemeris, selectedTelescope, {}, {WW<WPushButton>(WString::tr("buttons_close")).css("btn-xs").onClick([=](WMouseEvent){ astroObjectCell->clear(); astroObjectCell->setHidden(true); }) } ));
+    });
+
+
+    actionsMenu->addItem(WString::tr("buttons_remove"))->triggered().connect([=](WMenuItem*, _n5){ remove(sessionObject, [=] { populate(); }); });
     if(pastObservation) {
-      WPushButton *observedToggleButton = WW<WPushButton>().css("btn btn-xs");
-      observedToggleButton->setTextFormat(XHTMLUnsafeText);
-      auto setObservedButtonStyle = [=]( const Dbo::ptr<AstroSessionObject> &o) {
-        observedToggleButton->setText(o->observed() ? WString::tr("astrosessiontab_object_observed") : WString::tr("astrosessiontab_object_not_observed"));
-        observedToggleButton->addStyleClass(o->observed() ? "btn-success" : "btn-inverse");
-        observedToggleButton->removeStyleClass(!o->observed() ? "btn-success" : "btn-inverse");
-      };
-      observedToggleButton->clicked().connect([=](WMouseEvent) {
+      WMenuItem *observedMenuItem = actionsMenu->addItem(WString::tr("astrosessiontab_object_observed_menu"));
+      observedMenuItem->setCheckable(true);
+      observedMenuItem->setChecked(sessionObject->observed());
+
+      observedMenuItem->triggered().connect([=](WMenuItem *, _n5) {
         Dbo::Transaction t(session);
         Dbo::ptr<AstroSessionObject> o = session.find<AstroSessionObject>().where("id = ?").bind(sessionObject.id());
         o.modify()->setObserved(!sessionObject->observed());
         t.commit();
-        setObservedButtonStyle(o);
       });
-      setObservedButtonStyle(sessionObject);
-      actions->addButton(observedToggleButton);
     }
   }
   if(objectAddedRow) {
