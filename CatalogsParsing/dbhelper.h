@@ -15,6 +15,7 @@
 class CatalogsImporter {
 public:
   CatalogsImporter(const std::string &catalogue, const std::string &catalogueCode, int argc, char **argv);
+  CatalogsImporter(QCoreApplication &app);
   CatalogsImporter(const std::string &catalogue, const std::string &catalogueCode, QCoreApplication &app);
   ~CatalogsImporter();
   long long insertObject(const std::string &objectId, double rightAscension, double declination, double magnitude, double angularSize, int type);
@@ -27,11 +28,11 @@ public:
   long long findBy(const std::string &query, const std::map<std::string,QVariant> &bindValues);
   CatalogsImporter &setCatalogue(QString _catalogue, QString _code = QString());
   long long catalogueId;
+  QSqlDatabase db;
 private:
   QString catalogue;
   void init(QStringList arguments);
   long long lastInsertId(QSqlQuery &query, const QString &selectQuery, std::map<QString,QVariant> bindValues = {});
-  QSqlDatabase db;
 };
 
 
@@ -44,7 +45,10 @@ void __dumpQuery(const QString &where, const QSqlQuery &query) {
 
 #define dumpQuery(q) __dumpQuery(__PRETTY_FUNCTION__, q)
 
-
+CatalogsImporter::CatalogsImporter(QCoreApplication &app)
+{
+  init(app.arguments());
+}
 
 CatalogsImporter::CatalogsImporter( const std::string &catalogue, const std::string &catalogueCode, int argc, char **argv )
 {

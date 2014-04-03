@@ -52,12 +52,14 @@ class Angle {
     bool valid() const;
     Angle operator*(double coefficient) const;
     Angle &operator+=(const Angle &other) { _degrees += other.degrees(); return *this; }
+    Angle &operator /=(double d) { _degrees /= d; return *this; }
     bool operator>(const Angle &other) const { return degrees() > other.degrees(); }
     bool operator<(const Angle &other) const { return degrees() < other.degrees(); }
     bool operator==(const Angle &other) const { return degrees() == other.degrees(); }
     bool operator<=(const Angle &other) const { return (*this == other) || (*this < other); }
     bool operator>=(const Angle &other) const { return (*this == other) || (*this > other); }
     bool operator!=(const Angle &other) const { return ! (*this == other); }
+    Angle operator-(const Angle &other) const { return Angle::degrees(_degrees - other.degrees()); }
   private:
     Angle(double degrees);
     double _degrees;

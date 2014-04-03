@@ -21,21 +21,136 @@ using namespace std;
 struct ShakhbazianGalaxy {
   int index;
   int group;
-  int number;
+  int number = -1;
   Angle rightAscension;
   Angle declination;
-  double magnitude;
+  double magR = 99;
+  double magV = 99;
   QString notes;
+  QString object;
+  double magnitude() const;
+  QString json() const;
+  bool isInteresting() const;
 };
 
+double ShakhbazianGalaxy::magnitude() const
+{
+  return min(magR, magV);
+}
+
+bool ShakhbazianGalaxy::isInteresting() const
+{
+  return (!object.isEmpty() || number > 0) && (magnitude() < 99 || !notes.isEmpty());
+}
+
+
+
+QString ShakhbazianGalaxy::json() const
+{
+  return QString(R"({ "index": %1, "group": %2, "number"=%3, "object": "%4", "rightAscension": %5, "declination": %6, "magR": %7, "magV": %8, "notes": "%9"})")
+    .arg(index)
+    .arg(group)
+    .arg(number)
+    .arg(object)
+    .arg(rightAscension.degrees())
+    .arg(declination.degrees())
+    .arg(magR)
+    .arg(magV)
+    .arg(notes)
+    ;
+}
+
+
+struct ShakhbazianGroup {
+  int group;
+  vector<ShakhbazianGalaxy> galaxies;
+  Angle rightAscension() const;
+  Angle declination() const;
+  Angle size() const;
+  double magnitude() const;
+  QString description() const;
+  QString json() const;
+};
+
+QString ShakhbazianGroup::json() const
+{
+  QStringList out;
+  transform(begin(galaxies), end(galaxies), back_inserter(out), [](const ShakhbazianGalaxy &g) { return g.json(); });
+  return QString("[ %1 ]").arg(out.join(", "));
+}
+
+
+Angle ShakhbazianGroup::declination() const
+{
+  Angle angle;
+  for(auto galaxy: galaxies)
+    angle += galaxy.declination;
+  angle /= galaxies.size();
+  return angle;
+}
+
+Angle ShakhbazianGroup::rightAscension() const
+{
+  Angle angle;
+  for(auto galaxy: galaxies)
+    angle += galaxy.rightAscension;
+  angle /= galaxies.size();
+  return angle;
+}
+
+Angle ShakhbazianGroup::size() const
+{
+  Angle minAR = rightAscension();
+  Angle maxAR = rightAscension();
+  Angle minDEC = declination();
+  Angle maxDEC = declination();
+  for(auto galaxy: galaxies) {
+    minAR = min(minAR, galaxy.rightAscension);
+    minDEC = min(minDEC, galaxy.declination);
+    maxAR = max(maxAR, galaxy.rightAscension);
+    maxDEC = max(maxDEC, galaxy.declination);
+  }
+  Angle maxDiff = max(maxAR - minAR, maxDEC - minDEC);
+  return maxDiff * 1.5;
+}
+
+QString ShakhbazianGroup::description() const
+{
+  int n = 0;
+  QString _d = QString("%1 galaxies.\n").arg(galaxies.size());
+  for(auto galaxy: galaxies) {
+    if(!galaxy.isInteresting()) continue;
+    if(n++>15) break;
+    _d += QString("Galaxy \"%1\": magnitude %2, notes/other names: %3\n")
+      .arg(galaxy.object.isEmpty() ? QString::number(galaxy.number) : galaxy.object)
+      .arg(galaxy.magnitude() >= 99 ? "N/A" : QString::number(galaxy.magnitude()) )
+      .arg(galaxy.notes.isEmpty() ? "N/A" : galaxy.notes)
+    ;
+  }
+  return _d.trimmed();
+}
+
+
+double ShakhbazianGroup::magnitude() const
+{
+  double magnitude = 99;
+  for(auto galaxy: galaxies)
+    magnitude = min(magnitude, galaxy.magnitude() );
+  return magnitude;
+}
+
 ostream &operator<<(ostream &o, const ShakhbazianGalaxy &galaxy) {
-  o << "{ " << galaxy.index << ", group: " << galaxy.group << ", group #: " << galaxy.number << ", ar: " << galaxy.rightAscension.printable(Angle::Hourly) << ", dec: " << galaxy.declination.printable() << ", mag: " << galaxy.magnitude << ", notes: " << galaxy.notes.toStdString() << " }";
+  o << "{ " << galaxy.index << ", group: " << galaxy.group << ", object: " << galaxy.object.toStdString() << ", group #: " 
+    << galaxy.number << ", ar: " << galaxy.rightAscension.printable(Angle::Hourly) << ", dec: " << galaxy.declination.printable() 
+    << ", mag: " << galaxy.magnitude() << ", notes: " << galaxy.notes.toStdString() << " }";
   return o;
 }
 
-ostream &operator<<(ostream &o, const pair<int, vector<ShakhbazianGalaxy>> group) {
-  o << "Shakhbazian #" << group.first << endl;
-  for(auto galaxy: group.second)
+ostream &operator<<(ostream &o, const ShakhbazianGroup &group) {
+  o << "Shakhbazian #" << group.group << ": magnitude=" << group.magnitude() << ", ar=" << group.rightAscension().printable(Angle::Hourly) << ", dec=" << group.declination().printable() 
+    << ", size=" << group.size().printable() << endl;
+  o << "Description: " << group.description().toStdString() << endl;
+  for(auto galaxy: group.galaxies)
     o << "\t" << galaxy << endl;
   return o;
 }
@@ -50,7 +165,7 @@ int main(int argc, char ** argv){
   inputFile.open(QFile::ReadOnly);
   QTextStream input(&inputFile);
   QString line;
-  map<int, vector<ShakhbazianGalaxy>> groups;
+  map<int, ShakhbazianGroup> groups;
   do {
     line = input.readLine();
     if(line.isEmpty() || line.left(1) == "#") continue;
@@ -58,19 +173,44 @@ int main(int argc, char ** argv){
     ShakhbazianGalaxy galaxy;
     galaxy.index = values[2].toInt();
     galaxy.group = values[3].toInt();
-    galaxy.number = values[5].toInt();
+    galaxy.object = values[4].trimmed();
+    if(!values[5].trimmed().isEmpty())
+      galaxy.number = values[5].toInt();
     galaxy.rightAscension = Angle::degrees(values[0].toDouble());
     galaxy.declination = Angle::degrees(values[1].toDouble());
-    galaxy.magnitude = 99;
-    for(auto i: vector<int>{10, 11})
-      if(galaxy.magnitude >= 99 && !values[i].trimmed().isEmpty())
-        galaxy.magnitude = values[i].trimmed().toDouble();
+    if(!values[10].trimmed().isEmpty())
+      galaxy.magV = values[10].toDouble();
+    if(!values[11].trimmed().isEmpty())
+      galaxy.magR = values[11].toDouble();
     galaxy.notes = values[14].trimmed();
-    groups[galaxy.group].push_back(galaxy);
+    groups[galaxy.group].group = galaxy.group;
+    groups[galaxy.group].galaxies.push_back(galaxy);
   } while(!line.isNull());
 
   for(auto group: groups) {
-    cout << group << endl;
+    cout << group.second << endl;
+  }
+  CatalogsImporter importer(app);
+  QSqlQuery insertCatalog(importer.db);
+  insertCatalog.exec(R"(INSERT INTO catalogues ("version", "name", "code", "priority", "search_mode", "hidden") VALUES (0, 'Shakhbazian' , 'shk' , -92, 1, 0))");
+  QSqlQuery getCatalogId(R"(SELECT id FROM catalogues WHERE code = 'shk')", importer.db);
+  getCatalogId.exec();
+  if(!getCatalogId.next())
+    throw runtime_error("Error adding catalogue");
+  long long catalogId = getCatalogId.value(0).toLongLong();
+  for(auto group: groups) {
+    QString objectId = QString("shk %1");
+    QSqlQuery insertObject(R"(INSERT INTO "objects"
+      ( object_id, ra, "dec", magnitude, angular_size, type, extra_data )
+      VALUES ( :object_id, :ra, :dec, :magnitude, :angular_size, :type, :extra_data ) )", importer.db);
+      insertObject.bindValue(":object_id", objectId.arg(group.first));
+      insertObject.bindValue(":ra", group.second.rightAscension().radians());
+      insertObject.bindValue(":dec", group.second.declination().radians());
+      insertObject.bindValue(":magnitude", group.second.magnitude());
+      insertObject.bindValue(":angular_size", group.second.size().degrees());
+      insertObject.bindValue(":type", NgcObject::NebGalGroups);
+      insertObject.bindValue(":extra_data", group.second.json() );
+    insertObject.exec();
   }
   return 0;        
 /*

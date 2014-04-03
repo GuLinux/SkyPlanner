@@ -67,6 +67,7 @@ public:
             NebGalCluster=0x9, //!< Galaxy Clusters, mostly abell
             Asterism=0xA,
             RedStar=0xB,
+            NebGalGroups=0xC,
     };
     static const int NebulaTypeCount = 12;
     static std::set<NebulaType> allNebulaTypes();
