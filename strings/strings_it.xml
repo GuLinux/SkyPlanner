@@ -147,6 +147,7 @@
 <message id="notification_success_title">Successo</message>
 <message id="notification_warning_title">Attenzione</message>
 <message id="notification_error_title">Errore</message>
+<message id="notification_suggestion_title">Suggerimento</message>
 
 <message id="notification_object_already_added">Oggetto già aggiunto a questa sessione.</message>
 <message id="notification_object_added">Oggetto aggiunto con successo alla sessione.<br /><a class="link" onclick="location.hash = '#' + '{1}'; window.scrollBy(0, -80)"><strong>Vai all'oggetto aggiunto</strong></a>.</message>

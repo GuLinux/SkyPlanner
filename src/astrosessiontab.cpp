@@ -301,43 +301,57 @@ void AstroSessionTab::Private::reload()
   sessionContainer->addWidget(objectsTable = WW<WTable>().addCss("table table-hover astroobjects-table"));
   objectsTable->setHeaderCount(1);
   
-
-  auto telescopes = session.user()->telescopes();
-  if(telescopes.size() > 0) {
-
-    WComboBox *telescopeCombo = new WComboBox;
-    telescopeCombo->setWidth(350);
-    WLabel *telescopeComboLabel = WW<WLabel>(WString::tr("astrosessiontab__telescope_label")).setMargin(10);
-    telescopeComboLabel->setBuddy(telescopeCombo);
-
-    actionsContainer->addWidget(WW<WContainerWidget>().css("form-inline pull-right").add(telescopeComboLabel).add(telescopeCombo));
-    WStandardItemModel *model = new WStandardItemModel(sessionContainer);
-    WStandardItem *defaultItem = 0;
-    for(auto telescope: telescopes) {
-      WStandardItem *item = new WStandardItem(telescope->name());
-      if(!selectedTelescope || telescope->isDefault()) {
-        selectedTelescope = telescope;
-        spLog("notice") << "Setting telescope " << telescope->name() << " as preselected";
-        defaultItem = item;
-      }
-      item->setData(telescope);
-      model->appendRow(item);
-    }
-    telescopeCombo->setModel(model);
-    if(defaultItem)
-      telescopeCombo->setCurrentIndex(model->indexFromItem(defaultItem).row());
+  WContainerWidget *telescopeComboContainer;
+  WComboBox *telescopeCombo = new WComboBox;
+  WStandardItemModel *telescopesModel = new WStandardItemModel(sessionContainer);
+  telescopeCombo->setWidth(350);
+  telescopeCombo->setModel(telescopesModel);
+  WLabel *telescopeComboLabel = WW<WLabel>(WString::tr("astrosessiontab__telescope_label")).setMargin(10);
+  telescopeComboLabel->setBuddy(telescopeCombo);
+  actionsContainer->addWidget( telescopeComboContainer = WW<WContainerWidget>().css("form-inline pull-right").add(telescopeComboLabel).add(telescopeCombo));
+  telescopeCombo->activated().connect([=](int index, _n5){
+    selectedTelescope = boost::any_cast<Dbo::ptr<Telescope>>(telescopesModel->item(index)->data());
     filterByMinimumMagnitude->setMaximum(selectedTelescope->limitMagnitudeGain() + 6.5);
-    
-    telescopeCombo->activated().connect([=](int index, _n5){
-      selectedTelescope = boost::any_cast<Dbo::ptr<Telescope>>(model->item(index)->data());
+    populate();
+    addObjectsTabWidget->populateFor(selectedTelescope, timezone);
+  });
+
+  auto updateTelescopes = [=](Dbo::Transaction &t) {
+    auto telescopes = session.user()->telescopes();
+    if(telescopes.size() > 0) {
+      telescopesModel->clear();
+      selectedTelescope = {};
+      telescopeComboContainer->setHidden(false);
+      WStandardItem *defaultItem = 0;
+      for(auto telescope: telescopes) {
+        WStandardItem *item = new WStandardItem(telescope->name());
+        if(!selectedTelescope || telescope->isDefault()) {
+          selectedTelescope = telescope;
+          spLog("notice") << "Setting telescope " << telescope->name() << " as preselected";
+          defaultItem = item;
+        }
+        item->setData(telescope);
+        telescopesModel->appendRow(item);
+      }
+
+      if(defaultItem)
+        telescopeCombo->setCurrentIndex(telescopesModel->indexFromItem(defaultItem).row());
       filterByMinimumMagnitude->setMaximum(selectedTelescope->limitMagnitudeGain() + 6.5);
-      populate();
+    
+    } else {
+      telescopeComboContainer->setHidden(true);
+      SkyPlanner::instance()->notification(WString::tr("notification_suggestion_title"), WString::tr("astrosessiontab_no_telescopes_message"), SkyPlanner::Notification::Information, 12);
+    }
+  };
+  updateTelescopes(t);
+  SkyPlanner::instance()->telescopesListChanged().connect([=](_n6) {
+    Dbo::Transaction t(session);
+    updateTelescopes(t);
+    populate();
+    WTimer::singleShot(200, [=](WMouseEvent) {
       addObjectsTabWidget->populateFor(selectedTelescope, timezone);
     });
-  } else {
-    actionsContainer->addWidget(WW<WText>(WString::tr("astrosessiontab_no_telescopes_message")).css("pull-right"));
-  }
-  
+  });
   populate();
   updatePositionDetails(positionDetails);
   WTimer::singleShot(200, [=](WMouseEvent) {
