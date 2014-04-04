@@ -169,7 +169,12 @@ void SelectObjectsWidget::Private::append(WTable *table, const Dbo::ptr<NgcObjec
     }
     astroObjectCell->setHidden(false);
     astroObjectCell->clear();
-    astroObjectCell->addWidget(new AstroObjectWidget(ngcObject, astroSession, session, timezone, selectedTelescope, {}, {WW<WPushButton>(WString::tr("buttons_close")).css("btn-xs").onClick([=](WMouseEvent){ astroObjectCell->clear(); astroObjectCell->setHidden(true); }) } ));
+    astroObjectCell->addWidget(new AstroObjectWidget(ngcObject, astroSession, session, timezone, selectedTelescope, {}, {WW<WPushButton>(WString::tr("buttons_close")).css("btn-xs").onClick([=](WMouseEvent){
+      astroObjectCell->clear();
+      astroObjectCell->setHidden(true);
+      toggleMoreInfo->removeStyleClass("active");
+      toggleMoreInfo->setText("&#x25bc");
+    }) } ));
 
   });
 
