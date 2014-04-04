@@ -72,6 +72,7 @@ TelescopesPage::TelescopesPage( Session &session, WContainerWidget *parent )
       d->session.execute(R"(UPDATE telescope set "default" = ? where "user_id" = ?)").bind(false).bind(d->session.user().id());
     d->session.user().modify()->telescopes().insert(new Telescope(telescopeName->text().toUTF8(), telescopeDiameter->value(), telescopeFocalLength->value(), d->isDefault->isChecked() ));
     t.commit();
+    d->changed.emit();
     d->populate();
   });
   addWidget(WW<WForm>(WForm::Horizontal).addCss("col-sm-6").get()
@@ -127,6 +128,7 @@ void TelescopesPage::Private::populate()
         Dbo::ptr<Telescope> tel = telescope;
         tel.remove();
         t.commit();
+        changed.emit();
         populate();
       }) )
     );
@@ -145,3 +147,7 @@ void TelescopesPage::Private::loginChanged()
   populate();
 }
 
+Signal<> &TelescopesPage::changed() const
+{
+  return d->changed;
+}

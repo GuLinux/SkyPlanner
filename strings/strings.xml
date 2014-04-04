@@ -158,6 +158,7 @@
 <message id="ngcobject_type_NebUnknown">Unknown</message>
 <message id="ngcobject_type_Asterism">Asterism</message>
 <message id="ngcobject_type_RedStar">Red Star</message>
+<message id="ngcobject_type_NebGalGroups">Galaxy Group</message>
 
 <message id="dss_open_new_window_menu">Open in a new window</message>
 <message id="dss_change_type_menu">Change type...</message>

@@ -29,18 +29,7 @@ set(SkyPlanner_SRCS
   homepage.cpp
   dss.cpp
 )
-
-set(SkyPlanner_MODELS_SRCS
-  models/catalogue.cpp
-  models/astrosessionobject.cpp
-  models/astrosession.cpp
-  models/telescope.cpp
-  models/user.cpp
-  models/nebuladenomination.cpp
-  models/ngcobject.cpp
-  models/usersetting.cpp
-  models/viewport.cpp
-)
+include(models/source_files.cmake)
 
 
 

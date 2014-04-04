@@ -41,6 +41,7 @@ public:
     std::string previousInternalPath = "/";
     Wt::WContainerWidget *dssContainer;
     Wt::WString loginname;
+    Wt::Signal<> telescopesListChanged;
 private:
     class SkyPlanner* const q;
 };

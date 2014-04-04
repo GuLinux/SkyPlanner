@@ -43,6 +43,7 @@ public:
     static const std::string HOME_PATH;
     Wt::WLogEntry uLog (const std::string &type) const;
 
+    Wt::Signal<> &telescopesListChanged() const;
 private:
     D_PTR;
 };

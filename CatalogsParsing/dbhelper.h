@@ -144,7 +144,7 @@ void CatalogsImporter::init( QStringList arguments )
     db.setDatabaseName(database);
   if(!db.open()) {
     std::stringstream error("Error opening database!\n");
-    error << "Params:  driver=" << driver.toStdString() << ", username=" << username.toStdString() << ", password=" << password.toStdString() << ", database=" << database.toStdString();
+    error << "Params:  driver=" << driver.toStdString() << ", username=" << username.toStdString() << ", password=" << password.toStdString() << ", database=" << database.toStdString() << ", last error: " << db.lastError().text().toStdString();
     std::cerr << error.str() << std::endl;
     throw std::runtime_error(error.str());
   }

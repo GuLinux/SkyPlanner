@@ -34,6 +34,7 @@ class TelescopesPage::Private
     void populate();
     Wt::WTable *telescopesTable;
     Wt::WCheckBox *isDefault;
+    Wt::Signal<> changed;
   private:
     class TelescopesPage *const q;
 };

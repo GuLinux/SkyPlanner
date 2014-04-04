@@ -29,6 +29,7 @@ class TelescopesPage : public Wt::WContainerWidget
   public:
     ~TelescopesPage();
     TelescopesPage( Session &session, Wt::WContainerWidget *parent = 0);
+    Wt::Signal<> &changed() const;
 
   private:
     D_PTR;

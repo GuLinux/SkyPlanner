@@ -69,7 +69,7 @@ public:
             RedStar=0xB,
             NebGalGroups=0xC,
     };
-    static const int NebulaTypeCount = 12;
+    static const int NebulaTypeCount = 13;
     static std::set<NebulaType> allNebulaTypes();
     static std::set<NebulaType> allNebulaTypesButStars();
     NgcObject();

@@ -13,8 +13,12 @@
 #include <QFile>
 #include <QTextStream>
 #include "types.h"
+#include "session.h"
+#include <Wt/Dbo/backend/Postgres>
+#include <Wt/Dbo/backend/Sqlite3>
 
 using namespace std;
+using namespace Wt;
 
 // STRUCT
 
@@ -111,7 +115,7 @@ Angle ShakhbazianGroup::size() const
     maxDEC = max(maxDEC, galaxy.declination);
   }
   Angle maxDiff = max(maxAR - minAR, maxDEC - minDEC);
-  return maxDiff * 1.5;
+  return maxDiff * 1.1;
 }
 
 QString ShakhbazianGroup::description() const
@@ -186,33 +190,49 @@ int main(int argc, char ** argv){
     groups[galaxy.group].group = galaxy.group;
     groups[galaxy.group].galaxies.push_back(galaxy);
   } while(!line.isNull());
-
+/*
   for(auto group: groups) {
     cout << group.second << endl;
   }
-  CatalogsImporter importer(app);
-  QSqlQuery insertCatalog(importer.db);
-  insertCatalog.exec(R"(INSERT INTO catalogues ("version", "name", "code", "priority", "search_mode", "hidden") VALUES (0, 'Shakhbazian' , 'shk' , -92, 1, 0))");
-  QSqlQuery getCatalogId(R"(SELECT id FROM catalogues WHERE code = 'shk')", importer.db);
-  getCatalogId.exec();
-  if(!getCatalogId.next())
-    throw runtime_error("Error adding catalogue");
-  long long catalogId = getCatalogId.value(0).toLongLong();
-  for(auto group: groups) {
-    QString objectId = QString("shk %1");
-    QSqlQuery insertObject(R"(INSERT INTO "objects"
-      ( object_id, ra, "dec", magnitude, angular_size, type, extra_data )
-      VALUES ( :object_id, :ra, :dec, :magnitude, :angular_size, :type, :extra_data ) )", importer.db);
-      insertObject.bindValue(":object_id", objectId.arg(group.first));
-      insertObject.bindValue(":ra", group.second.rightAscension().radians());
-      insertObject.bindValue(":dec", group.second.declination().radians());
-      insertObject.bindValue(":magnitude", group.second.magnitude());
-      insertObject.bindValue(":angular_size", group.second.size().degrees());
-      insertObject.bindValue(":type", NgcObject::NebGalGroups);
-      insertObject.bindValue(":extra_data", group.second.json() );
-    insertObject.exec();
+*/
+
+  Dbo::Session session;
+  string connectionString = app.arguments()[2].toStdString();
+  shared_ptr<Dbo::SqlConnection> connection;
+  if(!connectionString.empty()) {
+    connection = make_shared<Dbo::backend::Postgres>(connectionString);
+  } else {
+    connection = make_shared<Dbo::backend::Sqlite3>("SkyPlanner.sqlite");
   }
-  return 0;        
+  session.setConnection(*connection);
+  connection->setProperty("show-queries", "false");
+  Dbo::Transaction t(session);
+  session.execute(R"_(INSERT INTO catalogues ("version", "name", "code", "priority", "search_mode", "hidden") VALUES (0, ?, ?, -92, 1, FALSE ) )_")
+    .bind("Shakhbazian").bind("shk");
+
+
+  long long catalogId = session.query<long long>(R"(SELECT id FROM catalogues WHERE code = 'shk')");
+cerr << "Found newly inserted catalog id: " << catalogId << endl;
+  for(auto group: groups) {
+    QString objectIdStr = QString("shk %1").arg(group.first);
+    session.execute(R"(INSERT INTO "objects"
+      ( object_id, ra, "dec", magnitude, angular_size, type, extra_data )
+      VALUES ( ?, ?, ?, ?, ?, ?, ? ) )")
+      .bind(objectIdStr.toStdString())
+      .bind(group.second.rightAscension().radians())
+      .bind(group.second.declination().radians())
+      .bind(group.second.magnitude())
+      .bind(group.second.size().degrees())
+      .bind(NgcObject::NebGalGroups)
+      .bind(group.second.json().toStdString() );
+    long long objectId = session.query<long long>(R"(SELECT id FROM objects WHERE object_id = ?)").bind(objectIdStr.toStdString());
+    session.execute(R"(INSERT INTO denominations ("number", name, comment, objects_id, catalogues_id) VALUES( ?, ?, ?, ?, ? ) )")
+    .bind(group.first)
+    .bind(QString("Shakhbazian %1").arg(group.first).toStdString() )
+    .bind(group.second.description().toStdString() )
+    .bind(objectId)
+    .bind(catalogId);
+  }
 /*
         if(arguments.contains("--pretend")) {
           for(UGC &obj: objects) {
@@ -253,6 +273,8 @@ int main(int argc, char ** argv){
         }
   return 0;
 */
+//  t.rollback();
+  return 0;
 }
 
 

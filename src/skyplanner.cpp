@@ -137,6 +137,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
   d->loggedOutItems.push_back(authMenuItem = navBarMenu->addItem(WString::tr("mainmenu_login"), authWidget));
   authMenuItem->setPathComponent("login/");
   TelescopesPage *telescopesPage = new TelescopesPage(d->session);
+  telescopesPage->changed().connect([=](_n6) { d->telescopesListChanged.emit(); });
   AstroSessionsPage *astrosessionspage = new AstroSessionsPage(d->session);
   
   WMenuItem *mySessionsMenuItem;
@@ -287,4 +288,10 @@ SkyPlanner::Notification::Notification(const WString &title, const WString &cont
 SkyPlanner::Notification::~Notification()
 {
 
+}
+
+
+Signal<> &SkyPlanner::telescopesListChanged() const
+{
+  return d->telescopesListChanged;
 }

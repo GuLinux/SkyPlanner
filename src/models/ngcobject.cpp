@@ -23,6 +23,7 @@
 #include <boost/algorithm/string/trim.hpp>
 
 using namespace std;
+
 NgcObject::NgcObject()
 {
 }
@@ -111,6 +112,7 @@ string NgcObject::typeDescriptionKey( NebulaType nebulaType )
     {NebGalCluster, "ngcobject_type_GalClust"},
     {Asterism, "ngcobject_type_Asterism"},
     {RedStar, "ngcobject_type_RedStar"},
+    {NebGalGroups, "ngcobject_type_NebGalGroups"},
   };
   return descriptions[nebulaType];
 }
