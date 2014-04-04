@@ -489,7 +489,7 @@ void AstroSessionTab::Private::printableVersion()
     default:
       printableResource->setTelescope(selectedTelescope);
       printableDialog->contents()->addWidget(new WLabel{WString::tr("printable_version_dialog_telescope_combo_label")});
-      WComboBox *telescopesCombo = new WComboBox(printableDialog->contents());
+      WComboBox *telescopesCombo = WW<WComboBox>(printableDialog->contents()).addCss("input-sm");
       WStandardItemModel *telescopesModel = new WStandardItemModel(printableDialog);
       telescopesCombo->setModel(telescopesModel);
       for(auto telescope: telescopes) {
