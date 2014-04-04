@@ -30,6 +30,8 @@ struct ShakhbazianGalaxy {
   Angle declination;
   double magR = 99;
   double magV = 99;
+  double magPh = 99;
+  QString catalogue;
   QString notes;
   QString object;
   double magnitude() const;
@@ -39,6 +41,7 @@ struct ShakhbazianGalaxy {
 
 double ShakhbazianGalaxy::magnitude() const
 {
+  if(magPh < 99) return magPh;
   return min(magR, magV);
 }
 
@@ -51,7 +54,7 @@ bool ShakhbazianGalaxy::isInteresting() const
 
 QString ShakhbazianGalaxy::json() const
 {
-  return QString(R"({ "index": %1, "group": %2, "number"=%3, "object": "%4", "rightAscension": %5, "declination": %6, "magR": %7, "magV": %8, "notes": "%9"})")
+  return QString(R"({ "index": %1, "group": %2, "number"=%3, "object": "%4", "rightAscension": %5, "declination": %6, "magR": %7, "magV": %8, "mag_photo": %9, "notes": "%10", "catalog": "%11"})")
     .arg(index)
     .arg(group)
     .arg(number)
@@ -60,7 +63,9 @@ QString ShakhbazianGalaxy::json() const
     .arg(declination.degrees())
     .arg(magR)
     .arg(magV)
+    .arg(magPh)
     .arg(notes)
+    .arg(catalogue)
     ;
 }
 
@@ -74,7 +79,13 @@ struct ShakhbazianGroup {
   double magnitude() const;
   QString description() const;
   QString json() const;
+  QString catalogue() const;
 };
+
+QString ShakhbazianGroup::catalogue() const
+{
+  return galaxies.size() > 0 ? galaxies[0].catalogue : "N/A";
+}
 
 QString ShakhbazianGroup::json() const
 {
@@ -121,7 +132,7 @@ Angle ShakhbazianGroup::size() const
 QString ShakhbazianGroup::description() const
 {
   int n = 0;
-  QString _d = QString("%1 galaxies.\n").arg(galaxies.size());
+  QString _d = QString("%1 catalogue, %2 galaxies.\n").arg(catalogue() ).arg(galaxies.size());
   for(auto galaxy: galaxies) {
     if(!galaxy.isInteresting()) continue;
     if(n++>15) break;
@@ -144,9 +155,7 @@ double ShakhbazianGroup::magnitude() const
 }
 
 ostream &operator<<(ostream &o, const ShakhbazianGalaxy &galaxy) {
-  o << "{ " << galaxy.index << ", group: " << galaxy.group << ", object: " << galaxy.object.toStdString() << ", group #: " 
-    << galaxy.number << ", ar: " << galaxy.rightAscension.printable(Angle::Hourly) << ", dec: " << galaxy.declination.printable() 
-    << ", mag: " << galaxy.magnitude() << ", notes: " << galaxy.notes.toStdString() << " }";
+  o << galaxy.json().toStdString();
   return o;
 }
 
@@ -170,11 +179,15 @@ int main(int argc, char ** argv){
   QTextStream input(&inputFile);
   QString line;
   map<int, ShakhbazianGroup> groups;
+  bool southTable = false;
   do {
     line = input.readLine();
+    if(!line.isNull() && line.contains("VII_196_south"))
+      southTable = true;
     if(line.isEmpty() || line.left(1) == "#") continue;
     QStringList values = line.split("|");
     ShakhbazianGalaxy galaxy;
+    galaxy.catalogue = southTable ? "south" : "north";
     galaxy.index = values[2].toInt();
     galaxy.group = values[3].toInt();
     galaxy.object = values[4].trimmed();
@@ -182,19 +195,25 @@ int main(int argc, char ** argv){
       galaxy.number = values[5].toInt();
     galaxy.rightAscension = Angle::degrees(values[0].toDouble());
     galaxy.declination = Angle::degrees(values[1].toDouble());
-    if(!values[10].trimmed().isEmpty())
-      galaxy.magV = values[10].toDouble();
-    if(!values[11].trimmed().isEmpty())
-      galaxy.magR = values[11].toDouble();
+     if(!values[11].trimmed().isEmpty())
+      galaxy.magPh = values[11].toDouble();
+   if(southTable) {
+    } else {
+      if(!values[10].trimmed().isEmpty())
+        galaxy.magV = values[10].toDouble();
+      if(!values[11].trimmed().isEmpty())
+        galaxy.magR = values[11].toDouble();
+    }
     galaxy.notes = values[14].trimmed();
     groups[galaxy.group].group = galaxy.group;
     groups[galaxy.group].galaxies.push_back(galaxy);
   } while(!line.isNull());
-/*
-  for(auto group: groups) {
-    cout << group.second << endl;
+  if(app.arguments()[2] == "-p") {
+    for(auto group: groups) {
+      cout << group.second << endl;
+    }
+    return 0;
   }
-*/
 
   Dbo::Session session;
   string connectionString = app.arguments()[2].toStdString();
