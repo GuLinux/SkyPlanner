@@ -1,8 +1,6 @@
 #include "models/Models"
 #include <Wt/Dbo/Transaction>
 #include <Wt/Dbo/Session>
-#include "skyplanner.h"
-#include <Wt/WServer>
 
 using namespace Wt;
 using namespace std;
@@ -50,12 +48,10 @@ ViewPort ViewPort::findOrCreate( DSS::ImageVersion imageVersion, const Dbo::ptr<
 {
   auto size = defaultAngle(ngcObject, transaction);
   if(!user) {
-    WServer::instance()->log("notice") << "no user found, returning default viewport";
     return ViewPort{ngcObject->coordinates(), size, imageVersion, ngcObject, user};
   }
   ViewPortPtr viewPort = transaction.session().find<ViewPort>().where("objects_id = ?").bind(ngcObject.id()).where("user_id = ?").bind(user.id());
   if(!viewPort) {
-    spLog("notice") << "creating new viewport for object id=" << ngcObject.id() << " (" << ngcObject->objectId() << "): " << ngcObject->coordinates().toString() << ", angular size: " << size.printable(); 
     viewPort = transaction.session().add(new ViewPort{ngcObject->coordinates(), size, imageVersion, ngcObject, user});
   }
   return *viewPort;
