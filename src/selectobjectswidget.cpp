@@ -155,7 +155,12 @@ void SelectObjectsWidget::Private::append(WTable *table, const Dbo::ptr<NgcObjec
   astroObjectCell->setHidden(true);
   astroObjectCell->setColumnSpan(8);
 
-  WPushButton *extendedInfoButton = WW<WPushButton>(WString::tr("buttons_extended_info")).css("btn-xs").onClick([=](WMouseEvent){
+  WPushButton *toggleMoreInfo = WW<WPushButton>(row->elementAt(0)).css("btn btn-xs pull-right hidden-print").setTextFormat(XHTMLUnsafeText).setText("&#x25bc;").setAttribute("title", WString::tr("astroobject_extended_info_title").toUTF8() );
+    
+  toggleMoreInfo->clicked().connect([=](WMouseEvent) {
+    toggleMoreInfo->setText(!astroObjectCell->isVisible() ? "&#x25b2;" : "&#x25bc;");
+    toggleMoreInfo->toggleStyleClass("active", !astroObjectCell->isVisible());
+
     selectRow();
     if(astroObjectCell->isVisible()) {
       astroObjectCell->clear();
@@ -168,16 +173,7 @@ void SelectObjectsWidget::Private::append(WTable *table, const Dbo::ptr<NgcObjec
 
   });
 
-  row->elementAt(7)->addWidget(WW<WToolBar>().addButton(addToSessionButton).addButton(extendedInfoButton));
-
-  auto cataloguesDescriptionWidget = CataloguesDescriptionWidget::add(table, 8, ngcObject, true);
-  if(cataloguesDescriptionWidget) {
-    WPushButton *toggleDescriptionsButton = WW<WPushButton>(WString::tr("object_more_info"), row->elementAt(0)).css("btn btn-xs pull-right");
-    toggleDescriptionsButton->clicked().connect([=](WMouseEvent){
-      toggleDescriptionsButton->toggleStyleClass("btn-inverse", cataloguesDescriptionWidget->isHidden());
-      cataloguesDescriptionWidget->setHidden(!cataloguesDescriptionWidget->isHidden());
-    });
-  }
+  row->elementAt(7)->addWidget(WW<WToolBar>().addButton(addToSessionButton)/*.addButton(extendedInfoButton)*/);
 }
 
 

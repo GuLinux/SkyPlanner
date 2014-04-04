@@ -124,6 +124,7 @@
 <message id="astroobject_widget_dialog">Dettagli</message>
 <message id="astroobject_actions_label">Azioni</message>
 <message id="astroobject_actions_edit_description">Modifica descrizione</message>
+<message id="astroobject_extended_info_title">Mostra l'immagine DSS ed altre informazioni</message>
 
 <message id="object_column_names">Nomi</message>
 <message id="object_column_type">Tipo</message>

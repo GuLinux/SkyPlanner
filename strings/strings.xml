@@ -75,6 +75,7 @@
 <message id="preview_back_to_astrosessiontab">Back to list version</message>
 <message id="dss-embed-menu-info-message">Click on the images to move, zoom, change type and other options.</message>
 
+<message id="astroobject_extended_info_title">Show DSS Image and more information</message>
 <message id="astroobject_widget_dialog">Details</message>
 <message id="astroobject_coordinates_label">Coordinates</message>
 <message id="astroobject_best_altitude">Best Altitude</message>

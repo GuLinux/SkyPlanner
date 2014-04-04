@@ -685,7 +685,7 @@ void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject
     WTableCell *astroObjectCell = astroObjectRow->elementAt(0);
     astroObjectCell->setHidden(true);
     astroObjectCell->setColumnSpan(OBJECTS_TABLE_COLS);
-    WPushButton *toggleMoreInfo = WW<WPushButton>(row->elementAt(0)).css("btn btn-xs pull-right hidden-print").setTextFormat(XHTMLUnsafeText).setText("&#x25bc;");
+    WPushButton *toggleMoreInfo = WW<WPushButton>(row->elementAt(0)).css("btn btn-xs pull-right hidden-print").setTextFormat(XHTMLUnsafeText).setText("&#x25bc;").setAttribute("title", WString::tr("astroobject_extended_info_title").toUTF8() );
     auto showHideMoreInfo = [=] {
       toggleMoreInfo->setText(!astroObjectCell->isVisible() ? "&#x25b2;" : "&#x25bc;");
       toggleMoreInfo->toggleStyleClass("active", !astroObjectCell->isVisible());
