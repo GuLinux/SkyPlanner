@@ -215,7 +215,7 @@ int main(int argc, char ** argv){
     return 0;
   }
 
-  //Dbo::Session session;
+  Dbo::Session session;
 //  Session session;
   string connectionString = app.arguments()[2].toStdString();
   shared_ptr<Dbo::SqlConnection> connection;
