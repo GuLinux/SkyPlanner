@@ -73,6 +73,8 @@ const string SkyPlanner::HOME_PATH = "/home/";
 SkyPlanner::SkyPlanner( const WEnvironment &environment )
   : WApplication( environment ), d( this )
 {
+  addMetaHeader("viewport", "width=device-width, initial-scale=1, maximum-scale=1");
+
   string stringsDirectory = (boost::filesystem::current_path() / "strings").string();
   readConfigurationProperty("strings_directory", stringsDirectory);
 
@@ -233,7 +235,7 @@ void SkyPlanner::Private::loadDSSPage( const std::string &hexId )
 
 WLogEntry SkyPlanner::uLog(const string &type) const
 {
-    return WApplication::log(type) << " - user: '" << d->loginname << "' - ";
+    return WApplication::log(type) << " - user: '" << (d->loginname.empty() ? "anonymous" : WString("{1} ({2})").arg(d->loginname).arg(static_cast<long>(d->session.user().id())) ) << "' - ";
 }
 
 
