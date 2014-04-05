@@ -181,7 +181,9 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
   WMenuItem *logout = navBarMenu->addItem(WString::tr("mainmenu_logout"));
   logout->setPathComponent("logout/");
   d->loggedInItems.push_back(logout);
-  
+  auto blogMenuItem = navBarMenu->addItem("Blog: gulinux.net");
+  blogMenuItem->setLink("http://blog.gulinux.net");
+  blogMenuItem->setLinkTarget(Wt::TargetNewWindow);
   
   
   auto setMenuItemsVisibility = [=] {
@@ -230,10 +232,6 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
     setInternalPath(HOME_PATH, true);
   }
   handlePath(internalPath());
-
-  root()->addWidget(WW<WContainerWidget>().css("alert alert-warning blog-link-cell hidden-print").add(
-                        WW<WAnchor>("http://blog.gulinux.net", "Blog: gulinux.net").setTarget(TargetNewWindow)
-                        ));
 }
 
 void SkyPlanner::Private::loadDSSPage( const std::string &hexId )
