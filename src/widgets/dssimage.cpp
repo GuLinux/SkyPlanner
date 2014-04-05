@@ -270,7 +270,7 @@ void DSSImage::Private::showImageController()
   moveFactor->setValue(10);
   zoomLevel->valueChanged().connect([=](double v, _n5) {
     imageOptions.size = Angle::arcMinutes( v ); 
-    spLog("notice") << __PRETTY_FUNCTION__ << ": reloading with zoom level: " << imageOptions.size.arcMinutes() << " arcminutes";
+    spLog("notice") << "reloading with zoom level: " << imageOptions.size.arcMinutes() << " arcminutes";
     imageOptions.onViewPortChanged(imageOptions.coordinates, imageOptions.size);
     reload();
   });

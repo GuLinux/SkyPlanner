@@ -58,7 +58,7 @@ AstroSessionsPage::AstroSessionsPage(Session &session, WContainerWidget* parent)
   listMenuItem->addStyleClass("hidden-print");
   listMenuItem->setPathComponent("list/");
   d->tabWidget->tabClosed().connect([=](int tabNumber, _n5){
-    spLog("notice") << __PRETTY_FUNCTION__ << ": tabNumber=" << tabNumber;
+    spLog("notice") << "tabNumber=" << tabNumber;
     d->removeTab(d->tabs[0].astroSession);
     d->tabWidget->setCurrentWidget(d->astroSessionsListTab);
   });
