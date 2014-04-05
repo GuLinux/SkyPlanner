@@ -203,7 +203,7 @@ void SelectObjectsWidget::Private::suggestedObjects(Dbo::Transaction& transactio
   
   suggestedObjectsContainer->setPadding(10);
   q->addTab(suggestedObjectsContainer, WString::tr("select_objects_widget_best_visible_objects"));
-  suggestedObjectsContainer->addWidget(suggestedObjectsTable);
+  suggestedObjectsContainer->addWidget(WW<WContainerWidget>().css("table-responsive").add(suggestedObjectsTable));
   suggestedObjectsContainer->addWidget(suggestedObjectsFooter);
 }
 
