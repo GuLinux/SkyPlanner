@@ -303,7 +303,6 @@ void AstroSessionTab::Private::reload()
   WContainerWidget *telescopeComboContainer;
   WComboBox *telescopeCombo = new WComboBox;
   WStandardItemModel *telescopesModel = new WStandardItemModel(sessionContainer);
-  telescopeCombo->setWidth(350);
   telescopeCombo->setModel(telescopesModel);
   WLabel *telescopeComboLabel = WW<WLabel>(WString::tr("astrosessiontab__telescope_label")).setMargin(10);
   telescopeComboLabel->setBuddy(telescopeCombo);
