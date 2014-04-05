@@ -1,6 +1,6 @@
 *kdev*
 *.user
-*.swp
+*swp
 build*
 *.pro.user
 

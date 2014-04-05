@@ -64,7 +64,7 @@ AstroSessionsPage::AstroSessionsPage(Session &session, WContainerWidget* parent)
   });
   d->tabs[0].path = "/sessions/list";
   d->tabWidget->currentChanged().connect([=](int index, _n5){
-    spLog("notice") << __PRETTY_FUNCTION__ << ", index= " << index << "path: " << d->tabs[index].path;
+    spLog("notice") << "index= " << index << "path: " << d->tabs[index].path;
     wApp->setInternalPath(d->tabs[index].path);
   });
 }
@@ -83,7 +83,7 @@ void AstroSessionsPage::Private::removeTab(const Wt::Dbo::ptr<AstroSession> &ast
 
 void AstroSessionsPage::open(const string &tabName)
 {
-  spLog("notice") << __PRETTY_FUNCTION__ << ": tabName=" << tabName;
+  spLog("notice") << "tabName=" << tabName;
   if(tabName == "list") {
     d->tabWidget->setCurrentIndex(0);
     return;

@@ -101,7 +101,7 @@ AstroSessionTab::~AstroSessionTab()
 AstroSessionTab::AstroSessionTab(const Dbo::ptr<AstroSession>& astroSession, Session& session, WContainerWidget* parent)
     : WContainerWidget(parent), d(astroSession, session, this)
 {
-  spLog("notice") << __PRETTY_FUNCTION__ << ", astroSession: " << astroSession.id() << ", id=" << id();
+  spLog("notice") << "astroSession: " << astroSession.id() << ", id=" << id();
   d->reload();
 }
 

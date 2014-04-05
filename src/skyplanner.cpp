@@ -195,7 +195,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
   if(d->session.login().loggedIn())
     loginLogoutMessage();
   auto handlePath = [=](const string &newPath){
-    spLog("notice") << __PRETTY_FUNCTION__ << ": newPath=" << newPath;
+    spLog("notice") << "newPath=" << newPath;
     if(internalPathMatches("/dss")) {
       d->loadDSSPage(internalPathNextPart("/dss/"));
     }
