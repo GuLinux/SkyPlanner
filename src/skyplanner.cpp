@@ -131,7 +131,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
     collapseButton->setHidden(collapse);
     expandButton->setHidden(!collapse);
   };
-  collapseNavBar(false);
+  WTimer::singleShot(2000, [=](WMouseEvent){ collapseNavBar(true); });
   collapseButton->clicked().connect(std::bind(collapseNavBar, true));
   expandButton->clicked().connect(std::bind(collapseNavBar, false));
   navBar->setResponsive( true );
@@ -142,6 +142,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
   d->widgets->setTransitionAnimation({WAnimation::AnimationEffect::Fade});
   d->widgets->setMargin(10);
   WMenu *navBarMenu = new WMenu(d->widgets);
+  navBarMenu->itemSelected().connect(std::bind(collapseNavBar, true));
   
   navBar->addMenu(navBarMenu);
   Auth::AuthWidget *authWidget = new Auth::AuthWidget( Session::auth(), d->session.users(), d->session.login() );

@@ -27,9 +27,13 @@ std::vector<uint8_t> styleCss() {
     .dropdown-menu li {
       cursor: pointer;
     }
-    
-   .navbar .navbar-collapsed {
-     display: none!important;
+    .navbar .navbar-collapsed {
+      display: none!important;
+    }
+    @media (min-width: 768px) {
+      .navbar .navbar-collapsed {
+        display: block!important;
+      }
    }
 
    .astroobject-list-item {
