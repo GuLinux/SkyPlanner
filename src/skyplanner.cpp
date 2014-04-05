@@ -114,15 +114,35 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
     }
   }
 
-  WNavigationBar *navBar = WW<WNavigationBar>( root() ).addCss( "navbar-inverse navbar-fixed-top" );
+  WNavigationBar *navBar = WW<WNavigationBar>().addCss( "navbar-inverse" );
+  WPushButton *collapseButton = WW<WPushButton>(WString::tr("Wt.WNavigationBar.expand-button"));
+  WPushButton *expandButton = WW<WPushButton>(WString::tr("Wt.WNavigationBar.expand-button"));
+  collapseButton->setTextFormat(XHTMLText);
+  wApp->theme()->apply(navBar, collapseButton, NavbarBtn);
+  expandButton->setTextFormat(XHTMLText);
+  wApp->theme()->apply(navBar, expandButton, NavbarBtn);
+  navBar->bindWidget("collapse-button", collapseButton);
+  navBar->bindWidget("expand-button", expandButton);
+  root()->addWidget(navBar);
+  auto collapseNavBar = [=](bool collapse) {
+    WContainerWidget *contents = navBar->resolve<WContainerWidget *>("contents");
+    contents->toggleStyleClass("navbar-collapsed", collapse);
+    contents->setHidden(collapse);
+    collapseButton->setHidden(collapse);
+    expandButton->setHidden(!collapse);
+  };
+  collapseNavBar(false);
+  collapseButton->clicked().connect(std::bind(collapseNavBar, true));
+  expandButton->clicked().connect(std::bind(collapseNavBar, false));
   navBar->setResponsive( true );
   navBar->setTitle( WString::tr("application_title"), WLink(WLink::InternalPath, HOME_PATH) );
   useStyleSheet( "/skyplanner_style.css" );
   root()->addWidget(d->notifications = WW<WContainerWidget>().addCss("skyplanner-notifications"));
-  d->widgets = new WStackedWidget( root() );
+  d->widgets = WW<WStackedWidget>( root() ).addCss("contents");
   d->widgets->setTransitionAnimation({WAnimation::AnimationEffect::Fade});
   d->widgets->setMargin(10);
   WMenu *navBarMenu = new WMenu(d->widgets);
+  
   navBar->addMenu(navBarMenu);
   Auth::AuthWidget *authWidget = new Auth::AuthWidget( Session::auth(), d->session.users(), d->session.login() );
   authWidget->model()->addPasswordAuth( &Session::passwordAuth() );

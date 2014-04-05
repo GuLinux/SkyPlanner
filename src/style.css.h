@@ -1,4 +1,4 @@
-#ifndef STYLE_CSS_H
+ #ifndef STYLE_CSS_H
 #define STYLE_CSS_H
 #include <stdint.h>
 #include <string>
@@ -7,9 +7,7 @@
 
 std::vector<uint8_t> styleCss() {
   std::string css = CSS(
-    body {
-      padding-top: 70px;
-    }
+
     .skyplanner-notifications {
       position: fixed;
       width: 100%;
@@ -19,12 +17,20 @@ std::vector<uint8_t> styleCss() {
     .dialog-popup-submenu {
       z-index: 1100!important;
     }
+
+    .navbar-toggle-fix {
+      display:inherit!important;
+    }
     .astroobjectwidget,print-no-break {
       page-break-inside:avoid;
     }
     .dropdown-menu li {
       cursor: pointer;
     }
+    
+   .navbar .navbar-collapsed {
+     display: none!important;
+   }
 
    .astroobject-list-item {
 //     margin-top: 5px;
