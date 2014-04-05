@@ -24,6 +24,7 @@
 #include "utils/format.h"
 #include "utils/curl.h"
 #include "Wt-Commons/wt_helpers.h"
+#include "Wt-Commons/wform.h"
 #include "session.h"
 #include "placewidget.h"
 #include <Wt/WText>
@@ -125,15 +126,14 @@ void AstroSessionTab::Private::reload()
     wApp->setInternalPath("/login");
     return;
   }
-  WContainerWidget *actionsContainer = WW<WContainerWidget>().setMargin(10);
+  WForm *actionsContainer = WW<WForm>(WForm::Inline).setMargin(10);
   sessionContainer->addWidget(actionsContainer);
   pastObservation = astroSession->wDateWhen() < WDateTime::currentDateTime();
 
 
   Dbo::Transaction t(session);
-  WToolBar *sessionActions = WW<WToolBar>();
 
-  sessionActions->addButton(WW<WPushButton>(WString::tr("astrosessiontab_change_name_or_date")).css("btn btn-sm").onClick([=](WMouseEvent){
+  actionsContainer->addButton(WW<WPushButton>(WString::tr("astrosessiontab_change_name_or_date")).css("btn btn-sm").onClick([=](WMouseEvent){
     WDialog *changeNameOrDateDialog = new WDialog(WString::tr("astrosessiontab_change_name_or_date"));
     WLineEdit *sessionName = WW<WLineEdit>(astroSession->name()).css("input-block-level");
     WDateEdit *sessionDate = WW<WDateEdit>().css("input-block-level");
@@ -152,7 +152,7 @@ void AstroSessionTab::Private::reload()
     changeNameOrDateDialog->contents()->addWidget(form);
     changeNameOrDateDialog->show();
   }));
-  sessionActions->addButton(WW<WPushButton>(WString::tr("astrosessiontab_preview_version")).css("btn-primary btn-sm").onClick([=](WMouseEvent){
+  actionsContainer->addButton(WW<WPushButton>(WString::tr("astrosessiontab_preview_version")).css("btn-primary btn-sm").onClick([=](WMouseEvent){
     spLog("notice") << "Switching to preview version..";
     sessionPreviewContainer->clear();
     sessionPreviewContainer->setStyleClass("astroobjects-list");
@@ -236,7 +236,7 @@ void AstroSessionTab::Private::reload()
     invertAllButton->clicked().connect([=](WMouseEvent){ for(auto a: *astroObjectWidgets) a->toggleInvert(); } );
     sessionStacked->setCurrentWidget(sessionPreviewContainer);
   }));
-  sessionActions->addButton(WW<WPushButton>(WString::tr("astrosessiontab_printable_version")).css("btn btn-info btn-sm").onClick( [=](WMouseEvent){ printableVersion(); } ));
+  actionsContainer->addButton(WW<WPushButton>(WString::tr("astrosessiontab_printable_version")).css("btn btn-info btn-sm").onClick( [=](WMouseEvent){ printableVersion(); } ));
 
   WPushButton *exportButton = WW<WPushButton>(WString::tr("astrosessiontab_export")).css("btn btn-sm btn-info");
   WPopupMenu *exportMenu = new WPopupMenu;
@@ -246,10 +246,9 @@ void AstroSessionTab::Private::reload()
   exportToCsvResource->setReportType(ExportAstroSessionResource::CSV);
   exportToCsv->setLink(exportToCsvResource);
   exportToCsv->setLinkTarget(TargetNewWindow);
-  sessionActions->addButton(exportButton);
+  actionsContainer->addButton(exportButton);
 
-  sessionActions->addButton(WW<WPushButton>(WString::tr("buttons_close")).css("btn btn-warning btn-sm").onClick( [=](WMouseEvent){ close.emit(); } ));
-  actionsContainer->addWidget(sessionActions);
+  actionsContainer->addButton(WW<WPushButton>(WString::tr("buttons_close")).css("btn btn-warning btn-sm").onClick( [=](WMouseEvent){ close.emit(); } ));
 
   
   WContainerWidget *sessionInfo = WW<WContainerWidget>();
@@ -308,7 +307,9 @@ void AstroSessionTab::Private::reload()
   telescopeCombo->setModel(telescopesModel);
   WLabel *telescopeComboLabel = WW<WLabel>(WString::tr("astrosessiontab__telescope_label")).setMargin(10);
   telescopeComboLabel->setBuddy(telescopeCombo);
-  actionsContainer->addWidget( telescopeComboContainer = WW<WContainerWidget>().css("form-inline pull-right").add(telescopeComboLabel).add(telescopeCombo));
+  telescopeComboContainer = actionsContainer->addControl(telescopeCombo, "astrosessiontab__telescope_label");
+  
+  //actionsContainer->addWidget( telescopeComboContainer = WW<WContainerWidget>().css("form-inline pull-right").add(telescopeComboLabel).add(telescopeCombo));
   telescopeCombo->activated().connect([=](int index, _n5){
     selectedTelescope = boost::any_cast<Dbo::ptr<Telescope>>(telescopesModel->item(index)->data());
     filterByMinimumMagnitude->setMaximum(selectedTelescope->limitMagnitudeGain() + 6.5);

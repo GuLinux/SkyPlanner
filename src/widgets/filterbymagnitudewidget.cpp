@@ -24,7 +24,7 @@ FilterByMagnitudeWidget::FilterByMagnitudeWidget(const Options &options, const R
   : WCompositeWidget(parent), d(this)
 {
   WText *valueLabel = WW<WText>().css("badge");
-  d->magnitudeSlider = WW<WSlider>().css("form-slider");
+  d->magnitudeSlider = WW<WSlider>().css("form-slider").setInline(true);
   d->magnitudeSlider->setNativeControl(false);
   setRange(range);
   d->minimumValueText = options.minimumValueText;
@@ -50,6 +50,7 @@ FilterByMagnitudeWidget::FilterByMagnitudeWidget(const Options &options, const R
   d->magnitudeSlider->sliderMoved().connect("function(a, b) { console.log(a); console.log(b); var lastSliderMoved = b; }");
 #endif
   setImplementation(WW<WContainerWidget>().setInline(true).add(new WText{WString("<small>{1}</small>").arg(options.labelText)}).add(d->magnitudeSlider).add(valueLabel));
+  d->magnitudeSlider->setInline(true);
 }
 
 FilterByMagnitudeWidget::~FilterByMagnitudeWidget()
