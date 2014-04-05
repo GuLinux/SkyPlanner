@@ -48,6 +48,6 @@ private:
     D_PTR;
 };
 
-#define spLog(type) SkyPlanner::instance()->uLog(type)
+#define spLog(type) SkyPlanner::instance()->uLog(type) << __PRETTY_FUNCTION__ << "-"
 
 #endif // ASTROPLANNER_H

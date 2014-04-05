@@ -235,7 +235,7 @@ void SkyPlanner::Private::loadDSSPage( const std::string &hexId )
 
 WLogEntry SkyPlanner::uLog(const string &type) const
 {
-    return WApplication::log(type) << " - user: '" << (d->loginname.empty() ? "anonymous" : WString("{1} ({2})").arg(d->loginname).arg(static_cast<long>(d->session.user().id())) ) << "' - ";
+    return WApplication::log(type) << "{user: '" << (d->loginname.empty() ? "anonymous" : WString("{1} ({2})").arg(d->loginname).arg(static_cast<long>(d->session.user().id())) ) << "'} ";
 }
 
 
