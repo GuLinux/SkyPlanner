@@ -46,6 +46,8 @@
 #include "homepage.h"
 #include <mutex>
 #include <Wt/WProgressBar>
+#include <Wt/WPopupMenu>
+#include <Wt/WProgressBar>
 #include "utils/format.h"
 
 
@@ -182,9 +184,30 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
   WMenuItem *logout = navBarMenu->addItem(WString::tr("mainmenu_logout"));
   logout->setPathComponent("logout/");
   d->loggedInItems.push_back(logout);
-  auto blogMenuItem = navBarMenu->addItem("Blog: gulinux.net");
-  blogMenuItem->setLink("http://blog.gulinux.net");
-  blogMenuItem->setLinkTarget(Wt::TargetNewWindow);
+
+  auto rightMenu = new Wt::WMenu();
+  navBar->addMenu(rightMenu, Wt::AlignRight);
+
+  auto gulinuxMenuItem = rightMenu->addItem("Gulinux.net");
+  gulinuxMenuItem->setInternalPathEnabled(false);
+  gulinuxMenuItem->addStyleClass("hidden-xs");
+  WPopupMenu *gulinuxPopup = new WPopupMenu;
+  gulinuxMenuItem->setMenu(gulinuxPopup);
+
+  auto addGulinuxItems = [=](WMenu *menu, string css = {}) {
+    auto blogMenuItem = menu->addItem("Blog");
+    blogMenuItem->addStyleClass(css);
+    blogMenuItem->setLink("http://blog.gulinux.net");
+    blogMenuItem->setLinkTarget(Wt::TargetNewWindow);
+    auto skyPlannerMenuItem = menu->addItem("SkyPlanner Homepage");
+    skyPlannerMenuItem->addStyleClass(css);
+    skyPlannerMenuItem->setLink((format("http://blog.gulinux.net/skyplanner?lang=%s") % locale().name()).str() );
+    skyPlannerMenuItem->setLinkTarget(Wt::TargetNewWindow);
+  };
+  addGulinuxItems(gulinuxPopup);
+  addGulinuxItems(navBarMenu, "visible-xs");
+ 
+
   
   
   auto setMenuItemsVisibility = [=] {
