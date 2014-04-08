@@ -156,7 +156,7 @@ void AstroSessionTab::Private::reload()
     spLog("notice") << "Switching to preview version..";
     sessionPreviewContainer->clear();
     sessionPreviewContainer->setStyleClass("astroobjects-list");
-    sessionPreviewContainer->addWidget(WW<WText>(WString("<h3>{1}, {2}</h3>").arg(astroSession->name()).arg(astroSession->wDateWhen().toString("dddd d MMMM yyyy") )).css("text-center") );
+    sessionPreviewContainer->addWidget(WW<WText>(WString("<h3>{1}, {2}</h3>").arg(WString::fromUTF8(astroSession->name())).arg(astroSession->wDateWhen().toString("dddd d MMMM yyyy") )).css("text-center") );
     WPushButton *printButton = WW<WPushButton>(WString::tr("buttons_print")).css("btn-info btn-sm");
     printButton->clicked().connect([=](WMouseEvent){
       wApp->doJavaScript("window.print();", false);
