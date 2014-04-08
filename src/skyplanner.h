@@ -29,17 +29,20 @@ class SkyPlanner : public Wt::WApplication
 public:
   SkyPlanner(const Wt::WEnvironment& environment);
     ~SkyPlanner();
-    class Notification : public Wt::WContainerWidget {
+    class Notification {
     public:
       enum Type { Alert, Error, Success, Information };
-      Notification(const Wt::WString &title, const Wt::WString &content, Type type, int autoHideSeconds = 0, Wt::WContainerWidget *parent = 0);
+      Notification(const Wt::WString &title, const Wt::WString &content, Type type, bool addCloseButton, Wt::WContainerWidget *parent = 0);
       ~Notification();
+      void close();
+      bool valid() const;
       Wt::Signal<> &closed() const;
+      Wt::WWidget *widget() const;
     private:
       D_PTR;
     };
     static SkyPlanner *instance();
-    Notification * notification( const Wt::WString &title, const Wt::WString &content, Notification::Type type, int autoHideSeconds = 0 , Wt::WContainerWidget *addTo = nullptr);
+    std::shared_ptr<Notification>notification( const Wt::WString &title, const Wt::WString &content, Notification::Type type, int autoHideSeconds = 0 , Wt::WContainerWidget *addTo = nullptr);
     static const std::string HOME_PATH;
     Wt::WLogEntry uLog (const std::string &type) const;
 

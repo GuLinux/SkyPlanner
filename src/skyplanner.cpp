@@ -297,17 +297,21 @@ WLogEntry SkyPlanner::uLog(const string &type) const
 }
 
 
-SkyPlanner::Notification *SkyPlanner::notification(const WString &title, const WString &content, Notification::Type type, int autoHideSeconds, WContainerWidget *addTo)
+shared_ptr<SkyPlanner::Notification> SkyPlanner::notification(const WString &title, const WString &content, Notification::Type type, int autoHideSeconds, WContainerWidget *addTo)
 {
-  Notification *notification = new Notification(title, content, type, autoHideSeconds);
-  (addTo ? addTo : d->notifications)->addWidget(notification);
-  notification->animateShow({WAnimation::Fade, WAnimation::EaseInOut, 500});
+  auto notification = make_shared<Notification>(title, content, type, autoHideSeconds == 0);
+  (addTo ? addTo : d->notifications)->addWidget(notification->widget() );
+  notification->widget()->animateShow({WAnimation::Fade, WAnimation::EaseInOut, 500});
+  if(autoHideSeconds > 0)
+    WTimer::singleShot(1000*autoHideSeconds, [=](WMouseEvent) { notification->close(); } );
   return notification;
 }
 
 class SkyPlanner::Notification::Private {
 public:
   Signal<> closed;
+  WContainerWidget *widget;
+  bool valid = true;
 };
 
 Signal<> &SkyPlanner::Notification::closed() const
@@ -315,8 +319,30 @@ Signal<> &SkyPlanner::Notification::closed() const
   return d->closed;
 }
 
-SkyPlanner::Notification::Notification(const WString &title, const WString &content, Type type, int autoHideSeconds, WContainerWidget *parent)
-  : WContainerWidget(parent), d()
+WWidget *SkyPlanner::Notification::widget() const
+{
+  return d->widget;
+}
+
+void SkyPlanner::Notification::close()
+{
+  spLog("notice") << " valid=" << valid();
+  if(!valid())
+    return;
+  d->valid = false;
+  d->closed.emit();
+  d->widget->hide();
+  delete d->widget;
+//  WTimer::singleShot(3000, [=](WMouseEvent){delete d->widget; d->widget = nullptr; });
+}
+
+bool SkyPlanner::Notification::valid() const
+{
+  return d->valid;
+}
+
+SkyPlanner::Notification::Notification(const WString &title, const WString &content, Type type, bool addCloseButton, WContainerWidget *parent)
+  : d()
 {
   static map<Type,string> notificationStyles {
     {Error, "alert-error"},
@@ -324,25 +350,16 @@ SkyPlanner::Notification::Notification(const WString &title, const WString &cont
     {Information, "alert-info"},
     {Alert, "alert-warning"},
   };
-  addStyleClass("alert");
-  addStyleClass("alert-block");
-  addStyleClass(notificationStyles[type]);
-  auto deleteNotification = [=](WMouseEvent) {
-    d->closed.emit();
-    hide();
-    WTimer::singleShot(3000, [=](WMouseEvent){delete this; });
-  };
-  if(autoHideSeconds<=0) {
-    WPushButton *closeButton = WW<WPushButton>().css("close").onClick(deleteNotification);
+  d->widget = WW<WContainerWidget>().addCss("alert").addCss("alert-block").addCss(notificationStyles[type]);
+  if(addCloseButton) {
+    WPushButton *closeButton = WW<WPushButton>().css("close").onClick([=](WMouseEvent) { close(); } );
     closeButton->setTextFormat(XHTMLUnsafeText);
     closeButton->setText("<h4><strong>&times;</strong></h4>");
-    addWidget(closeButton);
-  } else {
-    WTimer::singleShot(1000*autoHideSeconds, deleteNotification);
+    d->widget->addWidget(closeButton);
   }
 
-  addWidget(new WText{WString("<h4>{1}</h4>").arg(title) });
-  addWidget(new WText{content});
+  d->widget->addWidget(new WText{WString("<h4>{1}</h4>").arg(title) });
+  d->widget->addWidget(new WText{content});
 }
 
 SkyPlanner::Notification::~Notification()

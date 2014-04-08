@@ -262,13 +262,14 @@ void AstroSessionTab::Private::reload()
 
   auto locationPanel = addPanel(WString::tr("position_title"), placeWidget, false, true, sessionContainer );
   addPanel(WString::tr("astrosessiontab_information_panel"), sessionInfo, true, true, sessionContainer);
+  shared_ptr<SkyPlanner::Notification> placeWidgetInstructions;
   if(astroSession->position()) {
     placeWidget->mapReady().connect([=](_n6){ WTimer::singleShot(1500, [=](WMouseEvent){
         locationPanel->collapse();
       });
     });
   } else {
-    SkyPlanner::instance()->notification(WString::tr("notification_suggestion_title"), WString::tr("placewidget_instructions_notification"), SkyPlanner::Notification::Information);
+    placeWidgetInstructions = SkyPlanner::instance()->notification(WString::tr("notification_suggestion_title"), WString::tr("placewidget_instructions_notification"), SkyPlanner::Notification::Information);
   }
   updateTimezone();
 
@@ -276,6 +277,8 @@ void AstroSessionTab::Private::reload()
   SelectObjectsWidget *addObjectsTabWidget = new SelectObjectsWidget(astroSession, session);
   placeWidget->placeChanged().connect([=](double lat, double lng, _n4) {
     updateTimezone();
+    if(placeWidgetInstructions)
+      placeWidgetInstructions->close();
     SkyPlanner::instance()->notification(WString::tr("notification_success_title"), WString::tr("placewidget_place_set_notification"), SkyPlanner::Notification::Success, 5);
     addObjectsTabWidget->populateFor(selectedTelescope, timezone);
     updatePositionDetails(positionDetails);
