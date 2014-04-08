@@ -164,26 +164,42 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
   TelescopesPage *telescopesPage = new TelescopesPage(d->session);
   telescopesPage->changed().connect([=](_n6) { d->telescopesListChanged.emit(); });
   AstroSessionsPage *astrosessionspage = new AstroSessionsPage(d->session);
-  
-  WMenuItem *mySessionsMenuItem;
-  
-  d->loggedInItems.push_back(mySessionsMenuItem = navBarMenu->addItem(WString::tr("mainmenu_my_sessions"), astrosessionspage));
-  mySessionsMenuItem->setPathComponent("sessions/");
-  WMenuItem *telescopesMenuItem;
-  d->loggedInItems.push_back(telescopesMenuItem = navBarMenu->addItem(WString::tr("mainmenu_my_telescopes"), telescopesPage));
-  telescopesMenuItem->setPathComponent("telescopes/");
-  
-  WMenuItem *userSettingsMenuItem = navBarMenu->addItem(WString::tr("mainmenu_my_settings"), new UserSettingsPage(d->session));
-  d->loggedInItems.push_back(userSettingsMenuItem);
-  userSettingsMenuItem->setPathComponent("settings/");
 
+  WMenuItem *mySessionsMenuItem = navBarMenu->addItem(WString::tr("mainmenu_my_sessions"), astrosessionspage);
+  d->loggedInItems.push_back(mySessionsMenuItem);
+  mySessionsMenuItem->setPathComponent("sessions/");
+
+
+  WMenuItem *userSubMenu = WW<WMenuItem>(navBarMenu->addItem("")).addCss("hidden-xs");
+  userSubMenu->setInternalPathEnabled(false);
+  d->loggedInItems.push_back(userSubMenu);
+  WPopupMenu *userPopup = new WPopupMenu(d->widgets);
+  userPopup->setInternalPathEnabled("/");
+  userSubMenu->setMenu(userPopup);
+
+  auto userMenuItems = [=](WMenu *menu, string css = {}) {
+    WMenuItem *telescopesMenuItem = WW<WMenuItem>(menu->addItem(WString::tr("mainmenu_my_telescopes"), telescopesPage)).addCss(css);
+    d->loggedInItems.push_back(telescopesMenuItem);
+    telescopesMenuItem->setPathComponent("telescopes/");
+  
+    WMenuItem *userSettingsMenuItem = WW<WMenuItem>(menu->addItem(WString::tr("mainmenu_my_settings"), new UserSettingsPage(d->session))).addCss(css);
+    d->loggedInItems.push_back(userSettingsMenuItem);
+    userSettingsMenuItem->setPathComponent("settings/");
+
+    WMenuItem *logout = WW<WMenuItem>(menu->addItem(WString::tr("mainmenu_logout"))).addCss(css);
+    logout->setPathComponent("logout/");
+    d->loggedInItems.push_back(logout);
+    logout->triggered().connect([=](WMenuItem*,_n5){ d->session.login().logout(); });
+  };
+  
+  userMenuItems(navBarMenu, "visible-xs");
+  userMenuItems(userPopup);
+  
+ 
   WMenuItem *feedbackMenuItem = navBarMenu->addItem(WString::tr("mainmenu_feedback"), new SendFeedbackPage(d->session));
   d->loggedInItems.push_back(feedbackMenuItem);
   feedbackMenuItem->setPathComponent("feedback/");
 
-  WMenuItem *logout = navBarMenu->addItem(WString::tr("mainmenu_logout"));
-  logout->setPathComponent("logout/");
-  d->loggedInItems.push_back(logout);
 
   auto rightMenu = new Wt::WMenu();
   navBar->addMenu(rightMenu, Wt::AlignRight);
@@ -222,6 +238,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
     if(d->session.login().loggedIn()) {
       Dbo::Transaction t(d->session);
       d->loginname = d->session.authInfo()->identity("loginname");
+      userSubMenu->setText(d->loginname);
     }
     spLog("notice") << "***** "
                         << (d->session.login().loggedIn() ? "LOGIN"  : "LOGOUT")
@@ -229,8 +246,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
                         << (d->session.login().loggedIn() ?   "in"  : "out")
                         << "; wApp->sessionId " << sessionId();
   };
-  
-  logout->triggered().connect([=](WMenuItem*,_n5){ d->session.login().logout(); });
+ 
   d->session.login().changed().connect([=](_n6){
     if(internalPathMatches("/login") || internalPathMatches("/logout"))
       setInternalPath(HOME_PATH, true);
