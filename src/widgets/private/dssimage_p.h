@@ -73,6 +73,7 @@ class DSSImage::Private
     boost::thread downloadThread;
     bool aborted = false;
     Wt::Http::Client httpClient;
+    std::map<Wt::WWidget*, std::function<void(bool)>> downloadingFunctions;
   private:
     class DSSImage *const q;
 };

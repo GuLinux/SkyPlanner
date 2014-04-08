@@ -68,6 +68,7 @@ DSSImage::~DSSImage()
 
 void DSSImage::Private::save(const boost::system::error_code &errorCode, const Http::Message &httpMessage)
 {
+  for(auto d: downloadingFunctions) d.second(false);
   if(errorCode != boost::system::errc::success) {
     WServer::instance()->log(aborted ? "notice" : "error") << "Download failed for " << imageLink() << ": " << errorCode.message(); 
     if(!aborted) failed.emit();
@@ -95,6 +96,8 @@ void DSSImage::Private::save(const boost::system::error_code &errorCode, const H
   
   WServer::instance()->log("notice") << " download successfully finished, calling setImageFromCache";
   setImageFromCache();
+
+
   wApp->triggerUpdate();
 }
 
@@ -287,11 +290,19 @@ void DSSImage::Private::showImageController()
     reload();
   }) );
   dialog->contents()->addWidget(content);
+  downloadingFunctions[dialog] = [=](bool downloading) {
+    dialog->setClosable(!downloading);
+    for(auto s: vector<string>{"zoom", "move-factor", "up-button", "down-button", "left-button", "right-button", "restore-default"})
+      static_cast<WFormWidget*>(content->resolveWidget(s))->setEnabled(!downloading);
+  };
+
+  dialog->finished().connect([=](WDialog::DialogCode, _n5) { downloadingFunctions.erase(dialog); });
   dialog->show();
 }
 
 void DSSImage::Private::wtDownload()
 {
+  for(auto d: downloadingFunctions) d.second(true);
   httpClient.abort();
   httpClient.get(imageLink()); 
 }
