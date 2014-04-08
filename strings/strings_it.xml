@@ -171,6 +171,8 @@
 <message id="notification_description_saved">Descrizione Salvata!</message>
 <message id="description">Descrizione</message>
 <message id="placewidget_maps_instructions">Clicca su un punto della mappa per impostare il luogo di osservazione. Usa il box di ricerca per trovare luoghi dal nome.</message>
+<message id="placewidget_instructions_notification">Clicca un punto sulla mappa per impostare la posizione osservativa.<br />Questo permetterà di ottenere suggerimenti personalizzati ed effemeridi per il luogo selezionato.<br />Usa il box di ricerca per trovare luoghi dal nome.</message>
+<message id="placewidget_place_set_notification">Posizione osservativa impostata correttamente.</message>
 <message id="placewidget_open_google_maps">Apri in Google Maps</message>
 <message id="objectnames_more_info">More Information</message>
 <message id="objectnames_search_menu_title">Ricerca</message>

@@ -130,6 +130,8 @@
 <message id="notification_description_saved">Description saved!</message>
 <message id="description">Description</message>
 <message id="placewidget_maps_instructions">Just click a point on the map to set the observation place. Use the search box to find places by name.</message>
+<message id="placewidget_instructions_notification">Click anywhere on the map to set the observation place, to receive suggestions and ephemeris for the selected position.<br />Use the search box to find places by name.</message>
+<message id="placewidget_place_set_notification">Observation place properly set.</message>
 <message id="placewidget_open_google_maps">Open in Google Maps</message>
 <message id="objectnames_more_info">More Information</message>
 <message id="objectnames_search_menu_title">Search</message>

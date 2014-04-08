@@ -112,7 +112,7 @@ PlaceWidget::~PlaceWidget()
 PlaceWidget::PlaceWidget(const Wt::Dbo::ptr< AstroSession >& astroSession, Session& session, Wt::WContainerWidget* parent)
     : d(astroSession, session, this)
 {
-  addWidget(new WText(WString::tr("placewidget_maps_instructions")));
+//  addWidget(new WText(WString::tr("placewidget_maps_instructions")));
   WContainerWidget *googleMapsLinkContainer = new WContainerWidget;
   addWidget(googleMapsLinkContainer);
   auto linkToGoogleMaps = [=](double latitude, double longitude) {

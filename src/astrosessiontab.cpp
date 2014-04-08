@@ -267,6 +267,8 @@ void AstroSessionTab::Private::reload()
         locationPanel->collapse();
       });
     });
+  } else {
+    SkyPlanner::instance()->notification(WString::tr("notification_suggestion_title"), WString::tr("placewidget_instructions_notification"), SkyPlanner::Notification::Information);
   }
   updateTimezone();
 
@@ -274,6 +276,7 @@ void AstroSessionTab::Private::reload()
   SelectObjectsWidget *addObjectsTabWidget = new SelectObjectsWidget(astroSession, session);
   placeWidget->placeChanged().connect([=](double lat, double lng, _n4) {
     updateTimezone();
+    SkyPlanner::instance()->notification(WString::tr("notification_success_title"), WString::tr("placewidget_place_set_notification"), SkyPlanner::Notification::Success, 5);
     addObjectsTabWidget->populateFor(selectedTelescope, timezone);
     updatePositionDetails(positionDetails);
   });
