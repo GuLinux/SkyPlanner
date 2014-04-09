@@ -302,7 +302,7 @@ void AstroSessionTab::Private::reload()
   sessionContainer->addWidget(WW<WContainerWidget>().addCss("form-inline").add(filterByType).add(filterByMinimumMagnitude).add(filterByConstellation).add(filterByCatalogue));
 
   if(timezone)
-    sessionContainer->addWidget(  new WText(WString::tr("printable_timezone_info").arg(timezone.timeZoneName)));
+    sessionContainer->addWidget(  new WText(WString::tr("printable_timezone_info").arg(WString::fromUTF8(timezone.timeZoneName))));
   sessionContainer->addWidget(WW<WContainerWidget>().css("table-responsive").add(objectsTable = WW<WTable>().addCss("table table-hover astroobjects-table")));
   objectsTable->setHeaderCount(1);
   
@@ -543,7 +543,7 @@ void AstroSessionTab::Private::updatePositionDetails( WContainerWidget *position
       return (format("%02d:%02d") % t.time_of_day().hours() % t.time_of_day().minutes()).str();
     return (format("%s %02d:%02d") % WDate(t.date()).toString("d/M").toUTF8() % t.time_of_day().hours() % t.time_of_day().minutes()).str();
   };
-  positionDetails->addWidget(new WText{WString::tr("printable_timezone_info").arg(timezone.timeZoneName)});
+  positionDetails->addWidget(new WText{WString::tr("printable_timezone_info").arg(WString::fromUTF8(timezone.timeZoneName))});
   positionDetails->addWidget(new WBreak);
   positionDetails->addWidget(new WText(WString(WString::tr("astrosessiontab_sun_info"))
     .arg(formatTime(sun.rise, true))
