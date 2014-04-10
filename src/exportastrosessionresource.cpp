@@ -171,10 +171,10 @@ void ExportAstroSessionResource::handleRequest(const Wt::Http::Request &request,
     auto darkness = ephemeris.darknessHours(d->astroSession->date() );
 
     auto formatTime = [=](const boost::posix_time::ptime &time) { auto t = d->timezone.fix(time); return (format("%02d:%02d") % t.time_of_day().hours() % t.time_of_day().minutes()).str(); };
-    printable.bindString("astrosessiontab_sun_info", WString::tr("astrosessiontab_sun_info").arg(formatTime(sun.rise)).arg(formatTime(sun.set)));
-    printable.bindString("astrosessiontab_astro_twilight_info", WString::tr("astrosessiontab_astro_twilight_info").arg(formatTime(twilight.rise)).arg(formatTime(twilight.set)));
-    printable.bindString("astrosessiontab_moon_info", WString::tr("astrosessiontab_moon_info").arg(formatTime(moon.rise)).arg(formatTime(moon.set)));
-    printable.bindString("astrosessiontab_darkness_hours", WString::tr("astrosessiontab_darkness_hours").arg(formatTime(darkness.begin)).arg(formatTime(darkness.end)).arg(boost::posix_time::to_simple_string(darkness.duration)));
+    printable.bindString("astrosessiontab_sun_info", WString::tr("astrosessiontab_sun_info").arg(sun.rise.str(DateTime::DateShort)).arg(sun.set.str(DateTime::DateShort)));
+    printable.bindString("astrosessiontab_astro_twilight_info", WString::tr("astrosessiontab_astro_twilight_info").arg(twilight.rise.str(DateTime::DateShort)).arg(twilight.set.str(DateTime::DateShort)));
+    printable.bindString("astrosessiontab_moon_info", WString::tr("astrosessiontab_moon_info").arg(moon.rise.str(DateTime::DateShort)).arg(moon.set.str(DateTime::DateShort)));
+    printable.bindString("astrosessiontab_darkness_hours", WString::tr("astrosessiontab_darkness_hours").arg(darkness.begin.str(DateTime::DateShort)).arg(darkness.end.str(DateTime::DateShort)).arg(boost::posix_time::to_simple_string(darkness.duration)));
   }
   stringstream tableRows;
   printable.bindString("objects-number", WString::tr("objects_number_label").arg(sessionObjects.size()));

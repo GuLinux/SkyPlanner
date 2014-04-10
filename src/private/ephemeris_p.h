@@ -30,9 +30,10 @@ class Ephemeris::Private
     Private( const Coordinates::LatLng &geoPosition, const Timezone &timezone, Ephemeris *q );
     Coordinates::LatLng geoPosition;
 
-    double dateToJulian(const boost::posix_time::ptime &date) const;
-    boost::posix_time::ptime julianToDate(double jd) const;
+    double dateToJulian(const boost::posix_time::ptime &date, bool utc = false) const;
+    DateTime julianToDate(double jd) const;
 
+    Ephemeris::RiseTransitSet rst(const boost::gregorian::date &date, RiseTransitSetFunction, bool nightMode);
     Ephemeris::RiseTransitSet rst(const boost::posix_time::ptime &when, RiseTransitSetFunction, bool nightMode);
 
     ln_lnlat_posn lnGeoPosition() const;

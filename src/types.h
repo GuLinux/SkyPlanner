@@ -109,17 +109,17 @@ struct DateTime {
   boost::posix_time::ptime localtime;
   Timezone timezone;
   enum TZone { UTC, Localtime };
-  enum PrintFormat { HourOnly, DateShort, DateLong };
-  std::string str(PrintFormat = DateShort, TZone tzone = Localtime) const;
+  enum PrintFormat { HoursAndMinutes, HoursMinutesSeconds, DateShort };
+  std::string str(PrintFormat = HoursAndMinutes, TZone tzone = Localtime) const;
   static DateTime fromUTC(const boost::posix_time::ptime &utc, const Timezone &timezone);
   static DateTime fromLocal(const boost::posix_time::ptime &local, const Timezone &timezone);
 
-  bool operator<(const DateTime &other) { return utc < other.utc; }
-  bool operator>(const DateTime &other) { return utc > other.utc; }
-  bool operator==(const DateTime &other) { return utc == other.utc; }
-  bool operator<=(const DateTime &other) { return utc <= other.utc; }
-  bool operator>=(const DateTime &other) { return utc >= other.utc; }
-  bool operator!=(const DateTime &other) { return utc != other.utc; }
+  bool operator<(const DateTime &other) const { return utc < other.utc; }
+  bool operator>(const DateTime &other) const { return utc > other.utc; }
+  bool operator==(const DateTime &other) const { return utc == other.utc; }
+  bool operator<=(const DateTime &other) const { return utc <= other.utc; }
+  bool operator>=(const DateTime &other) const { return utc >= other.utc; }
+  bool operator!=(const DateTime &other) const { return utc != other.utc; }
 };
 
 

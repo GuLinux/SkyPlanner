@@ -182,8 +182,15 @@ DateTime DateTime::fromLocal(const boost::posix_time::ptime &local, const Timezo
   return {local - timezone.offset(), local, timezone};
 }
 
-string DateTime::str(DateTime::PrintFormat, DateTime::TZone tzone) const
+string DateTime::str(DateTime::PrintFormat format, DateTime::TZone tzone) const
 {
+  static map<PrintFormat, function<string(boost::posix_time::ptime)>> formats {
+    {HoursAndMinutes, [this](const boost::posix_time::ptime &t){ return (::format("%02d:%02d") % t.time_of_day().hours() % t.time_of_day().minutes()).str(); }},
+    {HoursMinutesSeconds, [this](const boost::posix_time::ptime &t){ return (::format("%02d:%02d:%02d") % t.time_of_day().hours() % t.time_of_day().minutes() % t.time_of_day().seconds() ).str(); }},
+    {DateShort, [this](const boost::posix_time::ptime &t){return (::format("%d %s, %02d:%02d") % t.date().day() % t.date().month().as_short_string() % t.time_of_day().hours() % t.time_of_day().minutes()).str(); }},
+  };
+
+  return formats[format](UTC ? utc : localtime);
 }
 
 

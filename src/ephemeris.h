@@ -28,9 +28,9 @@ class Ephemeris
 {
   public:
     struct RiseTransitSet {
-      boost::posix_time::ptime rise;
-      boost::posix_time::ptime transit;
-      boost::posix_time::ptime set;
+      DateTime rise;
+      DateTime transit;
+      DateTime set;
     };
     struct LunarPhase {
       double illuminated_fraction;
@@ -43,8 +43,8 @@ class Ephemeris
       operator bool() const;
     };
     struct Darkness {
-      boost::posix_time::ptime begin;
-      boost::posix_time::ptime end;
+      DateTime begin;
+      DateTime end;
       boost::posix_time::time_duration duration;
     };
 

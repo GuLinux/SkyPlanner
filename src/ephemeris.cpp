@@ -46,18 +46,18 @@ void Ephemeris::setTimezone(const Timezone &timezone)
 Ephemeris::RiseTransitSet Ephemeris::moon( const boost::gregorian::date &when, bool nightMode ) const
 {
   //DateTime dtWhen = DateTime::fromLocal(when, d->timezone);
-  return d->rst(boost::posix_time::ptime{when}, [](double jd, ln_lnlat_posn* pos,ln_rst_time* rst){ return ln_get_lunar_rst(jd, pos, rst); }, nightMode);
+  return d->rst(when, [](double jd, ln_lnlat_posn* pos,ln_rst_time* rst){ return ln_get_lunar_rst(jd, pos, rst); }, nightMode);
 }
 
 
 Ephemeris::RiseTransitSet Ephemeris::sun( const boost::gregorian::date &when, bool nightMode ) const
 {
-  return d->rst(boost::posix_time::ptime{when}, [](double jd, ln_lnlat_posn* pos,ln_rst_time* rst){ return ln_get_solar_rst(jd, pos, rst); }, nightMode);
+  return d->rst(when, [](double jd, ln_lnlat_posn* pos,ln_rst_time* rst){ return ln_get_solar_rst(jd, pos, rst); }, nightMode);
 }
 
 Ephemeris::RiseTransitSet Ephemeris::astronomicalTwilight( const boost::gregorian::date &when, bool nightMode ) const
 {
-  return d->rst(boost::posix_time::ptime{when}, [](double jd, ln_lnlat_posn* pos,ln_rst_time* rst){ return ln_get_solar_rst_horizon(jd, pos, LN_SOLAR_ASTRONOMICAL_HORIZON, rst); }, nightMode);
+  return d->rst(when, [](double jd, ln_lnlat_posn* pos,ln_rst_time* rst){ return ln_get_solar_rst_horizon(jd, pos, LN_SOLAR_ASTRONOMICAL_HORIZON, rst); }, nightMode);
 }
 
 
@@ -82,7 +82,7 @@ Ephemeris::Darkness Ephemeris::darknessHours( const boost::gregorian::date &when
 
   if(darkness.rise > _moon.rise)
     darkness.rise = _moon.rise;
-  return {darkness.set, darkness.rise, darkness.rise - darkness.set};
+  return {darkness.set, darkness.rise, darkness.rise.utc - darkness.set.utc};
 }
 
 Timezone Ephemeris::timezone() const
@@ -104,7 +104,7 @@ Ephemeris::BestAltitude Ephemeris::findBestAltitude( const Coordinates::Equatori
     }
     return result;
   }, false);
-  if(rst.transit == boost::posix_time::ptime{})  return {};
+  if(rst.transit.utc == boost::posix_time::ptime{})  return {};
 
   ln_lnlat_posn observer = d->lnGeoPosition();
 
@@ -114,8 +114,9 @@ Ephemeris::BestAltitude Ephemeris::findBestAltitude( const Coordinates::Equatori
     return BestAltitude{{ Angle::degrees(position.alt), Angle::degrees(position.az) }, when };
   };
 
-  if(rst.transit < rangeEnd && rst.transit > rangeStart) {
-    return bestAltitude(rst.transit);
+  // TODO: fix, using utc
+  if(rst.transit.localtime < d->timezone.fix(rangeEnd) && rst.transit.localtime > d->timezone.fix(rangeStart)) {
+    return bestAltitude(rst.transit.localtime - boost::posix_time::seconds(d->timezone.dstOffset) );
   }
 
   BestAltitude atStart = bestAltitude(rangeStart);
@@ -130,29 +131,31 @@ Ephemeris::BestAltitude::operator bool() const
 
 
 
-double Ephemeris::Private::dateToJulian(const boost::posix_time::ptime &when) const
+double Ephemeris::Private::dateToJulian(const boost::posix_time::ptime &when, bool utc) const
 {
 /*  tm _tm = boost::posix_time::to_tm(when);
   time_t t = mktime(&_tm);
   return ln_get_julian_from_timet(&t);
 */
+  // TODO: always UFC as input?
+  if(utc) {
+    ln_date date{when.date().year(), when.date().month(), when.date().day(), when.time_of_day().hours(), when.time_of_day().minutes(), static_cast<double>(when.time_of_day().seconds())};
+    return ln_get_julian_day(&date);
+  }
   ln_zonedate zonedate{when.date().year(), when.date().month(), when.date().day(), when.time_of_day().hours(), when.time_of_day().minutes(), static_cast<double>(when.time_of_day().seconds()), timezone.rawOffset};
   ln_date date;
   ln_zonedate_to_date(&zonedate, &date);
   return ln_get_julian_day(&date);
 }
 
-boost::posix_time::ptime Ephemeris::Private::julianToDate(double jd) const
+DateTime Ephemeris::Private::julianToDate(double jd) const
 {
   // TODO: local/UTC date support
-  ln_date date;
-  ln_zonedate zonedate;
-  ln_get_date(jd, &date);
-  ln_date_to_zonedate(&date, &zonedate, timezone.rawOffset); 
-//  ln_get_local_date(jd, &zonedate);
+  time_t utc_time;
+  ln_get_timet_from_julian(jd, &utc_time);
   try {
-  return {{static_cast<uint16_t>(zonedate.years), static_cast<uint16_t>(zonedate.months), static_cast<uint16_t>(zonedate.days)},
-          {zonedate.hours, zonedate.minutes, static_cast<int>(zonedate.seconds)}};
+    boost::posix_time::ptime utc = boost::posix_time::from_time_t(utc_time);
+    return DateTime::fromUTC(utc, timezone); 
   } catch(std::exception &e) {
     return {};
   }
@@ -162,6 +165,11 @@ boost::posix_time::ptime Ephemeris::Private::julianToDate(double jd) const
 ln_lnlat_posn Ephemeris::Private::lnGeoPosition() const
 {
   return {geoPosition.longitude.degrees(), geoPosition.latitude.degrees()};
+}
+
+Ephemeris::RiseTransitSet Ephemeris::Private::rst(const boost::gregorian::date &date, RiseTransitSetFunction f, bool nightMode)
+{
+  return rst(boost::posix_time::ptime(date), f, nightMode);
 }
 
 Ephemeris::RiseTransitSet Ephemeris::Private::rst(const boost::posix_time::ptime &when, RiseTransitSetFunction f, bool nightMode)

@@ -546,18 +546,18 @@ void AstroSessionTab::Private::updatePositionDetails( WContainerWidget *position
   positionDetails->addWidget(new WText{WString::tr("printable_timezone_info").arg(WString::fromUTF8(timezone.timeZoneName))});
   positionDetails->addWidget(new WBreak);
   positionDetails->addWidget(new WText(WString(WString::tr("astrosessiontab_sun_info"))
-    .arg(formatTime(sun.rise, true))
-    .arg(formatTime(sun.set, true))
+    .arg(sun.rise.str(DateTime::DateShort) )
+    .arg(sun.set.str(DateTime::DateShort) )
   ));
   positionDetails->addWidget(new WBreak);
   positionDetails->addWidget(new WText(WString(WString::tr("astrosessiontab_astro_twilight_info"))
-    .arg(formatTime(astroTwilight.rise, true))
-    .arg(formatTime(astroTwilight.set, true))
+    .arg(astroTwilight.rise.str(DateTime::DateShort))
+    .arg(astroTwilight.set.str(DateTime::DateShort))
   ));
   positionDetails->addWidget(new WBreak);
   positionDetails->addWidget(new WText(WString(WString::tr("astrosessiontab_moon_info"))
-    .arg(formatTime(moon.rise, true))
-    .arg(formatTime(moon.set, true))
+    .arg(moon.rise.str(DateTime::DateShort))
+    .arg(moon.set.str(DateTime::DateShort))
   ));
   positionDetails->addWidget(new WBreak);
 
@@ -567,8 +567,8 @@ void AstroSessionTab::Private::updatePositionDetails( WContainerWidget *position
 
     positionDetails->addWidget(new WText{
       WString::tr("astrosessiontab_darkness_hours")
-        .arg(formatTime(darkness.begin, true))
-        .arg(formatTime(darkness.end, true))
+        .arg(darkness.begin.str(DateTime::DateShort))
+        .arg(darkness.end.str(DateTime::DateShort))
         .arg(boost::posix_time::to_simple_string(darkness.duration))
     });
   }
@@ -679,7 +679,7 @@ void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject
     row->elementAt(5)->addWidget(new WText{ Utils::htmlEncode( WString::fromUTF8( Angle::degrees(sessionObject->ngcObject()->angularSize()).printable() )) });
     row->elementAt(6)->addWidget(new WText{ sessionObject->ngcObject()->magnitude() > 90. ? "N/A" : (format("%.1f") % sessionObject->ngcObject()->magnitude()).str() });
     auto bestAltitude = sessionObject->bestAltitude(ephemeris, 1);
-    row->elementAt(7)->addWidget(new WText{ WDateTime::fromPosixTime( timezone.fix(bestAltitude.when)).time().toString() });
+    row->elementAt(7)->addWidget(new WText{ WDateTime::fromPosixTime( timezone.fix(bestAltitude.when)).time().toString()  });
     row->elementAt(8)->addWidget(new WText{ Utils::htmlEncode(WString::fromUTF8(bestAltitude.coordinates.altitude.printable() )) });
     row->elementAt(9)->addWidget(new ObjectDifficultyWidget{sessionObject->ngcObject(), selectedTelescope, bestAltitude.coordinates.altitude.degrees() }); 
     
