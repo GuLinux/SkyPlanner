@@ -299,7 +299,7 @@ WLogEntry SkyPlanner::uLog(const string &type) const
 
 shared_ptr<SkyPlanner::Notification> SkyPlanner::notification(const WString &title, const WString &content, Notification::Type type, int autoHideSeconds, WContainerWidget *addTo)
 {
-  auto notification = make_shared<Notification>(title, content, type, autoHideSeconds == 0);
+  auto notification = make_shared<Notification>(title, content, type, true);
   (addTo ? addTo : d->notifications)->addWidget(notification->widget() );
   notification->widget()->animateShow({WAnimation::Fade, WAnimation::EaseInOut, 500});
   if(autoHideSeconds > 0)
