@@ -130,17 +130,6 @@ string Angle::printable(Format format, PrintFormat printFormat) const
 }
 
  
-
-boost::posix_time::ptime Timezone::fix(const boost::posix_time::ptime &src) const
-{
-  return src + boost::posix_time::seconds(dstOffset);
-}
-
-boost::posix_time::ptime Timezone::fixUTC(const boost::posix_time::ptime &src) const
-{
-  return fix(src) + boost::posix_time::seconds(rawOffset);
-}
-
 boost::posix_time::time_duration Timezone::offset() const
 {
   return boost::posix_time::seconds(dstOffset) + boost::posix_time::seconds(rawOffset);
@@ -182,12 +171,21 @@ DateTime DateTime::fromLocal(const boost::posix_time::ptime &local, const Timezo
   return {local - timezone.offset(), local, timezone};
 }
 
+#ifndef TESTS_NO_WT
+#include <Wt/WApplication>
+#include <Wt/WDateTime>
+#endif
+
 string DateTime::str(DateTime::PrintFormat format, DateTime::TZone tzone) const
 {
   static map<PrintFormat, function<string(boost::posix_time::ptime)>> formats {
     {HoursAndMinutes, [this](const boost::posix_time::ptime &t){ return (::format("%02d:%02d") % t.time_of_day().hours() % t.time_of_day().minutes()).str(); }},
     {HoursMinutesSeconds, [this](const boost::posix_time::ptime &t){ return (::format("%02d:%02d:%02d") % t.time_of_day().hours() % t.time_of_day().minutes() % t.time_of_day().seconds() ).str(); }},
+#ifdef TESTS_NO_WT
     {DateShort, [this](const boost::posix_time::ptime &t){return (::format("%d %s, %02d:%02d") % t.date().day() % t.date().month().as_short_string() % t.time_of_day().hours() % t.time_of_day().minutes()).str(); }},
+#else
+    {DateShort, [this](const boost::posix_time::ptime &t){return (WDateTime::fromPosixTime(t).toString("d MMM hh:mm")).toUTF8(); }},
+#endif
   };
 
   return formats[format](UTC ? utc : localtime);

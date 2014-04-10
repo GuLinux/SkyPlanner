@@ -98,8 +98,6 @@ struct Timezone {
   std::string key(const boost::posix_time::ptime &when, const std::string &language);
   static std::string key(double lat, double lng, const boost::posix_time::ptime &when, const std::string &language);
   static Timezone from(const std::string &response, double lat, double lng);
-  boost::posix_time::ptime fix(const boost::posix_time::ptime &src) const;
-  boost::posix_time::ptime fixUTC(const boost::posix_time::ptime &src) const;
   boost::posix_time::time_duration offset() const;
   operator bool() const { return !timeZoneId.empty(); }
 };
