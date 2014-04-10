@@ -46,6 +46,7 @@ public:
   
   std::string name() const;
   boost::posix_time::ptime when() const;
+  boost::gregorian::date date() const;
   Wt::WDateTime wDateWhen() const;
   dbo::collection<dbo::ptr<AstroSessionObject>> astroSessionObjects() const;
   Coordinates::LatLng position() const;

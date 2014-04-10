@@ -55,6 +55,13 @@ Wt::WDateTime AstroSession::wDateWhen() const
 {
   return WDateTime::fromPosixTime(when());
 }
+
+boost::gregorian::date AstroSession::date() const
+{
+  return _when.date();
+}
+
+
 boost::posix_time::ptime AstroSession::when() const
 {
   return _when;
@@ -81,7 +88,7 @@ void AstroSession::setPosition(const Coordinates::LatLng& position)
 
 AstroSession::ObservabilityRange AstroSession::observabilityRange( const Ephemeris &ephemeris ) const
 {
-  auto sunEphemeris = ephemeris.sun(when());
+  auto sunEphemeris = ephemeris.sun(date());
   return {  
     sunEphemeris.set,
     sunEphemeris.rise

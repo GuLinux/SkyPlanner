@@ -5,7 +5,6 @@ include(${CMAKE_SOURCE_DIR}/src/models/source_files.cmake)
 add_executable(shakhbazian_importer shakhbazian.cpp
   ${CMAKE_SOURCE_DIR}/src/types.cpp
   ${SkyPlanner_MODELS_SRCS}
-  ${CMAKE_SOURCE_DIR}/src/session.cpp
   ${CMAKE_SOURCE_DIR}/src/ephemeris.cpp
   ${CMAKE_SOURCE_DIR}/src/utils/utils.cpp
   ${CMAKE_SOURCE_DIR}/src/constellationfinder.cpp

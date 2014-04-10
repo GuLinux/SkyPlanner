@@ -161,14 +161,14 @@ void ExportAstroSessionResource::handleRequest(const Wt::Http::Request &request,
                          );
   }
 
-  printable.bindString("moonPhase", WString::tr("astrosessiontab_moon_phase").arg(static_cast<int>(ephemeris.moonPhase(d->astroSession->when()).illuminated_fraction*100.)));
+  printable.bindString("moonPhase", WString::tr("astrosessiontab_moon_phase").arg(static_cast<int>(ephemeris.moonPhase(d->astroSession->date()).illuminated_fraction*100.)));
   printable.bindString("sessionDate", d->astroSession->wDateWhen().date().toString("dddd dd MMMM yyyy"));
   printable.bindString("timezone_info", d->timezone ?  WString::tr("printable_timezone_info").arg(WString::fromUTF8(d->timezone.timeZoneName)) : WString());
   if(d->astroSession->position()) {
-    auto sun = ephemeris.sun(d->astroSession->when());
-    auto twilight = ephemeris.astronomicalTwilight(d->astroSession->when());
-    auto moon = ephemeris.moon(d->astroSession->when());
-    auto darkness = ephemeris.darknessHours(d->astroSession->when() );
+    auto sun = ephemeris.sun(d->astroSession->date());
+    auto twilight = ephemeris.astronomicalTwilight(d->astroSession->date());
+    auto moon = ephemeris.moon(d->astroSession->date());
+    auto darkness = ephemeris.darknessHours(d->astroSession->date() );
 
     auto formatTime = [=](const boost::posix_time::ptime &time) { auto t = d->timezone.fix(time); return (format("%02d:%02d") % t.time_of_day().hours() % t.time_of_day().minutes()).str(); };
     printable.bindString("astrosessiontab_sun_info", WString::tr("astrosessiontab_sun_info").arg(formatTime(sun.rise)).arg(formatTime(sun.set)));

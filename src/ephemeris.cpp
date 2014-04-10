@@ -28,8 +28,6 @@ Ephemeris::Private::Private( const Coordinates::LatLng &geoPosition, const Timez
 {
 }
 
-
-
 Ephemeris::Ephemeris( const Coordinates::LatLng &geoPosition, const Timezone &timezone )
   : d( geoPosition, timezone, this )
 {
@@ -45,25 +43,27 @@ void Ephemeris::setTimezone(const Timezone &timezone)
 }
 
 
-Ephemeris::RiseTransitSet Ephemeris::moon( const boost::posix_time::ptime &when, bool nightMode ) const
+Ephemeris::RiseTransitSet Ephemeris::moon( const boost::gregorian::date &when, bool nightMode ) const
 {
-  return d->rst(boost::posix_time::ptime{when.date()}, [](double jd, ln_lnlat_posn* pos,ln_rst_time* rst){ return ln_get_lunar_rst(jd, pos, rst); }, nightMode);
+  //DateTime dtWhen = DateTime::fromLocal(when, d->timezone);
+  return d->rst(boost::posix_time::ptime{when}, [](double jd, ln_lnlat_posn* pos,ln_rst_time* rst){ return ln_get_lunar_rst(jd, pos, rst); }, nightMode);
 }
 
 
-Ephemeris::RiseTransitSet Ephemeris::sun( const boost::posix_time::ptime &when, bool nightMode ) const
+Ephemeris::RiseTransitSet Ephemeris::sun( const boost::gregorian::date &when, bool nightMode ) const
 {
-  return d->rst(boost::posix_time::ptime{when.date()}, [](double jd, ln_lnlat_posn* pos,ln_rst_time* rst){ return ln_get_solar_rst(jd, pos, rst); }, nightMode);
+  return d->rst(boost::posix_time::ptime{when}, [](double jd, ln_lnlat_posn* pos,ln_rst_time* rst){ return ln_get_solar_rst(jd, pos, rst); }, nightMode);
 }
 
-Ephemeris::RiseTransitSet Ephemeris::astronomicalTwilight( const boost::posix_time::ptime &when, bool nightMode ) const
+Ephemeris::RiseTransitSet Ephemeris::astronomicalTwilight( const boost::gregorian::date &when, bool nightMode ) const
 {
-  return d->rst(boost::posix_time::ptime{when.date()}, [](double jd, ln_lnlat_posn* pos,ln_rst_time* rst){ return ln_get_solar_rst_horizon(jd, pos, LN_SOLAR_ASTRONOMICAL_HORIZON, rst); }, nightMode);
+  return d->rst(boost::posix_time::ptime{when}, [](double jd, ln_lnlat_posn* pos,ln_rst_time* rst){ return ln_get_solar_rst_horizon(jd, pos, LN_SOLAR_ASTRONOMICAL_HORIZON, rst); }, nightMode);
 }
 
 
-Ephemeris::LunarPhase Ephemeris::moonPhase( const boost::posix_time::ptime &when ) const
+Ephemeris::LunarPhase Ephemeris::moonPhase( const boost::gregorian::date &date ) const
 {
+  boost::posix_time::ptime when(date);
   LunarPhase lunarPhase;
   lunarPhase.illuminated_fraction = ln_get_lunar_disk(d->dateToJulian(when));
   lunarPhase.phase_angle = ln_get_lunar_phase(d->dateToJulian(when));
@@ -72,7 +72,7 @@ Ephemeris::LunarPhase Ephemeris::moonPhase( const boost::posix_time::ptime &when
 }
 
 
-Ephemeris::Darkness Ephemeris::darknessHours( const boost::posix_time::ptime &when ) const
+Ephemeris::Darkness Ephemeris::darknessHours( const boost::gregorian::date &when ) const
 {
   RiseTransitSet darkness = astronomicalTwilight(when);
   RiseTransitSet _moon = moon(when);
@@ -82,14 +82,6 @@ Ephemeris::Darkness Ephemeris::darknessHours( const boost::posix_time::ptime &wh
 
   if(darkness.rise > _moon.rise)
     darkness.rise = _moon.rise;
-
-/*
-  if(moonEphemeris.set - darkness.set < boost::posix_time::hours(4) && moonEphemeris.set > darkness.set )
-    darkness.set = moonEphemeris.set;
-
-  if(darkness.rise - moonEphemeris.rise < boost::posix_time::hours(4) && moonEphemeris.rise < darkness.rise )
-    darkness.rise = moonEphemeris.rise;
-*/
   return {darkness.set, darkness.rise, darkness.rise - darkness.set};
 }
 

@@ -87,6 +87,7 @@ namespace Coordinates {
   };
 }
 
+
 struct Timezone {
   int dstOffset = 0;
   int rawOffset = 0;
@@ -99,8 +100,28 @@ struct Timezone {
   static Timezone from(const std::string &response, double lat, double lng);
   boost::posix_time::ptime fix(const boost::posix_time::ptime &src) const;
   boost::posix_time::ptime fixUTC(const boost::posix_time::ptime &src) const;
+  boost::posix_time::time_duration offset() const;
   operator bool() const { return !timeZoneId.empty(); }
 };
+
+struct DateTime {
+  boost::posix_time::ptime utc;
+  boost::posix_time::ptime localtime;
+  Timezone timezone;
+  enum TZone { UTC, Localtime };
+  enum PrintFormat { HourOnly, DateShort, DateLong };
+  std::string str(PrintFormat = DateShort, TZone tzone = Localtime) const;
+  static DateTime fromUTC(const boost::posix_time::ptime &utc, const Timezone &timezone);
+  static DateTime fromLocal(const boost::posix_time::ptime &local, const Timezone &timezone);
+
+  bool operator<(const DateTime &other) { return utc < other.utc; }
+  bool operator>(const DateTime &other) { return utc > other.utc; }
+  bool operator==(const DateTime &other) { return utc == other.utc; }
+  bool operator<=(const DateTime &other) { return utc <= other.utc; }
+  bool operator>=(const DateTime &other) { return utc >= other.utc; }
+  bool operator!=(const DateTime &other) { return utc != other.utc; }
+};
+
 
 std::ostream &operator<<(std::ostream &o, const Timezone &t);
 std::ostream &operator<<(std::ostream &o, const Coordinates::LatLng &c);

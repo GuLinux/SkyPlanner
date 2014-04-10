@@ -50,11 +50,11 @@ class Ephemeris
 
     Ephemeris(const Coordinates::LatLng &geoPosition, const Timezone &timezone);
     ~Ephemeris();
-    RiseTransitSet sun(const boost::posix_time::ptime &when, bool nightMode = true) const;
-    RiseTransitSet astronomicalTwilight(const boost::posix_time::ptime &when, bool nightMode = true) const;
-    RiseTransitSet moon(const boost::posix_time::ptime &when, bool nightMode = true) const;
-    LunarPhase moonPhase(const boost::posix_time::ptime &when) const;
-    Darkness darknessHours(const boost::posix_time::ptime &when) const;
+    RiseTransitSet sun(const boost::gregorian::date &when, bool nightMode = true) const;
+    RiseTransitSet astronomicalTwilight(const boost::gregorian::date &when, bool nightMode = true) const;
+    RiseTransitSet moon(const boost::gregorian::date &when, bool nightMode = true) const;
+    LunarPhase moonPhase(const boost::gregorian::date &when) const;
+    Darkness darknessHours(const boost::gregorian::date &when) const;
     void setTimezone(const Timezone &timezone);
     Timezone timezone() const;
 

@@ -526,16 +526,16 @@ void AstroSessionTab::Private::updatePositionDetails( WContainerWidget *position
     positionDetails->addWidget(new WBreak);
   };
   if(!astroSession->position()) {
-    addMoonPhaseDetails(Ephemeris({}, {}).moonPhase(astroSession->when()));
+    addMoonPhaseDetails(Ephemeris({}, {}).moonPhase(astroSession->date()));
     return;
   }
 //   forecast.fetch(astroSession->position().longitude, astroSession->position().latitude);
   const Ephemeris ephemeris(astroSession->position(), timezone);
-  Ephemeris::RiseTransitSet sun = ephemeris.sun(astroSession->when());
-  Ephemeris::RiseTransitSet astroTwilight = ephemeris.astronomicalTwilight(astroSession->when());
-  Ephemeris::RiseTransitSet moon = ephemeris.moon(astroSession->when());
-  Ephemeris::LunarPhase lunarPhase = ephemeris.moonPhase(astroSession->when());
-  Ephemeris::Darkness darkness = ephemeris.darknessHours(astroSession->when() );
+  Ephemeris::RiseTransitSet sun = ephemeris.sun(astroSession->date());
+  Ephemeris::RiseTransitSet astroTwilight = ephemeris.astronomicalTwilight(astroSession->date());
+  Ephemeris::RiseTransitSet moon = ephemeris.moon(astroSession->date());
+  Ephemeris::LunarPhase lunarPhase = ephemeris.moonPhase(astroSession->date());
+  Ephemeris::Darkness darkness = ephemeris.darknessHours(astroSession->date() );
 
   auto formatTime = [=](const boost::posix_time::ptime &solarT, bool date = false) { 
     auto t = timezone.fix(solarT);

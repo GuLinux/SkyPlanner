@@ -138,7 +138,12 @@ boost::posix_time::ptime Timezone::fix(const boost::posix_time::ptime &src) cons
 
 boost::posix_time::ptime Timezone::fixUTC(const boost::posix_time::ptime &src) const
 {
-  return fix(src) + boost::posix_time::seconds(dstOffset);
+  return fix(src) + boost::posix_time::seconds(rawOffset);
+}
+
+boost::posix_time::time_duration Timezone::offset() const
+{
+  return boost::posix_time::seconds(dstOffset) + boost::posix_time::seconds(rawOffset);
 }
 
 string Timezone::key(const boost::posix_time::ptime &when, const std::string &language)
@@ -153,7 +158,7 @@ string Timezone::key(double latitude, double longitude, const boost::posix_time:
 Timezone Timezone::from(const string &response, double lat, double lng)
 {
   Timezone timezone;
-  #ifndef TESTS_NO_WT
+#ifndef TESTS_NO_WT
   Json::Object timezoneJsonObject;
   Json::parse(response, timezoneJsonObject);
   timezone.dstOffset = timezoneJsonObject.get("dstOffset");
@@ -165,6 +170,22 @@ Timezone Timezone::from(const string &response, double lat, double lng)
   return timezone;
 #endif
 }
+
+
+DateTime DateTime::fromUTC(const boost::posix_time::ptime &utc, const Timezone &timezone)
+{
+  return {utc, utc + timezone.offset(), timezone};
+}
+
+DateTime DateTime::fromLocal(const boost::posix_time::ptime &local, const Timezone &timezone)
+{
+  return {local - timezone.offset(), local, timezone};
+}
+
+string DateTime::str(DateTime::PrintFormat, DateTime::TZone tzone) const
+{
+}
+
 
 ostream &operator<<(ostream &o, const Timezone &t)
 {

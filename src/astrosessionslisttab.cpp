@@ -97,7 +97,7 @@ AstroSessionsListTab::AstroSessionsListTab(Session &session, Wt::WContainerWidge
   Ephemeris moonPhaseEphemeris{{}, {}};
   for(int i=-0; i<60; i++) {
     auto day = boost::posix_time::second_clock::local_time() + boost::posix_time::time_duration(24*i, 0, 0);
-    Ephemeris::LunarPhase phase = moonPhaseEphemeris.moonPhase(day);
+    Ephemeris::LunarPhase phase = moonPhaseEphemeris.moonPhase(day.date() );
     if(phase.illuminated_fraction < 0.15)
       newMoons.push_back({phase, day});
   }
