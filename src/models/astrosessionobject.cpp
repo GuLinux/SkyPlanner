@@ -50,9 +50,10 @@ Coordinates::Equatorial AstroSessionObject::coordinates() const
 
 Ephemeris::BestAltitude AstroSessionObject::bestAltitude(const AstroSessionPtr &astroSession, const NgcObjectPtr &ngcObject, const Ephemeris &ephemeris, int rangeDeltaInHours)
 {
-  AstroSession::ObservabilityRange range = astroSession->observabilityRange(ephemeris).delta({rangeDeltaInHours, 0, 0});
-  return ephemeris.findBestAltitude( ngcObject->coordinates(), range.begin, range.end );
+  auto twilight = ephemeris.astronomicalTwilight(astroSession->date());
+  return ephemeris.findBestAltitude( ngcObject->coordinates(), twilight.set, twilight.rise);
 } 
+
 Ephemeris::BestAltitude AstroSessionObject::bestAltitude(const Ephemeris &ephemeris, int rangeDeltaInHours) const
 {
   return bestAltitude(_astroSession, _ngcObject, ephemeris, rangeDeltaInHours);

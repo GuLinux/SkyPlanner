@@ -32,7 +32,7 @@ class EphemerisCache
 public:
     explicit EphemerisCache() = default;
     explicit EphemerisCache(const Ephemeris::BestAltitude &bestAltitude, const dbo::ptr<NgcObject> &ngcObject, const dbo::ptr<AstroSession> &astroSession)
-    : _astroSession(astroSession), _ngcObject(ngcObject), _transitTime(bestAltitude.when), _altitude(bestAltitude.coordinates.altitude.degrees()), _azimuth(bestAltitude.coordinates.azimuth.degrees()) {}
+    : _astroSession(astroSession), _ngcObject(ngcObject), _transitTime(bestAltitude.when.utc), _altitude(bestAltitude.coordinates.altitude.degrees()), _azimuth(bestAltitude.coordinates.azimuth.degrees()) {}
 
 //  explicit Telescope(const std::string &name, int diameter, int focalLength, bool isDefault = false);
   template<typename Action>
@@ -44,7 +44,7 @@ public:
     dbo::belongsTo(a, _astroSession);
     dbo::belongsTo(a, _ngcObject);
   }
-  Ephemeris::BestAltitude bestAltitude() const { return { {Angle::degrees(_altitude), Angle::degrees(_azimuth)},  _transitTime};  }
+  Ephemeris::BestAltitude bestAltitude(const Timezone &timezone) const { return { {Angle::degrees(_altitude), Angle::degrees(_azimuth)},  DateTime::fromUTC(_transitTime, timezone)};  }
 private:
   dbo::ptr<AstroSession> _astroSession;
   dbo::ptr<NgcObject> _ngcObject;

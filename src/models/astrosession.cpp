@@ -86,20 +86,3 @@ void AstroSession::setPosition(const Coordinates::LatLng& position)
   _longitude.reset(position.longitude.degrees());
 }
 
-AstroSession::ObservabilityRange AstroSession::observabilityRange( const Ephemeris &ephemeris ) const
-{
-  // TODO: fix, or remove
-  auto sunEphemeris = ephemeris.sun(date());
-  return {  
-    sunEphemeris.set.utc + boost::posix_time::seconds(ephemeris.timezone().rawOffset),
-    sunEphemeris.rise.utc + boost::posix_time::seconds(ephemeris.timezone().rawOffset)
-  };
-}
-
-
-AstroSession::ObservabilityRange &AstroSession::ObservabilityRange::delta( const boost::posix_time::time_duration &duration )
-{
-  begin += duration;
-  end -= duration;
-  return *this;
-}

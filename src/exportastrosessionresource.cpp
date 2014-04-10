@@ -137,7 +137,7 @@ void ExportAstroSessionResource::handleRequest(const Wt::Http::Request &request,
       add(object->ngcObject()->typeDescription().toUTF8());
       if(d->astroSession->position()) {
         auto bestAltitude = object->bestAltitude(ephemeris, 1);
-        add(boost::posix_time::to_simple_string(bestAltitude.when.time_of_day()));
+        add(bestAltitude.when.str());
         add(format("%.3f") % bestAltitude.coordinates.altitude.degrees());
       }
       response.out() << boost::algorithm::join(fields, ",") << endl;
@@ -170,7 +170,6 @@ void ExportAstroSessionResource::handleRequest(const Wt::Http::Request &request,
     auto moon = ephemeris.moon(d->astroSession->date());
     auto darkness = ephemeris.darknessHours(d->astroSession->date() );
 
-    auto formatTime = [=](const boost::posix_time::ptime &time) { auto t = d->timezone.fix(time); return (format("%02d:%02d") % t.time_of_day().hours() % t.time_of_day().minutes()).str(); };
     printable.bindString("astrosessiontab_sun_info", WString::tr("astrosessiontab_sun_info").arg(sun.rise.str(DateTime::DateShort)).arg(sun.set.str(DateTime::DateShort)));
     printable.bindString("astrosessiontab_astro_twilight_info", WString::tr("astrosessiontab_astro_twilight_info").arg(twilight.rise.str(DateTime::DateShort)).arg(twilight.set.str(DateTime::DateShort)));
     printable.bindString("astrosessiontab_moon_info", WString::tr("astrosessiontab_moon_info").arg(moon.rise.str(DateTime::DateShort)).arg(moon.set.str(DateTime::DateShort)));
@@ -193,7 +192,7 @@ void ExportAstroSessionResource::handleRequest(const Wt::Http::Request &request,
     rowTemplate.bindInt("total-columns", d->astroSession->position() ? 10 : 8);
     auto bestAltitude = sessionObject->bestAltitude(ephemeris, 1);
     if(d->astroSession->position()) {
-      rowTemplate.bindString("highestAt", WDateTime::fromPosixTime( bestAltitude.when).time().toString() );
+      rowTemplate.bindString("highestAt", bestAltitude.when.str() );
       rowTemplate.bindString("maxAltitude", WString::fromUTF8(bestAltitude.coordinates.altitude.printable(Angle::Degrees, Angle::HTML)) );
     }
     rowTemplate.bindWidget("difficulty", new ObjectDifficultyWidget{sessionObject->ngcObject(), d->telescope, bestAltitude.coordinates.altitude.degrees() });

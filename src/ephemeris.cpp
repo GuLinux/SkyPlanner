@@ -90,10 +90,10 @@ Timezone Ephemeris::timezone() const
   return d->timezone;
 }
 
-Ephemeris::BestAltitude Ephemeris::findBestAltitude( const Coordinates::Equatorial &arDec, const boost::posix_time::ptime &rangeStart, const boost::posix_time::ptime &rangeEnd, const boost::posix_time::time_duration steps) const
+Ephemeris::BestAltitude Ephemeris::findBestAltitude( const Coordinates::Equatorial &arDec, const DateTime &rangeStart, const DateTime &rangeEnd) const
 {
   ln_equ_posn object{arDec.rightAscension.degrees(), arDec.declination.degrees()};
-  RiseTransitSet rst = d->rst(rangeStart, [&object](double jd, ln_lnlat_posn* pos,ln_rst_time* rst){
+  RiseTransitSet rst = d->rst(rangeStart.utc, [&object](double jd, ln_lnlat_posn* pos,ln_rst_time* rst){
     int result = 0;
     int horizon = 0;
     result = ln_get_object_next_rst(jd, pos, &object, rst);
@@ -108,15 +108,14 @@ Ephemeris::BestAltitude Ephemeris::findBestAltitude( const Coordinates::Equatori
 
   ln_lnlat_posn observer = d->lnGeoPosition();
 
-  auto bestAltitude = [this,&observer, &object](const boost::posix_time::ptime &when) mutable {
+  auto bestAltitude = [this,&observer, &object](const DateTime &when) mutable {
     ln_hrz_posn position;
-    ln_get_hrz_from_equ(&object, &observer, d->dateToJulian(when), &position);
+    ln_get_hrz_from_equ(&object, &observer, d->dateToJulian(when.utc, true), &position);
     return BestAltitude{{ Angle::degrees(position.alt), Angle::degrees(position.az) }, when };
   };
 
-  // TODO: fix, using utc
-  if(rst.transit.localtime < d->timezone.fix(rangeEnd) && rst.transit.localtime > d->timezone.fix(rangeStart)) {
-    return bestAltitude(rst.transit.localtime - boost::posix_time::seconds(d->timezone.dstOffset) );
+  if(rst.transit < rangeEnd && rst.transit > rangeStart ) {
+    return bestAltitude(rst.transit);
   }
 
   BestAltitude atStart = bestAltitude(rangeStart);
@@ -126,11 +125,11 @@ Ephemeris::BestAltitude Ephemeris::findBestAltitude( const Coordinates::Equatori
 
 Ephemeris::BestAltitude::operator bool() const
 {
-  return when != boost::posix_time::ptime{} && coordinates.altitude.valid() && coordinates.azimuth.valid();
+  return when.utc != boost::posix_time::ptime{} && coordinates.altitude.valid() && coordinates.azimuth.valid();
 }
 
 
-
+// TODO: use DateTime?
 double Ephemeris::Private::dateToJulian(const boost::posix_time::ptime &when, bool utc) const
 {
 /*  tm _tm = boost::posix_time::to_tm(when);
@@ -169,6 +168,7 @@ ln_lnlat_posn Ephemeris::Private::lnGeoPosition() const
 
 Ephemeris::RiseTransitSet Ephemeris::Private::rst(const boost::gregorian::date &date, RiseTransitSetFunction f, bool nightMode)
 {
+  // TODO: utc? local?
   return rst(boost::posix_time::ptime(date), f, nightMode);
 }
 
@@ -176,7 +176,9 @@ Ephemeris::RiseTransitSet Ephemeris::Private::rst(const boost::posix_time::ptime
 {
   ln_lnlat_posn where = lnGeoPosition();
   ln_rst_time rst;
-  f(dateToJulian(when), &where, &rst);
+
+  // TODO: utc? local?
+  f(dateToJulian(when, true), &where, &rst);
   if(nightMode && rst.rise < rst.set) {
     ln_rst_time nextDay_rst;
     f(dateToJulian(when + boost::posix_time::hours{24}), &where, &nextDay_rst);

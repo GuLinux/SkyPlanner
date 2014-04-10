@@ -536,13 +536,6 @@ void AstroSessionTab::Private::updatePositionDetails( WContainerWidget *position
   Ephemeris::RiseTransitSet moon = ephemeris.moon(astroSession->date());
   Ephemeris::LunarPhase lunarPhase = ephemeris.moonPhase(astroSession->date());
   Ephemeris::Darkness darkness = ephemeris.darknessHours(astroSession->date() );
-
-  auto formatTime = [=](const boost::posix_time::ptime &solarT, bool date = false) { 
-    auto t = timezone.fix(solarT);
-    if(!date)
-      return (format("%02d:%02d") % t.time_of_day().hours() % t.time_of_day().minutes()).str();
-    return (format("%s %02d:%02d") % WDate(t.date()).toString("d/M").toUTF8() % t.time_of_day().hours() % t.time_of_day().minutes()).str();
-  };
   positionDetails->addWidget(new WText{WString::tr("printable_timezone_info").arg(WString::fromUTF8(timezone.timeZoneName))});
   positionDetails->addWidget(new WBreak);
   positionDetails->addWidget(new WText(WString(WString::tr("astrosessiontab_sun_info"))
@@ -679,7 +672,7 @@ void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject
     row->elementAt(5)->addWidget(new WText{ Utils::htmlEncode( WString::fromUTF8( Angle::degrees(sessionObject->ngcObject()->angularSize()).printable() )) });
     row->elementAt(6)->addWidget(new WText{ sessionObject->ngcObject()->magnitude() > 90. ? "N/A" : (format("%.1f") % sessionObject->ngcObject()->magnitude()).str() });
     auto bestAltitude = sessionObject->bestAltitude(ephemeris, 1);
-    row->elementAt(7)->addWidget(new WText{ WDateTime::fromPosixTime( timezone.fix(bestAltitude.when)).time().toString()  });
+    row->elementAt(7)->addWidget(new WText{ bestAltitude.when.str() });
     row->elementAt(8)->addWidget(new WText{ Utils::htmlEncode(WString::fromUTF8(bestAltitude.coordinates.altitude.printable() )) });
     row->elementAt(9)->addWidget(new ObjectDifficultyWidget{sessionObject->ngcObject(), selectedTelescope, bestAltitude.coordinates.altitude.degrees() }); 
     

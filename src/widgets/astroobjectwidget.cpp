@@ -75,7 +75,7 @@ void AstroObjectWidget::Private::init()
 
   auto bestAltitude =  AstroSessionObject::bestAltitude(astroSession, ngcObject, ephemeris, 1);
 
-  info->bindString("best_altitude_when", WDateTime::fromPosixTime( ephemeris.timezone().fix(bestAltitude.when)).time().toString());
+  info->bindString("best_altitude_when", bestAltitude.when.str() );
   info->bindString("best_altitude", Utils::htmlEncode(WString::fromUTF8(bestAltitude.coordinates.altitude.printable() )) );
   info->bindWidget("difficulty", new ObjectDifficultyWidget{ngcObject, telescope, bestAltitude.coordinates.altitude.degrees() } );
   info->setCondition("has-catalogues-descriptions", ngcObject->descriptions().size() > 0);

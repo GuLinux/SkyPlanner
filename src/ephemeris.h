@@ -39,7 +39,7 @@ class Ephemeris
     };
     struct BestAltitude {
       Coordinates::AltAzimuth coordinates;
-      boost::posix_time::ptime when;
+      DateTime when;
       operator bool() const;
     };
     struct Darkness {
@@ -58,7 +58,7 @@ class Ephemeris
     void setTimezone(const Timezone &timezone);
     Timezone timezone() const;
 
-    BestAltitude findBestAltitude(const Coordinates::Equatorial &equatorial, const boost::posix_time::ptime &rangeStart, const boost::posix_time::ptime &rangeEnd, const boost::posix_time::time_duration steps = {0, 10, 0}) const;
+    BestAltitude findBestAltitude(const Coordinates::Equatorial &equatorial, const DateTime &rangeStart, const DateTime &rangeEnd) const;
   private:
     D_PTR;
 };

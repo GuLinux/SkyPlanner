@@ -128,9 +128,8 @@ void SelectObjectsWidget::Private::append(WTable *table, const Dbo::ptr<NgcObjec
   row->elementAt(1)->addWidget(new WText{ ngcObject->typeDescription() });
   row->elementAt(2)->addWidget(new WText{ WString::fromUTF8(ngcObject->constellation().name) });
   row->elementAt(3)->addWidget(new WText{ (ngcObject->magnitude() > 90.) ? "N/A" : (format("%.1f") % ngcObject->magnitude()).str() });
-  WDateTime transit = WDateTime::fromPosixTime(timezone.fix(bestAltitude.when));
   row->elementAt(4)->addWidget(new ObjectDifficultyWidget(ngcObject, selectedTelescope, 99 /* TODO: hack, to be replaced */));
-  row->elementAt(5)->addWidget(new WText{transit.time().toString()});
+  row->elementAt(5)->addWidget(new WText{bestAltitude.when.str() });
   row->elementAt(6)->addWidget(new WText{Utils::htmlEncode(WString::fromUTF8(bestAltitude.coordinates.altitude.printable()))});
 
 
@@ -257,7 +256,7 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsList()
     for(auto ngcObject: ngcObjectsQuery.resultList() ) {
       // TODO: safety limit = 1, test better
       auto ephemerisCache = session.find<EphemerisCache>().where("astro_session_id = ?").bind(astroSession.id()).where("objects_id = ?").bind(ngcObject.id()).limit(1).resultValue();
-      append(suggestedObjectsTable, ngcObject, ephemerisCache->bestAltitude());
+      append(suggestedObjectsTable, ngcObject, ephemerisCache->bestAltitude(timezone));
     }
   };
   
@@ -323,10 +322,10 @@ void SelectObjectsWidget::populateFor(const Dbo::ptr< Telescope > &telescope , T
     ephemerisCacheSession.execute("delete from ephemeris_cache WHERE astro_session_id = ?").bind(d->astroSession.id());
 
     Ephemeris ephemeris({d->astroSession->position().latitude, d->astroSession->position().longitude}, d->timezone);
-    AstroSession::ObservabilityRange range = d->astroSession->observabilityRange(ephemeris).delta({1,20,0});
+    auto twilight = ephemeris.astronomicalTwilight(d->astroSession->date());
     long loadedObjects = 0;
     for(auto ngcObject: ephemerisCacheSession.find<NgcObject>().where("magnitude < ?").bind(magnitudeLimit).resultList()) {
-      auto bestAltitude = ephemeris.findBestAltitude(ngcObject->coordinates(), range.begin, range.end);
+      auto bestAltitude = ephemeris.findBestAltitude(ngcObject->coordinates(), twilight.set, twilight.rise);
       if(bestAltitude.coordinates.altitude.degrees() > 17.) {
         loadedObjects++;
         ephemerisCacheSession.add(new EphemerisCache{bestAltitude, ngcObject, d->astroSession});
@@ -380,9 +379,9 @@ void SelectObjectsWidget::Private::searchByNameTab(Dbo::Transaction& transaction
 
     populateHeaders(resultsTable);
     Ephemeris ephemeris(astroSession->position(), timezone);
-    AstroSession::ObservabilityRange range = astroSession->observabilityRange(ephemeris).delta({1,20,0});
+    auto twilight = ephemeris.astronomicalTwilight(astroSession->date());
     for(auto nebula: denominations) {
-      auto bestAltitude = ephemeris.findBestAltitude(nebula->ngcObject()->coordinates(), range.begin, range.end);
+      auto bestAltitude = ephemeris.findBestAltitude(nebula->ngcObject()->coordinates(), twilight.set, twilight.rise);
       append(resultsTable, nebula->ngcObject(), bestAltitude);
     }
   };
@@ -440,9 +439,9 @@ void SelectObjectsWidget::Private::searchByCatalogueTab(Dbo::Transaction& transa
     });
     populateHeaders(resultsTable);
     Ephemeris ephemeris(astroSession->position(), timezone);
-    AstroSession::ObservabilityRange range = astroSession->observabilityRange(ephemeris).delta({1,20,0});
+    auto twilight = ephemeris.astronomicalTwilight(astroSession->date());
     for(auto nebula: denominations) {
-      auto bestAltitude = ephemeris.findBestAltitude(nebula->ngcObject()->coordinates(), range.begin, range.end);
+      auto bestAltitude = ephemeris.findBestAltitude(nebula->ngcObject()->coordinates(), twilight.set, twilight.rise);
       append(resultsTable, nebula->ngcObject(), bestAltitude);
     }
   };

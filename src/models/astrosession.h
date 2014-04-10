@@ -35,11 +35,6 @@ namespace dbo = Wt::Dbo;
 class AstroSession
 {
 public:
-  struct ObservabilityRange {
-    boost::posix_time::ptime begin;
-    boost::posix_time::ptime end;
-    ObservabilityRange &delta(const boost::posix_time::time_duration &duration);
-  };
   AstroSession();
   AstroSession(const std::string &name, const boost::posix_time::ptime &when, const dbo::ptr<User> &user = dbo::ptr<User>() );
   AstroSession(const std::string &name, const Wt::WDateTime &when, const dbo::ptr<User> &user = dbo::ptr<User>() );
@@ -53,7 +48,6 @@ public:
   void setPosition(const Coordinates::LatLng &position);
   void setName(const std::string &name);
   void setDateTime(const Wt::WDateTime &when);
-  ObservabilityRange observabilityRange(const Ephemeris &ephemeris) const;
   template<typename Action>
   void persist(Action& a) {
     dbo::field(a, _name, "name");
