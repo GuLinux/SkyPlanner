@@ -82,7 +82,8 @@ void AstroObjectWidget::Private::init()
   if(info->conditionValue("has-catalogues-descriptions")) {
     info->bindWidget("catalogues-description", new CataloguesDescriptionWidget{ngcObject->descriptions()});
   }
-
+  if(!astroSessionObject)
+    astroSessionObject = session.find<AstroSessionObject>().where("objects_id = ?").bind(ngcObject.id()).where("astro_session_id = ?").bind(astroSession.id());
 
   info->setCondition("has-custom-description", astroSessionObject && astroSessionObject->description().size() > 0);
   if(info->conditionValue("has-custom-description")) {
