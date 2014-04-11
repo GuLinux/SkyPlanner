@@ -204,7 +204,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
   auto rightMenu = new Wt::WMenu();
   navBar->addMenu(rightMenu, Wt::AlignRight);
 
-  auto gulinuxMenuItem = rightMenu->addItem("Gulinux.net");
+  WMenuItem *gulinuxMenuItem = WW<WMenuItem>(rightMenu->addItem("GuLinux")).addCss("bold").addCss("menu-item-highlight");
   gulinuxMenuItem->setInternalPathEnabled(false);
   gulinuxMenuItem->addStyleClass("hidden-xs");
   WPopupMenu *gulinuxPopup = new WPopupMenu;

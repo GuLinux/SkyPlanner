@@ -14,6 +14,15 @@ std::vector<uint8_t> styleCss() {
       top: 55px;
       z-index: 999;
     }
+    .bold {
+      font-weight: bold;
+    }
+    .menu-item-highlight span {
+      color: #eeeeee;
+    }
+    .menu-item-highlight .dropdown-menu span {
+      color: #616161;
+    }
     .dialog-popup-submenu {
       z-index: 1100!important;
     }
