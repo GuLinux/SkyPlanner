@@ -192,7 +192,7 @@ void AstroSessionTab::Private::reload()
     {
       Ephemeris ephemeris({astroSession->position().latitude, astroSession->position().longitude}, timezone);
       transform(begin(sessionObjectsDbCollection), end(sessionObjectsDbCollection), back_inserter(sessionObjects), [&ephemeris](const dbo::ptr<AstroSessionObject> &o){
-        return AstroSessionObjectElement{o, o->bestAltitude(ephemeris, -3)};
+        return AstroSessionObjectElement{o, o->bestAltitude(ephemeris)};
       });
     }
     sort(begin(sessionObjects), end(sessionObjects), [&](const AstroSessionObjectElement &a, const AstroSessionObjectElement &b){
@@ -647,7 +647,7 @@ void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject
   typedef pair<dbo::ptr<AstroSessionObject>, Ephemeris::BestAltitude> AstroSessionObjectElement;
   vector<AstroSessionObjectElement> sessionObjects;
   transform(begin(sessionObjectsDbCollection), end(sessionObjectsDbCollection), back_inserter(sessionObjects), [&ephemeris](const dbo::ptr<AstroSessionObject> &o){
-    return AstroSessionObjectElement{o, o->bestAltitude(ephemeris, -3)};
+    return AstroSessionObjectElement{o, o->bestAltitude(ephemeris)};
   });
   sort(begin(sessionObjects), end(sessionObjects), [&](const AstroSessionObjectElement &a, const AstroSessionObjectElement &b){
     return a.second.when < b.second.when;
@@ -655,7 +655,7 @@ void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject
   
   vector<AstroObjectsTable::AstroObject> astroObjects;
   transform(begin(sessionObjects), end(sessionObjects), back_inserter(astroObjects), [&ephemeris](const AstroSessionObjectElement &e) {
-    return AstroObjectsTable::AstroObject{e.first->astroSession(), e.first->ngcObject(), e.first->bestAltitude(ephemeris, 1)};
+    return AstroObjectsTable::AstroObject{e.first->astroSession(), e.first->ngcObject(), e.first->bestAltitude(ephemeris)};
   });
 
   objectsCounter->setText(format("%d") % sessionObjects.size());
@@ -663,53 +663,6 @@ void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject
   astroObjectsTable->populate(astroObjects, selectedTelescope, timezone, addedObject ? AstroObjectsTable::Selection{addedObject->ngcObject(), "success", [=](WTableRow *r) {
     SkyPlanner::instance()->notification(WString::tr("notification_success_title"), WString::tr("notification_object_added").arg(r->id()), SkyPlanner::Notification::Information, 5);
   }} : AstroObjectsTable::Selection{} ); 
-
-/*
-
-    WPopupMenu *actionsMenu = new WPopupMenu;
-    actionsMenu->addItem(WString::tr("buttons_extended_info"))->triggered().connect(std::bind(showHideMoreInfo));
-
-
-    WTableRow *descriptionRow = objectsTable->insertRow(objectsTable->rowCount());
-    WTableCell *descriptionCell = descriptionRow->elementAt(0);
-    descriptionCell->setHidden(true);
-    descriptionCell->setColumnSpan(OBJECTS_TABLE_COLS);
-    WTextArea *descriptionTextArea = WW<WTextArea>(WString::fromUTF8(sessionObject->description())).css("input-block-level");
-    WContainerWidget *descriptionContainer = WW<WContainerWidget>()
-      .add(new WLabel{WString::tr("object_notes")})
-      .add(descriptionTextArea)
-      .add(WW<WToolBar>().css("pull-right").addButton(
-        WW<WPushButton>(WString::tr("buttons_save")).css("btn btn-xs btn-primary").onClick([=](WMouseEvent){
-          Dbo::Transaction t(session);
-          sessionObject.modify()->setDescription(descriptionTextArea->text().toUTF8());
-          SkyPlanner::instance()->notification(WString::tr("notification_success_title"), WString::tr("notification_description_saved"), SkyPlanner::Notification::Success, 5);
-        }))
-        .addButton(WW<WPushButton>(WString::tr("buttons_close")).css("btn-xs").onClick([=](WMouseEvent){ descriptionCell->setHidden(true); }))
-    );
-    descriptionCell->addWidget(descriptionContainer);
-
-    WPushButton *actionsButton = WW<WPushButton>(WString::tr("buttons_actions")).css("btn-xs");
-    actionsButton->setMenu(actionsMenu);
-    row->elementAt(10)->addWidget(actionsButton);
-    actionsMenu->addItem(WString::tr("description"))->triggered().connect([=](WMenuItem*, _n5){
-      descriptionCell->setHidden(!descriptionCell->isHidden());
-    });
-
-
-    actionsMenu->addItem(WString::tr("buttons_remove"))->triggered().connect([=](WMenuItem*, _n5){ remove(sessionObject, [=] { populate(); }); });
-    if(pastObservation) {
-      WMenuItem *observedMenuItem = actionsMenu->addItem(WString::tr("astrosessiontab_object_observed_menu"));
-      observedMenuItem->setCheckable(true);
-      observedMenuItem->setChecked(sessionObject->observed());
-
-      observedMenuItem->triggered().connect([=](WMenuItem *, _n5) {
-        Dbo::Transaction t(session);
-        Dbo::ptr<AstroSessionObject> o = session.find<AstroSessionObject>().where("id = ?").bind(sessionObject.id());
-        o.modify()->setObserved(!sessionObject->observed());
-        t.commit();
-      });
-    }
-*/
 }
 
 

@@ -48,15 +48,15 @@ Coordinates::Equatorial AstroSessionObject::coordinates() const
   return _ngcObject->coordinates();
 }
 
-Ephemeris::BestAltitude AstroSessionObject::bestAltitude(const AstroSessionPtr &astroSession, const NgcObjectPtr &ngcObject, const Ephemeris &ephemeris, int rangeDeltaInHours)
+Ephemeris::BestAltitude AstroSessionObject::bestAltitude(const AstroSessionPtr &astroSession, const NgcObjectPtr &ngcObject, const Ephemeris &ephemeris)
 {
   auto twilight = ephemeris.astronomicalTwilight(astroSession->date());
   return ephemeris.findBestAltitude( ngcObject->coordinates(), twilight.set, twilight.rise);
 } 
 
-Ephemeris::BestAltitude AstroSessionObject::bestAltitude(const Ephemeris &ephemeris, int rangeDeltaInHours) const
+Ephemeris::BestAltitude AstroSessionObject::bestAltitude(const Ephemeris &ephemeris) const
 {
-  return bestAltitude(_astroSession, _ngcObject, ephemeris, rangeDeltaInHours);
+  return bestAltitude(_astroSession, _ngcObject, ephemeris);
 }
 
 

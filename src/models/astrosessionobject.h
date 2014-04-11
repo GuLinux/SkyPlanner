@@ -47,8 +47,8 @@ public:
     dbo::belongsTo(a, _ngcObject);
   }
   Coordinates::Equatorial coordinates() const;
-  Ephemeris::BestAltitude bestAltitude(const Ephemeris &ephemeris, int rangeDeltaInHours = 0) const;
-  static Ephemeris::BestAltitude bestAltitude(const dbo::ptr<AstroSession> &astroSession, const dbo::ptr<NgcObject> &ngcObject, const Ephemeris &ephemeris, int rangeDeltaInHours = 0);
+  Ephemeris::BestAltitude bestAltitude(const Ephemeris &ephemeris) const;
+  static Ephemeris::BestAltitude bestAltitude(const dbo::ptr<AstroSession> &astroSession, const dbo::ptr<NgcObject> &ngcObject, const Ephemeris &ephemeris);
   /** It's a simil-percentage evaluation:
     if we have a valid telescope here, and this object magnitude doesn't exceed its magnitude
     limit, we return the difficulty percentage (0-100).

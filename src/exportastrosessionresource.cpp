@@ -110,7 +110,7 @@ void ExportAstroSessionResource::handleRequest(const Wt::Http::Request &request,
   auto sessionObjectsDbCollection = d->astroSession->astroSessionObjects();
   vector<AstroSessionObjectPtr> sessionObjects(sessionObjectsDbCollection.begin(), sessionObjectsDbCollection.end());
   sort(begin(sessionObjects), end(sessionObjects), [&](const dbo::ptr<AstroSessionObject> &a, const dbo::ptr<AstroSessionObject> &b){
-    return a->bestAltitude(ephemeris, -3 ).when < b->bestAltitude(ephemeris, -3).when;
+    return a->bestAltitude(ephemeris).when < b->bestAltitude(ephemeris).when;
   });
 
   if(d->reportType == CSV) {
@@ -136,7 +136,7 @@ void ExportAstroSessionResource::handleRequest(const Wt::Http::Request &request,
       add(format("%.3f") % object->ngcObject()->magnitude());
       add(object->ngcObject()->typeDescription().toUTF8());
       if(d->astroSession->position()) {
-        auto bestAltitude = object->bestAltitude(ephemeris, 1);
+        auto bestAltitude = object->bestAltitude(ephemeris);
         add(bestAltitude.when.str());
         add(format("%.3f") % bestAltitude.coordinates.altitude.degrees());
       }
@@ -190,7 +190,7 @@ void ExportAstroSessionResource::handleRequest(const Wt::Http::Request &request,
     rowTemplate.setCondition("have-place", d->astroSession->position());
     rowTemplate.setCondition("have-telescope", d->telescope);
     rowTemplate.bindInt("total-columns", d->astroSession->position() ? 10 : 8);
-    auto bestAltitude = sessionObject->bestAltitude(ephemeris, 1);
+    auto bestAltitude = sessionObject->bestAltitude(ephemeris);
     if(d->astroSession->position()) {
       rowTemplate.bindString("highestAt", bestAltitude.when.str() );
       rowTemplate.bindString("maxAltitude", WString::fromUTF8(bestAltitude.coordinates.altitude.printable(Angle::Degrees, Angle::HTML)) );

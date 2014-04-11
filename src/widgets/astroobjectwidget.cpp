@@ -73,7 +73,7 @@ void AstroObjectWidget::Private::init()
   info->bindString("angular_size", Utils::htmlEncode( WString::fromUTF8( Angle::degrees(ngcObject->angularSize()).printable() )) );
   info->bindString("magnitude", Utils::htmlEncode( ngcObject->magnitude() > 90. ? "N/A" : (format("%.1f") % ngcObject->magnitude()).str() ));
 
-  auto bestAltitude =  AstroSessionObject::bestAltitude(astroSession, ngcObject, ephemeris, 1);
+  auto bestAltitude =  AstroSessionObject::bestAltitude(astroSession, ngcObject, ephemeris);
 
   info->bindString("best_altitude_when", bestAltitude.when.str() );
   info->bindString("best_altitude", Utils::htmlEncode(WString::fromUTF8(bestAltitude.coordinates.altitude.printable() )) );
