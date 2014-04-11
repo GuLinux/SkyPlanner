@@ -653,71 +653,18 @@ void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject
     return a.second.when < b.second.when;
   });
   
-#ifndef PRODUCTION_MODE
   vector<AstroObjectsTable::AstroObject> astroObjects;
   transform(begin(sessionObjects), end(sessionObjects), back_inserter(astroObjects), [&ephemeris](const AstroSessionObjectElement &e) {
     return AstroObjectsTable::AstroObject{e.first->astroSession(), e.first->ngcObject(), e.first->bestAltitude(ephemeris, 1)};
   });
 
+  objectsCounter->setText(format("%d") % sessionObjects.size());
+
   astroObjectsTable->populate(astroObjects, selectedTelescope, timezone, addedObject ? AstroObjectsTable::Selection{addedObject->ngcObject(), "success", [=](WTableRow *r) {
     SkyPlanner::instance()->notification(WString::tr("notification_success_title"), WString::tr("notification_object_added").arg(r->id()), SkyPlanner::Notification::Information, 5);
   }} : AstroObjectsTable::Selection{} ); 
-#endif
-  objectsCounter->setText(format("%d") % sessionObjects.size());
-  WTableRow *objectAddedRow = nullptr;
-  for(auto sessionObjectElement: sessionObjects) {
-    dbo::ptr<AstroSessionObject> sessionObject = sessionObjectElement.first;
-    WTableRow *row = objectsTable->insertRow(objectsTable->rowCount());
-    if(addedObject == sessionObject) {
-      objectAddedRow = row;
-      row->addStyleClass("success");
-    }
-    row->elementAt(0)->addWidget(WW<ObjectNamesWidget>(new ObjectNamesWidget{sessionObject->ngcObject(), session, sessionObject->astroSession()}).setInline(true).onClick([=](WMouseEvent){
-      if(selectedRow)
-        selectedRow->removeStyleClass("info");
-      if(objectAddedRow)
-        objectAddedRow->removeStyleClass("success");
-      row->addStyleClass("info");
-      selectedRow = row;
-    }));
-    row->elementAt(1)->addWidget(new WText{sessionObject->ngcObject()->typeDescription() });
-    row->elementAt(2)->addWidget(new WText{ Utils::htmlEncode( sessionObject->coordinates().rightAscension.printable(Angle::Hourly) ) });
-    row->elementAt(3)->addWidget(new WText{ Utils::htmlEncode( WString::fromUTF8( sessionObject->coordinates().declination.printable() )) });
-    row->elementAt(4)->addWidget(new WText{ WString::fromUTF8(sessionObject->ngcObject()->constellation().name) });
-    row->elementAt(5)->addWidget(new WText{ Utils::htmlEncode( WString::fromUTF8( Angle::degrees(sessionObject->ngcObject()->angularSize()).printable() )) });
-    row->elementAt(6)->addWidget(new WText{ sessionObject->ngcObject()->magnitude() > 90. ? "N/A" : (format("%.1f") % sessionObject->ngcObject()->magnitude()).str() });
-    auto bestAltitude = sessionObject->bestAltitude(ephemeris, 1);
-    row->elementAt(7)->addWidget(new WText{ bestAltitude.when.str() });
-    row->elementAt(8)->addWidget(new WText{ Utils::htmlEncode(WString::fromUTF8(bestAltitude.coordinates.altitude.printable() )) });
-    row->elementAt(9)->addWidget(new ObjectDifficultyWidget{sessionObject->ngcObject(), selectedTelescope, bestAltitude.coordinates.altitude.degrees() }); 
-    
 
-       
-    #define OBJECTS_TABLE_COLS 11
-
-    WTableRow *astroObjectRow = objectsTable->insertRow(objectsTable->rowCount());
-    WTableCell *astroObjectCell = astroObjectRow->elementAt(0);
-    astroObjectCell->setHidden(true);
-    astroObjectCell->setColumnSpan(OBJECTS_TABLE_COLS);
-    WPushButton *toggleMoreInfo = WW<WPushButton>(row->elementAt(0)).css("btn btn-xs pull-right hidden-print").setTextFormat(XHTMLUnsafeText).setText("&#x25bc;").setAttribute("title", WString::tr("astroobject_extended_info_title").toUTF8() );
-    auto showHideMoreInfo = [=] {
-      toggleMoreInfo->setText(!astroObjectCell->isVisible() ? "&#x25b2;" : "&#x25bc;");
-      toggleMoreInfo->toggleStyleClass("active", !astroObjectCell->isVisible());
-      if(astroObjectCell->isVisible()) {
-        astroObjectCell->clear();
-        astroObjectCell->setHidden(true);
-        return;
-      }
-      astroObjectCell->setHidden(false);
-      astroObjectCell->clear();
-      astroObjectCell->addWidget(new AstroObjectWidget(sessionObject, session, timezone, selectedTelescope, {}, {WW<WPushButton>(WString::tr("buttons_close")).css("btn-xs").onClick([=](WMouseEvent){
-        astroObjectCell->clear();
-        astroObjectCell->setHidden(true);
-        toggleMoreInfo->removeStyleClass("active");
-        toggleMoreInfo->setText("&#x25bc");
-      }) } ));
-    };
-    toggleMoreInfo->clicked().connect(std::bind(showHideMoreInfo));
+/*
 
     WPopupMenu *actionsMenu = new WPopupMenu;
     actionsMenu->addItem(WString::tr("buttons_extended_info"))->triggered().connect(std::bind(showHideMoreInfo));
@@ -762,10 +709,7 @@ void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject
         t.commit();
       });
     }
-  }
-  if(objectAddedRow) {
-    SkyPlanner::instance()->notification(WString::tr("notification_success_title"), WString::tr("notification_object_added").arg(objectAddedRow->id()), SkyPlanner::Notification::Information, 5);
-  }
+*/
 }
 
 
