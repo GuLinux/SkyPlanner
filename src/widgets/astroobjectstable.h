@@ -35,12 +35,16 @@ public:
     NgcObjectPtr object;
     Ephemeris::BestAltitude bestAltitude; 
   };
+  struct Row {
+    AstroObject astroObject;
+    Wt::WTableRow *tableRow;
+  };
   struct Selection {
     Selection() = default;
-    Selection(const NgcObjectPtr &object, const std::string &css, std::function<void(Wt::WTableRow*)> onSelectionFound) : object(object), css(css), onSelectionFound(onSelectionFound) {}
+    Selection(const NgcObjectPtr &object, const std::string &css, std::function<void(Row)> onSelectionFound) : object(object), css(css), onSelectionFound(onSelectionFound) {}
     NgcObjectPtr object;
     std::string css;
-    std::function<void(Wt::WTableRow*)> onSelectionFound = [](Wt::WTableRow*) {};
+    std::function<void(Row)> onSelectionFound = [](Row) {};
     operator bool() const { return object && !css.empty(); }
   };
   AstroObjectsTable(Session &session, Wt::WContainerWidget *parent = 0);

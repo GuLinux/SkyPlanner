@@ -644,24 +644,18 @@ void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject
     query.where("objects.constellation_abbrev = ?").bind(filterByConstellation->selectedConstellation().abbrev);
 
   auto sessionObjectsDbCollection = query.resultList();
-  typedef pair<dbo::ptr<AstroSessionObject>, Ephemeris::BestAltitude> AstroSessionObjectElement;
-  vector<AstroSessionObjectElement> sessionObjects;
-  transform(begin(sessionObjectsDbCollection), end(sessionObjectsDbCollection), back_inserter(sessionObjects), [&ephemeris](const dbo::ptr<AstroSessionObject> &o){
-    return AstroSessionObjectElement{o, o->bestAltitude(ephemeris)};
+  vector<AstroObjectsTable::AstroObject> astroObjects;
+  transform(begin(sessionObjectsDbCollection), end(sessionObjectsDbCollection), back_inserter(astroObjects), [&ephemeris](const dbo::ptr<AstroSessionObject> &o){
+    return AstroObjectsTable::AstroObject{o->astroSession(), o->ngcObject(), o->bestAltitude(ephemeris)};
   });
-  sort(begin(sessionObjects), end(sessionObjects), [&](const AstroSessionObjectElement &a, const AstroSessionObjectElement &b){
-    return a.second.when < b.second.when;
+  sort(begin(astroObjects), end(astroObjects), [&](const AstroObjectsTable::AstroObject &a, const AstroObjectsTable::AstroObject &b){
+    return a.bestAltitude.when < b.bestAltitude.when;
   });
   
-  vector<AstroObjectsTable::AstroObject> astroObjects;
-  transform(begin(sessionObjects), end(sessionObjects), back_inserter(astroObjects), [&ephemeris](const AstroSessionObjectElement &e) {
-    return AstroObjectsTable::AstroObject{e.first->astroSession(), e.first->ngcObject(), e.first->bestAltitude(ephemeris)};
-  });
+  objectsCounter->setText(format("%d") % astroObjects.size());
 
-  objectsCounter->setText(format("%d") % sessionObjects.size());
-
-  astroObjectsTable->populate(astroObjects, selectedTelescope, timezone, addedObject ? AstroObjectsTable::Selection{addedObject->ngcObject(), "success", [=](WTableRow *r) {
-    SkyPlanner::instance()->notification(WString::tr("notification_success_title"), WString::tr("notification_object_added").arg(r->id()), SkyPlanner::Notification::Information, 5);
+  astroObjectsTable->populate(astroObjects, selectedTelescope, timezone, addedObject ? AstroObjectsTable::Selection{addedObject->ngcObject(), "success", [=](const AstroObjectsTable::Row &r) {
+    SkyPlanner::instance()->notification(WString::tr("notification_success_title"), WString::tr("notification_object_added").arg(r.tableRow->id()), SkyPlanner::Notification::Information, 5);
   }} : AstroObjectsTable::Selection{} ); 
 }
 

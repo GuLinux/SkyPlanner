@@ -69,10 +69,11 @@ void AstroObjectsTable::populate(const vector<AstroObject> &objects, const Teles
   WTableRow *objectAddedRow = nullptr;
   for(auto astroObject: objects) {
     WTableRow *row = d->objectsTable->insertRow(d->objectsTable->rowCount());
+    Row objectRow{astroObject, row};
     if(selection && selection.object == astroObject.object) {
       objectAddedRow = row;
       row->addStyleClass(selection.css);
-      selection.onSelectionFound(objectAddedRow);
+      selection.onSelectionFound(objectRow);
     }
     row->elementAt(0)->addWidget(WW<ObjectNamesWidget>(new ObjectNamesWidget{astroObject.object, d->session, astroObject.astroSession}).setInline(true).onClick([=](WMouseEvent){
       if(d->selectedRow)
