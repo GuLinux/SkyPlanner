@@ -192,7 +192,7 @@ void AstroSessionTab::Private::reload()
     {
       Ephemeris ephemeris({astroSession->position().latitude, astroSession->position().longitude}, timezone);
       transform(begin(sessionObjectsDbCollection), end(sessionObjectsDbCollection), back_inserter(sessionObjects), [&ephemeris](const dbo::ptr<AstroSessionObject> &o){
-        return AstroSessionObjectElement{o, o->bestAltitude(ephemeris, -3)};
+        return AstroSessionObjectElement{o, o->bestAltitude(ephemeris)};
       });
     }
     sort(begin(sessionObjects), end(sessionObjects), [&](const AstroSessionObjectElement &a, const AstroSessionObjectElement &b){
@@ -647,7 +647,7 @@ void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject
   typedef pair<dbo::ptr<AstroSessionObject>, Ephemeris::BestAltitude> AstroSessionObjectElement;
   vector<AstroSessionObjectElement> sessionObjects;
   transform(begin(sessionObjectsDbCollection), end(sessionObjectsDbCollection), back_inserter(sessionObjects), [&ephemeris](const dbo::ptr<AstroSessionObject> &o){
-    return AstroSessionObjectElement{o, o->bestAltitude(ephemeris, -3)};
+    return AstroSessionObjectElement{o, o->bestAltitude(ephemeris)};
   });
   sort(begin(sessionObjects), end(sessionObjects), [&](const AstroSessionObjectElement &a, const AstroSessionObjectElement &b){
     return a.second.when < b.second.when;
@@ -656,7 +656,7 @@ void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject
 #ifndef PRODUCTION_MODE
   vector<AstroObjectsTable::AstroObject> astroObjects;
   transform(begin(sessionObjects), end(sessionObjects), back_inserter(astroObjects), [&ephemeris](const AstroSessionObjectElement &e) {
-    return AstroObjectsTable::AstroObject{e.first->astroSession(), e.first->ngcObject(), e.first->bestAltitude(ephemeris, 1)};
+    return AstroObjectsTable::AstroObject{e.first->astroSession(), e.first->ngcObject(), e.first->bestAltitude(ephemeris)};
   });
 
   astroObjectsTable->populate(astroObjects, selectedTelescope, timezone, addedObject ? AstroObjectsTable::Selection{addedObject->ngcObject(), "success", [=](WTableRow *r) {
@@ -686,7 +686,7 @@ void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject
     row->elementAt(4)->addWidget(new WText{ WString::fromUTF8(sessionObject->ngcObject()->constellation().name) });
     row->elementAt(5)->addWidget(new WText{ Utils::htmlEncode( WString::fromUTF8( Angle::degrees(sessionObject->ngcObject()->angularSize()).printable() )) });
     row->elementAt(6)->addWidget(new WText{ sessionObject->ngcObject()->magnitude() > 90. ? "N/A" : (format("%.1f") % sessionObject->ngcObject()->magnitude()).str() });
-    auto bestAltitude = sessionObject->bestAltitude(ephemeris, 1);
+    auto bestAltitude = sessionObject->bestAltitude(ephemeris);
     row->elementAt(7)->addWidget(new WText{ bestAltitude.when.str() });
     row->elementAt(8)->addWidget(new WText{ Utils::htmlEncode(WString::fromUTF8(bestAltitude.coordinates.altitude.printable() )) });
     row->elementAt(9)->addWidget(new ObjectDifficultyWidget{sessionObject->ngcObject(), selectedTelescope, bestAltitude.coordinates.altitude.degrees() }); 
