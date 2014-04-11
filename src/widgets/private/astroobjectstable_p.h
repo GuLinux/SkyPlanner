@@ -26,8 +26,9 @@
 class AstroObjectsTable::Private
 {
   public:
-    Private(Session &session, AstroObjectsTable *q );
+    Private(Session &session, const std::vector<AstroObjectsTable::Action> &actions, AstroObjectsTable *q );
     Session &session;
+    std::vector<AstroObjectsTable::Action> actions; 
     Wt::WTable *objectsTable;
     Wt::WTableRow *selectedRow = nullptr;
     void header();

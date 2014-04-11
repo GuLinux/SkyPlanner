@@ -304,7 +304,17 @@ void AstroSessionTab::Private::reload()
 
   if(timezone)
     sessionContainer->addWidget(  new WText(WString::tr("printable_timezone_info").arg(WString::fromUTF8(timezone.timeZoneName))));
-  sessionContainer->addWidget(astroObjectsTable = new AstroObjectsTable(session));
+
+  vector<AstroObjectsTable::Action> actions = {
+    {"buttons_extended_info", [](const AstroObjectsTable::Row &r) { r.toggleMoreInfo(); } },
+    {"description", [](const AstroObjectsTable::Row &r) { /* TODO */ } },
+    {"buttons_remove", [=](const AstroObjectsTable::Row &r) {
+      Dbo::Transaction t(session);
+      auto sessionObject = session.find<AstroSessionObject>().where("objects_id = ?").bind(r.astroObject.object.id()).where("astro_session_id = ?").bind(r.astroObject.astroSession.id()).resultValue();
+      remove(sessionObject, [=] { populate(); });
+    } },
+  };
+  sessionContainer->addWidget(astroObjectsTable = new AstroObjectsTable(session, actions ));
   
   WContainerWidget *telescopeComboContainer;
   WComboBox *telescopeCombo = new WComboBox;

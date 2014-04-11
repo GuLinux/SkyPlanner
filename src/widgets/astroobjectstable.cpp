@@ -24,6 +24,7 @@
 #include <Wt/WText>
 #include <Wt/WPushButton>
 #include <Wt/Utils>
+#include <Wt/WPopupMenu>
 #include <Wt-Commons/wt_helpers.h>
 #include "models/Models"
 #include "widgets/astroobjectwidget.h"
@@ -35,12 +36,12 @@ using namespace Wt;
 using namespace WtCommons;
 using namespace std;
 
-AstroObjectsTable::Private::Private(Session &session, AstroObjectsTable *q) : session(session), q(q)
+AstroObjectsTable::Private::Private(Session &session, const vector<AstroObjectsTable::Action> &actions, AstroObjectsTable *q) : session(session), actions(actions), q(q)
 {
 }
 
-AstroObjectsTable::AstroObjectsTable(Session &session, WContainerWidget *parent)
-  : WCompositeWidget(parent), d(session, this)
+AstroObjectsTable::AstroObjectsTable(Session &session, const vector<Action> &actions, WContainerWidget *parent)
+  : WCompositeWidget(parent), d(session, actions, this)
 {
   d->objectsTable = WW<WTable>().addCss("table table-hover astroobjects-table");
   d->objectsTable->setHeaderCount(1);
@@ -74,7 +75,31 @@ void AstroObjectsTable::populate(const vector<AstroObject> &objects, const Teles
   WTableRow *objectAddedRow = nullptr;
   for(auto astroObject: objects) {
     WTableRow *row = d->objectsTable->insertRow(d->objectsTable->rowCount());
+    WTableRow *astroObjectRow = d->objectsTable->insertRow(d->objectsTable->rowCount());
+    WTableCell *astroObjectCell = astroObjectRow->elementAt(0);
+    astroObjectCell->setHidden(true);
+    WPushButton *toggleMoreInfo = WW<WPushButton>(row->elementAt(0)).css("btn btn-xs pull-right hidden-print").setTextFormat(XHTMLUnsafeText).setText("&#x25bc;").setAttribute("title", WString::tr("astroobject_extended_info_title").toUTF8() );
+
     Row objectRow{astroObject, row};
+    objectRow.toggleMoreInfo = [=] {
+      toggleMoreInfo->setText(!astroObjectCell->isVisible() ? "&#x25b2;" : "&#x25bc;");
+      toggleMoreInfo->toggleStyleClass("active", !astroObjectCell->isVisible());
+      if(astroObjectCell->isVisible()) {
+        astroObjectCell->clear();
+        astroObjectCell->setHidden(true);
+        return;
+      }
+      astroObjectCell->setHidden(false);
+      astroObjectCell->clear();
+      astroObjectCell->addWidget(new AstroObjectWidget(astroObject.object, astroObject.astroSession, d->session, timezone, telescope, {}, {WW<WPushButton>(WString::tr("buttons_close")).css("btn-xs").onClick([=](WMouseEvent){
+        astroObjectCell->clear();
+        astroObjectCell->setHidden(true);
+        toggleMoreInfo->removeStyleClass("active");
+        toggleMoreInfo->setText("&#x25bc");
+      }) } ));
+    };
+    toggleMoreInfo->clicked().connect(std::bind(objectRow.toggleMoreInfo));
+
     if(selection && selection.object == astroObject.object) {
       objectAddedRow = row;
       row->addStyleClass(selection.css);
@@ -99,32 +124,25 @@ void AstroObjectsTable::populate(const vector<AstroObject> &objects, const Teles
     row->elementAt(8)->addWidget(new WText{ Utils::htmlEncode(WString::fromUTF8(bestAltitude.coordinates.altitude.printable() )) });
     row->elementAt(9)->addWidget(new ObjectDifficultyWidget{astroObject.object, telescope, bestAltitude.coordinates.altitude.degrees() }); 
     
+    int objectsTableColumns = 10;
 
-       
-    #define OBJECTS_TABLE_COLS 11
-
-    WTableRow *astroObjectRow = d->objectsTable->insertRow(d->objectsTable->rowCount());
-    WTableCell *astroObjectCell = astroObjectRow->elementAt(0);
-    astroObjectCell->setHidden(true);
-    astroObjectCell->setColumnSpan(OBJECTS_TABLE_COLS);
-    WPushButton *toggleMoreInfo = WW<WPushButton>(row->elementAt(0)).css("btn btn-xs pull-right hidden-print").setTextFormat(XHTMLUnsafeText).setText("&#x25bc;").setAttribute("title", WString::tr("astroobject_extended_info_title").toUTF8() );
-    auto showHideMoreInfo = [=] {
-      toggleMoreInfo->setText(!astroObjectCell->isVisible() ? "&#x25b2;" : "&#x25bc;");
-      toggleMoreInfo->toggleStyleClass("active", !astroObjectCell->isVisible());
-      if(astroObjectCell->isVisible()) {
-        astroObjectCell->clear();
-        astroObjectCell->setHidden(true);
-        return;
+    if(d->actions.size() > 0) {
+      objectsTableColumns++;
+      if(d->actions.size() == 1) {
+        row->elementAt(10)->addWidget(WW<WPushButton>(WString::tr(d->actions[0].name)).addCss("btn-xs").addCss(d->actions[0].buttonCss).onClick([=](WMouseEvent) { d->actions[0].onClick(objectRow); }));
+      } else {
+        WPopupMenu *actionsMenu = new WPopupMenu;
+        WPushButton *actionsButton = WW<WPushButton>(WString::tr("buttons_actions")).css("btn-xs");
+        actionsButton->setMenu(actionsMenu);
+        row->elementAt(10)->addWidget(actionsButton);
+        for(auto action: d->actions) {
+          auto menuItem = actionsMenu->addItem(WString::tr(action.name));
+          menuItem->addStyleClass(action.buttonCss);
+          menuItem->triggered().connect([=](WMenuItem*, _n5) { action.onClick(objectRow); });
+        }
       }
-      astroObjectCell->setHidden(false);
-      astroObjectCell->clear();
-      astroObjectCell->addWidget(new AstroObjectWidget(astroObject.object, astroObject.astroSession, d->session, timezone, telescope, {}, {WW<WPushButton>(WString::tr("buttons_close")).css("btn-xs").onClick([=](WMouseEvent){
-        astroObjectCell->clear();
-        astroObjectCell->setHidden(true);
-        toggleMoreInfo->removeStyleClass("active");
-        toggleMoreInfo->setText("&#x25bc");
-      }) } ));
-    };
-    toggleMoreInfo->clicked().connect(std::bind(showHideMoreInfo));
+    }
+       
+    astroObjectCell->setColumnSpan(objectsTableColumns);
   }
 }

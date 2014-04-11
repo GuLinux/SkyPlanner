@@ -38,6 +38,7 @@ public:
   struct Row {
     AstroObject astroObject;
     Wt::WTableRow *tableRow;
+    std::function<void()> toggleMoreInfo;
   };
   struct Selection {
     Selection() = default;
@@ -47,7 +48,12 @@ public:
     std::function<void(Row)> onSelectionFound = [](Row) {};
     operator bool() const { return object && !css.empty(); }
   };
-  AstroObjectsTable(Session &session, Wt::WContainerWidget *parent = 0);
+  struct Action {
+    std::string name;
+    std::function<void(Row)> onClick;
+    std::string buttonCss;
+  };
+  AstroObjectsTable(Session &session, const std::vector<Action> &actions = {}, Wt::WContainerWidget *parent = 0);
   void populate(const std::vector<AstroObject> &objects, const TelescopePtr &telescope, const Timezone &timezone, const Selection &selection = {});
   void clear();
 private:
