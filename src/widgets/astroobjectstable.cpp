@@ -22,21 +22,28 @@
 #include "utils/d_ptr_implementation.h"
 #include <Wt/WContainerWidget>
 #include <Wt/WText>
+#include <Wt/WPushButton>
+#include <Wt/Utils>
 #include <Wt-Commons/wt_helpers.h>
 #include "models/Models"
+#include "widgets/astroobjectwidget.h"
+#include "widgets/objectnameswidget.h"
+#include "utils/format.h"
+#include "widgets/objectdifficultywidget.h"
 
 using namespace Wt;
 using namespace WtCommons;
 using namespace std;
 
-AstroObjectsTable::Private::Private(AstroObjectsTable *q) : q(q)
+AstroObjectsTable::Private::Private(Session &session, AstroObjectsTable *q) : session(session), q(q)
 {
 }
 
-AstroObjectsTable::AstroObjectsTable(WContainerWidget *parent)
-  : WCompositeWidget(parent), d(this)
+AstroObjectsTable::AstroObjectsTable(Session &session, WContainerWidget *parent)
+  : WCompositeWidget(parent), d(session, this)
 {
   d->objectsTable = WW<WTable>().addCss("table table-hover astroobjects-table");
+  d->objectsTable->setHeaderCount(1);
   setImplementation(WW<WContainerWidget>().add(WW<WContainerWidget>().addCss("table-responsive").add(d->objectsTable)));
 }
 
@@ -55,40 +62,42 @@ void AstroObjectsTable::Private::header()
   objectsTable->elementAt(0,9)->addWidget(new WText{WString::tr("object_column_difficulty")});
 }
 
-void AstroObjectsTable::populate(const vector<Object> &objects, Dbo::Transaction &transaction)
+void AstroObjectsTable::populate(const vector<AstroObject> &objects, const TelescopePtr &telescope, const Timezone &timezone, const Selection &selection)
 {
   d->header();
-/*
-  for(auto object: objects) {
-    WTableRow *row = objectsTable->insertRow(objectsTable->rowCount());
-    if(addedObject == sessionObject) {
+  d->selectedRow = nullptr;
+  WTableRow *objectAddedRow = nullptr;
+  for(auto astroObject: objects) {
+    WTableRow *row = d->objectsTable->insertRow(d->objectsTable->rowCount());
+    if(selection && selection.object == astroObject.object) {
       objectAddedRow = row;
-      row->addStyleClass("success");
+      row->addStyleClass(selection.css);
+      selection.onSelectionFound(objectAddedRow);
     }
-    row->elementAt(0)->addWidget(WW<ObjectNamesWidget>(new ObjectNamesWidget{sessionObject, timezone, selectedTelescope, session}).setInline(true).onClick([=](WMouseEvent){
-      if(selectedRow)
-        selectedRow->removeStyleClass("info");
+    row->elementAt(0)->addWidget(WW<ObjectNamesWidget>(new ObjectNamesWidget{astroObject.object, d->session, astroObject.astroSession}).setInline(true).onClick([=](WMouseEvent){
+      if(d->selectedRow)
+        d->selectedRow->removeStyleClass("info");
       if(objectAddedRow)
-        objectAddedRow->removeStyleClass("success");
+        objectAddedRow->removeStyleClass(selection.css);
       row->addStyleClass("info");
-      selectedRow = row;
+      d->selectedRow = row;
     }));
-    row->elementAt(1)->addWidget(new WText{sessionObject->ngcObject()->typeDescription() });
-    row->elementAt(2)->addWidget(new WText{ Utils::htmlEncode( sessionObject->coordinates().rightAscension.printable(Angle::Hourly) ) });
-    row->elementAt(3)->addWidget(new WText{ Utils::htmlEncode( WString::fromUTF8( sessionObject->coordinates().declination.printable() )) });
-    row->elementAt(4)->addWidget(new WText{ WString::fromUTF8(sessionObject->ngcObject()->constellation().name) });
-    row->elementAt(5)->addWidget(new WText{ Utils::htmlEncode( WString::fromUTF8( Angle::degrees(sessionObject->ngcObject()->angularSize()).printable() )) });
-    row->elementAt(6)->addWidget(new WText{ sessionObject->ngcObject()->magnitude() > 90. ? "N/A" : (format("%.1f") % sessionObject->ngcObject()->magnitude()).str() });
-    auto bestAltitude = sessionObject->bestAltitude(ephemeris, 1);
+    row->elementAt(1)->addWidget(new WText{astroObject.object->typeDescription() });
+    row->elementAt(2)->addWidget(new WText{ Utils::htmlEncode( astroObject.object->coordinates().rightAscension.printable(Angle::Hourly) ) });
+    row->elementAt(3)->addWidget(new WText{ Utils::htmlEncode( WString::fromUTF8( astroObject.object->coordinates().declination.printable() )) });
+    row->elementAt(4)->addWidget(new WText{ WString::fromUTF8(astroObject.object->constellation().name) });
+    row->elementAt(5)->addWidget(new WText{ Utils::htmlEncode( WString::fromUTF8( Angle::degrees(astroObject.object->angularSize()).printable() )) });
+    row->elementAt(6)->addWidget(new WText{ astroObject.object->magnitude() > 90. ? "N/A" : (format("%.1f") % astroObject.object->magnitude()).str() });
+    auto bestAltitude = astroObject.bestAltitude;
     row->elementAt(7)->addWidget(new WText{ bestAltitude.when.str() });
     row->elementAt(8)->addWidget(new WText{ Utils::htmlEncode(WString::fromUTF8(bestAltitude.coordinates.altitude.printable() )) });
-    row->elementAt(9)->addWidget(new ObjectDifficultyWidget{sessionObject->ngcObject(), selectedTelescope, bestAltitude.coordinates.altitude.degrees() }); 
+    row->elementAt(9)->addWidget(new ObjectDifficultyWidget{astroObject.object, telescope, bestAltitude.coordinates.altitude.degrees() }); 
     
 
        
     #define OBJECTS_TABLE_COLS 11
 
-    WTableRow *astroObjectRow = objectsTable->insertRow(objectsTable->rowCount());
+    WTableRow *astroObjectRow = d->objectsTable->insertRow(d->objectsTable->rowCount());
     WTableCell *astroObjectCell = astroObjectRow->elementAt(0);
     astroObjectCell->setHidden(true);
     astroObjectCell->setColumnSpan(OBJECTS_TABLE_COLS);
@@ -103,7 +112,7 @@ void AstroObjectsTable::populate(const vector<Object> &objects, Dbo::Transaction
       }
       astroObjectCell->setHidden(false);
       astroObjectCell->clear();
-      astroObjectCell->addWidget(new AstroObjectWidget(sessionObject, session, timezone, selectedTelescope, {}, {WW<WPushButton>(WString::tr("buttons_close")).css("btn-xs").onClick([=](WMouseEvent){
+      astroObjectCell->addWidget(new AstroObjectWidget(astroObject.object, astroObject.astroSession, d->session, timezone, telescope, {}, {WW<WPushButton>(WString::tr("buttons_close")).css("btn-xs").onClick([=](WMouseEvent){
         astroObjectCell->clear();
         astroObjectCell->setHidden(true);
         toggleMoreInfo->removeStyleClass("active");
@@ -112,5 +121,4 @@ void AstroObjectsTable::populate(const vector<Object> &objects, Dbo::Transaction
     };
     toggleMoreInfo->clicked().connect(std::bind(showHideMoreInfo));
   }
-*/
 }

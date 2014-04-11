@@ -20,13 +20,16 @@
 #ifndef ASTROOBJECTSTABLE_P_H
 #define ASTROOBJECTSTABLE_P_H
 #include "widgets/astroobjectstable.h"
+#include "session.h"
 #include <Wt/WTable>
 
 class AstroObjectsTable::Private
 {
   public:
-    Private(AstroObjectsTable *q );
+    Private(Session &session, AstroObjectsTable *q );
+    Session &session;
     Wt::WTable *objectsTable;
+    Wt::WTableRow *selectedRow = nullptr;
     void header();
   private:
     class AstroObjectsTable *const q; 

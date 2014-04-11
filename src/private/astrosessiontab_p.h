@@ -39,6 +39,7 @@ class ExportAstroSessionResource;
 class FilterByMagnitudeWidget;
 class FilterByCatalogue;
 class FilterByTypeWidget;
+class AstroObjectsTable;
 class AstroSessionTab::Private
 {
 public:
@@ -69,6 +70,7 @@ public:
     FilterByCatalogue *filterByCatalogue;
     void remove(const Wt::Dbo::ptr<AstroSessionObject> &sessionObject, std::function<void()> runAfterRemove);
     Wt::WText *objectsCounter;
+    AstroObjectsTable *astroObjectsTable;
 private:
     class AstroSessionTab* const q;
 };

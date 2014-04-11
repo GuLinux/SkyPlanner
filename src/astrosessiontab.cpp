@@ -76,6 +76,7 @@
 #include <boost/thread.hpp>
 #include <Wt/WStackedWidget>
 #include "widgets/astroobjectwidget.h"
+#include "widgets/astroobjectstable.h"
 
 using namespace Wt;
 using namespace WtCommons;
@@ -303,6 +304,9 @@ void AstroSessionTab::Private::reload()
 
   if(timezone)
     sessionContainer->addWidget(  new WText(WString::tr("printable_timezone_info").arg(WString::fromUTF8(timezone.timeZoneName))));
+#ifndef  PRODUCTION_MODE
+  sessionContainer->addWidget(astroObjectsTable = new AstroObjectsTable(session));
+#endif
   sessionContainer->addWidget(WW<WContainerWidget>().css("table-responsive").add(objectsTable = WW<WTable>().addCss("table table-hover astroobjects-table")));
   objectsTable->setHeaderCount(1);
   
@@ -648,6 +652,17 @@ void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject
   sort(begin(sessionObjects), end(sessionObjects), [&](const AstroSessionObjectElement &a, const AstroSessionObjectElement &b){
     return a.second.when < b.second.when;
   });
+  
+#ifndef PRODUCTION_MODE
+  vector<AstroObjectsTable::AstroObject> astroObjects;
+  transform(begin(sessionObjects), end(sessionObjects), back_inserter(astroObjects), [&ephemeris](const AstroSessionObjectElement &e) {
+    return AstroObjectsTable::AstroObject{e.first->astroSession(), e.first->ngcObject(), e.first->bestAltitude(ephemeris, 1)};
+  });
+
+  astroObjectsTable->populate(astroObjects, selectedTelescope, timezone, addedObject ? AstroObjectsTable::Selection{addedObject->ngcObject(), "success", [=](WTableRow *r) {
+    SkyPlanner::instance()->notification(WString::tr("notification_success_title"), WString::tr("notification_object_added").arg(r->id()), SkyPlanner::Notification::Information, 5);
+  }} : AstroObjectsTable::Selection{} ); 
+#endif
   objectsCounter->setText(format("%d") % sessionObjects.size());
   WTableRow *objectAddedRow = nullptr;
   for(auto sessionObjectElement: sessionObjects) {
@@ -657,7 +672,7 @@ void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject
       objectAddedRow = row;
       row->addStyleClass("success");
     }
-    row->elementAt(0)->addWidget(WW<ObjectNamesWidget>(new ObjectNamesWidget{sessionObject, timezone, selectedTelescope, session}).setInline(true).onClick([=](WMouseEvent){
+    row->elementAt(0)->addWidget(WW<ObjectNamesWidget>(new ObjectNamesWidget{sessionObject->ngcObject(), session, sessionObject->astroSession()}).setInline(true).onClick([=](WMouseEvent){
       if(selectedRow)
         selectedRow->removeStyleClass("info");
       if(objectAddedRow)

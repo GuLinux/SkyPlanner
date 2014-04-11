@@ -53,21 +53,11 @@ class ObjectNamesWidget::Private
     Private( Session &session, ObjectNamesWidget *q ) : session( session ), q( q ) {}
     AstroSessionObjectPtr astroSessionObject;
     Session &session;
-    Timezone timezone;
-    TelescopePtr telescope;
     void init(const NgcObjectPtr &object, const AstroSessionPtr &astroSession, RenderType renderType, int limitNames);
   private:
     ObjectNamesWidget *const q;
 };
 
-ObjectNamesWidget::ObjectNamesWidget( const AstroSessionObjectPtr &object, const Timezone &timezone, const TelescopePtr &telescope, Session &session, RenderType renderType, int limitNames, WContainerWidget *parent )
-  : WContainerWidget( parent ), d( session, this )
-{
-  d->astroSessionObject = object;
-  d->timezone = timezone;
-  d->telescope = telescope;
-  d->init(object->ngcObject(), object->astroSession(), renderType, limitNames);
-}
 
 ObjectNamesWidget::ObjectNamesWidget( const NgcObjectPtr &object, Session &session, const AstroSessionPtr &astroSession, RenderType renderType, int limitNames, WContainerWidget *parent )
   : WContainerWidget( parent ), d( session, this )
@@ -143,7 +133,6 @@ void ObjectNamesWidget::Private::init(const NgcObjectPtr &object, const AstroSes
                                         : Angle::degrees( -astroSession->position().latitude.degrees() ).sexagesimal();
           dsoBrowserLink << "&lat_deg=" << latitude.degrees << "&lat_min=" << latitude.minutes << "&lat_sec=" << static_cast<int>( latitude.seconds ) << "&lon_hem=" << longitudeEmisphere;
           dsoBrowserLink << "&lon_deg=" << longitude.degrees << "&lon_min=" << longitude.minutes << "&lon_sec=" << static_cast<int>( longitude.seconds ) << "&lat_hem=" << latitudeEmisphere;
-          // ?lat_deg=45&lat_min=29&lat_sec=31&lat_hem=N&month=12&day=2&year=2013&timezone=0&lon_deg=9&lon_min=17&lon_sec=53&lon_hem=E&min_alt=0&hour=0
         }
 
         addLink( "DSO Browser", dsoBrowserLink.str() );

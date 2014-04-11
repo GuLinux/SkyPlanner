@@ -23,16 +23,28 @@
 #include <Wt/WCompositeWidget>
 #include "utils/d_ptr.h"
 #include "models/Models"
+#include <functional>
+
+class Session;
 
 class AstroObjectsTable : public Wt::WCompositeWidget
 {
 public:
-  struct Object {
+  struct AstroObject {
     AstroSessionPtr astroSession;
     NgcObjectPtr object;
+    Ephemeris::BestAltitude bestAltitude; 
   };
-  AstroObjectsTable(Wt::WContainerWidget *parent = 0);
-  void populate(const std::vector<Object> &objects, Wt::Dbo::Transaction &transaction);
+  struct Selection {
+    Selection() = default;
+    Selection(const NgcObjectPtr &object, const std::string &css, std::function<void(Wt::WTableRow*)> onSelectionFound) : object(object), css(css), onSelectionFound(onSelectionFound) {}
+    NgcObjectPtr object;
+    std::string css;
+    std::function<void(Wt::WTableRow*)> onSelectionFound = [](Wt::WTableRow*) {};
+    operator bool() const { return object && !css.empty(); }
+  };
+  AstroObjectsTable(Session &session, Wt::WContainerWidget *parent = 0);
+  void populate(const std::vector<AstroObject> &objects, const TelescopePtr &telescope, const Timezone &timezone, const Selection &selection = {});
 private:
   D_PTR;
 };
