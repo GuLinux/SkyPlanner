@@ -304,11 +304,7 @@ void AstroSessionTab::Private::reload()
 
   if(timezone)
     sessionContainer->addWidget(  new WText(WString::tr("printable_timezone_info").arg(WString::fromUTF8(timezone.timeZoneName))));
-#ifndef  PRODUCTION_MODE
   sessionContainer->addWidget(astroObjectsTable = new AstroObjectsTable(session));
-#endif
-  sessionContainer->addWidget(WW<WContainerWidget>().css("table-responsive").add(objectsTable = WW<WTable>().addCss("table table-hover astroobjects-table")));
-  objectsTable->setHeaderCount(1);
   
   WContainerWidget *telescopeComboContainer;
   WComboBox *telescopeCombo = new WComboBox;
@@ -607,23 +603,10 @@ void AstroSessionTab::Private::remove(const AstroSessionObjectPtr &sessionObject
 
 void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject)
 {
-  objectsTable->clear();
-
-  Dbo::Transaction t(session);
-  selectedRow = 0;
-  objectsTable->elementAt(0,0)->addWidget(new WText{WString::tr("object_column_names")});
-  objectsTable->elementAt(0,1)->addWidget(new WText{WString::tr("object_column_type")});
-  objectsTable->elementAt(0,2)->addWidget(new WText{WString::tr("object_column_ar")});
-  objectsTable->elementAt(0,3)->addWidget(new WText{WString::tr("object_column_dec")});
-  objectsTable->elementAt(0,4)->addWidget(new WText{WString::tr("object_column_constellation")});
-  objectsTable->elementAt(0,5)->addWidget(new WText{WString::tr("object_column_angular_size")});
-  objectsTable->elementAt(0,6)->addWidget(new WText{WString::tr("object_column_magnitude")});
-  objectsTable->elementAt(0,7)->addWidget(new WText{WString::tr("object_column_highest_time")});
-  objectsTable->elementAt(0,8)->addWidget(new WText{WString::tr("object_column_max_altitude")});
-  objectsTable->elementAt(0,9)->addWidget(new WText{WString::tr("object_column_difficulty")});
+  astroObjectsTable->clear();
   if(filterByType->selected().size() == 0)
     return;
-  
+  Dbo::Transaction t(session);
   Ephemeris ephemeris({astroSession->position().latitude, astroSession->position().longitude}, timezone);
   
   auto query = session.query<AstroSessionObjectPtr>(format("select a from astro_session_object a inner join objects on a.objects_id = objects.id %s")

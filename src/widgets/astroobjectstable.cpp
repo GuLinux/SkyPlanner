@@ -47,9 +47,14 @@ AstroObjectsTable::AstroObjectsTable(Session &session, WContainerWidget *parent)
   setImplementation(WW<WContainerWidget>().add(WW<WContainerWidget>().addCss("table-responsive").add(d->objectsTable)));
 }
 
+void AstroObjectsTable::clear()
+{
+  d->objectsTable->clear();
+}
+
 void AstroObjectsTable::Private::header()
 {
-  objectsTable->clear();
+  q->clear();
   objectsTable->elementAt(0,0)->addWidget(new WText{WString::tr("object_column_names")});
   objectsTable->elementAt(0,1)->addWidget(new WText{WString::tr("object_column_type")});
   objectsTable->elementAt(0,2)->addWidget(new WText{WString::tr("object_column_ar")});

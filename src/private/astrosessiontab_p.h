@@ -48,7 +48,6 @@ public:
     void reload();
     Wt::Dbo::ptr<AstroSession> astroSession;
     Session &session;
-    Wt::WTable *objectsTable;
     Wt::WContainerWidget *positionDetails;
     void populate(const Wt::Dbo::ptr<AstroSessionObject> &astroSessionObject = {});
     Wt::WPanel *addPanel(const Wt::WString &title, Wt::WWidget *widget, bool collapsed = false, bool collapsible = true, Wt::WContainerWidget *container = 0);
@@ -61,7 +60,6 @@ public:
     std::shared_ptr<Wt::Http::Client> client;
     Timezone timezone;
     void updateTimezone();
-    Wt::WTableRow *selectedRow = 0;
     Wt::Signal<> close;
     ExportAstroSessionResource *exportToCsvResource = 0;
     FilterByTypeWidget *filterByType;

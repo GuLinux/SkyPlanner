@@ -49,6 +49,7 @@ public:
   };
   AstroObjectsTable(Session &session, Wt::WContainerWidget *parent = 0);
   void populate(const std::vector<AstroObject> &objects, const TelescopePtr &telescope, const Timezone &timezone, const Selection &selection = {});
+  void clear();
 private:
   D_PTR;
 };
