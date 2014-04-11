@@ -49,9 +49,12 @@ public:
     operator bool() const { return object && !css.empty(); }
   };
   struct Action {
+    Action() = default;
+    Action(const std::string &name, std::function<void(Row)> onClick, const std::string buttonCss = std::string{}) : name(name), onClick(onClick), buttonCss(buttonCss) {}
     std::string name;
     std::function<void(Row)> onClick;
     std::string buttonCss;
+    std::function<void(Wt::WMenuItem *, Row)> onMenuItemCreated = [](Wt::WMenuItem*, Row) {};
   };
   AstroObjectsTable(Session &session, const std::vector<Action> &actions = {}, Wt::WContainerWidget *parent = 0);
   void populate(const std::vector<AstroObject> &objects, const TelescopePtr &telescope, const Timezone &timezone, const Selection &selection = {});

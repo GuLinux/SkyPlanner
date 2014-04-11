@@ -22,7 +22,7 @@
 #include "astrosessiontab.h"
 #include <forecast.h>
 #include "types.h"
-
+#include "models/Models"
 class FilterByConstellation;
 namespace Wt
 {
@@ -33,7 +33,6 @@ namespace Wt
   class WTableRow;
 }
 
-class Telescope;
 class Session;
 class ExportAstroSessionResource;
 class FilterByMagnitudeWidget;
@@ -69,6 +68,7 @@ public:
     void remove(const Wt::Dbo::ptr<AstroSessionObject> &sessionObject, std::function<void()> runAfterRemove);
     Wt::WText *objectsCounter;
     AstroObjectsTable *astroObjectsTable;
+    void setDescriptionDialog(const AstroSessionObjectPtr &astroSessionObject, std::function<void()> onUpdate = []{});
 private:
     class AstroSessionTab* const q;
 };

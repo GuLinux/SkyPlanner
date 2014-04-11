@@ -139,6 +139,7 @@ void AstroObjectsTable::populate(const vector<AstroObject> &objects, const Teles
           auto menuItem = actionsMenu->addItem(WString::tr(action.name));
           menuItem->addStyleClass(action.buttonCss);
           menuItem->triggered().connect([=](WMenuItem*, _n5) { action.onClick(objectRow); });
+          action.onMenuItemCreated(menuItem, objectRow);
         }
       }
     }

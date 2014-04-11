@@ -44,6 +44,10 @@ std::vector<uint8_t> styleCss() {
         display: block!important;
       }
    }
+   
+   .resize-none {
+     resize: none;
+   }
 
    .astroobject-list-item {
 //     margin-top: 5px;
