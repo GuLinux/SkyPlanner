@@ -1,7 +1,7 @@
 include(   ${QT_USE_FILE}   )
 add_definitions(-DTESTS_NO_WT)
 include_directories(${CMAKE_SOURCE_DIR}/src/models)
-include(${CMAKE_SOURCE_DIR}/src/models/source_files.cmake)
+#include(${CMAKE_SOURCE_DIR}/src/models/source_files.cmake)
 add_executable(shakhbazian_importer shakhbazian.cpp
   ${CMAKE_SOURCE_DIR}/src/types.cpp
   ${SkyPlanner_MODELS_SRCS}
