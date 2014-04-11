@@ -307,7 +307,22 @@ void AstroSessionTab::Private::reload()
 
   vector<AstroObjectsTable::Action> actions = {
     {"buttons_extended_info", [](const AstroObjectsTable::Row &r) { r.toggleMoreInfo(); } },
-    {"description", [](const AstroObjectsTable::Row &r) { /* TODO */ } },
+    {"description", [=](const AstroObjectsTable::Row &r) {
+      Dbo::Transaction t(session);
+      auto sessionObject = session.find<AstroSessionObject>().where("objects_id = ?").bind(r.astroObject.object.id()).where("astro_session_id = ?").bind(r.astroObject.astroSession.id()).resultValue();
+      WDialog *editDescriptionDialog = WW<WDialog>(WString::tr("object_notes"));
+      editDescriptionDialog->setWidth(500);
+      WTextArea *descriptionTextArea = WW<WTextArea>(WString::fromUTF8(sessionObject->description())).css("input-block-level");
+      editDescriptionDialog->contents()->addWidget(descriptionTextArea);
+      editDescriptionDialog->footer()->addWidget(WW<WPushButton>(WString::tr("buttons_close")).css("btn-sm").onClick([=](WMouseEvent){ editDescriptionDialog->reject(); }));
+      editDescriptionDialog->footer()->addWidget( WW<WPushButton>(WString::tr("buttons_save")).css("btn-sm btn-primary").onClick([=](WMouseEvent){
+        editDescriptionDialog->accept();
+        Dbo::Transaction t(session);
+        sessionObject.modify()->setDescription(descriptionTextArea->text().toUTF8());
+        SkyPlanner::instance()->notification(WString::tr("notification_success_title"), WString::tr("notification_description_saved"), SkyPlanner::Notification::Success, 5);
+      }));
+      editDescriptionDialog->show();
+    } },
     {"buttons_remove", [=](const AstroObjectsTable::Row &r) {
       Dbo::Transaction t(session);
       auto sessionObject = session.find<AstroSessionObject>().where("objects_id = ?").bind(r.astroObject.object.id()).where("astro_session_id = ?").bind(r.astroObject.astroSession.id()).resultValue();
