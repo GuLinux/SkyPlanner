@@ -61,10 +61,6 @@ public:
     void updateTimezone();
     Wt::Signal<> close;
     ExportAstroSessionResource *exportToCsvResource = 0;
-    FilterByTypeWidget *filterByType;
-    FilterByMagnitudeWidget *filterByMinimumMagnitude;
-    FilterByConstellation *filterByConstellation;
-    FilterByCatalogue *filterByCatalogue;
     void remove(const Wt::Dbo::ptr<AstroSessionObject> &sessionObject, std::function<void()> runAfterRemove);
     Wt::WText *objectsCounter;
     AstroObjectsTable *astroObjectsTable;

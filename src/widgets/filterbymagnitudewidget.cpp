@@ -24,7 +24,7 @@ FilterByMagnitudeWidget::FilterByMagnitudeWidget(const Options &options, const R
   : WCompositeWidget(parent), d(this)
 {
   WText *valueLabel = WW<WText>().css("badge");
-  d->magnitudeSlider = WW<WSlider>().css("form-slider").setInline(true);
+  d->magnitudeSlider = WW<WSlider>().css("form-slider");
   d->magnitudeSlider->setNativeControl(false);
   setRange(range);
   d->minimumValueText = options.minimumValueText;

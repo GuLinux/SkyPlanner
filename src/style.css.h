@@ -138,6 +138,7 @@ std::vector<uint8_t> styleCss() {
     }
     .form-slider {
       vertical-align: middle;
+      display: inline-block!important;
     }
     .panel-compact {
       margin-bottom: 0px;

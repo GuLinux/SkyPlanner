@@ -40,13 +40,57 @@ AstroObjectsTable::Private::Private(Session &session, const vector<AstroObjectsT
 {
 }
 
-AstroObjectsTable::AstroObjectsTable(Session &session, const vector<Action> &actions, WContainerWidget *parent)
+AstroObjectsTable::AstroObjectsTable(Session &session, const vector<Action> &actions, bool showFilters, const set<NgcObject::NebulaType> &initialTypes, WContainerWidget *parent)
   : WCompositeWidget(parent), d(session, actions, this)
 {
   d->objectsTable = WW<WTable>().addCss("table table-hover astroobjects-table");
   d->objectsTable->setHeaderCount(1);
-  setImplementation(WW<WContainerWidget>().add(WW<WContainerWidget>().addCss("table-responsive").add(d->objectsTable)));
+  WContainerWidget *container = WW<WContainerWidget>();
+  if(showFilters) {
+    d->filterByType = new FilterByTypeWidget(initialTypes);
+    d->filterByType->changed().connect([=](_n6){ d->filtersChanged.emit(d->filters()); });
+    d->filterByMinimumMagnitude = new FilterByMagnitudeWidget({WString::tr("not_set"), {}, WString::tr("minimum_magnitude_label")}, {0, 20});
+    d->filterByMinimumMagnitude->changed().connect([=](double, _n5){ d->filtersChanged.emit(d->filters()); });
+
+    d->filterByCatalogue = new FilterByCatalogue(session);
+    d->filterByCatalogue->changed().connect([=](_n6){ d->filtersChanged.emit(d->filters()); });
+   
+    d->filterByConstellation = new FilterByConstellation;
+    d->filterByConstellation->changed().connect([=](_n6){ d->filtersChanged.emit(d->filters()); });
+    container->addWidget(WW<WContainerWidget>().addCss("form-inline").add(d->filterByType).add(d->filterByMinimumMagnitude).add(d->filterByConstellation).add(d->filterByCatalogue));
+  }
+  container->addWidget(WW<WContainerWidget>().addCss("table-responsive").add(d->objectsTable));
+  setImplementation(container);
 }
+
+AstroObjectsTable::Filters AstroObjectsTable::Private::filters() const
+{
+  Filters _filters;
+  if(!filterByMinimumMagnitude->isMinimum())
+    _filters.minimumMagnitude = filterByMinimumMagnitude->magnitude();
+  _filters.catalogue = filterByCatalogue->selectedCatalogue();
+  _filters.constellation = filterByConstellation->selectedConstellation();
+  _filters.types = filterByType->selected();
+  return _filters;
+}
+
+void AstroObjectsTable::setMaximumMagnitude( double magnitudeLimit )
+{
+  d->filterByMinimumMagnitude->setMaximum(magnitudeLimit);
+}
+
+
+AstroObjectsTable::Filters AstroObjectsTable::currentFilters() const
+{
+  return d->filters();
+}
+
+Signal< AstroObjectsTable::Filters > &AstroObjectsTable::filtersChanged() const
+{
+  return d->filtersChanged;
+}
+
+
 
 void AstroObjectsTable::clear()
 {

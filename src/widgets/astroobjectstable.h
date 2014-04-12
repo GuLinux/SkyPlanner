@@ -56,9 +56,18 @@ public:
     std::string buttonCss;
     std::function<void(Wt::WMenuItem *, Row)> onMenuItemCreated = [](Wt::WMenuItem*, Row) {};
   };
-  AstroObjectsTable(Session &session, const std::vector<Action> &actions = {}, Wt::WContainerWidget *parent = 0);
+  struct Filters {
+    std::set<NgcObject::NebulaType> types;
+    double minimumMagnitude = -200;
+    ConstellationFinder::Constellation constellation;
+    CataloguePtr catalogue;
+  };
+  AstroObjectsTable(Session &session, const std::vector<Action> &actions = {}, bool showFilters = true, const std::set<NgcObject::NebulaType> &initialTypes = NgcObject::allNebulaTypes(), Wt::WContainerWidget *parent = 0);
   void populate(const std::vector<AstroObject> &objects, const TelescopePtr &telescope, const Timezone &timezone, const Selection &selection = {});
   void clear();
+  Wt::Signal<Filters> &filtersChanged() const;
+  Filters currentFilters() const;
+  void setMaximumMagnitude(double magnitudeLimit);
 private:
   D_PTR;
 };

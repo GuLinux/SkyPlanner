@@ -274,17 +274,6 @@ void AstroSessionTab::Private::reload()
   title->addFunction("tr", &WTemplate::Functions::tr);
   title->bindWidget("counter", objectsCounter = WW<WText>("0").css("badge"));
 
-  filterByType = new FilterByTypeWidget(NgcObject::allNebulaTypes());
-  filterByMinimumMagnitude = new FilterByMagnitudeWidget({WString::tr("not_set"), {}, WString::tr("minimum_magnitude_label")}, {0, 20});
-  filterByType->changed().connect([=](_n6){ populate(); });
-  filterByMinimumMagnitude->changed().connect([=](double, _n5){ populate(); });
-
-  filterByCatalogue = new FilterByCatalogue(session);
-  filterByCatalogue->changed().connect([=](_n6){ populate(); });
-  
-  filterByConstellation = new FilterByConstellation;
-  filterByConstellation->changed().connect([=](_n6){ populate(); });
-  sessionContainer->addWidget(WW<WContainerWidget>().addCss("form-inline").add(filterByType).add(filterByMinimumMagnitude).add(filterByConstellation).add(filterByCatalogue));
 
   if(timezone)
     sessionContainer->addWidget(  new WText(WString::tr("printable_timezone_info").arg(WString::fromUTF8(timezone.timeZoneName))));
@@ -318,7 +307,7 @@ void AstroSessionTab::Private::reload()
     actions.push_back(toggleObserved);
 }
   sessionContainer->addWidget(astroObjectsTable = new AstroObjectsTable(session, actions ));
-  
+  astroObjectsTable->filtersChanged().connect([=](AstroObjectsTable::Filters, _n5){ populate(); });
   WContainerWidget *telescopeComboContainer;
   WComboBox *telescopeCombo = new WComboBox;
   WStandardItemModel *telescopesModel = new WStandardItemModel(sessionContainer);
@@ -330,7 +319,7 @@ void AstroSessionTab::Private::reload()
   //actionsContainer->addWidget( telescopeComboContainer = WW<WContainerWidget>().css("form-inline pull-right").add(telescopeComboLabel).add(telescopeCombo));
   telescopeCombo->activated().connect([=](int index, _n5){
     selectedTelescope = boost::any_cast<Dbo::ptr<Telescope>>(telescopesModel->item(index)->data());
-    filterByMinimumMagnitude->setMaximum(selectedTelescope->limitMagnitudeGain() + 6.5);
+    astroObjectsTable->setMaximumMagnitude(selectedTelescope->limitMagnitudeGain() + 6.5);
     populate();
     addObjectsTabWidget->populateFor(selectedTelescope, timezone);
   });
@@ -355,7 +344,7 @@ void AstroSessionTab::Private::reload()
 
       if(defaultItem)
         telescopeCombo->setCurrentIndex(telescopesModel->indexFromItem(defaultItem).row());
-      filterByMinimumMagnitude->setMaximum(selectedTelescope->limitMagnitudeGain() + 6.5);
+      astroObjectsTable->setMaximumMagnitude(selectedTelescope->limitMagnitudeGain() + 6.5);
     
     } else {
       telescopeComboContainer->setHidden(true);
@@ -636,27 +625,28 @@ void AstroSessionTab::Private::remove(const AstroSessionObjectPtr &sessionObject
 void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject)
 {
   astroObjectsTable->clear();
-  if(filterByType->selected().size() == 0)
+  auto filters = astroObjectsTable->currentFilters();
+  if(filters.types.size() == 0)
     return;
   Dbo::Transaction t(session);
   Ephemeris ephemeris({astroSession->position().latitude, astroSession->position().longitude}, timezone);
   
   auto query = session.query<AstroSessionObjectPtr>(format("select a from astro_session_object a inner join objects on a.objects_id = objects.id %s")
-         % ( filterByCatalogue->selectedCatalogue() ? "inner join denominations on objects.id = denominations.objects_id" : "")
+         % ( filters.catalogue? "inner join denominations on objects.id = denominations.objects_id" : "")
 
        )
       .where("astro_session_id = ?").bind(astroSession.id())
-      .where("objects.magnitude > ?").bind(filterByMinimumMagnitude->isMinimum() ? -200 : filterByMinimumMagnitude->magnitude());
+      .where("objects.magnitude > ?").bind(filters.minimumMagnitude);
 
-  if(filterByCatalogue->selectedCatalogue() )
-    query.where("denominations.catalogues_id = ?").bind(filterByCatalogue->selectedCatalogue().id());
-  vector<string> filterByTypeConditionPlaceholders{filterByType->selected().size(), "?"};
+  if( filters.catalogue )
+    query.where("denominations.catalogues_id = ?").bind(filters.catalogue.id());
+  vector<string> filterByTypeConditionPlaceholders{filters.types.size(), "?"};
   query.where(format("\"type\" IN (%s)") % boost::algorithm::join(filterByTypeConditionPlaceholders, ", "));
-  for(auto filter: filterByType->selected())
+  for(auto filter: filters.types)
     query.bind(filter);
 
-  if(filterByConstellation->selectedConstellation())
-    query.where("objects.constellation_abbrev = ?").bind(filterByConstellation->selectedConstellation().abbrev);
+  if(filters.constellation)
+    query.where("objects.constellation_abbrev = ?").bind(filters.constellation.abbrev);
 
   auto sessionObjectsDbCollection = query.resultList();
   vector<AstroObjectsTable::AstroObject> astroObjects;

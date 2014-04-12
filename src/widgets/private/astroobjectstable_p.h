@@ -20,6 +20,10 @@
 #ifndef ASTROOBJECTSTABLE_P_H
 #define ASTROOBJECTSTABLE_P_H
 #include "widgets/astroobjectstable.h"
+#include <widgets/filterbytypewidget.h>
+#include <widgets/filterbymagnitudewidget.h>
+#include "filterbyconstellation_p.h"
+#include <widgets/filterbycatalogue.h>
 #include "session.h"
 #include <Wt/WTable>
 
@@ -31,9 +35,16 @@ class AstroObjectsTable::Private
     std::vector<AstroObjectsTable::Action> actions; 
     Wt::WTable *objectsTable;
     Wt::WTableRow *selectedRow = nullptr;
+    FilterByTypeWidget *filterByType;
+    FilterByMagnitudeWidget *filterByMinimumMagnitude;
+    FilterByConstellation *filterByConstellation;
+    FilterByCatalogue *filterByCatalogue;
+    Wt::Signal<Filters> filtersChanged;
+    Filters filters() const;
     void header();
   private:
     class AstroObjectsTable *const q; 
 };
+
 #endif
 
