@@ -664,9 +664,22 @@ void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject
   if(pageNumber >=0 ) {
     page.current = pageNumber;
     page.total = astroObjects.size() / page.pageSize;
+    if(addedObject) {
+      auto addedObjectPosition = find_if(begin(astroObjects), end(astroObjects), [=](const AstroObjectsTable::AstroObject &o) {
+        return o.astroSession == addedObject->astroSession() && o.object == addedObject->ngcObject();
+      });
+      auto position = addedObjectPosition - astroObjects.begin();
+      long addedObjectPage = position / page.pageSize;
+      if(addedObjectPage != page.current) {
+        WTimer::singleShot(500, [=](WMouseEvent) {
+          populate(addedObject, addedObjectPage);
+        });
+        return;
+      }
+    }
     if(astroObjects.size() % page.pageSize != 0) page.total++;
     page.change = [=] (int pageNumber) {
-      populate(addedObject, pageNumber);
+      populate({}, pageNumber);
     };
     copy_n(astroObjects.begin() + (pageNumber * page.pageSize), min(page.pageSize, astroObjects.size() - (pageNumber * page.pageSize)), back_inserter(pagedAstroObjects));
   }
@@ -676,9 +689,9 @@ void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject
     SkyPlanner::instance()->notification(WString::tr("notification_success_title"), WString::tr("notification_object_added").arg(r.tableRow->id()), SkyPlanner::Notification::Information, 5);
   }} : AstroObjectsTable::Selection{}, page ); 
   if(page)
-    astroObjectsTable->tableFooter()->addWidget(WW<WPushButton>(WString::tr("astrosessiontab_list_no_pagination")).addCss("btn-link").onClick([=](WMouseEvent){ populate(addedObject, -1); }));
+    astroObjectsTable->tableFooter()->addWidget(WW<WPushButton>(WString::tr("astrosessiontab_list_no_pagination")).addCss("btn-link").onClick([=](WMouseEvent){ populate({}, -1); }));
   else
-    astroObjectsTable->tableFooter()->addWidget(WW<WPushButton>(WString::tr("astrosessiontab_list_pagination")).addCss("btn-link").onClick([=](WMouseEvent){ populate(addedObject); }));
+    astroObjectsTable->tableFooter()->addWidget(WW<WPushButton>(WString::tr("astrosessiontab_list_pagination")).addCss("btn-link").onClick([=](WMouseEvent){ populate({}); }));
 }
 
 
