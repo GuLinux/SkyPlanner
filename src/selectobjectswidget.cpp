@@ -367,9 +367,7 @@ void SelectObjectsWidget::Private::searchByNameTab(Dbo::Transaction& transaction
   name->setTextSize(0);
   name->setEmptyText(WString::tr("select_objects_widget_add_by_name"));
   AstroObjectsTable *resultsTable = new AstroObjectsTable(session, {addToSessionAction}, false);
-  auto searchByName = [=] {
-    clearSelection();
-    Dbo::Transaction t(session);
+  auto searchByNameTrigger = [=] {
     string nameToSearch = boost::algorithm::trim_copy(name->text().toUTF8());
     boost::replace_all(nameToSearch, "*", "%");
     if(nameToSearch.empty()) {
@@ -382,34 +380,14 @@ void SelectObjectsWidget::Private::searchByNameTab(Dbo::Transaction& transaction
       return;
     lastSearch = nameToSearch;
     transform(nameToSearch.begin(), nameToSearch.end(), nameToSearch.begin(), ::tolower);
-    int count = session.query<int>("select count(*) from denominations where lower(name) like '%' || ? || '%'").bind(nameToSearch);
-    spLog("notice") << "search by name: count=" << count;
-    if(count > 200) { // TODO: pagination
-      SkyPlanner::instance()->notification(WString::tr("select_objects_widget_add_by_name"), WString::tr("select_objects_widget_add_by_name_too_many"), SkyPlanner::Notification::Information, 5);
-      return;
-    }
-    resultsTable->clear();
-    dbo::collection<dbo::ptr<NebulaDenomination>> dboDenominations = session.find<NebulaDenomination>().where("lower(name) like '%' || ? || '%' ")
-     .bind(nameToSearch);
-    vector<NebulaDenominationPtr> denominations;
-    copy_if(begin(dboDenominations), end(dboDenominations), back_inserter(denominations), [&denominations](const NebulaDenominationPtr &a){
-      return count_if(begin(denominations), end(denominations), [&a](const NebulaDenominationPtr &b){ return a->ngcObject().id() == b->ngcObject().id(); }) == 0;
-    });
-
-    Ephemeris ephemeris(astroSession->position(), timezone);
-    auto twilight = ephemeris.astronomicalTwilight(astroSession->date());
-    vector<AstroObjectsTable::AstroObject> objects;
-    transform(denominations.begin(), denominations.end(), back_inserter(objects), [=,&ephemeris,&twilight](const NebulaDenominationPtr d) {
-      auto bestAltitude = ephemeris.findBestAltitude(d->ngcObject()->coordinates(), twilight.set, twilight.rise);
-      return AstroObjectsTable::AstroObject{astroSession, d->ngcObject(), bestAltitude};
-    } );
-    resultsTable->populate(objects, selectedTelescope, timezone);
+    
+    searchByName(nameToSearch, resultsTable);
   };
-  name->changed().connect([=](...){ searchByName(); });
+  name->changed().connect([=](...){ searchByNameTrigger(); });
   addObjectByName->addWidget(WW<WContainerWidget>().css("form-inline").add(name)
     .add(
          WW<WToolBar>()
-            .addButton( WW<WPushButton>(WString::tr("search")).css("btn btn-primary").onClick([=](WMouseEvent){ searchByName(); }) )
+            .addButton( WW<WPushButton>(WString::tr("search")).css("btn btn-primary").onClick([=](WMouseEvent){ searchByNameTrigger(); }) )
             .addButton( WW<WPushButton>("?").css("btn btn-primary").onClick([=](WMouseEvent){
                 SkyPlanner::instance()->notification(WString::tr("help_notification"), WString::tr("help_search_by_name"), SkyPlanner::Notification::Information, 10 );
             }) )
@@ -419,6 +397,35 @@ void SelectObjectsWidget::Private::searchByNameTab(Dbo::Transaction& transaction
 
   addObjectByName->setPadding(10);
   q->addTab(addObjectByName, WString::tr("select_objects_widget_add_by_name"));
+}
+
+void SelectObjectsWidget::Private::searchByName(const string &name, AstroObjectsTable *table, int page)
+{
+  Dbo::Transaction t(session);
+  int count = session.query<int>(R"(select count(distinct o.id) from "objects" o inner join denominations d on o.id = d.objects_id where lower(d.name) like '%' || ? || '%')")
+    .bind(name);
+  spLog("notice") << "search by name: count=" << count;
+  AstroObjectsTable::Page tablePage;
+  tablePage.current = page;
+  tablePage.total = count / tablePage.pageSize + (count % tablePage.pageSize != 0 ? 1 : 0);
+  tablePage.change = [=](int p) {
+    searchByName(name, table, p);
+  };
+  if(tablePage.total > 200) {
+    SkyPlanner::instance()->notification(WString::tr("select_objects_widget_add_by_name"), WString::tr("select_objects_widget_add_by_name_too_many"), SkyPlanner::Notification::Information, 5);
+    return;
+  }
+
+  auto ngcObjects = session.query<NgcObjectPtr>(R"(select o from "objects" o inner join denominations d on o.id = d.objects_id where lower(d.name) like '%' || ? || '%' group by o.id)")
+    .bind(name).limit(tablePage.pageSize).offset(tablePage.pageSize * page).resultList();
+  Ephemeris ephemeris(astroSession->position(), timezone);
+  auto twilight = ephemeris.astronomicalTwilight(astroSession->date());
+  vector<AstroObjectsTable::AstroObject> objects;
+  transform(ngcObjects.begin(), ngcObjects.end(), back_inserter(objects), [=,&ephemeris,&twilight](const NgcObjectPtr &o) {
+    auto bestAltitude = ephemeris.findBestAltitude(o->coordinates(), twilight.set, twilight.rise);
+    return AstroObjectsTable::AstroObject{astroSession, o, bestAltitude};
+  } );
+  table->populate(objects, selectedTelescope, timezone, {}, tablePage);
 }
 
 void SelectObjectsWidget::Private::searchByCatalogueTab(Dbo::Transaction& transaction)

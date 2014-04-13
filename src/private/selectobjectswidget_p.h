@@ -64,6 +64,7 @@ public:
     void clearSelection();
     void addToSession(const Wt::Dbo::ptr<NgcObject> &object, Wt::WTableRow *row);
     AstroObjectsTable::Action addToSessionAction;
+    void searchByName(const std::string &name, AstroObjectsTable *table, int page = 0);
 private:
     class SelectObjectsWidget* const q;
 };
