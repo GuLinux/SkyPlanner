@@ -47,6 +47,8 @@
 <message id="messagebox_confirm_removal_message">Are you sure? This cannot be undone</message>
 <message id="position_title">Position</message>
 <message id="astrosessiontab_add_observable_object">Add Observable Object</message>
+<message id="astrosessiontab_list_no_pagination">Show all objects without pagination</message>
+<message id="astrosessiontab_list_pagination">Show objects with pagination</message>
 <message id="astrosessiontab_objects_title">Objects</message>
 <message id="astrosessiontab_change_name_or_date">Change name and date</message>
 <message id="astrosessiontab_printable_version">Printable Version</message>

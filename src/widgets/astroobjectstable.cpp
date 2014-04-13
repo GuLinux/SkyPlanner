@@ -206,6 +206,7 @@ void AstroObjectsTable::populate(const vector<AstroObject> &objects, const Teles
     WContainerWidget *paginationWidget = WW<WContainerWidget>().addCss("pagination pagination-sm");
     paginationWidget->setList(true);
     d->tableFooter->addWidget(paginationWidget);
+    d->tableFooter->addWidget(new WBreak);
     
     WContainerWidget *previousButton = WW<WContainerWidget>().css("disabled");
     WContainerWidget *nextButton = WW<WContainerWidget>();

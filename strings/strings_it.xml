@@ -81,6 +81,8 @@
 <message id="messagebox_confirm_removal_message">Sei sicuro?</message>
 <message id="position_title">Posizione</message>
 <message id="astrosessiontab_add_observable_object">Aggiungi Oggetto da Osservare</message>
+<message id="astrosessiontab_list_no_pagination">Show all objects without pagination</message>
+<message id="astrosessiontab_list_pagination">Show objects with pagination</message>
 <message id="astrosessiontab_objects_title">Oggetti</message>
 <message id="astrosessiontab_change_name_or_date">Cambia nome e data</message>
 <message id="astrosessiontab_printable_version">Versione Stampabile</message>
