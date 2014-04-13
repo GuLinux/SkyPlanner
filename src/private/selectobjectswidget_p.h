@@ -23,6 +23,7 @@
 #include <boost/thread.hpp>
 #include "utils/format.h"
 #include "widgets/filterbycatalogue.h"
+#include "widgets/astroobjectstable.h"
 
 class FilterByConstellation;
 namespace Wt
@@ -61,6 +62,8 @@ public:
     Wt::WTableRow *selectedRow = 0;
     template<typename T> Wt::Dbo::Query<T> filterQuery(const std::string &query);
     void clearSelection();
+    void addToSession(const Wt::Dbo::ptr<NgcObject> &object, Wt::WTableRow *row);
+    AstroObjectsTable::Action addToSessionAction;
 private:
     class SelectObjectsWidget* const q;
 };

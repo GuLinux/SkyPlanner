@@ -63,7 +63,8 @@ using namespace WtCommons;
 using namespace std;
 
 
-SelectObjectsWidget::Private::Private(const Dbo::ptr< AstroSession >& astroSession, Session& session, SelectObjectsWidget* q) : astroSession(astroSession), session(session), q(q)
+SelectObjectsWidget::Private::Private(const Dbo::ptr< AstroSession >& astroSession, Session& session, SelectObjectsWidget* q) : astroSession(astroSession), session(session),
+  addToSessionAction("buttons_add", [=](const AstroObjectsTable::Row &r){ addToSession(r.astroObject.object, r.tableRow);  }, "btn-primary" ),  q(q)
 {
 }
 
@@ -179,6 +180,23 @@ void SelectObjectsWidget::Private::append(WTable *table, const Dbo::ptr<NgcObjec
   });
 
   row->elementAt(7)->addWidget(WW<WToolBar>().addButton(addToSessionButton)/*.addButton(extendedInfoButton)*/);
+}
+
+void SelectObjectsWidget::Private::addToSession(const NgcObjectPtr &ngcObject, WTableRow *row)
+{
+    Dbo::Transaction t(session);
+    int existing = session.query<int>("select count(*) from astro_session_object where astro_session_id = ? AND objects_id = ? ").bind(astroSession.id() ).bind(ngcObject.id() );
+    if(existing>0) {
+      SkyPlanner::instance()->notification(WString::tr("notification_warning_title"), WString::tr("notification_object_already_added"), SkyPlanner::Notification::Alert, 10);
+      return;
+    }
+    astroSession.modify()->astroSessionObjects().insert(new AstroSessionObject(ngcObject));
+    auto astroSessionObject = session.find<AstroSessionObject>().where("astro_session_id = ?").bind(astroSession.id()).where("objects_id = ?").bind(ngcObject.id()).resultValue();
+    t.commit();
+    clearSelection();
+    row->addStyleClass("success");
+
+    objectsListChanged.emit(astroSessionObject);
 }
 
 
@@ -413,9 +431,8 @@ void SelectObjectsWidget::Private::searchByCatalogueTab(Dbo::Transaction& transa
   WLineEdit *catalogueNumber = WW<WLineEdit>();
   catalogueNumber->setTextSize(0);
   catalogueNumber->setEmptyText(WString::tr("catalogue_number"));
-//  WTable *resultsTable = WW<WTable>().addCss("table  table-hover");
   
-  AstroObjectsTable *resultsTable = new AstroObjectsTable(session, {}, false);
+  AstroObjectsTable *resultsTable = new AstroObjectsTable(session, {addToSessionAction}, false);
 
   cataloguesCombo->setModel(cataloguesModel);
   auto searchByCatalogueNumber = [=] {
@@ -439,13 +456,11 @@ void SelectObjectsWidget::Private::searchByCatalogueTab(Dbo::Transaction& transa
     copy_if(begin(dboDenominations), end(dboDenominations), back_inserter(denominations), [&denominations](const NebulaDenominationPtr &a){
       return count_if(begin(denominations), end(denominations), [&a](const NebulaDenominationPtr &b){ return a->ngcObject().id() == b->ngcObject().id(); }) == 0;
     });
-  //  populateHeaders(resultsTable);
     Ephemeris ephemeris(astroSession->position(), timezone);
     auto twilight = ephemeris.astronomicalTwilight(astroSession->date());
     for(auto nebula: denominations) {
       auto bestAltitude = ephemeris.findBestAltitude(nebula->ngcObject()->coordinates(), twilight.set, twilight.rise);
       resultsTable->populate({{astroSession, nebula->ngcObject(), bestAltitude}}, selectedTelescope, timezone );
-      // append(resultsTable, nebula->ngcObject(), bestAltitude);
     }
   };
   catalogueNumber->changed().connect([=](...){ searchByCatalogueNumber(); });
