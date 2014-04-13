@@ -663,7 +663,8 @@ void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject
   vector<AstroObjectsTable::AstroObject> pagedAstroObjects;
   if(pageNumber >=0 ) {
     page.current = pageNumber;
-    page.total = astroObjects.size() / page.pageSize + 1;
+    page.total = astroObjects.size() / page.pageSize;
+    if(astroObjects.size() % page.pageSize != 0) page.total++;
     page.change = [=] (int pageNumber) {
       populate(addedObject, pageNumber);
     };
