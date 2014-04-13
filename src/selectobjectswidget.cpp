@@ -40,6 +40,7 @@
 #include "constellationfinder.h"
 #include "widgets/objectnameswidget.h"
 #include "widgets/objectdifficultywidget.h"
+#include "widgets/astroobjectstable.h"
 #include "widgets/cataloguesdescriptionwidget.h"
 #include "skyplanner.h"
 #include <Wt/WGroupBox>
@@ -412,8 +413,9 @@ void SelectObjectsWidget::Private::searchByCatalogueTab(Dbo::Transaction& transa
   WLineEdit *catalogueNumber = WW<WLineEdit>();
   catalogueNumber->setTextSize(0);
   catalogueNumber->setEmptyText(WString::tr("catalogue_number"));
-  WTable *resultsTable = WW<WTable>().addCss("table  table-hover");
-
+//  WTable *resultsTable = WW<WTable>().addCss("table  table-hover");
+  
+  AstroObjectsTable *resultsTable = new AstroObjectsTable(session, {}, false);
 
   cataloguesCombo->setModel(cataloguesModel);
   auto searchByCatalogueNumber = [=] {
@@ -437,12 +439,13 @@ void SelectObjectsWidget::Private::searchByCatalogueTab(Dbo::Transaction& transa
     copy_if(begin(dboDenominations), end(dboDenominations), back_inserter(denominations), [&denominations](const NebulaDenominationPtr &a){
       return count_if(begin(denominations), end(denominations), [&a](const NebulaDenominationPtr &b){ return a->ngcObject().id() == b->ngcObject().id(); }) == 0;
     });
-    populateHeaders(resultsTable);
+  //  populateHeaders(resultsTable);
     Ephemeris ephemeris(astroSession->position(), timezone);
     auto twilight = ephemeris.astronomicalTwilight(astroSession->date());
     for(auto nebula: denominations) {
       auto bestAltitude = ephemeris.findBestAltitude(nebula->ngcObject()->coordinates(), twilight.set, twilight.rise);
-      append(resultsTable, nebula->ngcObject(), bestAltitude);
+      resultsTable->populate({{astroSession, nebula->ngcObject(), bestAltitude}}, selectedTelescope, timezone );
+      // append(resultsTable, nebula->ngcObject(), bestAltitude);
     }
   };
   catalogueNumber->changed().connect([=](...){ searchByCatalogueNumber(); });
