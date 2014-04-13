@@ -59,7 +59,7 @@ AstroObjectsTable::AstroObjectsTable(Session &session, const vector<Action> &act
     d->filterByConstellation->changed().connect([=](_n6){ d->filtersChanged.emit(d->filters()); });
     container->addWidget(WW<WContainerWidget>().addCss("form-inline").add(d->filterByType).add(d->filterByMinimumMagnitude).add(d->filterByConstellation).add(d->filterByCatalogue));
   }
-  container->addWidget(WW<WContainerWidget>().addCss("table-responsive").add(d->objectsTable));
+  container->addWidget(WW<WContainerWidget>().addCss("table-responsive").add(d->objectsTable).add(d->tableFooter = WW<WContainerWidget>() ));
   setImplementation(container);
 }
 
@@ -91,6 +91,13 @@ Signal< AstroObjectsTable::Filters > &AstroObjectsTable::filtersChanged() const
 }
 
 
+AstroObjectsTable::Page::operator bool() const
+{
+  return current >= 0 && total >= 0;
+}
+
+
+
 
 void AstroObjectsTable::clear()
 {
@@ -112,10 +119,16 @@ void AstroObjectsTable::Private::header()
   objectsTable->elementAt(0,9)->addWidget(new WText{WString::tr("object_column_difficulty")});
 }
 
-void AstroObjectsTable::populate(const vector<AstroObject> &objects, const TelescopePtr &telescope, const Timezone &timezone, const Selection &selection)
+void AstroObjectsTable::populate(const vector<AstroObject> &objects, const TelescopePtr &telescope, const Timezone &timezone, const Selection &selection, const Page &page)
 {
+  auto clearSelection = [=] {
+    //if(!d->selectedRow) return;
+    //d->selectedRow->removeStyleClass("info");
+    d->selectedRow = nullptr;
+  };
+  clearSelection();
   d->header();
-  d->selectedRow = nullptr;
+  d->tableFooter->clear();
   WTableRow *objectAddedRow = nullptr;
   for(auto astroObject: objects) {
     WTableRow *row = d->objectsTable->insertRow(d->objectsTable->rowCount());
@@ -187,7 +200,33 @@ void AstroObjectsTable::populate(const vector<AstroObject> &objects, const Teles
         }
       }
     }
-       
     astroObjectCell->setColumnSpan(objectsTableColumns);
   }
+  if(page) {
+    WContainerWidget *paginationWidget = WW<WContainerWidget>().addCss("pagination pagination-sm");
+    paginationWidget->setList(true);
+    d->tableFooter->addWidget(paginationWidget);
+    
+    WContainerWidget *previousButton = WW<WContainerWidget>().css("disabled");
+    WContainerWidget *nextButton = WW<WContainerWidget>();
+    
+    auto activatePage = [=](int pageNumber) {
+      clearSelection();
+      if(pageNumber<0 || pageNumber>=page.total) return;
+      page.change(pageNumber);
+    };
+    
+    previousButton->addWidget(WW<WAnchor>("", "&laquo;" ).onClick([=](WMouseEvent){ activatePage(page.current-1); }));
+    nextButton->addWidget(WW<WAnchor>("", "&raquo;" ).onClick([=](WMouseEvent){ activatePage(page.current+1); }));
+    paginationWidget->addWidget(previousButton);
+    for(int i=0; i <page.total; i++) {
+      paginationWidget->addWidget(WW<WContainerWidget>().addCss(i == page.current ? "active" : "").add(WW<WAnchor>("", format("%d") % (i+1) ).onClick([=](WMouseEvent){ activatePage(i); }) ));
+    }
+    paginationWidget->addWidget(nextButton);
+  }
+}
+
+WContainerWidget *AstroObjectsTable::tableFooter() const
+{
+  return d->tableFooter;
 }

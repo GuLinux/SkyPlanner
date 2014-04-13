@@ -622,7 +622,7 @@ void AstroSessionTab::Private::remove(const AstroSessionObjectPtr &sessionObject
       confirmation->show();
 }
 
-void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject)
+void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject, int pageNumber)
 {
   astroObjectsTable->clear();
   auto filters = astroObjectsTable->currentFilters();
@@ -659,9 +659,19 @@ void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject
   
   objectsCounter->setText(format("%d") % astroObjects.size());
 
-  astroObjectsTable->populate(astroObjects, selectedTelescope, timezone, addedObject ? AstroObjectsTable::Selection{addedObject->ngcObject(), "success", [=](const AstroObjectsTable::Row &r) {
+  AstroObjectsTable::Page page;
+  page.current = pageNumber;
+  page.total = astroObjects.size() / page.pageSize + 1;
+  page.change = [=] (int pageNumber) {
+    populate(addedObject, pageNumber);
+  };
+
+  vector<AstroObjectsTable::AstroObject> pagedAstroObjects;
+  copy_n(astroObjects.begin() + (pageNumber * page.pageSize), min(page.pageSize, astroObjects.size() - (pageNumber * page.pageSize)), back_inserter(pagedAstroObjects));
+
+  astroObjectsTable->populate(pagedAstroObjects, selectedTelescope, timezone, addedObject ? AstroObjectsTable::Selection{addedObject->ngcObject(), "success", [=](const AstroObjectsTable::Row &r) {
     SkyPlanner::instance()->notification(WString::tr("notification_success_title"), WString::tr("notification_object_added").arg(r.tableRow->id()), SkyPlanner::Notification::Information, 5);
-  }} : AstroObjectsTable::Selection{} ); 
+  }} : AstroObjectsTable::Selection{}, page ); 
 }
 
 

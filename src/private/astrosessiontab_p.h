@@ -48,7 +48,7 @@ public:
     Wt::Dbo::ptr<AstroSession> astroSession;
     Session &session;
     Wt::WContainerWidget *positionDetails;
-    void populate(const Wt::Dbo::ptr<AstroSessionObject> &astroSessionObject = {});
+    void populate(const Wt::Dbo::ptr<AstroSessionObject> &astroSessionObject = {}, int pageNumber = 0);
     Wt::WPanel *addPanel(const Wt::WString &title, Wt::WWidget *widget, bool collapsed = false, bool collapsible = true, Wt::WContainerWidget *container = 0);
     void updatePositionDetails(Wt::WContainerWidget *positionDetails, bool showMeteo = true);
     Forecast forecast;

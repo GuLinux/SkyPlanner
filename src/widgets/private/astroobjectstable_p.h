@@ -42,6 +42,7 @@ class AstroObjectsTable::Private
     Wt::Signal<Filters> filtersChanged;
     Filters filters() const;
     void header();
+    Wt::WContainerWidget *tableFooter;
   private:
     class AstroObjectsTable *const q; 
 };

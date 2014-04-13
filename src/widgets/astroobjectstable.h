@@ -62,14 +62,23 @@ public:
     ConstellationFinder::Constellation constellation;
     CataloguePtr catalogue;
   };
+  struct Page {
+    long current = -1;
+    long total = -1;
+    std::size_t pageSize = 15;
+    std::function<void(int)> change;
+    operator bool() const;
+  };
   AstroObjectsTable(Session &session, const std::vector<Action> &actions = {}, bool showFilters = true, const std::set<NgcObject::NebulaType> &initialTypes = NgcObject::allNebulaTypes(), Wt::WContainerWidget *parent = 0);
-  void populate(const std::vector<AstroObject> &objects, const TelescopePtr &telescope, const Timezone &timezone, const Selection &selection = {});
+  void populate(const std::vector<AstroObject> &objects, const TelescopePtr &telescope, const Timezone &timezone, const Selection &selection = {}, const Page &page = {});
   void clear();
   Wt::Signal<Filters> &filtersChanged() const;
   Filters currentFilters() const;
   void setMaximumMagnitude(double magnitudeLimit);
+  Wt::WContainerWidget *tableFooter() const;
 private:
   D_PTR;
 };
+
 
 #endif
