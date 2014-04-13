@@ -366,7 +366,7 @@ void SelectObjectsWidget::Private::searchByNameTab(Dbo::Transaction& transaction
   WLineEdit *name = WW<WLineEdit>();
   name->setTextSize(0);
   name->setEmptyText(WString::tr("select_objects_widget_add_by_name"));
-  WTable *resultsTable = WW<WTable>().addCss("table  table-hover");
+  AstroObjectsTable *resultsTable = new AstroObjectsTable(session, {addToSessionAction}, false);
   auto searchByName = [=] {
     clearSelection();
     Dbo::Transaction t(session);
@@ -396,13 +396,14 @@ void SelectObjectsWidget::Private::searchByNameTab(Dbo::Transaction& transaction
       return count_if(begin(denominations), end(denominations), [&a](const NebulaDenominationPtr &b){ return a->ngcObject().id() == b->ngcObject().id(); }) == 0;
     });
 
-    populateHeaders(resultsTable);
     Ephemeris ephemeris(astroSession->position(), timezone);
     auto twilight = ephemeris.astronomicalTwilight(astroSession->date());
-    for(auto nebula: denominations) {
-      auto bestAltitude = ephemeris.findBestAltitude(nebula->ngcObject()->coordinates(), twilight.set, twilight.rise);
-      append(resultsTable, nebula->ngcObject(), bestAltitude);
-    }
+    vector<AstroObjectsTable::AstroObject> objects;
+    transform(denominations.begin(), denominations.end(), back_inserter(objects), [=,&ephemeris,&twilight](const NebulaDenominationPtr d) {
+      auto bestAltitude = ephemeris.findBestAltitude(d->ngcObject()->coordinates(), twilight.set, twilight.rise);
+      return AstroObjectsTable::AstroObject{astroSession, d->ngcObject(), bestAltitude};
+    } );
+    resultsTable->populate(objects, selectedTelescope, timezone);
   };
   name->changed().connect([=](...){ searchByName(); });
   addObjectByName->addWidget(WW<WContainerWidget>().css("form-inline").add(name)
