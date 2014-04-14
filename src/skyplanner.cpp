@@ -97,7 +97,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
   auto theme = new WBootstrapTheme(this);
   theme->setVersion(WBootstrapTheme::Version3);
   setTheme( theme );
-  requireJQuery("http://codeorigin.jquery.com/jquery-1.8.3.min.js");
+  requireJQuery("//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js");
   {
     Dbo::Transaction t(d->session);
     long objectsWithoutConstellationSize = d->session.query<long>("select count(*) from objects where constellation_abbrev is null").resultValue();
@@ -119,26 +119,8 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
     }
   }
 
-  WNavigationBar *navBar = WW<WNavigationBar>().addCss( "navbar-inverse" );
-  WPushButton *collapseButton = WW<WPushButton>(WString::tr("Wt.WNavigationBar.expand-button"));
-  WPushButton *expandButton = WW<WPushButton>(WString::tr("Wt.WNavigationBar.expand-button"));
-  collapseButton->setTextFormat(XHTMLText);
-  wApp->theme()->apply(navBar, collapseButton, NavbarBtn);
-  expandButton->setTextFormat(XHTMLText);
-  wApp->theme()->apply(navBar, expandButton, NavbarBtn);
-  navBar->bindWidget("collapse-button", collapseButton);
-  navBar->bindWidget("expand-button", expandButton);
-  root()->addWidget(navBar);
-  auto collapseNavBar = [=](bool collapse) {
-    WContainerWidget *contents = navBar->resolve<WContainerWidget *>("contents");
-    contents->toggleStyleClass("navbar-collapsed", collapse);
-    contents->setHidden(collapse);
-    collapseButton->setHidden(collapse);
-    expandButton->setHidden(!collapse);
-  };
-  WTimer::singleShot(2000, [=](WMouseEvent){ collapseNavBar(true); });
-  collapseButton->clicked().connect(std::bind(collapseNavBar, true));
-  expandButton->clicked().connect(std::bind(collapseNavBar, false));
+  WNavigationBar *navBar = WW<WNavigationBar>(root()).addCss( "navbar-inverse" );
+
   navBar->setResponsive( true );
   navBar->setTitle( WString::tr("application_title"), WLink(WLink::InternalPath, HOME_PATH) );
   useStyleSheet( "/skyplanner_style.css" );
@@ -147,7 +129,6 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
   d->widgets->setTransitionAnimation({WAnimation::AnimationEffect::Fade});
   d->widgets->setMargin(10);
   WMenu *navBarMenu = new WMenu(d->widgets);
-  navBarMenu->itemSelected().connect(std::bind(collapseNavBar, true));
   
   navBar->addMenu(navBarMenu);
   Auth::AuthWidget *authWidget = new Auth::AuthWidget( Session::auth(), d->session.users(), d->session.login() );
@@ -180,23 +161,18 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
   userPopup->setInternalPathEnabled("/");
   userSubMenu->setMenu(userPopup);
 
-  auto userMenuItems = [=](WMenu *menu, string css = {}) {
-    WMenuItem *telescopesMenuItem = WW<WMenuItem>(menu->addItem(WString::tr("mainmenu_my_telescopes"), telescopesPage)).addCss(css);
-    d->loggedInItems.push_back(telescopesMenuItem);
-    telescopesMenuItem->setPathComponent("telescopes/");
-  
-    WMenuItem *userSettingsMenuItem = WW<WMenuItem>(menu->addItem(WString::tr("mainmenu_my_settings"), new UserSettingsPage(d->session))).addCss(css);
-    d->loggedInItems.push_back(userSettingsMenuItem);
-    userSettingsMenuItem->setPathComponent("settings/");
+  WMenuItem *telescopesMenuItem = WW<WMenuItem>(userPopup->addItem(WString::tr("mainmenu_my_telescopes"), telescopesPage));
+  d->loggedInItems.push_back(telescopesMenuItem);
+  telescopesMenuItem->setPathComponent("telescopes/");
 
-    WMenuItem *logout = WW<WMenuItem>(menu->addItem(WString::tr("mainmenu_logout"))).addCss(css);
-    logout->setPathComponent("logout/");
-    d->loggedInItems.push_back(logout);
-    logout->triggered().connect([=](WMenuItem*,_n5){ d->session.login().logout(); });
-  };
-  
-  userMenuItems(navBarMenu, "visible-xs");
-  userMenuItems(userPopup);
+  WMenuItem *userSettingsMenuItem = WW<WMenuItem>(userPopup->addItem(WString::tr("mainmenu_my_settings"), new UserSettingsPage(d->session)));
+  d->loggedInItems.push_back(userSettingsMenuItem);
+  userSettingsMenuItem->setPathComponent("settings/");
+
+  WMenuItem *logout = WW<WMenuItem>(userPopup->addItem(WString::tr("mainmenu_logout")));
+  logout->setPathComponent("logout/");
+  d->loggedInItems.push_back(logout);
+  logout->triggered().connect([=](WMenuItem*,_n5){ d->session.login().logout(); });
   
  
   WMenuItem *feedbackMenuItem = navBarMenu->addItem(WString::tr("mainmenu_feedback"), new SendFeedbackPage(d->session));
@@ -210,25 +186,15 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
 
   WMenuItem *gulinuxMenuItem = WW<WMenuItem>(rightMenu->addItem("GuLinux")).addCss("bold").addCss("menu-item-highlight");
   gulinuxMenuItem->setInternalPathEnabled(false);
-  gulinuxMenuItem->addStyleClass("hidden-xs");
   WPopupMenu *gulinuxPopup = new WPopupMenu;
   gulinuxMenuItem->setMenu(gulinuxPopup);
 
-  auto addGulinuxItems = [=](WMenu *menu, string css = {}) {
-    auto blogMenuItem = menu->addItem("Blog");
-    blogMenuItem->addStyleClass(css);
-    blogMenuItem->setLink("http://blog.gulinux.net");
-    blogMenuItem->setLinkTarget(Wt::TargetNewWindow);
-    auto skyPlannerMenuItem = menu->addItem("SkyPlanner Homepage");
-    skyPlannerMenuItem->addStyleClass(css);
-    skyPlannerMenuItem->setLink((format("http://blog.gulinux.net/skyplanner?lang=%s") % locale().name()).str() );
-    skyPlannerMenuItem->setLinkTarget(Wt::TargetNewWindow);
-  };
-  addGulinuxItems(gulinuxPopup);
-  addGulinuxItems(navBarMenu, "visible-xs");
- 
-
-  
+  auto blogMenuItem = gulinuxPopup->addItem("Blog");
+  blogMenuItem->setLink("http://blog.gulinux.net");
+  blogMenuItem->setLinkTarget(Wt::TargetNewWindow);
+  auto skyPlannerMenuItem = gulinuxPopup->addItem("SkyPlanner Homepage");
+  skyPlannerMenuItem->setLink((format("http://blog.gulinux.net/skyplanner?lang=%s") % locale().name()).str() );
+  skyPlannerMenuItem->setLinkTarget(Wt::TargetNewWindow);
   
   auto setMenuItemsVisibility = [=] {
     bool loggedIn = d->session.login().loggedIn();
@@ -274,9 +240,8 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
   d->widgets->addWidget(d->dssContainer = new WContainerWidget);
   WContainerWidget *searchByNameWidget = WW<WContainerWidget>();
   d->widgets->addWidget(searchByNameWidget);
-  WContainerWidget *searchByNameContainer = WW<WContainerWidget>();
-  WLineEdit *searchByNameEdit = WW<WLineEdit>(searchByNameContainer);
-  navBar->addWidget(searchByNameContainer, AlignRight);
+  WLineEdit *searchByNameEdit = new WLineEdit;
+  navBar->addSearch(searchByNameEdit, AlignRight);
   searchByNameEdit->setTextSize(0);
   searchByNameEdit->setEmptyText(WString::tr("select_objects_widget_add_by_name"));
   searchByNameEdit->changed().connect([=](_n1){
@@ -394,7 +359,7 @@ SkyPlanner::Notification::Notification(const WString &title, const WString &cont
   : d()
 {
   static map<Type,string> notificationStyles {
-    {Error, "alert-error"},
+    {Error, "alert-danger"},
     {Success, "alert-success"},
     {Information, "alert-info"},
     {Alert, "alert-warning"},

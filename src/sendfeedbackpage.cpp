@@ -66,7 +66,7 @@ void SendFeedbackPage::Private::feedbackForm(const Wt::Dbo::ptr<NgcObject> &obje
 {
   content->clear();
   if(session.login().user().email().empty()) {
-    SkyPlanner::instance()->notification(WString::tr("notification_error_title"), WString::tr("feedback_user_without_email_error"), SkyPlanner::Notification::Error);
+    SkyPlanner::instance()->notification(WString::tr("notification_error_title"), WString::tr("feedback_user_without_email_error"), SkyPlanner::Notification::Error, 15);
     wApp->setInternalPath("/", true);
     return;
   }
