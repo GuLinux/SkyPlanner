@@ -22,6 +22,7 @@
 #include "skyplanner.h"
 #include "session.h"
 
+class AstroObjectsTable;
 namespace Wt
 {
   class WMenuItem;
@@ -38,6 +39,7 @@ public:
     Wt::WContainerWidget *notifications;
     Wt::WStackedWidget *widgets;
     void loadDSSPage(const std::string &hexId);
+    void searchByName(const std::string &name, AstroObjectsTable *table, int page = 0);
     std::string previousInternalPath = "/";
     Wt::WContainerWidget *dssContainer;
     Wt::WString loginname;

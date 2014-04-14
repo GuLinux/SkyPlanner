@@ -37,6 +37,7 @@
 #include <Wt/WTimer>
 #include "models/Models"
 #include "widgets/dsspage.h"
+#include "widgets/astroobjectstable.h"
 #include <Wt/Auth/AbstractUserDatabase>
 #include "usersettingspage.h"
 #include "sendfeedbackpage.hpp"
@@ -47,8 +48,10 @@
 #include <mutex>
 #include <Wt/WProgressBar>
 #include <Wt/WPopupMenu>
+#include <Wt/WLineEdit>
 #include <Wt/WProgressBar>
 #include "utils/format.h"
+#include <boost/algorithm/string.hpp>
 
 
 using namespace std;
@@ -204,6 +207,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
   auto rightMenu = new Wt::WMenu();
   navBar->addMenu(rightMenu, Wt::AlignRight);
 
+
   WMenuItem *gulinuxMenuItem = WW<WMenuItem>(rightMenu->addItem("GuLinux")).addCss("bold").addCss("menu-item-highlight");
   gulinuxMenuItem->setInternalPathEnabled(false);
   gulinuxMenuItem->addStyleClass("hidden-xs");
@@ -268,10 +272,55 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
   };
   internalPathChanged().connect([=](string p, ...) {handlePath(p); });
   d->widgets->addWidget(d->dssContainer = new WContainerWidget);
+  WContainerWidget *searchByNameWidget = WW<WContainerWidget>();
+  d->widgets->addWidget(searchByNameWidget);
+  WContainerWidget *searchByNameContainer = WW<WContainerWidget>();
+  WLineEdit *searchByNameEdit = WW<WLineEdit>(searchByNameContainer);
+  navBar->addWidget(searchByNameContainer, AlignRight);
+  searchByNameEdit->setTextSize(0);
+  searchByNameEdit->setEmptyText(WString::tr("select_objects_widget_add_by_name"));
+  searchByNameEdit->changed().connect([=](_n1){
+    spLog("notice") << "Search by name: original=" << searchByNameEdit->valueText();
+    string nameToSearch = boost::algorithm::trim_copy(searchByNameEdit->valueText().toUTF8());
+    searchByNameWidget->clear();
+    
+    spLog("notice") << "Search by name: original=" << searchByNameEdit->valueText() << ", trimmed: " << nameToSearch << ";";
+    boost::replace_all(nameToSearch, "*", "%");
+    if(nameToSearch.empty()) {
+      return;
+    }
+    
+    AstroObjectsTable *resultsTable = new AstroObjectsTable(d->session, {}, false);
+    searchByNameWidget->addWidget(resultsTable);
+    
+    d->searchByName(nameToSearch, resultsTable);
+    d->widgets->setCurrentWidget(searchByNameWidget);
+  });
   if(!d->session.login().loggedIn() && ! internalPathMatches("/dss") ) {
     setInternalPath(HOME_PATH, true);
   }
   handlePath(internalPath());
+}
+
+void SkyPlanner::Private::searchByName(const string &name, AstroObjectsTable *table, int page)
+{
+  Dbo::Transaction t(session);
+  int count = session.query<int>(R"(select count(distinct o.id) from "objects" o inner join denominations d on o.id = d.objects_id where lower(d.name) like '%' || ? || '%')")
+    .bind(name);
+  spLog("notice") << "search by name: count=" << count;
+  auto tablePage = AstroObjectsTable::Page::fromCount(page, count, [=](int p) { searchByName(name, table, p); });
+  if(tablePage.total > 200) {
+    q->notification(WString::tr("select_objects_widget_add_by_name"), WString::tr("select_objects_widget_add_by_name_too_many"), SkyPlanner::Notification::Information, 5);
+    return;
+  }
+
+  auto ngcObjects = session.query<NgcObjectPtr>(R"(select o from "objects" o inner join denominations d on o.id = d.objects_id where lower(d.name) like '%' || ? || '%' group by o.id)")
+    .bind(name).limit(tablePage.pageSize).offset(tablePage.pageSize * page).resultList();
+  vector<AstroObjectsTable::AstroObject> objects;
+  transform(ngcObjects.begin(), ngcObjects.end(), back_inserter(objects), [=,&t](const NgcObjectPtr &o) {
+    return AstroObjectsTable::AstroObject{{}, o};
+  } );
+  table->populate(objects, TelescopePtr(), {}, tablePage);
 }
 
 void SkyPlanner::Private::loadDSSPage( const std::string &hexId )
