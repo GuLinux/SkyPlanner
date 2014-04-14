@@ -172,30 +172,30 @@ void AstroObjectsTable::populate(const vector<AstroObject> &objects, const Teles
       row->addStyleClass(selection.css);
       selection.onSelectionFound(objectRow);
     }
-    auto addColumn = [=](Column column, WWidget *widget) -> WTableCell* {
+    auto addColumn = [=](Column column, function<WWidget *()> createWidget) -> WTableCell* {
       auto hasColumn = std::find(begin(d->columns), end(d->columns), column);
       if(hasColumn == end(d->columns))
         return nullptr;
-      return WW<WTableCell>(row->elementAt(hasColumn - begin(d->columns))).add(widget).get();
+      return WW<WTableCell>(row->elementAt(hasColumn - begin(d->columns))).add(createWidget() ).get();
     };
-    addColumn(Names, WW<ObjectNamesWidget>(new ObjectNamesWidget{astroObject.object, d->session, astroObject.astroSession}).setInline(true).onClick([=](WMouseEvent){
+    addColumn(Names, [=] { return WW<ObjectNamesWidget>(new ObjectNamesWidget{astroObject.object, d->session, astroObject.astroSession}).setInline(true).onClick([=](WMouseEvent){
       if(d->selectedRow)
         d->selectedRow->removeStyleClass("info");
       if(objectAddedRow)
         objectAddedRow->removeStyleClass(selection.css);
       row->addStyleClass("info");
       d->selectedRow = row;
-    }));
-    addColumn(Type, new WText{astroObject.object->typeDescription() });
-    addColumn(AR, new WText{ Utils::htmlEncode( astroObject.object->coordinates().rightAscension.printable(Angle::Hourly) ) });
-    addColumn(DEC, new WText{ Utils::htmlEncode( WString::fromUTF8( astroObject.object->coordinates().declination.printable() )) });
-    addColumn(Constellation, new WText{ WString::fromUTF8(astroObject.object->constellation().name) });
-    addColumn(AngularSize, new WText{ Utils::htmlEncode( WString::fromUTF8( Angle::degrees(astroObject.object->angularSize()).printable() )) });
-    addColumn(Magnitude, new WText{ astroObject.object->magnitude() > 90. ? "N/A" : (format("%.1f") % astroObject.object->magnitude()).str() });
+    }).get(); });
+    addColumn(Type, [=] { return new WText{astroObject.object->typeDescription() }; });
+    addColumn(AR, [=] { return new WText{ Utils::htmlEncode( astroObject.object->coordinates().rightAscension.printable(Angle::Hourly) ) }; });
+    addColumn(DEC, [=] { return new WText{ Utils::htmlEncode( WString::fromUTF8( astroObject.object->coordinates().declination.printable() )) }; });
+    addColumn(Constellation, [=] { return new WText{ WString::fromUTF8(astroObject.object->constellation().name) }; });
+    addColumn(AngularSize, [=] { return new WText{ Utils::htmlEncode( WString::fromUTF8( Angle::degrees(astroObject.object->angularSize()).printable() )) }; });
+    addColumn(Magnitude, [=] { return new WText{ astroObject.object->magnitude() > 90. ? "N/A" : (format("%.1f") % astroObject.object->magnitude()).str() }; });
     auto bestAltitude = astroObject.bestAltitude;
-    addColumn(TransitTime, new WText{ bestAltitude.when.str() });
-    addColumn(MaxAltitude, new WText{ Utils::htmlEncode(WString::fromUTF8(bestAltitude.coordinates.altitude.printable() )) });
-    addColumn(Difficulty, new ObjectDifficultyWidget{astroObject.object, telescope, bestAltitude.coordinates.altitude.degrees() }); 
+    addColumn(TransitTime, [=] { return new WText{ bestAltitude.when.str() }; });
+    addColumn(MaxAltitude, [=] { return new WText{ Utils::htmlEncode(WString::fromUTF8(bestAltitude.coordinates.altitude.printable() )) }; });
+    addColumn(Difficulty, [=] { return new ObjectDifficultyWidget{astroObject.object, telescope, bestAltitude.coordinates.altitude.degrees() }; }); 
     
     if(d->actions.size() > 0) {
       if(d->actions.size() == 1) {

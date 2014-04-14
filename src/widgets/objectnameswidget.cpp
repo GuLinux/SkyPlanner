@@ -116,11 +116,13 @@ void ObjectNamesWidget::Private::init(const NgcObjectPtr &object, const AstroSes
         ngcIcMenuItem->setLinkTarget( TargetNewWindow );
         stringstream dsoBrowserLink;
         dsoBrowserLink << "http://dso-browser.com/dso/info/" << catName << "/" << catNumber;
-        dsoBrowserLink << "?year=" << astroSession->when().date().year()
-        << "&month=" << astroSession->when().date().month().as_number()
-        << "&day=" << astroSession->when().date().day();
+        if(astroSession) {
+          dsoBrowserLink << "?year=" << astroSession->when().date().year()
+          << "&month=" << astroSession->when().date().month().as_number()
+          << "&day=" << astroSession->when().date().day();
+        }
 
-        if( astroSession->position() )
+        if( astroSession && astroSession->position() )
         {
           string longitudeEmisphere = astroSession->position().longitude.degrees() > 0 ? "E" : "W" ;
           Angle::Sexagesimal longitude = astroSession->position().longitude.degrees() > 0

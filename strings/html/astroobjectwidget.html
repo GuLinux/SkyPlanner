@@ -5,9 +5,11 @@
 <tr><td><small class="astroobject_text">${tr:astroobject_coordinates_label}:</small></td><td><small class="astroobject_text">AR ${ar}, DEC ${dec}</small></td></tr>
 <tr><td><small class="astroobject_text">${tr:object_column_angular_size}:</small></td><td><small class="astroobject_text">${angular_size}</small></td></tr>
 <tr><td><small class="astroobject_text">${tr:object_column_magnitude}:</small></td><td><small class="astroobject_text">${magnitude}</small></td></tr>
+${<have-ephemeris>}
 <tr><td><small class="astroobject_text">${tr:astroobject_best_altitude}:</small></td><td><small class="astroobject_text">${best_altitude}</small></td></tr>
 <tr><td><small class="astroobject_text">${tr:astroobject_best_altitude_when}:</small></td><td><small class="astroobject_text">${best_altitude_when}</small></td></tr>
 <tr><td><small class="astroobject_text">${tr:object_column_difficulty}:</small></td><td><small class="astroobject_text">${difficulty}</small></td></tr>
+${</have-ephemeris>}
 ${<have-actions>}
 <tr class="hidden-print"><td><small class="astroobject_text">${tr:astroobject_actions_label}:</small></td><td><small class="astroobject_text">${actions}</small></td></tr>
 ${</have-actions>}

@@ -56,7 +56,6 @@ void AstroObjectWidget::Private::init()
   auto names = [=] { return new ObjectNamesWidget(ngcObject, session, astroSession, ObjectNamesWidget::Printable); }; 
   collapsed = WW<WTemplate>("<small class=\"text-center astroobject_title\"><b>${title-widget} ${expand}</b></small>").setHidden(true).bindWidget("title-widget", names() ).bindWidget("expand", WW<WPushButton>(WString::tr("buttons_expand")).css("btn-xs hidden-print pull-right").onClick([=](WMouseEvent){ q->setCollapsed(false); }));
   Dbo::Transaction t(session);
-  Ephemeris ephemeris(astroSession->position(), timezone);
   expanded->addWidget(WW<WTemplate>("<h4 class=\"row print-no-break hidden-print astroobject_title text-center\">${title-widget}</h4>").bindWidget("title-widget", names()) );
   expanded->addWidget(row);
   content->addWidget(collapsed);
@@ -73,11 +72,15 @@ void AstroObjectWidget::Private::init()
   info->bindString("angular_size", Utils::htmlEncode( WString::fromUTF8( Angle::degrees(ngcObject->angularSize()).printable() )) );
   info->bindString("magnitude", Utils::htmlEncode( ngcObject->magnitude() > 90. ? "N/A" : (format("%.1f") % ngcObject->magnitude()).str() ));
 
-  auto bestAltitude =  AstroSessionObject::bestAltitude(astroSession, ngcObject, ephemeris);
+  info->setCondition("have-ephemeris", astroSession);
+  if(astroSession) {
+    Ephemeris ephemeris(astroSession->position(), timezone);
+    auto bestAltitude =  AstroSessionObject::bestAltitude(astroSession, ngcObject, ephemeris);
 
-  info->bindString("best_altitude_when", bestAltitude.when.str() );
-  info->bindString("best_altitude", Utils::htmlEncode(WString::fromUTF8(bestAltitude.coordinates.altitude.printable() )) );
-  info->bindWidget("difficulty", new ObjectDifficultyWidget{ngcObject, telescope, bestAltitude.coordinates.altitude.degrees() } );
+    info->bindString("best_altitude_when", bestAltitude.when.str() );
+    info->bindString("best_altitude", Utils::htmlEncode(WString::fromUTF8(bestAltitude.coordinates.altitude.printable() )) );
+    info->bindWidget("difficulty", new ObjectDifficultyWidget{ngcObject, telescope, bestAltitude.coordinates.altitude.degrees() } );
+  }
   info->setCondition("has-catalogues-descriptions", ngcObject->descriptions().size() > 0);
   if(info->conditionValue("has-catalogues-descriptions")) {
     info->bindWidget("catalogues-description", new CataloguesDescriptionWidget{ngcObject->descriptions()});

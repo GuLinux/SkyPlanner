@@ -255,7 +255,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
       return;
     }
     
-    AstroObjectsTable *resultsTable = new AstroObjectsTable(d->session, {}, false);
+    AstroObjectsTable *resultsTable = new AstroObjectsTable(d->session, {}, false, NgcObject::allNebulaTypes(), {AstroObjectsTable::Names, AstroObjectsTable::Type, AstroObjectsTable::AR, AstroObjectsTable::DEC, AstroObjectsTable::Constellation, AstroObjectsTable::AngularSize, AstroObjectsTable::Magnitude});
     searchByNameWidget->addWidget(resultsTable);
     
     d->searchByName(nameToSearch, resultsTable);
