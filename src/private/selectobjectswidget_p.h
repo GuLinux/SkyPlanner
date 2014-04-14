@@ -22,7 +22,6 @@
 #include "selectobjectswidget.h"
 #include <boost/thread.hpp>
 #include "utils/format.h"
-#include "widgets/filterbycatalogue.h"
 #include "widgets/astroobjectstable.h"
 
 class FilterByConstellation;
@@ -32,9 +31,6 @@ namespace Wt
 }
 
 class NgcObject;
-class FilterByTypeWidget;
-class FilterByMagnitudeWidget;
-class FilterByCatalogue;
 class SelectObjectsWidget::Private
 {
 public:
@@ -46,7 +42,6 @@ public:
     void searchByCatalogueTab(Wt::Dbo::Transaction &transaction);
     void searchByNameTab(Wt::Dbo::Transaction &transaction);
     void suggestedObjects(Wt::Dbo::Transaction &transaction);
-    void populateSuggestedObjectsList();
     void populateSuggestedObjectsTable(int pageNumber = 0);
     boost::mutex suggestedObjectsListMutex;
     int pagesCurrentIndex = 0;
@@ -60,8 +55,10 @@ public:
     void addToSession(const Wt::Dbo::ptr<NgcObject> &object, Wt::WTableRow *row);
     AstroObjectsTable::Action addToSessionAction;
     void searchByName(const std::string &name, AstroObjectsTable *table, int page = 0);
+    std::string styleFor(const NgcObjectPtr &object, Wt::Dbo::Transaction &t) const;
 private:
     class SelectObjectsWidget* const q;
 };
+
 
 #endif // SELECTOBJECTSWIDGET_P_H

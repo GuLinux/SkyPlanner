@@ -33,7 +33,8 @@ public:
   struct AstroObject {
     AstroSessionPtr astroSession;
     NgcObjectPtr object;
-    Ephemeris::BestAltitude bestAltitude; 
+    Ephemeris::BestAltitude bestAltitude;
+    std::string rowStyle;
   };
   struct Row {
     AstroObject astroObject;
@@ -66,11 +67,13 @@ public:
     long current = -1;
     long total = -1;
     std::size_t pageSize = 15;
-    std::function<void(int)> change;
+    std::function<void(long)> change;
     operator bool() const;
+    static Page fromCount(long pageNumber, long count, std::function<void(long)> onChange, std::size_t pageSize = 15);
+    long offset() const;
   };
   AstroObjectsTable(Session &session, const std::vector<Action> &actions = {}, bool showFilters = true, const std::set<NgcObject::NebulaType> &initialTypes = NgcObject::allNebulaTypes(), Wt::WContainerWidget *parent = 0);
-  void populate(const std::vector<AstroObject> &objects, const TelescopePtr &telescope, const Timezone &timezone, const Selection &selection = {}, const Page &page = {});
+  void populate(const std::vector<AstroObject> &objects, const TelescopePtr &telescope, const Timezone &timezone, const Page &page = {}, const Selection &selection = {});
   void clear();
   Wt::Signal<Filters> &filtersChanged() const;
   Filters currentFilters() const;

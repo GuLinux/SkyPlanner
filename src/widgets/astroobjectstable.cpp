@@ -119,7 +119,7 @@ void AstroObjectsTable::Private::header()
   objectsTable->elementAt(0,9)->addWidget(new WText{WString::tr("object_column_difficulty")});
 }
 
-void AstroObjectsTable::populate(const vector<AstroObject> &objects, const TelescopePtr &telescope, const Timezone &timezone, const Selection &selection, const Page &page)
+void AstroObjectsTable::populate(const vector<AstroObject> &objects, const TelescopePtr &telescope, const Timezone &timezone, const Page &page, const Selection &selection)
 {
   auto clearSelection = [=] {
     //if(!d->selectedRow) return;
@@ -132,6 +132,7 @@ void AstroObjectsTable::populate(const vector<AstroObject> &objects, const Teles
   WTableRow *objectAddedRow = nullptr;
   for(auto astroObject: objects) {
     WTableRow *row = d->objectsTable->insertRow(d->objectsTable->rowCount());
+    row->addStyleClass(astroObject.rowStyle);
     WTableRow *astroObjectRow = d->objectsTable->insertRow(d->objectsTable->rowCount());
     WTableCell *astroObjectCell = astroObjectRow->elementAt(0);
     astroObjectCell->setHidden(true);
@@ -202,14 +203,14 @@ void AstroObjectsTable::populate(const vector<AstroObject> &objects, const Teles
     }
     astroObjectCell->setColumnSpan(objectsTableColumns);
   }
-  if(page) {
+  if(page && page.total > 1) {
     WContainerWidget *paginationWidget = WW<WContainerWidget>().addCss("pagination pagination-sm");
     paginationWidget->setList(true);
     d->tableFooter->addWidget(paginationWidget);
     d->tableFooter->addWidget(new WBreak);
     
-    WContainerWidget *previousButton = WW<WContainerWidget>().css("disabled");
-    WContainerWidget *nextButton = WW<WContainerWidget>();
+    WContainerWidget *previousButton = WW<WContainerWidget>().css(page.current > 0 ? "" : "disabled");
+    WContainerWidget *nextButton = WW<WContainerWidget>().css(page.current <  page.total-1 ? "" : "disabled");
     
     auto activatePage = [=](int pageNumber) {
       clearSelection();
@@ -226,6 +227,21 @@ void AstroObjectsTable::populate(const vector<AstroObject> &objects, const Teles
     paginationWidget->addWidget(nextButton);
   }
 }
+
+AstroObjectsTable::Page AstroObjectsTable::Page::fromCount( long pageNumber, long count, function<void(long)> onChange, size_t pageSize )
+{
+  Page page;
+  page.current = pageNumber;
+  page.total = count / pageSize + (count % pageSize ? 1 : 0);
+  page.pageSize = pageSize;
+  page.change = onChange;
+  return page;
+}
+long AstroObjectsTable::Page::offset() const
+{
+  return current * pageSize;
+}
+
 
 WContainerWidget *AstroObjectsTable::tableFooter() const
 {

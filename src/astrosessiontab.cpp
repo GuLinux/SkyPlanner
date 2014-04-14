@@ -662,8 +662,7 @@ void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject
   AstroObjectsTable::Page page;
   vector<AstroObjectsTable::AstroObject> pagedAstroObjects;
   if(pageNumber >=0 ) {
-    page.current = pageNumber;
-    page.total = astroObjects.size() / page.pageSize;
+    page = AstroObjectsTable::Page::fromCount(pageNumber, astroObjects.size(), [=] (long pageNumber) { populate({}, pageNumber); });
     if(addedObject) {
       auto addedObjectPosition = find_if(begin(astroObjects), end(astroObjects), [=](const AstroObjectsTable::AstroObject &o) {
         return o.astroSession == addedObject->astroSession() && o.object == addedObject->ngcObject();
@@ -677,17 +676,14 @@ void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject
         return;
       }
     }
-    if(astroObjects.size() % page.pageSize != 0) page.total++;
-    page.change = [=] (int pageNumber) {
-      populate({}, pageNumber);
-    };
-    copy_n(astroObjects.begin() + (pageNumber * page.pageSize), min(page.pageSize, astroObjects.size() - (pageNumber * page.pageSize)), back_inserter(pagedAstroObjects));
+    copy_n(astroObjects.begin() + (page.offset()), min(page.pageSize, astroObjects.size() - (page.offset())), back_inserter(pagedAstroObjects));
   }
 
 
-  astroObjectsTable->populate(page ? pagedAstroObjects : astroObjects, selectedTelescope, timezone, addedObject ? AstroObjectsTable::Selection{addedObject->ngcObject(), "success", [=](const AstroObjectsTable::Row &r) {
-    SkyPlanner::instance()->notification(WString::tr("notification_success_title"), WString::tr("notification_object_added").arg(r.tableRow->id()), SkyPlanner::Notification::Information, 5);
-  }} : AstroObjectsTable::Selection{}, page ); 
+  astroObjectsTable->populate(page ? pagedAstroObjects : astroObjects, selectedTelescope, timezone, page,
+    addedObject ? AstroObjectsTable::Selection{addedObject->ngcObject(), "success", [=](const AstroObjectsTable::Row &r) {
+      SkyPlanner::instance()->notification(WString::tr("notification_success_title"), WString::tr("notification_object_added").arg(r.tableRow->id()), SkyPlanner::Notification::Information, 5);
+    }} : AstroObjectsTable::Selection{} ); 
   if(page)
     astroObjectsTable->tableFooter()->addWidget(WW<WPushButton>(WString::tr("astrosessiontab_list_no_pagination")).addCss("btn-link").onClick([=](WMouseEvent){ populate({}, -1); }));
   else

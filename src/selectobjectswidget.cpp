@@ -52,9 +52,6 @@
 #include <boost/regex.hpp>
 #include <boost/algorithm/string.hpp>
 #include <Wt/WCheckBox>
-#include "widgets/filterbytypewidget.h"
-#include "widgets/filterbymagnitudewidget.h"
-#include "widgets/filterbyconstellation.h"
 #include "widgets/astroobjectwidget.h"
 #include <Wt/WImage>
 
@@ -195,7 +192,7 @@ void SelectObjectsWidget::Private::suggestedObjects(Dbo::Transaction& transactio
   WContainerWidget *suggestedObjectsContainer = WW<WContainerWidget>();
 
   suggestedObjectsTable = new AstroObjectsTable(session, {addToSessionAction}, true, NgcObject::allNebulaTypesButStars());
-  suggestedObjectsTable->filtersChanged().connect([=](AstroObjectsTable::Filters, _n5) { populateSuggestedObjectsList(); });
+  suggestedObjectsTable->filtersChanged().connect([=](AstroObjectsTable::Filters, _n5) { populateSuggestedObjectsTable(); });
   suggestedObjectsContainer->setPadding(10);
   q->addTab(suggestedObjectsContainer, WString::tr("select_objects_widget_best_visible_objects"));
   suggestedObjectsContainer->addWidget(suggestedObjectsTable);
@@ -221,10 +218,6 @@ template<typename T> Dbo::Query<T> SelectObjectsWidget::Private::filterQuery(con
   return query;
 }
 
-void SelectObjectsWidget::Private::populateSuggestedObjectsList()
-{
-  populateSuggestedObjectsTable();
-}
 
 
 void SelectObjectsWidget::Private::populateSuggestedObjectsTable( int pageNumber )
@@ -242,20 +235,16 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsTable( int pageNumber
       return;
     }
   
-    AstroObjectsTable::Page page;
-    page.current = pageNumber;
-    page.total = objectsCount / page.pageSize + (objectsCount % page.pageSize ? 1 : 0);
-    page.change = [=](int n) { populateSuggestedObjectsTable(n); };
-
+    auto page = AstroObjectsTable::Page::fromCount(pageNumber, objectsCount, [=](long n) { populateSuggestedObjectsTable(n); } );
     auto ngcObjectsQuery = filterQuery<NgcObjectPtr>("select o from objects o, ephemeris_cache").orderBy("magnitude asc").limit(page.pageSize).offset(page.pageSize * pageNumber);
     suggestedObjectsTable->clear();
     auto results = ngcObjectsQuery.resultList();
     vector<AstroObjectsTable::AstroObject> astroObjects;
     transform(begin(results), end(results), back_inserter(astroObjects), [=,&t](const NgcObjectPtr &o) {
       auto ephemerisCache = session.find<EphemerisCache>().where("astro_session_id = ?").bind(astroSession.id()).where("objects_id = ?").bind(o.id()).limit(1).resultValue();
-      return AstroObjectsTable::AstroObject{astroSession, o, ephemerisCache->bestAltitude(timezone)};
+      return AstroObjectsTable::AstroObject{astroSession, o, ephemerisCache->bestAltitude(timezone), styleFor(o, t)};
     });
-    suggestedObjectsTable->populate(astroObjects, selectedTelescope, timezone, {}, page);
+    suggestedObjectsTable->populate(astroObjects, selectedTelescope, timezone, page);
 }
 
 
@@ -292,7 +281,7 @@ void SelectObjectsWidget::populateFor(const Dbo::ptr< Telescope > &telescope , T
     t.commit();
     WServer::instance()->log("notice") << "Ephemeris cache calculation ended, elapsed: " << boost::posix_time::to_simple_string(boost::posix_time::microsec_clock::local_time() - start) << ", loaded " << loadedObjects << " objects";
     WServer::instance()->post(app->sessionId(), [=] {
-      d->populateSuggestedObjectsList();
+      d->populateSuggestedObjectsTable();
       app->triggerUpdate();
     });
   }).detach();
@@ -338,18 +327,20 @@ void SelectObjectsWidget::Private::searchByNameTab(Dbo::Transaction& transaction
   q->addTab(addObjectByName, WString::tr("select_objects_widget_add_by_name"));
 }
 
+string SelectObjectsWidget::Private::styleFor( const NgcObjectPtr &object, Dbo::Transaction &t ) const
+{
+  int existing = session.query<int>("select count(*) from astro_session_object where astro_session_id = ? AND objects_id = ? ").bind(astroSession.id() ).bind(object.id() );
+  return existing > 0 ? "success" : "";
+}
+
+
 void SelectObjectsWidget::Private::searchByName(const string &name, AstroObjectsTable *table, int page)
 {
   Dbo::Transaction t(session);
   int count = session.query<int>(R"(select count(distinct o.id) from "objects" o inner join denominations d on o.id = d.objects_id where lower(d.name) like '%' || ? || '%')")
     .bind(name);
   spLog("notice") << "search by name: count=" << count;
-  AstroObjectsTable::Page tablePage;
-  tablePage.current = page;
-  tablePage.total = count / tablePage.pageSize + (count % tablePage.pageSize != 0 ? 1 : 0);
-  tablePage.change = [=](int p) {
-    searchByName(name, table, p);
-  };
+  auto tablePage = AstroObjectsTable::Page::fromCount(page, count, [=](int p) { searchByName(name, table, p); });
   if(tablePage.total > 200) {
     SkyPlanner::instance()->notification(WString::tr("select_objects_widget_add_by_name"), WString::tr("select_objects_widget_add_by_name_too_many"), SkyPlanner::Notification::Information, 5);
     return;
@@ -360,11 +351,11 @@ void SelectObjectsWidget::Private::searchByName(const string &name, AstroObjects
   Ephemeris ephemeris(astroSession->position(), timezone);
   auto twilight = ephemeris.astronomicalTwilight(astroSession->date());
   vector<AstroObjectsTable::AstroObject> objects;
-  transform(ngcObjects.begin(), ngcObjects.end(), back_inserter(objects), [=,&ephemeris,&twilight](const NgcObjectPtr &o) {
+  transform(ngcObjects.begin(), ngcObjects.end(), back_inserter(objects), [=,&ephemeris,&twilight,&t](const NgcObjectPtr &o) {
     auto bestAltitude = ephemeris.findBestAltitude(o->coordinates(), twilight.set, twilight.rise);
-    return AstroObjectsTable::AstroObject{astroSession, o, bestAltitude};
+    return AstroObjectsTable::AstroObject{astroSession, o, bestAltitude, styleFor(o, t)};
   } );
-  table->populate(objects, selectedTelescope, timezone, {}, tablePage);
+  table->populate(objects, selectedTelescope, timezone, tablePage);
 }
 
 void SelectObjectsWidget::Private::searchByCatalogueTab(Dbo::Transaction& transaction)
@@ -407,7 +398,7 @@ void SelectObjectsWidget::Private::searchByCatalogueTab(Dbo::Transaction& transa
     auto twilight = ephemeris.astronomicalTwilight(astroSession->date());
     for(auto nebula: denominations) {
       auto bestAltitude = ephemeris.findBestAltitude(nebula->ngcObject()->coordinates(), twilight.set, twilight.rise);
-      resultsTable->populate({{astroSession, nebula->ngcObject(), bestAltitude}}, selectedTelescope, timezone );
+      resultsTable->populate({{astroSession, nebula->ngcObject(), bestAltitude, styleFor(nebula->ngcObject(), t)}}, selectedTelescope, timezone );
     }
   };
   catalogueNumber->changed().connect([=](...){ searchByCatalogueNumber(); });
