@@ -47,8 +47,6 @@ public:
     int pagesCurrentIndex = 0;
     Wt::Dbo::ptr< Telescope > selectedTelescope;
     Timezone timezone;
-    void populateHeaders(Wt::WTable *table);
-    void append(Wt::WTable *table, const Wt::Dbo::ptr<NgcObject> &ngcObject, const Ephemeris::BestAltitude &bestAltitude);
     std::string lastSearch;
     Wt::WTableRow *selectedRow = 0;
     template<typename T> Wt::Dbo::Query<T> filterQuery(const std::string &query);

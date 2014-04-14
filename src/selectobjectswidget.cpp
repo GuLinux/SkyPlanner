@@ -86,90 +86,6 @@ SelectObjectsWidget::SelectObjectsWidget(const Dbo::ptr< AstroSession >& astroSe
 }
 
 
-void SelectObjectsWidget::Private::populateHeaders(WTable *table)
-{
-  table->clear();
-  table->elementAt(0, 0)->addWidget(new WText{WString::tr("object_column_names")});
-  table->elementAt(0, 1)->addWidget(new WText{WString::tr("object_column_type")});
-  table->elementAt(0, 2)->addWidget(new WText{WString::tr("object_column_constellation")});
-  table->elementAt(0, 3)->addWidget(new WText{WString::tr("object_column_magnitude")});
-  table->elementAt(0, 4)->addWidget(new WText{WString::tr("object_column_difficulty")});
-  table->elementAt(0, 5)->addWidget(new WText{WString::tr("object_column_highest_time")});
-  table->elementAt(0, 6)->addWidget(new WText{WString::tr("object_column_max_altitude")});
-}
-
-void SelectObjectsWidget::Private::append(WTable *table, const Dbo::ptr<NgcObject> &ngcObject, const Ephemeris::BestAltitude &bestAltitude)
-{
-  WTableRow *row = table->insertRow(table->rowCount());
-
-  auto selectRow = [=] {
-    row->addStyleClass("info");
-    selectedRow = row;
-  };
-  stringstream names;
-  string separator = "";
-  for(auto denomination: ngcObject->nebulae()) {
-    names << separator << denomination->name();
-    separator = ", ";
-  }
-  int existing = session.query<int>("select count(*) from astro_session_object where astro_session_id = ? AND objects_id = ? ").bind(astroSession.id() ).bind(ngcObject.id() );
-  if(existing > 0)
-    row->addStyleClass("success");
-  row->elementAt(0)->addWidget(WW<ObjectNamesWidget>(new ObjectNamesWidget{ngcObject, session, astroSession}).setInline(true).onClick(bind(selectRow)));
-  row->elementAt(1)->addWidget(new WText{ ngcObject->typeDescription() });
-  row->elementAt(2)->addWidget(new WText{ WString::fromUTF8(ngcObject->constellation().name) });
-  row->elementAt(3)->addWidget(new WText{ (ngcObject->magnitude() > 90.) ? "N/A" : (format("%.1f") % ngcObject->magnitude()).str() });
-  row->elementAt(4)->addWidget(new ObjectDifficultyWidget(ngcObject, selectedTelescope, 99 /* TODO: hack, to be replaced */));
-  row->elementAt(5)->addWidget(new WText{bestAltitude.when.str() });
-  row->elementAt(6)->addWidget(new WText{Utils::htmlEncode(WString::fromUTF8(bestAltitude.coordinates.altitude.printable()))});
-
-
-  WPushButton *addToSessionButton = WW<WPushButton>(WString::tr("buttons_add")).css("btn btn-primary btn-xs").onClick([=](WMouseEvent){
-    Dbo::Transaction t(session);
-    int existing = session.query<int>("select count(*) from astro_session_object where astro_session_id = ? AND objects_id = ? ").bind(astroSession.id() ).bind(ngcObject.id() );
-    if(existing>0) {
-      SkyPlanner::instance()->notification(WString::tr("notification_warning_title"), WString::tr("notification_object_already_added"), SkyPlanner::Notification::Alert, 10);
-      return;
-    }
-    astroSession.modify()->astroSessionObjects().insert(new AstroSessionObject(ngcObject));
-    auto astroSessionObject = session.find<AstroSessionObject>().where("astro_session_id = ?").bind(astroSession.id()).where("objects_id = ?").bind(ngcObject.id()).resultValue();
-    t.commit();
-    row->addStyleClass("success");
-
-    objectsListChanged.emit(astroSessionObject);
-  });
-
-  WTableRow *astroObjectRow = table->insertRow(table->rowCount());
-  WTableCell *astroObjectCell = astroObjectRow->elementAt(0);
-  astroObjectCell->setHidden(true);
-  astroObjectCell->setColumnSpan(8);
-
-  WPushButton *toggleMoreInfo = WW<WPushButton>(row->elementAt(0)).css("btn btn-xs pull-right hidden-print").setTextFormat(XHTMLUnsafeText).setText("&#x25bc;").setAttribute("title", WString::tr("astroobject_extended_info_title").toUTF8() );
-    
-  toggleMoreInfo->clicked().connect([=](WMouseEvent) {
-    toggleMoreInfo->setText(!astroObjectCell->isVisible() ? "&#x25b2;" : "&#x25bc;");
-    toggleMoreInfo->toggleStyleClass("active", !astroObjectCell->isVisible());
-
-    selectRow();
-    if(astroObjectCell->isVisible()) {
-      astroObjectCell->clear();
-      astroObjectCell->setHidden(true);
-      return;
-    }
-    astroObjectCell->setHidden(false);
-    astroObjectCell->clear();
-    astroObjectCell->addWidget(new AstroObjectWidget(ngcObject, astroSession, session, timezone, selectedTelescope, {}, {WW<WPushButton>(WString::tr("buttons_close")).css("btn-xs").onClick([=](WMouseEvent){
-      astroObjectCell->clear();
-      astroObjectCell->setHidden(true);
-      toggleMoreInfo->removeStyleClass("active");
-      toggleMoreInfo->setText("&#x25bc");
-    }) } ));
-
-  });
-
-  row->elementAt(7)->addWidget(WW<WToolBar>().addButton(addToSessionButton)/*.addButton(extendedInfoButton)*/);
-}
-
 void SelectObjectsWidget::Private::addToSession(const NgcObjectPtr &ngcObject, WTableRow *row)
 {
     Dbo::Transaction t(session);
@@ -381,24 +297,20 @@ void SelectObjectsWidget::Private::searchByCatalogueTab(Dbo::Transaction& transa
     lastSearch = key;
     resultsTable->clear();
     std::string catNumber = boost::algorithm::trim_copy(catalogueNumber->text().toUTF8());
-    auto query = session.find<NebulaDenomination>().where("catalogues_id = ?").bind( cataloguesModel->resultRow(cataloguesCombo->currentIndex()).id() );
+    auto query = session.query<NgcObjectPtr>(R"(select o from "objects" o inner join denominations d on o.id = d.objects_id)")
+    .where("d.catalogues_id = ?").bind(cataloguesModel->resultRow(cataloguesCombo->currentIndex()).id());
     if( cataloguesCombo->currentText() == "MCG") {
       catNumber = ::Utils::mcg_name_fix(catNumber);
-      query.where("number like ?||'%'").bind(catNumber);
+      query.where("d.number like ?||'%'").bind(catNumber);
     } else {
-      query.where("number = ? ").bind(catNumber );
+      query.where("d.number = ? ").bind(catNumber );
     }
-    dbo::collection<dbo::ptr<NebulaDenomination>> dboDenominations = query;
-    // TODO: better query with join, as in Names Search Tab
-    vector<NebulaDenominationPtr> denominations;
-    copy_if(begin(dboDenominations), end(dboDenominations), back_inserter(denominations), [&denominations](const NebulaDenominationPtr &a){
-      return count_if(begin(denominations), end(denominations), [&a](const NebulaDenominationPtr &b){ return a->ngcObject().id() == b->ngcObject().id(); }) == 0;
-    });
+    dbo::collection<NgcObjectPtr> objects = query;
     Ephemeris ephemeris(astroSession->position(), timezone);
     auto twilight = ephemeris.astronomicalTwilight(astroSession->date());
-    for(auto nebula: denominations) {
-      auto bestAltitude = ephemeris.findBestAltitude(nebula->ngcObject()->coordinates(), twilight.set, twilight.rise);
-      resultsTable->populate({{astroSession, nebula->ngcObject(), bestAltitude, styleFor(nebula->ngcObject(), t)}}, selectedTelescope, timezone );
+    for(auto object: objects) {
+      auto bestAltitude = ephemeris.findBestAltitude(object->coordinates(), twilight.set, twilight.rise);
+      resultsTable->populate({{astroSession, object, bestAltitude, styleFor(object, t)}}, selectedTelescope, timezone );
     }
   };
   catalogueNumber->changed().connect([=](...){ searchByCatalogueNumber(); });
