@@ -86,15 +86,8 @@ SelectObjectsWidget::SelectObjectsWidget(const Dbo::ptr< AstroSession >& astroSe
     d->suggestedObjects(t);
     d->searchByCatalogueTab(t);
     d->searchByNameTab(t);
-    addObjectsTabWidget->currentChanged().connect(bind(&SelectObjectsWidget::Private::clearSelection, d.get()));
 }
 
-void SelectObjectsWidget::Private::clearSelection()
-{
-  if(!selectedRow) return;
-  selectedRow->removeStyleClass("info");
-  selectedRow = nullptr;
-}
 
 void SelectObjectsWidget::Private::populateHeaders(WTable *table)
 {
@@ -113,7 +106,6 @@ void SelectObjectsWidget::Private::append(WTable *table, const Dbo::ptr<NgcObjec
   WTableRow *row = table->insertRow(table->rowCount());
 
   auto selectRow = [=] {
-    clearSelection();
     row->addStyleClass("info");
     selectedRow = row;
   };
@@ -145,7 +137,6 @@ void SelectObjectsWidget::Private::append(WTable *table, const Dbo::ptr<NgcObjec
     astroSession.modify()->astroSessionObjects().insert(new AstroSessionObject(ngcObject));
     auto astroSessionObject = session.find<AstroSessionObject>().where("astro_session_id = ?").bind(astroSession.id()).where("objects_id = ?").bind(ngcObject.id()).resultValue();
     t.commit();
-    clearSelection();
     row->addStyleClass("success");
 
     objectsListChanged.emit(astroSessionObject);
@@ -193,7 +184,6 @@ void SelectObjectsWidget::Private::addToSession(const NgcObjectPtr &ngcObject, W
     astroSession.modify()->astroSessionObjects().insert(new AstroSessionObject(ngcObject));
     auto astroSessionObject = session.find<AstroSessionObject>().where("astro_session_id = ?").bind(astroSession.id()).where("objects_id = ?").bind(ngcObject.id()).resultValue();
     t.commit();
-    clearSelection();
     row->addStyleClass("success");
 
     objectsListChanged.emit(astroSessionObject);
@@ -204,132 +194,81 @@ void SelectObjectsWidget::Private::suggestedObjects(Dbo::Transaction& transactio
 {
   WContainerWidget *suggestedObjectsContainer = WW<WContainerWidget>();
 
-  filterByMinimumMagnitude = new FilterByMagnitudeWidget({WString::tr("not_set"), {}, WString::tr("minimum_magnitude_label")}, {0, 20});
-  filterByMinimumMagnitude->changed().connect([=](double, _n5) { populateSuggestedObjectsList(); });
-  filterByTypeWidget = new FilterByTypeWidget(NgcObject::allNebulaTypesButStars());
-  filterByTypeWidget->changed().connect([=](_n6){ populateSuggestedObjectsList(); });
-  filterByConstellation = new FilterByConstellation;
-  filterByConstellation->changed().connect([=](_n6){ populateSuggestedObjectsList(); });
-
-  filterByCatalogue = new FilterByCatalogue(session);
-  filterByCatalogue->changed().connect([=](_n6) { populateSuggestedObjectsList(); });
-  suggestedObjectsContainer->addWidget(WW<WGroupBox>(WString::tr("filters")).add(WW<WContainerWidget>().css("form-inline").add(filterByTypeWidget).add(filterByMinimumMagnitude).add(filterByConstellation).add(filterByCatalogue) ));
-  suggestedObjectsTable = WW<WTable>().addCss("table table-hover astroobjects-table");
-  suggestedObjectsFooter = WW<WContainerWidget>();
-
-  suggestedObjectsTable->setHeaderCount(1);
-  
+  suggestedObjectsTable = new AstroObjectsTable(session, {addToSessionAction}, true, NgcObject::allNebulaTypesButStars());
+  suggestedObjectsTable->filtersChanged().connect([=](AstroObjectsTable::Filters, _n5) { populateSuggestedObjectsList(); });
   suggestedObjectsContainer->setPadding(10);
   q->addTab(suggestedObjectsContainer, WString::tr("select_objects_widget_best_visible_objects"));
-  suggestedObjectsContainer->addWidget(WW<WContainerWidget>().css("table-responsive").add(suggestedObjectsTable));
-  suggestedObjectsContainer->addWidget(suggestedObjectsFooter);
+  suggestedObjectsContainer->addWidget(suggestedObjectsTable);
 }
 
 template<typename T> Dbo::Query<T> SelectObjectsWidget::Private::filterQuery(const std::string &queryString)
 {
-  CataloguePtr catalogue = filterByCatalogue->selectedCatalogue();
+  CataloguePtr catalogue = suggestedObjectsTable->currentFilters().catalogue;
   Dbo::Query<T> query = session.query<T>( catalogue ? queryString + ", denominations d" : queryString);
-  vector<string> filterConditions{filterByTypeWidget->selected().size(), "?"};
+  vector<string> filterConditions{suggestedObjectsTable->currentFilters().types.size(), "?"};
   query.where("o.id = ephemeris_cache.objects_id")
     .where("astro_session_id = ?").bind(astroSession.id())
-    .where("magnitude >= ?").bind(filterByMinimumMagnitude->isMinimum() ? -20 : filterByMinimumMagnitude->magnitude());
+    .where("magnitude >= ?").bind(suggestedObjectsTable->currentFilters().minimumMagnitude);
   if(catalogue) {
     query.where("o.id = d.objects_id")
          .where("d.catalogues_id = ?").bind(catalogue.id());
   }
   query.where(format("\"type\" IN (%s)") % boost::algorithm::join(filterConditions, ", ") );
-  for(auto filter: filterByTypeWidget->selected())
+  for(auto filter: suggestedObjectsTable->currentFilters().types)
     query.bind(filter);
-  if(filterByConstellation->selectedConstellation())
-    query.where("constellation_abbrev = ?").bind(filterByConstellation->selectedConstellation().abbrev);
+  if(suggestedObjectsTable->currentFilters().constellation)
+    query.where("constellation_abbrev = ?").bind(suggestedObjectsTable->currentFilters().constellation.abbrev);
   return query;
 }
 
 void SelectObjectsWidget::Private::populateSuggestedObjectsList()
 {
-  clearSelection();
-  suggestedObjectsTable->clear();
-  suggestedObjectsFooter->clear();
-  
-  if(filterByTypeWidget->selected().size() == 0) {
-    suggestedObjectsFooter->addWidget(WW<WText>(WString::tr("suggested_objects_empty_list")));
-    return;
-  }
-  Dbo::Transaction t(session);
-  double minimumMagnitude = filterByMinimumMagnitude->isMinimum() ? -20 : filterByMinimumMagnitude->magnitude();
-  vector<string> filterConditions{filterByTypeWidget->selected().size(), "?"};
-  
-  long objectsCount = filterQuery<long>("select count(*) from objects o, ephemeris_cache").resultValue();
+  populateSuggestedObjectsTable();
+}
 
-  spLog("notice") << "objects count: " << objectsCount;
-  if(objectsCount<=0) {
-    suggestedObjectsFooter->addWidget(WW<WText>(WString::tr("suggested_objects_empty_list")));
-    return;
-  }
-  
-  auto populateTable = [=](long limit, long offset) {
-    Dbo::Transaction t(session);
-    auto ngcObjectsQuery = filterQuery<NgcObjectPtr>("select o from objects o, ephemeris_cache").orderBy("magnitude asc").limit(limit).offset(offset);
+
+void SelectObjectsWidget::Private::populateSuggestedObjectsTable( int pageNumber )
+{
     suggestedObjectsTable->clear();
-    populateHeaders(suggestedObjectsTable);
-    for(auto ngcObject: ngcObjectsQuery.resultList() ) {
-      // TODO: safety limit = 1, test better
-      auto ephemerisCache = session.find<EphemerisCache>().where("astro_session_id = ?").bind(astroSession.id()).where("objects_id = ?").bind(ngcObject.id()).limit(1).resultValue();
-      append(suggestedObjectsTable, ngcObject, ephemerisCache->bestAltitude(timezone));
+    if( suggestedObjectsTable->currentFilters().types.size() == 0) {
+      suggestedObjectsTable->tableFooter()->addWidget(WW<WText>(WString::tr("suggested_objects_empty_list")));
+      return;
     }
-  };
+    Dbo::Transaction t(session);
+    long objectsCount = filterQuery<long>("select count(*) from objects o, ephemeris_cache").resultValue();
+    spLog("notice") << "objects count: " << objectsCount;
+    if(objectsCount<=0) {
+      suggestedObjectsTable->tableFooter()->addWidget(WW<WText>(WString::tr("suggested_objects_empty_list")));
+      return;
+    }
   
-  int pagesSize = 15;
-  
-  
-  WContainerWidget *paginationWidget = WW<WContainerWidget>().addCss("pagination pagination-sm");
-  paginationWidget->setList(true);
-  shared_ptr<vector<WContainerWidget*>> pages(new vector<WContainerWidget*>());
-  suggestedObjectsFooter->addWidget(paginationWidget);
-  
-  WContainerWidget *previousButton = WW<WContainerWidget>().css("disabled");
-  WContainerWidget *nextButton = WW<WContainerWidget>();
-  
-  auto activatePage = [=](int pageNumber) {
-    clearSelection();
-    if(pageNumber<0 || pageNumber>=pages->size()) return;
-    populateTable(pagesSize, pageNumber*pagesSize);
-    
-    pages->at(pagesCurrentIndex)->removeStyleClass("active");
-    pages->at(pageNumber)->addStyleClass("active");
-    pagesCurrentIndex = pageNumber;
-    previousButton->setStyleClass(pageNumber == 0 ? "disabled" : "");
-    nextButton->setStyleClass(pageNumber == pages->size()-1 ? "disabled" : "");
-  };
-  
-  previousButton->addWidget(WW<WAnchor>("", "&laquo;" ).onClick([=](WMouseEvent){ activatePage(pagesCurrentIndex-1); }));
-  nextButton->addWidget(WW<WAnchor>("", "&raquo;" ).onClick([=](WMouseEvent){ activatePage(pagesCurrentIndex+1); }));
-  paginationWidget->addWidget(previousButton);
-  for(int i=0; i*pagesSize <objectsCount; i++) {
-    WContainerWidget *page = WW<WContainerWidget>().add(WW<WAnchor>("", boost::lexical_cast<string>(i+1) ).onClick([=](WMouseEvent){ activatePage(i); }) );
-    pages->push_back(page);
-    paginationWidget->addWidget(page);
-  }
-  paginationWidget->addWidget(nextButton);
-  pages->at(0)->addStyleClass("active");
-  pagesCurrentIndex = 0;
-  populateTable(pagesSize, 0);
+    AstroObjectsTable::Page page;
+    page.current = pageNumber;
+    page.total = objectsCount / page.pageSize + (objectsCount % page.pageSize ? 1 : 0);
+    page.change = [=](int n) { populateSuggestedObjectsTable(n); };
+
+    auto ngcObjectsQuery = filterQuery<NgcObjectPtr>("select o from objects o, ephemeris_cache").orderBy("magnitude asc").limit(page.pageSize).offset(page.pageSize * pageNumber);
+    suggestedObjectsTable->clear();
+    auto results = ngcObjectsQuery.resultList();
+    vector<AstroObjectsTable::AstroObject> astroObjects;
+    transform(begin(results), end(results), back_inserter(astroObjects), [=,&t](const NgcObjectPtr &o) {
+      auto ephemerisCache = session.find<EphemerisCache>().where("astro_session_id = ?").bind(astroSession.id()).where("objects_id = ?").bind(o.id()).limit(1).resultValue();
+      return AstroObjectsTable::AstroObject{astroSession, o, ephemerisCache->bestAltitude(timezone)};
+    });
+    suggestedObjectsTable->populate(astroObjects, selectedTelescope, timezone, {}, page);
 }
 
 
 void SelectObjectsWidget::populateFor(const Dbo::ptr< Telescope > &telescope , Timezone timezone)
 {
-  d->clearSelection();
-  d->suggestedObjectsFooter->clear();
   d->suggestedObjectsTable->clear();
 
   double magnitudeLimit = (telescope ? telescope->limitMagnitudeGain() + 6.5 : 12);
-  d->filterByMinimumMagnitude->setMaximum(magnitudeLimit-0.5);
+  d->suggestedObjectsTable->setMaximumMagnitude(magnitudeLimit - 0.5);
   d->selectedTelescope = telescope;
   d->timezone = timezone;
   if(!d->astroSession->position()) return;
-
-  d->suggestedObjectsFooter->addWidget(WW<WImage>("http://gulinux.net/loading_animation.gif").addCss("center-block"));
+  d->suggestedObjectsTable->tableFooter()->addWidget(WW<WImage>("http://gulinux.net/loading_animation.gif").addCss("center-block"));
 
   WApplication *app = wApp;
   boost::thread( [=] {
@@ -444,7 +383,6 @@ void SelectObjectsWidget::Private::searchByCatalogueTab(Dbo::Transaction& transa
 
   cataloguesCombo->setModel(cataloguesModel);
   auto searchByCatalogueNumber = [=] {
-    clearSelection();
     Dbo::Transaction t(session);
     string key = string("_bycat: ") + cataloguesCombo->currentText().toUTF8() + catalogueNumber->text().toUTF8();
     if(lastSearch == key)
@@ -460,6 +398,7 @@ void SelectObjectsWidget::Private::searchByCatalogueTab(Dbo::Transaction& transa
       query.where("number = ? ").bind(catNumber );
     }
     dbo::collection<dbo::ptr<NebulaDenomination>> dboDenominations = query;
+    // TODO: better query with join, as in Names Search Tab
     vector<NebulaDenominationPtr> denominations;
     copy_if(begin(dboDenominations), end(dboDenominations), back_inserter(denominations), [&denominations](const NebulaDenominationPtr &a){
       return count_if(begin(denominations), end(denominations), [&a](const NebulaDenominationPtr &b){ return a->ngcObject().id() == b->ngcObject().id(); }) == 0;
