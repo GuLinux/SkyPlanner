@@ -230,13 +230,27 @@ void AstroObjectsTable::populate(const vector<AstroObject> &objects, const Teles
       page.change(pageNumber);
     };
     
-    previousButton->addWidget(WW<WAnchor>("", "&laquo;" ).onClick([=](WMouseEvent){ activatePage(page.current-1); }));
-    nextButton->addWidget(WW<WAnchor>("", "&raquo;" ).onClick([=](WMouseEvent){ activatePage(page.current+1); }));
+    previousButton->addWidget(WW<WAnchor>("", "&lt;" ).onClick([=](WMouseEvent){ activatePage(page.current-1); }));
+    nextButton->addWidget(WW<WAnchor>("", "&gt;" ).onClick([=](WMouseEvent){ activatePage(page.current+1); }));
+    long start = 0;
+    long paginationMax = 10;
+    if(page.current> (paginationMax/2-1) && page.total > paginationMax) {
+      start = page.current - (paginationMax/2-1);
+    }
+    int pEnd = min(start + paginationMax, page.total);
+    if(start > 0)
+      paginationWidget->addWidget(WW<WContainerWidget>().add(WW<WAnchor>("", "&laquo;" ).onClick([=](WMouseEvent){ activatePage(0); })));
+    if(page.current > paginationMax)
+      paginationWidget->addWidget(WW<WContainerWidget>().add(WW<WAnchor>("", "-10" ).onClick([=](WMouseEvent){ activatePage(page.current-10); })));
     paginationWidget->addWidget(previousButton);
-    for(int i=0; i <page.total; i++) {
+    for(int i=start; i <pEnd; i++) {
       paginationWidget->addWidget(WW<WContainerWidget>().addCss(i == page.current ? "active" : "").add(WW<WAnchor>("", format("%d") % (i+1) ).onClick([=](WMouseEvent){ activatePage(i); }) ));
     }
     paginationWidget->addWidget(nextButton);
+    if(page.current+10 < page.total)
+      paginationWidget->addWidget(WW<WContainerWidget>().add(WW<WAnchor>("", "+10" ).onClick([=](WMouseEvent){ activatePage(page.current+10); })));
+    if(pEnd < page.total)
+      paginationWidget->addWidget(WW<WContainerWidget>().add(WW<WAnchor>("", "&raquo;" ).onClick([=](WMouseEvent){ activatePage(page.total-1); })));
   }
 }
 
