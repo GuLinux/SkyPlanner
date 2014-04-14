@@ -241,7 +241,9 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
   WContainerWidget *searchByNameWidget = WW<WContainerWidget>();
   d->widgets->addWidget(searchByNameWidget);
   WLineEdit *searchByNameEdit = new WLineEdit;
+#ifndef PRODUCTION_MODE
   navBar->addSearch(searchByNameEdit, AlignRight);
+#endif
   searchByNameEdit->setTextSize(0);
   searchByNameEdit->setEmptyText(WString::tr("select_objects_widget_add_by_name"));
   searchByNameEdit->changed().connect([=](_n1){
