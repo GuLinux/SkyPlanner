@@ -72,7 +72,12 @@ public:
     static Page fromCount(long pageNumber, long count, std::function<void(long)> onChange, std::size_t pageSize = 15);
     long offset() const;
   };
-  AstroObjectsTable(Session &session, const std::vector<Action> &actions = {}, bool showFilters = true, const std::set<NgcObject::NebulaType> &initialTypes = NgcObject::allNebulaTypes(), Wt::WContainerWidget *parent = 0);
+  enum Column { Names, Type, AR, DEC, Constellation, AngularSize, Magnitude, TransitTime, MaxAltitude, Difficulty };
+  static const std::vector<Column> allColumns;
+  AstroObjectsTable(Session &session, const std::vector<Action> &actions = {}, bool showFilters = true,
+                    const std::set<NgcObject::NebulaType> &initialTypes = NgcObject::allNebulaTypes(),
+                    const std::vector<AstroObjectsTable::Column> &columns = allColumns,
+                    Wt::WContainerWidget *parent = 0);
   void populate(const std::vector<AstroObject> &objects, const TelescopePtr &telescope, const Timezone &timezone, const Page &page = {}, const Selection &selection = {});
   void clear();
   Wt::Signal<Filters> &filtersChanged() const;

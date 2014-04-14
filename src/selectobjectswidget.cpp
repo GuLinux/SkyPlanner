@@ -63,6 +63,8 @@ using namespace std;
 SelectObjectsWidget::Private::Private(const Dbo::ptr< AstroSession >& astroSession, Session& session, SelectObjectsWidget* q) : astroSession(astroSession), session(session),
   addToSessionAction("buttons_add", [=](const AstroObjectsTable::Row &r){ addToSession(r.astroObject.object, r.tableRow);  }, "btn-primary" ),  q(q)
 {
+  columns = {  AstroObjectsTable::Names, AstroObjectsTable::Type, AstroObjectsTable::Constellation, AstroObjectsTable::AngularSize, 
+    AstroObjectsTable::Magnitude, AstroObjectsTable::TransitTime, AstroObjectsTable::MaxAltitude, AstroObjectsTable::Difficulty};
 }
 
 SelectObjectsWidget::~SelectObjectsWidget()
@@ -107,7 +109,7 @@ void SelectObjectsWidget::Private::suggestedObjects(Dbo::Transaction& transactio
 {
   WContainerWidget *suggestedObjectsContainer = WW<WContainerWidget>();
 
-  suggestedObjectsTable = new AstroObjectsTable(session, {addToSessionAction}, true, NgcObject::allNebulaTypesButStars());
+  suggestedObjectsTable = new AstroObjectsTable(session, {addToSessionAction}, true, NgcObject::allNebulaTypesButStars(), columns);
   suggestedObjectsTable->filtersChanged().connect([=](AstroObjectsTable::Filters, _n5) { populateSuggestedObjectsTable(); });
   suggestedObjectsContainer->setPadding(10);
   q->addTab(suggestedObjectsContainer, WString::tr("select_objects_widget_best_visible_objects"));
@@ -210,7 +212,7 @@ void SelectObjectsWidget::Private::searchByNameTab(Dbo::Transaction& transaction
   WLineEdit *name = WW<WLineEdit>();
   name->setTextSize(0);
   name->setEmptyText(WString::tr("select_objects_widget_add_by_name"));
-  AstroObjectsTable *resultsTable = new AstroObjectsTable(session, {addToSessionAction}, false);
+  AstroObjectsTable *resultsTable = new AstroObjectsTable(session, {addToSessionAction}, false, NgcObject::allNebulaTypes(), columns);
   auto searchByNameTrigger = [=] {
     string nameToSearch = boost::algorithm::trim_copy(name->text().toUTF8());
     boost::replace_all(nameToSearch, "*", "%");
@@ -286,7 +288,7 @@ void SelectObjectsWidget::Private::searchByCatalogueTab(Dbo::Transaction& transa
   catalogueNumber->setTextSize(0);
   catalogueNumber->setEmptyText(WString::tr("catalogue_number"));
   
-  AstroObjectsTable *resultsTable = new AstroObjectsTable(session, {addToSessionAction}, false);
+  AstroObjectsTable *resultsTable = new AstroObjectsTable(session, {addToSessionAction}, false, NgcObject::allNebulaTypes(), columns);
 
   cataloguesCombo->setModel(cataloguesModel);
   auto searchByCatalogueNumber = [=] {

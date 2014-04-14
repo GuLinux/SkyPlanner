@@ -36,12 +36,13 @@ using namespace Wt;
 using namespace WtCommons;
 using namespace std;
 
-AstroObjectsTable::Private::Private(Session &session, const vector<AstroObjectsTable::Action> &actions, AstroObjectsTable *q) : session(session), actions(actions), q(q)
+AstroObjectsTable::Private::Private( Session &session, const vector< AstroObjectsTable::Action > &actions, const vector< AstroObjectsTable::Column > &columns, AstroObjectsTable *q )
+ : session(session), actions(actions), columns(columns), q(q)
 {
 }
 
-AstroObjectsTable::AstroObjectsTable(Session &session, const vector<Action> &actions, bool showFilters, const set<NgcObject::NebulaType> &initialTypes, WContainerWidget *parent)
-  : WCompositeWidget(parent), d(session, actions, this)
+AstroObjectsTable::AstroObjectsTable(Session &session, const vector<Action> &actions, bool showFilters, const set<NgcObject::NebulaType> &initialTypes, const vector<Column> &columns, WContainerWidget *parent)
+  : WCompositeWidget(parent), d(session, actions, columns, this)
 {
   d->objectsTable = WW<WTable>().addCss("table table-hover astroobjects-table");
   d->objectsTable->setHeaderCount(1);
@@ -104,26 +105,34 @@ void AstroObjectsTable::clear()
   d->objectsTable->clear();
 }
 
+const vector<AstroObjectsTable::Column> AstroObjectsTable::allColumns = {
+  Names, Type, AR, DEC, Constellation, AngularSize, Magnitude, TransitTime, MaxAltitude, Difficulty
+};
+
 void AstroObjectsTable::Private::header()
 {
+  static map<Column, string> columnKey {
+    {Names, "object_column_names"},
+    {Type, "object_column_type"},
+    {AR, "object_column_ar"},
+    {DEC, "object_column_dec"},
+    {Constellation, "object_column_constellation"},
+    {AngularSize, "object_column_angular_size"},
+    {Magnitude, "object_column_magnitude"},
+    {TransitTime, "object_column_highest_time"},
+    {MaxAltitude, "object_column_max_altitude"},
+    {Difficulty, "object_column_difficulty"},
+  };
   q->clear();
-  objectsTable->elementAt(0,0)->addWidget(new WText{WString::tr("object_column_names")});
-  objectsTable->elementAt(0,1)->addWidget(new WText{WString::tr("object_column_type")});
-  objectsTable->elementAt(0,2)->addWidget(new WText{WString::tr("object_column_ar")});
-  objectsTable->elementAt(0,3)->addWidget(new WText{WString::tr("object_column_dec")});
-  objectsTable->elementAt(0,4)->addWidget(new WText{WString::tr("object_column_constellation")});
-  objectsTable->elementAt(0,5)->addWidget(new WText{WString::tr("object_column_angular_size")});
-  objectsTable->elementAt(0,6)->addWidget(new WText{WString::tr("object_column_magnitude")});
-  objectsTable->elementAt(0,7)->addWidget(new WText{WString::tr("object_column_highest_time")});
-  objectsTable->elementAt(0,8)->addWidget(new WText{WString::tr("object_column_max_altitude")});
-  objectsTable->elementAt(0,9)->addWidget(new WText{WString::tr("object_column_difficulty")});
+  int index = 0;
+  for(auto column: columns) {
+    objectsTable->elementAt(0,index++)->addWidget(new WText{WString::tr(columnKey[column])});
+  }
 }
 
 void AstroObjectsTable::populate(const vector<AstroObject> &objects, const TelescopePtr &telescope, const Timezone &timezone, const Page &page, const Selection &selection)
 {
   auto clearSelection = [=] {
-    //if(!d->selectedRow) return;
-    //d->selectedRow->removeStyleClass("info");
     d->selectedRow = nullptr;
   };
   clearSelection();
@@ -163,7 +172,13 @@ void AstroObjectsTable::populate(const vector<AstroObject> &objects, const Teles
       row->addStyleClass(selection.css);
       selection.onSelectionFound(objectRow);
     }
-    row->elementAt(0)->addWidget(WW<ObjectNamesWidget>(new ObjectNamesWidget{astroObject.object, d->session, astroObject.astroSession}).setInline(true).onClick([=](WMouseEvent){
+    auto addColumn = [=](Column column, WWidget *widget) -> WTableCell* {
+      auto hasColumn = std::find(begin(d->columns), end(d->columns), column);
+      if(hasColumn == end(d->columns))
+        return nullptr;
+      return WW<WTableCell>(row->elementAt(hasColumn - begin(d->columns))).add(widget).get();
+    };
+    addColumn(Names, WW<ObjectNamesWidget>(new ObjectNamesWidget{astroObject.object, d->session, astroObject.astroSession}).setInline(true).onClick([=](WMouseEvent){
       if(d->selectedRow)
         d->selectedRow->removeStyleClass("info");
       if(objectAddedRow)
@@ -171,28 +186,25 @@ void AstroObjectsTable::populate(const vector<AstroObject> &objects, const Teles
       row->addStyleClass("info");
       d->selectedRow = row;
     }));
-    row->elementAt(1)->addWidget(new WText{astroObject.object->typeDescription() });
-    row->elementAt(2)->addWidget(new WText{ Utils::htmlEncode( astroObject.object->coordinates().rightAscension.printable(Angle::Hourly) ) });
-    row->elementAt(3)->addWidget(new WText{ Utils::htmlEncode( WString::fromUTF8( astroObject.object->coordinates().declination.printable() )) });
-    row->elementAt(4)->addWidget(new WText{ WString::fromUTF8(astroObject.object->constellation().name) });
-    row->elementAt(5)->addWidget(new WText{ Utils::htmlEncode( WString::fromUTF8( Angle::degrees(astroObject.object->angularSize()).printable() )) });
-    row->elementAt(6)->addWidget(new WText{ astroObject.object->magnitude() > 90. ? "N/A" : (format("%.1f") % astroObject.object->magnitude()).str() });
+    addColumn(Type, new WText{astroObject.object->typeDescription() });
+    addColumn(AR, new WText{ Utils::htmlEncode( astroObject.object->coordinates().rightAscension.printable(Angle::Hourly) ) });
+    addColumn(DEC, new WText{ Utils::htmlEncode( WString::fromUTF8( astroObject.object->coordinates().declination.printable() )) });
+    addColumn(Constellation, new WText{ WString::fromUTF8(astroObject.object->constellation().name) });
+    addColumn(AngularSize, new WText{ Utils::htmlEncode( WString::fromUTF8( Angle::degrees(astroObject.object->angularSize()).printable() )) });
+    addColumn(Magnitude, new WText{ astroObject.object->magnitude() > 90. ? "N/A" : (format("%.1f") % astroObject.object->magnitude()).str() });
     auto bestAltitude = astroObject.bestAltitude;
-    row->elementAt(7)->addWidget(new WText{ bestAltitude.when.str() });
-    row->elementAt(8)->addWidget(new WText{ Utils::htmlEncode(WString::fromUTF8(bestAltitude.coordinates.altitude.printable() )) });
-    row->elementAt(9)->addWidget(new ObjectDifficultyWidget{astroObject.object, telescope, bestAltitude.coordinates.altitude.degrees() }); 
+    addColumn(TransitTime, new WText{ bestAltitude.when.str() });
+    addColumn(MaxAltitude, new WText{ Utils::htmlEncode(WString::fromUTF8(bestAltitude.coordinates.altitude.printable() )) });
+    addColumn(Difficulty, new ObjectDifficultyWidget{astroObject.object, telescope, bestAltitude.coordinates.altitude.degrees() }); 
     
-    int objectsTableColumns = 10;
-
     if(d->actions.size() > 0) {
-      objectsTableColumns++;
       if(d->actions.size() == 1) {
-        row->elementAt(10)->addWidget(WW<WPushButton>(WString::tr(d->actions[0].name)).addCss("btn-xs").addCss(d->actions[0].buttonCss).onClick([=](WMouseEvent) { d->actions[0].onClick(objectRow); }));
+        row->elementAt(d->columns.size())->addWidget(WW<WPushButton>(WString::tr(d->actions[0].name)).addCss("btn-xs").addCss(d->actions[0].buttonCss).onClick([=](WMouseEvent) { d->actions[0].onClick(objectRow); }));
       } else {
         WPopupMenu *actionsMenu = new WPopupMenu;
         WPushButton *actionsButton = WW<WPushButton>(WString::tr("buttons_actions")).css("btn-xs");
         actionsButton->setMenu(actionsMenu);
-        row->elementAt(10)->addWidget(actionsButton);
+        row->elementAt(d->columns.size())->addWidget(actionsButton);
         for(auto action: d->actions) {
           auto menuItem = actionsMenu->addItem(WString::tr(action.name));
           menuItem->addStyleClass(action.buttonCss);
@@ -201,7 +213,7 @@ void AstroObjectsTable::populate(const vector<AstroObject> &objects, const Teles
         }
       }
     }
-    astroObjectCell->setColumnSpan(objectsTableColumns);
+    astroObjectCell->setColumnSpan(d->columns.size() + (d->actions.size() ? 1 : 0));
   }
   if(page && page.total > 1) {
     WContainerWidget *paginationWidget = WW<WContainerWidget>().addCss("pagination pagination-sm");

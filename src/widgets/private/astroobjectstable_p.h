@@ -30,9 +30,10 @@
 class AstroObjectsTable::Private
 {
   public:
-    Private(Session &session, const std::vector<AstroObjectsTable::Action> &actions, AstroObjectsTable *q );
+    Private(Session &session, const std::vector<AstroObjectsTable::Action> &actions, const std::vector<AstroObjectsTable::Column> &columns, AstroObjectsTable *q );
     Session &session;
     std::vector<AstroObjectsTable::Action> actions; 
+    std::vector<AstroObjectsTable::Column> columns;
     Wt::WTable *objectsTable;
     Wt::WTableRow *selectedRow = nullptr;
     FilterByTypeWidget *filterByType;
