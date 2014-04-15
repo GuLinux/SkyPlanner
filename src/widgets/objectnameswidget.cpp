@@ -175,8 +175,10 @@ void ObjectNamesWidget::Private::init(const NgcObjectPtr &object, const AstroSes
       }
     }
 
-    popup->addSectionHeader( WString::tr( "objectnames_feedback_title" ) )->addStyleClass("dropdown-header");
-    addLink(WString::tr( "objectnames_feedback_menu" ), WLink(WLink::InternalPath, SendFeedbackPage::internalPath(object, &t)) );
+    if(session.user()) {
+      popup->addSectionHeader( WString::tr( "objectnames_feedback_title" ) )->addStyleClass("dropdown-header");
+      addLink(WString::tr( "objectnames_feedback_menu" ), WLink(WLink::InternalPath, SendFeedbackPage::internalPath(object, &t)) );
+    }
     popup->popup(e);
   } );
 }

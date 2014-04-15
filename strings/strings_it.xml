@@ -261,4 +261,9 @@ Dopo aver aggiunto una nuova sessione, clicca sul suo nome per aggiungere oggett
 <message id="imagecontrol-move-factor-label">Movimento</message>
 <message id="imagecontrol-menu">Sposta/ridimensiona</message>
 
+<message id="search_by_name_add_to_session_caption">Aggiungi oggetto a una sessione</message>
+<message id="search_by_name_no_user_text">Per aggiungere oggetti alle tue sessioni, registrati ed entra nel tuo account.</message>
+<message id="search_by_name_no_sessions_text">Devi prima aggiungere una sessione.</message>
+
+
 </messages>

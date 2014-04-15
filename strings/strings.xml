@@ -241,4 +241,8 @@ After you added a session, click it to add new objects.
 <message id="imagecontrol-move-factor-label">Movement Steps</message>
 <message id="imagecontrol-menu">Move/resize</message>
 
+<message id="search_by_name_add_to_session_caption">Add object to session</message>
+<message id="search_by_name_no_user_text">To add objects to your sessions, please register and login to your account.</message>
+<message id="search_by_name_no_sessions_text">You need to add a session first.</message>
+
 </messages>

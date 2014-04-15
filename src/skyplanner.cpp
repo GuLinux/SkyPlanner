@@ -43,14 +43,20 @@
 #include "sendfeedbackpage.hpp"
 #include <Wt/WCombinedLocalizedStrings>
 #include <Wt/WMessageResourceBundle>
+#include <Wt/Dbo/QueryModel>
 #include <Wt-Commons/whtmltemplateslocalizedstrings.h>
 #include "homepage.h"
 #include <mutex>
 #include <Wt/WProgressBar>
 #include <Wt/WPopupMenu>
 #include <Wt/WLineEdit>
+#include <Wt/WComboBox>
 #include <Wt/WProgressBar>
+#include <Wt/WStandardItemModel>
+#include <Wt/WStandardItem>
+#include <Wt/WMessageBox>
 #include "utils/format.h"
+#include "astrosessiontab.h"
 #include <boost/algorithm/string.hpp>
 
 
@@ -244,7 +250,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
   navBar->addSearch(searchByNameEdit, AlignRight);
   searchByNameEdit->setTextSize(0);
   searchByNameEdit->setEmptyText(WString::tr("select_objects_widget_add_by_name"));
-  searchByNameEdit->changed().connect([=](_n1){
+  auto startSearch = [=] {
     spLog("notice") << "Search by name: original=" << searchByNameEdit->valueText();
     string nameToSearch = boost::algorithm::trim_copy(searchByNameEdit->valueText().toUTF8());
     searchByNameWidget->clear();
@@ -255,19 +261,56 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
       return;
     }
     
-    AstroObjectsTable *resultsTable = new AstroObjectsTable(d->session, {}, false, NgcObject::allNebulaTypes(), {AstroObjectsTable::Names, AstroObjectsTable::Type, AstroObjectsTable::AR, AstroObjectsTable::DEC, AstroObjectsTable::Constellation, AstroObjectsTable::AngularSize, AstroObjectsTable::Magnitude});
+    AstroObjectsTable *resultsTable = new AstroObjectsTable(d->session, {{"buttons_add", [=](const AstroObjectsTable::Row &r){
+      if(!d->session.user()) {
+        WMessageBox *msg = new WMessageBox(WString::tr("search_by_name_add_to_session_caption"), WString::tr("search_by_name_no_user_text"), Information, Ok);
+        msg->button(Ok)->clicked().connect([=](WMouseEvent){msg->accept();});
+        msg->show();
+        return;
+      }
+      Dbo::Transaction t(d->session);
+      auto sessions = d->session.find<AstroSession>().where("user_id = ?").bind(d->session.user().id()).where("\"when\" > now()").resultList();
+      if(sessions.size() == 0) {
+        WMessageBox *msg = new WMessageBox(WString::tr("search_by_name_add_to_session_caption"), WString::tr("search_by_name_no_sessions_text"), Information, Ok);
+        msg->button(Ok)->clicked().connect([=](WMouseEvent){msg->accept();});
+        msg->show();
+        return;
+      }
+      WDialog *addToSessionDialog = new WDialog(WString::tr("search_by_name_add_to_session_caption"));
+      WComboBox *sessionsCombo = WW<WComboBox>(addToSessionDialog->contents());
+
+      WStandardItemModel *model = new WStandardItemModel(sessionsCombo);
+      for(auto session: sessions) {
+        auto row = new WStandardItem(WString::fromUTF8(session->name()));
+        row->setData(session);
+        model->appendRow(row);
+      } 
+      sessionsCombo->setModel(model);
+      addToSessionDialog->footer()->addWidget(WW<WPushButton>(WString::tr("Wt.WMessageBox.Cancel")).css("btn-sm").onClick([=](WMouseEvent){addToSessionDialog->reject();}));
+      addToSessionDialog->footer()->addWidget(WW<WPushButton>(WString::tr("buttons_add")).css("btn-primary btn-sm").onClick([=](WMouseEvent){
+        addToSessionDialog->accept();
+        AstroSessionPtr astroSession =  boost::any_cast<AstroSessionPtr>(model->item(sessionsCombo->currentIndex())->data());
+        AstroSessionTab::add(r.astroObject.object, astroSession,  d->session, r.tableRow); 
+      }));
+      addToSessionDialog->show();
+    }}}, false, NgcObject::allNebulaTypes(),
+      {AstroObjectsTable::Names, AstroObjectsTable::Type, AstroObjectsTable::AR, AstroObjectsTable::DEC, AstroObjectsTable::Constellation, AstroObjectsTable::AngularSize, AstroObjectsTable::Magnitude}
+    );
     searchByNameWidget->addWidget(resultsTable);
     
-    d->searchByName(nameToSearch, resultsTable);
-    d->widgets->setCurrentWidget(searchByNameWidget);
-  });
+    if(d->searchByName(nameToSearch, resultsTable))
+      d->widgets->setCurrentWidget(searchByNameWidget);
+  };
+
+  searchByNameEdit->changed().connect([=](_n1){ startSearch(); });
+  searchByNameEdit->keyWentUp().connect([=](WKeyEvent e) { if(e.key() == Key_Enter ) startSearch(); });
   if(!d->session.login().loggedIn() && ! internalPathMatches("/dss") ) {
     setInternalPath(HOME_PATH, true);
   }
   handlePath(internalPath());
 }
 
-void SkyPlanner::Private::searchByName(const string &name, AstroObjectsTable *table, int page)
+bool SkyPlanner::Private::searchByName(const string &name, AstroObjectsTable *table, int page)
 {
   Dbo::Transaction t(session);
   int count = session.query<int>(R"(select count(distinct o.id) from "objects" o inner join denominations d on o.id = d.objects_id where lower(d.name) like '%' || ? || '%')")
@@ -276,7 +319,7 @@ void SkyPlanner::Private::searchByName(const string &name, AstroObjectsTable *ta
   auto tablePage = AstroObjectsTable::Page::fromCount(page, count, [=](int p) { searchByName(name, table, p); });
   if(tablePage.total > 200) {
     q->notification(WString::tr("select_objects_widget_add_by_name"), WString::tr("select_objects_widget_add_by_name_too_many"), SkyPlanner::Notification::Information, 5);
-    return;
+    return false;
   }
 
   auto ngcObjects = session.query<NgcObjectPtr>(R"(select o from "objects" o inner join denominations d on o.id = d.objects_id where lower(d.name) like '%' || ? || '%' group by o.id)")
@@ -286,6 +329,7 @@ void SkyPlanner::Private::searchByName(const string &name, AstroObjectsTable *ta
     return AstroObjectsTable::AstroObject{{}, o};
   } );
   table->populate(objects, TelescopePtr(), {}, tablePage);
+  return true;
 }
 
 void SkyPlanner::Private::loadDSSPage( const std::string &hexId )

@@ -25,6 +25,8 @@
 
 class Session;
 class AstroSession;
+class NgcObject;
+class AstroSessionObject;
 class AstroSessionTab : public Wt::WContainerWidget
 {
 public:
@@ -33,6 +35,7 @@ public:
     Wt::Signal<std::string> &nameChanged() const;
     static std::string pathComponent(const Wt::Dbo::ptr<AstroSession>& astroSession, Wt::Dbo::Transaction &transaction );
     Wt::Signal<> &close() const;
+    static Wt::Dbo::ptr<AstroSessionObject> add(const Wt::Dbo::ptr<NgcObject> &object, const Wt::Dbo::ptr<AstroSession> &astroSession, Session &session, Wt::WTableRow *row);
 private:
     D_PTR;
 };

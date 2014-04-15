@@ -39,7 +39,7 @@ public:
     Wt::WContainerWidget *notifications;
     Wt::WStackedWidget *widgets;
     void loadDSSPage(const std::string &hexId);
-    void searchByName(const std::string &name, AstroObjectsTable *table, int page = 0);
+    bool searchByName(const std::string &name, AstroObjectsTable *table, int page = 0);
     std::string previousInternalPath = "/";
     Wt::WContainerWidget *dssContainer;
     Wt::WString loginname;

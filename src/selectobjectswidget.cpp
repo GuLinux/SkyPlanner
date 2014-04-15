@@ -54,6 +54,7 @@
 #include <Wt/WCheckBox>
 #include "widgets/astroobjectwidget.h"
 #include <Wt/WImage>
+#include "astrosessiontab.h"
 
 using namespace Wt;
 using namespace WtCommons;
@@ -90,18 +91,9 @@ SelectObjectsWidget::SelectObjectsWidget(const Dbo::ptr< AstroSession >& astroSe
 
 void SelectObjectsWidget::Private::addToSession(const NgcObjectPtr &ngcObject, WTableRow *row)
 {
-    Dbo::Transaction t(session);
-    int existing = session.query<int>("select count(*) from astro_session_object where astro_session_id = ? AND objects_id = ? ").bind(astroSession.id() ).bind(ngcObject.id() );
-    if(existing>0) {
-      SkyPlanner::instance()->notification(WString::tr("notification_warning_title"), WString::tr("notification_object_already_added"), SkyPlanner::Notification::Alert, 10);
-      return;
-    }
-    astroSession.modify()->astroSessionObjects().insert(new AstroSessionObject(ngcObject));
-    auto astroSessionObject = session.find<AstroSessionObject>().where("astro_session_id = ?").bind(astroSession.id()).where("objects_id = ?").bind(ngcObject.id()).resultValue();
-    t.commit();
-    row->addStyleClass("success");
-
-    objectsListChanged.emit(astroSessionObject);
+    auto astroSessionObject = AstroSessionTab::add(ngcObject, astroSession, session, row);
+    if(astroSessionObject)
+      objectsListChanged.emit(astroSessionObject);
 }
 
 

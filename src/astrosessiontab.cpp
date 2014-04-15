@@ -113,6 +113,23 @@ Signal< NoClass > &AstroSessionTab::close() const
 }
 
 
+AstroSessionObjectPtr AstroSessionTab::add(const NgcObjectPtr &ngcObject, const AstroSessionPtr &astroSession, Session &session, WTableRow *row)
+{
+  Dbo::Transaction t(session);
+  int existing = session.query<int>("select count(*) from astro_session_object where astro_session_id = ? AND objects_id = ? ").bind(astroSession.id() ).bind(ngcObject.id() );
+  if(existing>0) {
+    SkyPlanner::instance()->notification(WString::tr("notification_warning_title"), WString::tr("notification_object_already_added"), SkyPlanner::Notification::Alert, 10);
+    return {};
+  }
+  astroSession.modify()->astroSessionObjects().insert(new AstroSessionObject(ngcObject));
+  auto astroSessionObject = session.find<AstroSessionObject>().where("astro_session_id = ?").bind(astroSession.id()).where("objects_id = ?").bind(ngcObject.id()).resultValue();
+  t.commit();
+  row->addStyleClass("success");
+
+  return astroSessionObject;
+}
+
+
 void AstroSessionTab::Private::reload()
 {
   q->clear();
