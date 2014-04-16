@@ -362,6 +362,8 @@ shared_ptr<SkyPlanner::Notification> SkyPlanner::notification(const WString &tit
   notification->widget()->animateShow({WAnimation::Fade, WAnimation::EaseInOut, 500});
   if(autoHideSeconds > 0)
     WTimer::singleShot(1000*autoHideSeconds, [=](WMouseEvent) { notification->close(); } );
+  d->shownNotifications.insert(notification);
+  notification->closed().connect([=](_n6) { d->shownNotifications.erase(notification); });
   return notification;
 }
 

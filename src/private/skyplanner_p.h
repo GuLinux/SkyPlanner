@@ -44,6 +44,7 @@ public:
     Wt::WContainerWidget *dssContainer;
     Wt::WString loginname;
     Wt::Signal<> telescopesListChanged;
+    std::set<std::shared_ptr<Notification>> shownNotifications;
 private:
     class SkyPlanner* const q;
 };

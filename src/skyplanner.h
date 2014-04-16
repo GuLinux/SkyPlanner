@@ -41,6 +41,7 @@ public:
     private:
       D_PTR;
     };
+    friend class Notification;
     static SkyPlanner *instance();
     std::shared_ptr<Notification>notification( const Wt::WString &title, const Wt::WString &content, Notification::Type type, int autoHideSeconds = 0 , Wt::WContainerWidget *addTo = nullptr);
     static const std::string HOME_PATH;
