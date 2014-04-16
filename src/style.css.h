@@ -39,6 +39,9 @@ std::vector<uint8_t> styleCss() {
     .navbar .navbar-collapsed {
       display: none!important;
     }
+    .pagination-item a {
+//      min-width: 3em;
+    }
     @media (min-width: 768px) {
       .navbar .navbar-collapsed {
         display: block!important;

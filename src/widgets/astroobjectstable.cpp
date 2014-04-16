@@ -221,36 +221,34 @@ void AstroObjectsTable::populate(const vector<AstroObject> &objects, const Teles
     d->tableFooter->addWidget(paginationWidget);
     d->tableFooter->addWidget(new WBreak);
     
-    WContainerWidget *previousButton = WW<WContainerWidget>().css(page.current > 0 ? "" : "disabled");
-    WContainerWidget *nextButton = WW<WContainerWidget>().css(page.current <  page.total-1 ? "" : "disabled");
-    
     auto activatePage = [=](int pageNumber) {
       clearSelection();
       if(pageNumber<0 || pageNumber>=page.total) return;
       page.change(pageNumber);
     };
+
+    auto add = [=] (const WString &text, bool condition, int newPage) {
+      WAnchor *link = WW<WAnchor>("", text);
+      if(condition)
+        link->clicked().connect([=](WMouseEvent){ if(condition) activatePage(newPage); });
+      paginationWidget->addWidget(WW<WContainerWidget>().addCss(condition ? "pagination-item" : "pagination-item disabled").addCss(newPage == page.current ? "active" : "").add(link));
+    };
     
-    previousButton->addWidget(WW<WAnchor>("", "&lt;" ).onClick([=](WMouseEvent){ activatePage(page.current-1); }));
-    nextButton->addWidget(WW<WAnchor>("", "&gt;" ).onClick([=](WMouseEvent){ activatePage(page.current+1); }));
     long start = 0;
-    long paginationMax = 10;
+    long paginationMax = 15;
     if(page.current> (paginationMax/2-1) && page.total > paginationMax) {
       start = page.current - (paginationMax/2-1);
     }
     int pEnd = min(start + paginationMax, page.total);
-    if(start > 0)
-      paginationWidget->addWidget(WW<WContainerWidget>().add(WW<WAnchor>("", "&laquo;" ).onClick([=](WMouseEvent){ activatePage(0); })));
-    if(page.current > paginationMax)
-      paginationWidget->addWidget(WW<WContainerWidget>().add(WW<WAnchor>("", "-10" ).onClick([=](WMouseEvent){ activatePage(page.current-10); })));
-    paginationWidget->addWidget(previousButton);
+    add("&laquo;", start>0, 0);
+    add(format("-%d") % paginationMax, page.current > paginationMax, page.current - paginationMax);
+    add("&lt;", page.current > 0, page.current - 1);
     for(int i=start; i <pEnd; i++) {
-      paginationWidget->addWidget(WW<WContainerWidget>().addCss(i == page.current ? "active" : "").add(WW<WAnchor>("", format("%d") % (i+1) ).onClick([=](WMouseEvent){ activatePage(i); }) ));
+      add(format("%d") % (i+1), true, i);
     }
-    paginationWidget->addWidget(nextButton);
-    if(page.current+10 < page.total)
-      paginationWidget->addWidget(WW<WContainerWidget>().add(WW<WAnchor>("", "+10" ).onClick([=](WMouseEvent){ activatePage(page.current+10); })));
-    if(pEnd < page.total)
-      paginationWidget->addWidget(WW<WContainerWidget>().add(WW<WAnchor>("", "&raquo;" ).onClick([=](WMouseEvent){ activatePage(page.total-1); })));
+    add("&gt;", page.current < page.total-1, page.current+1);
+    add(format("+%d") % paginationMax, page.current+paginationMax < page.total, page.current+paginationMax);
+    add("&raquo;", pEnd < page.total, page.total-1);
   }
 }
 
