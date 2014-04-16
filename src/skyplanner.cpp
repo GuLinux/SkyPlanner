@@ -312,6 +312,9 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
 
 bool SkyPlanner::Private::searchByName(const string &name, AstroObjectsTable *table, int page)
 {
+  if(name == lastNameSearch)
+    return false;
+  lastNameSearch = name;
   Dbo::Transaction t(session);
   int count = session.query<int>(R"(select count(distinct o.id) from "objects" o inner join denominations d on o.id = d.objects_id where lower(d.name) like '%' || ? || '%')")
     .bind(name);

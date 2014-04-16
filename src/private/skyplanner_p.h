@@ -45,6 +45,7 @@ public:
     Wt::WString loginname;
     Wt::Signal<> telescopesListChanged;
     std::set<std::shared_ptr<Notification>> shownNotifications;
+    std::string lastNameSearch;
 private:
     class SkyPlanner* const q;
 };
