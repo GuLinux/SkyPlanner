@@ -302,7 +302,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
       d->widgets->setCurrentWidget(searchByNameWidget);
   };
 
-  searchByNameEdit->changed().connect([=](_n1){ startSearch(); });
+ // searchByNameEdit->changed().connect([=](_n1){ startSearch(); });
   searchByNameEdit->keyWentUp().connect([=](WKeyEvent e) { if(e.key() == Key_Enter ) startSearch(); });
   if(!d->session.login().loggedIn() && ! internalPathMatches("/dss") ) {
     setInternalPath(HOME_PATH, true);
@@ -312,8 +312,8 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
 
 bool SkyPlanner::Private::searchByName(const string &name, AstroObjectsTable *table, int page)
 {
-  if(name == lastNameSearch)
-    return false;
+//  if(name == lastNameSearch)
+//    return false;
   lastNameSearch = name;
   Dbo::Transaction t(session);
   int count = session.query<int>(R"(select count(distinct o.id) from "objects" o inner join denominations d on o.id = d.objects_id where lower(d.name) like '%' || ? || '%')")
