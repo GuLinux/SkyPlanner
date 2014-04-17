@@ -50,6 +50,7 @@ void UserSettingsPage::Private::onDisplay()
 {
   content->clear();
   WGroupBox *changePassword = WW<WGroupBox>(WString::tr("user_settings_change_password"), content);
+  bool hasOldPassword = ! session.login().user().password().empty();
 
 
   WLineEdit *oldPassword = WW<WLineEdit>();
@@ -59,7 +60,7 @@ void UserSettingsPage::Private::onDisplay()
     edit->setEchoMode(WLineEdit::Password);
   WPushButton *changePasswordButton = WW<WPushButton>(WString::tr("user_settings_change_password")).css("btn btn-primary").onClick([=](WMouseEvent) {
     Auth::PasswordService &passwordService = session.passwordAuth();
-    if(!passwordService.verifyPassword(session.login().user(), oldPassword->text() )) {
+    if(hasOldPassword && ! passwordService.verifyPassword(session.login().user(), oldPassword->text() )) {
       SkyPlanner::instance()->notification(WString::tr("changepwd_error_title"), WString::tr("changepwd_wrong_password"), SkyPlanner::Notification::Error, 10);
       return;
     }
@@ -82,9 +83,12 @@ void UserSettingsPage::Private::onDisplay()
 
   auto enableChangePasswordButton = [=] {
     bool enable = true;
-    for(auto edit: vector<WLineEdit*>{oldPassword, newPassword, newPasswordConfirm})
+    for(auto edit: vector<WLineEdit*>{newPassword, newPasswordConfirm})
       enable &= !edit->text().empty();
-    enable &= oldPassword->text() != newPassword->text();
+    if(hasOldPassword) {
+      enable &= !oldPassword->text().empty();
+      enable &= oldPassword->text() != newPassword->text();
+    }
     enable &= newPassword->text() == newPasswordConfirm->text();
     changePasswordButton->setEnabled(enable);
   };
@@ -101,6 +105,7 @@ void UserSettingsPage::Private::onDisplay()
                             ->addButton(changePasswordButton)
                             );
 
+  oldPassword->setHidden(!hasOldPassword);
 
   WGroupBox *email = WW<WGroupBox>(WString::tr("user_settings_email"), content);
   Auth::User user = session.login().user();
