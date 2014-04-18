@@ -96,7 +96,6 @@ void AstroObjectWidget::Private::init()
 
   auto actionButtons = this->actionButtons;
   auto astroSessionObjectsWithDescription = session.find<AstroSessionObject>().where("description is not null").where("length(description) > 0").where("objects_id = ?").bind(ngcObject.id()).where("astro_session_id <> ?").bind(astroSession.id()).resultList();
-  spLog("notice") << "astroSessionObjectsWithDescription count: " << astroSessionObjectsWithDescription.size();
   if(astroSessionObjectsWithDescription.size() > 0) {
     WTemplate *rowsTemplate = new WTemplate();
     stringstream rows;
