@@ -15,6 +15,7 @@
 #include <Wt/WToolBar>
 #include <Wt/WPushButton>
 #include "widgets/objectnameswidget.h"
+#include "skyplanner.h"
 
 using namespace std;
 using namespace Wt;
@@ -93,6 +94,9 @@ void AstroObjectWidget::Private::init()
     info->bindString("custom-description", WString::fromUTF8(astroSessionObject->description()));
   }
 
+  auto actionButtons = this->actionButtons;
+  auto astroSessionObjectsWithDescription = session.find<AstroSessionObject>().where("description is not null").where("length(description) > 0").where("objects_id = ?").bind(ngcObject.id()).where("astro_session_id <> ?").bind(astroSession.id()).resultList();
+  spLog("notice") << "astroSessionObjectsWithDescription count: " << astroSessionObjectsWithDescription.size();
 
   info->setCondition("have-actions", actionButtons.size() > 0);
   if(info->conditionValue("have-actions")) {
