@@ -365,9 +365,8 @@ void AstroSessionTab::Private::reload()
     
     } else {
       telescopeComboContainer->setHidden(true);
-      WAnchor *telescopeLink =  WW<WAnchor>("", WString::tr("mainmenu_my_telescopes"));
-      auto notification = SkyPlanner::instance()->notification(WString::tr("notification_suggestion_title"), WW<WTemplate>(WString::tr("astrosessiontab_no_telescopes_message")).bindWidget("my_telescopes_link", telescopeLink), SkyPlanner::Notification::Information);
-      telescopeLink->clicked().connect([=](WMouseEvent){ notification->close(); wApp->setInternalPath("/telescopes", true); });
+      WAnchor *telescopeLink =  WW<WAnchor>("", WString::tr("mainmenu_my_telescopes")).onClick([=](WMouseEvent){ SkyPlanner::instance()->clearNotifications(); wApp->setInternalPath("/telescopes", true); });
+      SkyPlanner::instance()->notification(WString::tr("notification_suggestion_title"), WW<WTemplate>(WString::tr("astrosessiontab_no_telescopes_message")).bindWidget("my_telescopes_link", telescopeLink), SkyPlanner::Notification::Information);
     }
   };
   updateTelescopes(t);

@@ -44,6 +44,7 @@ public:
     static SkyPlanner *instance();
     std::shared_ptr<Notification>notification( const Wt::WString &title, const Wt::WString &content, Notification::Type type, int autoHideSeconds = 0 , Wt::WContainerWidget *addTo = nullptr);
     std::shared_ptr<Notification>notification( const Wt::WString &title, Wt::WWidget *content, Notification::Type type, int autoHideSeconds = 0 , Wt::WContainerWidget *addTo = nullptr);
+    void clearNotifications();
     static const std::string HOME_PATH;
     Wt::WLogEntry uLog (const std::string &type) const;
 

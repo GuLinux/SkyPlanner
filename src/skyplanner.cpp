@@ -357,6 +357,12 @@ WLogEntry SkyPlanner::uLog(const string &type) const
     return WApplication::log(type) << "{user: '" << (d->loginname.empty() ? "anonymous" : WString("{1} ({2})").arg(d->loginname).arg(static_cast<long>(d->session.user().id())) ) << "'} ";
 }
 
+void SkyPlanner::clearNotifications()
+{
+  for(auto notification: d->shownNotifications)
+    notification->close();
+  d->shownNotifications.clear();
+}
 
 shared_ptr<SkyPlanner::Notification> SkyPlanner::notification(const WString &title, const WString &content, Notification::Type type, int autoHideSeconds, WContainerWidget *addTo)
 {
