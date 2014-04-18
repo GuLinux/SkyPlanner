@@ -366,7 +366,7 @@ void SkyPlanner::clearNotifications()
 
 shared_ptr<SkyPlanner::Notification> SkyPlanner::notification(const WString &title, const WString &content, Notification::Type type, int autoHideSeconds, WContainerWidget *addTo)
 {
-  notification(title, new WText(content), type, autoHideSeconds, addTo);
+  return notification(title, new WText(content), type, autoHideSeconds, addTo);
 }
 shared_ptr<SkyPlanner::Notification> SkyPlanner::notification(const WString &title, WWidget *content, Notification::Type type, int autoHideSeconds, WContainerWidget *addTo)
 {
@@ -437,7 +437,6 @@ SkyPlanner::Notification::Notification(const WString &title, WWidget *content, T
 
 SkyPlanner::Notification::~Notification()
 {
-
 }
 
 
