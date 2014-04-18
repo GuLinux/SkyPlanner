@@ -66,6 +66,11 @@ boost::posix_time::ptime AstroSession::when() const
 {
   return _when;
 }
+  
+Dbo::ptr<User> AstroSession::user() const
+{
+  return _user;
+}
 
 Dbo::collection< Dbo::ptr< AstroSessionObject > > AstroSession::astroSessionObjects() const
 {

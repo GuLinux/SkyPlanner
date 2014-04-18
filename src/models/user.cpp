@@ -34,3 +34,13 @@ bool User::isAdmin() const
 {
   return _isAdmin;
 }
+
+Dbo::weak_ptr<AuthInfo> User::authInfo() const
+{
+  return _authInfo;
+}
+
+WString User::loginName() const
+{
+  return _authInfo->identity("loginname");
+}

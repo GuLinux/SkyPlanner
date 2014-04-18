@@ -45,6 +45,7 @@ public:
   Wt::WDateTime wDateWhen() const;
   dbo::collection<dbo::ptr<AstroSessionObject>> astroSessionObjects() const;
   Coordinates::LatLng position() const;
+  dbo::ptr<User> user() const;
   void setPosition(const Coordinates::LatLng &position);
   void setName(const std::string &name);
   void setDateTime(const Wt::WDateTime &when);

@@ -41,9 +41,12 @@ public:
     dbo::hasMany(a, _telescopes, dbo::ManyToOne);
     dbo::hasMany(a, _astroSessions, dbo::ManyToOne);
     dbo::hasMany(a, _settings, dbo::ManyToOne);
+    dbo::hasOne(a, _authInfo);
   }
   dbo::collection<dbo::ptr<Telescope>> telescopes() const;
   dbo::collection<dbo::ptr<AstroSession>> astroSessions() const;
+  dbo::weak_ptr<AuthInfo> authInfo() const;
+  Wt::WString loginName() const;
   bool isAdmin() const;
   class Setting;
   typedef dbo::ptr<Setting> SettingPtr;
@@ -54,7 +57,7 @@ private:
 
   friend class Setting;
   dbo::collection<dbo::ptr<Setting>> _settings;
-
+  dbo::weak_ptr<AuthInfo> _authInfo;
 };
 
 typedef dbo::ptr<User> UserPtr;

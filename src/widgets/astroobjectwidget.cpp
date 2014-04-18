@@ -97,6 +97,26 @@ void AstroObjectWidget::Private::init()
   auto actionButtons = this->actionButtons;
   auto astroSessionObjectsWithDescription = session.find<AstroSessionObject>().where("description is not null").where("length(description) > 0").where("objects_id = ?").bind(ngcObject.id()).where("astro_session_id <> ?").bind(astroSession.id()).resultList();
   spLog("notice") << "astroSessionObjectsWithDescription count: " << astroSessionObjectsWithDescription.size();
+  if(astroSessionObjectsWithDescription.size() > 0) {
+    WTemplate *rowsTemplate = new WTemplate();
+    stringstream rows;
+    for(int index = 0; index<astroSessionObjectsWithDescription.size(); index++)
+      rows << format(R"(<tr class='other-desc' style='display: none;'><td><small class="astroobject_text">${object-description-header-%d}:</small></td><td><small class="astroobject_text">${object-description-%d}</small></td></tr>\n)") % index % index;
+
+    rowsTemplate->setTemplateText(rows.str(), XHTMLUnsafeText);
+    actionButtons.push_back(WW<WPushButton>(WString::tr("btn_other_users_descriptions")).addCss("btn-xs").onClick([=](WMouseEvent){
+      wApp->doJavaScript(format(R"($('#%s >table > tbody >.other-desc').toggle();)") % info->id() );
+    }));
+    int index = 0;
+    for(auto description: astroSessionObjectsWithDescription) {
+      rowsTemplate->bindString(format("object-description-header-%d") % index, WString("{1}").arg(description->astroSession()->user()->loginName()) );
+      rowsTemplate->bindString(format("object-description-%d") % index++, WString("<b>{1}, {2}</b><br />{3}")
+        .arg(WString::fromUTF8(description->astroSession()->name())).arg(description->astroSession()->wDateWhen().toString("dddd, d MMM, yyyy")).arg(WString::fromUTF8(description->description()) ) );
+    }
+    info->bindWidget("other-descriptions", rowsTemplate);
+    } else {
+    info->bindEmpty("other-descriptions");
+  }
 
   info->setCondition("have-actions", actionButtons.size() > 0);
   if(info->conditionValue("have-actions")) {

@@ -92,6 +92,7 @@
 <message id="astrosessiontab_no_telescopes_message">Aggiungi uno o più telescopi nella sezione ${my_telescopes_link} per vedere suggerimenti e dati personalizzati.</message>
 <message id="suggested_objects_empty_list">Lista oggetti vuota per i criteri di ricerca utilizzati.</message>
 <message id="dss-embed-menu-info-message">Clicca sulle immagini per spostarle, ingrandirle, cambiare il tipo e altre opzioni.</message>
+<message id="btn_other_users_descriptions">Descrizioni da altre sessioni</message>
 
 <message id="astrosessionslisttab_add_new_name_empty">Il nome della sessione non può essere vuoto.</message>
 <message id="astrosessionslisttab_add_new_date_invalid">Devi inserire una data valida per la sessione.</message>
