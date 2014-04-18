@@ -202,8 +202,7 @@ void AstroObjectsTable::populate(const vector<AstroObject> &objects, const Teles
         row->elementAt(d->columns.size())->addWidget(WW<WPushButton>(WString::tr(d->actions[0].name)).addCss("btn-xs").addCss(d->actions[0].buttonCss).onClick([=](WMouseEvent) { d->actions[0].onClick(objectRow); }));
       } else {
         WPopupMenu *actionsMenu = new WPopupMenu;
-        WPushButton *actionsButton = WW<WPushButton>(WString::tr("buttons_actions")).css("btn-xs");
-        actionsButton->setMenu(actionsMenu);
+        WPushButton *actionsButton = WW<WPushButton>(WString::tr("buttons_actions")).css("btn-xs").onClick([=](WMouseEvent e) {actionsMenu->popup(e); });
         row->elementAt(d->columns.size())->addWidget(actionsButton);
         for(auto action: d->actions) {
           auto menuItem = actionsMenu->addItem(WString::tr(action.name));
