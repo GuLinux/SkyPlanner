@@ -55,7 +55,8 @@
 <message id="astrosessiontab_printable_version_max_names">Max number of names/catalogues per object</message>
 <message id="max_names_no_limit">no limits</message>
 <message id="astrosessiontab__telescope_label">Telescope: </message>
-<message id="astrosessiontab_no_telescopes_message">Add one or more telescopes in the "My Telescopes" section to see personalized suggestions and data here.</message>
+
+<message id="astrosessiontab_no_telescopes_message">Add one or more telescopes in the ${my_telescopes_link} section to see personalized suggestions and data here.</message>
 <message id="printable_version_dialog_spacing_between_objects">Spacing between objects rows</message>
 <message id="printable_version_dialog_fonts_size">Fonts size (PDF Only)</message>
 <message id="printable_version_dialog_add_telescope_suggestion">Please add one or more telescope to see suggestions</message>

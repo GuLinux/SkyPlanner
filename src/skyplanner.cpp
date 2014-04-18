@@ -360,6 +360,10 @@ WLogEntry SkyPlanner::uLog(const string &type) const
 
 shared_ptr<SkyPlanner::Notification> SkyPlanner::notification(const WString &title, const WString &content, Notification::Type type, int autoHideSeconds, WContainerWidget *addTo)
 {
+  notification(title, new WText(content), type, autoHideSeconds, addTo);
+}
+shared_ptr<SkyPlanner::Notification> SkyPlanner::notification(const WString &title, WWidget *content, Notification::Type type, int autoHideSeconds, WContainerWidget *addTo)
+{
   auto notification = make_shared<Notification>(title, content, type, true);
   (addTo ? addTo : d->notifications)->addWidget(notification->widget() );
   notification->widget()->animateShow({WAnimation::Fade, WAnimation::EaseInOut, 500});
@@ -404,7 +408,7 @@ bool SkyPlanner::Notification::valid() const
   return d->valid;
 }
 
-SkyPlanner::Notification::Notification(const WString &title, const WString &content, Type type, bool addCloseButton, WContainerWidget *parent)
+SkyPlanner::Notification::Notification(const WString &title, WWidget *content, Type type, bool addCloseButton, WContainerWidget *parent)
   : d()
 {
   static map<Type,string> notificationStyles {
@@ -422,7 +426,7 @@ SkyPlanner::Notification::Notification(const WString &title, const WString &cont
   }
 
   d->widget->addWidget(new WText{WString("<h4>{1}</h4>").arg(title) });
-  d->widget->addWidget(new WText{content});
+  d->widget->addWidget(content);
 }
 
 SkyPlanner::Notification::~Notification()

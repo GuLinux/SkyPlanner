@@ -32,7 +32,7 @@ public:
     class Notification {
     public:
       enum Type { Alert, Error, Success, Information };
-      Notification(const Wt::WString &title, const Wt::WString &content, Type type, bool addCloseButton, Wt::WContainerWidget *parent = 0);
+      Notification(const Wt::WString &title, Wt::WWidget *content, Type type, bool addCloseButton, Wt::WContainerWidget *parent = 0);
       ~Notification();
       void close();
       bool valid() const;
@@ -43,6 +43,7 @@ public:
     };
     static SkyPlanner *instance();
     std::shared_ptr<Notification>notification( const Wt::WString &title, const Wt::WString &content, Notification::Type type, int autoHideSeconds = 0 , Wt::WContainerWidget *addTo = nullptr);
+    std::shared_ptr<Notification>notification( const Wt::WString &title, Wt::WWidget *content, Notification::Type type, int autoHideSeconds = 0 , Wt::WContainerWidget *addTo = nullptr);
     static const std::string HOME_PATH;
     Wt::WLogEntry uLog (const std::string &type) const;
 

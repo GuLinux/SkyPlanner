@@ -89,7 +89,7 @@
 <message id="astrosessiontab__telescope_label">Telescopio: </message>
 <message id="astrosessiontab_printable_version_max_names">Numero massimo di nomi/cataloghi per oggetto</message>
 <message id="max_names_no_limit">nessun limite</message>
-<message id="astrosessiontab_no_telescopes_message">Aggiungi uno o più telescopi nella sezione "I Miei Telescopi" per vedere suggerimenti e dati personalizzati.</message>
+<message id="astrosessiontab_no_telescopes_message">Aggiungi uno o più telescopi nella sezione ${my_telescopes_link} per vedere suggerimenti e dati personalizzati.</message>
 <message id="suggested_objects_empty_list">Lista oggetti vuota per i criteri di ricerca utilizzati.</message>
 <message id="dss-embed-menu-info-message">Clicca sulle immagini per spostarle, ingrandirle, cambiare il tipo e altre opzioni.</message>
 
