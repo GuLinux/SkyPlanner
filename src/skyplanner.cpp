@@ -213,7 +213,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
   auto loginLogoutMessage = [=] {
     if(d->session.login().loggedIn()) {
       Dbo::Transaction t(d->session);
-      d->loginname = d->session.authInfo()->identity("loginname");
+      d->loginname = d->session.user()->loginName();
       userSubMenu->setText(d->loginname);
     }
     spLog("notice") << "***** "

@@ -26,6 +26,7 @@
 #include <Wt/WTemplate>
 #include <Wt/Auth/Login>
 #include <Wt/WAnchor>
+#include "models/Models"
 
 using namespace std;
 using namespace Wt;
@@ -51,12 +52,13 @@ HomePage::HomePage( Session &session, Wt::WContainerWidget *parent )
 }
 
 void HomePage::Private::populate() {
+  Dbo::Transaction t(session);
   content->clear();
   content->addFunction("tr", &WTemplate::Functions::tr);
   content->setCondition("logged-in", session.login().loggedIn());
   content->setCondition("not-logged-in", !session.login().loggedIn());
   if(session.login().loggedIn()) {
-    content->bindString("login-name", session.login().user().identity("loginname"));
+    content->bindString("login-name", session.user()->loginName() );
   }
   content->bindString("login-menu-path", link.createCall("'/login/'"));
   content->bindString("sessions-menu-path", link.createCall("'/sessions/list/'"));

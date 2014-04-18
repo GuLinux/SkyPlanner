@@ -87,7 +87,7 @@ void SendFeedbackPage::Private::feedbackForm(const Wt::Dbo::ptr<NgcObject> &obje
 
 
     Dbo::Transaction t(session);
-    WString username = session.login().user().identity("loginname");
+    WString username = session.user()->loginName();
     string userEmail = session.login().user().email();
 
     message.setReplyTo({userEmail, username});

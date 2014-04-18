@@ -49,6 +49,7 @@ UserSettingsPage::UserSettingsPage(Session &session, Wt::WContainerWidget *paren
 void UserSettingsPage::Private::onDisplay()
 {
   content->clear();
+  Dbo::Transaction t(session);
   WGroupBox *changePassword = WW<WGroupBox>(WString::tr("user_settings_change_password"), content);
   bool hasOldPassword = ! session.login().user().password().empty();
 
@@ -69,7 +70,7 @@ void UserSettingsPage::Private::onDisplay()
       return;
     }
     string email = session.login().user().email().empty() ? session.login().user().unverifiedEmail() : session.login().user().email();
-    WValidator::Result passwordValidation = passwordService.strengthValidator()->validate(newPassword->text(), session.login().user().identity("loginname"), email);
+    WValidator::Result passwordValidation = passwordService.strengthValidator()->validate(newPassword->text(), session.user()->loginName(), email);
     if( passwordValidation.state() != WValidator::Valid ) {
       SkyPlanner::instance()->notification(WString::tr("changepwd_error_title"), passwordValidation.message(), SkyPlanner::Notification::Error, 10);
       return;
