@@ -39,3 +39,4 @@ add_subdirectory(src)
 add_subdirectory(CatalogsParsing)
 
 add_subdirectory(tests)
+add_custom_target(manifest zip -9 ${CMAKE_BINARY_DIR}/skyplanner-manifest.zip ${CMAKE_SOURCE_DIR}/manifest.json ${CMAKE_SOURCE_DIR}/skyplanner-logo-v1-128.png)

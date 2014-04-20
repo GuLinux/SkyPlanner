@@ -1,0 +1,19 @@
+{
+  "name": "SkyPlanner",
+  "description": "Astronomy sessions planner for stargazers. SkyPlanner automatically suggests you the best object visible, and creates a printable plan list to watch them.",
+  "version": "1",
+  "app": {
+    "urls": [
+      "http://gulinux.net/SkyPlanner",
+    ],
+    "launch": {
+      "web_url": "http://gulinux.net/SkyPlanner"
+    }
+  },
+  "icons": {
+    "128": "skyplanner-logo-v1-128.png"
+  },
+  "permissions": [
+    "geolocation"
+  ]
+}
