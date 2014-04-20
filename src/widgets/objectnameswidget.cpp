@@ -168,10 +168,10 @@ void ObjectNamesWidget::Private::init(const NgcObjectPtr &object, const AstroSes
 
       for( auto name : denominations )
       {
-        addLink( name->search(), searchURL( "http://www.google.com/search?q=%s", name), googleSearchSubMenu );
-        addLink( name->search(), searchURL( "http://www.google.com/images?q=%s", name ), googleImagesSearchSubMenu );
-        addLink( name->search(), searchURL( "http://simbad.u-strasbg.fr/simbad/sim-basic?Ident=%s&submit=SIMBAD+search", name ), simbadSearchSubMenu );
-        addLink( name->search(), searchURL( "http://ned.ipac.caltech.edu/cgi-bin/objsearch?objname=%s", name ), nedSearchSubMenu );
+        addLink( WString::fromUTF8(name->search()), searchURL( "http://www.google.com/search?q=%s", name), googleSearchSubMenu );
+        addLink( WString::fromUTF8(name->search()), searchURL( "http://www.google.com/images?q=%s", name ), googleImagesSearchSubMenu );
+        addLink( WString::fromUTF8(name->search()), searchURL( "http://simbad.u-strasbg.fr/simbad/sim-basic?Ident=%s&submit=SIMBAD+search", name ), simbadSearchSubMenu );
+        addLink( WString::fromUTF8(name->search()), searchURL( "http://ned.ipac.caltech.edu/cgi-bin/objsearch?objname=%s", name ), nedSearchSubMenu );
       }
     }
 

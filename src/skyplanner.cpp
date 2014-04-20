@@ -85,6 +85,10 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
   : WApplication( environment ), d( this )
 {
   addMetaHeader("viewport", "width=device-width, initial-scale=1, maximum-scale=1");
+  string googleVerificationCode;
+  if(readConfigurationProperty("google-site-verification", googleVerificationCode)) {
+    addMetaHeader("google-site-verification", googleVerificationCode);
+  }
 
   string stringsDirectory = (boost::filesystem::current_path() / "strings").string();
   readConfigurationProperty("strings_directory", stringsDirectory);
@@ -308,6 +312,22 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
     setInternalPath(HOME_PATH, true);
   }
   handlePath(internalPath());
+
+  string googleAnalytics_ua, googleAnalytics_domain;
+  if(readConfigurationProperty("google-analytics-ua", googleAnalytics_ua) && readConfigurationProperty("google-analytics-domain", googleAnalytics_domain)) {
+    root()->addWidget(new WTemplate{format(R"(
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', '%s', '%s');
+  ga('send', 'pageview');
+
+</script>
+  )") % googleAnalytics_ua % googleAnalytics_domain });
+  }
 }
 
 bool SkyPlanner::Private::searchByName(const string &name, AstroObjectsTable *table, int page)
