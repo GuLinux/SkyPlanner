@@ -315,7 +315,8 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
 
   string googleAnalytics_ua, googleAnalytics_domain;
   if(readConfigurationProperty("google-analytics-ua", googleAnalytics_ua) && readConfigurationProperty("google-analytics-domain", googleAnalytics_domain)) {
-    root()->addWidget(new WTemplate{format(R"(
+    WTemplate *googleAnalyticsSCript = new WTemplate;
+    googleAnalyticsSCript->setTemplateText(format(R"(
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -326,7 +327,8 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
   ga('send', 'pageview');
 
 </script>
-  )") % googleAnalytics_ua % googleAnalytics_domain });
+  )") % googleAnalytics_ua % googleAnalytics_domain,  XHTMLUnsafeText);
+    root()->addWidget(googleAnalyticsSCript);
   }
 }
 
