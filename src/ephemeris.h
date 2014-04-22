@@ -40,6 +40,7 @@ class Ephemeris
     struct BestAltitude {
       Coordinates::AltAzimuth coordinates;
       DateTime when;
+      RiseTransitSet rst;
       operator bool() const;
     };
     struct Darkness {

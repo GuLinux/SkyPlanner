@@ -108,10 +108,10 @@ Ephemeris::BestAltitude Ephemeris::findBestAltitude( const Coordinates::Equatori
 
   ln_lnlat_posn observer = d->lnGeoPosition();
 
-  auto bestAltitude = [this,&observer, &object](const DateTime &when) mutable {
+  auto bestAltitude = [this,&observer, &object,&rst](const DateTime &when) mutable {
     ln_hrz_posn position;
     ln_get_hrz_from_equ(&object, &observer, d->dateToJulian(when.utc, true), &position);
-    return BestAltitude{{ Angle::degrees(position.alt), Angle::degrees(position.az) }, when };
+    return BestAltitude{{ Angle::degrees(position.alt), Angle::degrees(position.az) }, when, rst };
   };
 
   if(rst.transit < rangeEnd && rst.transit > rangeStart ) {
