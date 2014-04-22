@@ -43,6 +43,14 @@ class Ephemeris
       RiseTransitSet rst;
       operator bool() const;
     };
+    enum Planets { Mercury, Venus, Mars, Jupiter, Saturn, Uranus, Neptune, Pluto };
+    struct Planet {
+      Coordinates::Equatorial coordinates;
+      RiseTransitSet rst;
+      Angle maxAltitude;
+      double magnitude;
+      std::string name;
+    };
     struct Darkness {
       DateTime begin;
       DateTime end;
@@ -58,6 +66,8 @@ class Ephemeris
     Darkness darknessHours(const boost::gregorian::date &when) const;
     void setTimezone(const Timezone &timezone);
     Timezone timezone() const;
+
+    Planet planet(Planets which, const DateTime &when) const;
 
     BestAltitude findBestAltitude(const Coordinates::Equatorial &equatorial, const DateTime &rangeStart, const DateTime &rangeEnd) const;
   private:

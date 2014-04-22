@@ -42,7 +42,6 @@ void Ephemeris::setTimezone(const Timezone &timezone)
   d->timezone = timezone;
 }
 
-
 Ephemeris::RiseTransitSet Ephemeris::moon( const boost::gregorian::date &when, bool nightMode ) const
 {
   //DateTime dtWhen = DateTime::fromLocal(when, d->timezone);
@@ -60,6 +59,31 @@ Ephemeris::RiseTransitSet Ephemeris::astronomicalTwilight( const boost::gregoria
   return d->rst(when, [](double jd, ln_lnlat_posn* pos,ln_rst_time* rst){ return ln_get_solar_rst_horizon(jd, pos, LN_SOLAR_ASTRONOMICAL_HORIZON, rst); }, nightMode);
 }
 
+namespace {
+struct PlanetData {
+  string name;
+  function<int(double, ln_lnlat_posn *, ln_rst_time *)> getRST;
+  function<double(double)> getMagnitude;
+  function<void(double,ln_equ_posn *)> getCoordinates;
+};
+};
+
+#define PLANET(Name, name) { Name, {#Name, [](double jd, ln_lnlat_posn *pos, ln_rst_time *rst) { return ln_get_ ## name ## _rst(jd, pos, rst); }, [](double jd){ return ln_get_ ## name ## _magnitude(jd); }, [](double jd, ln_equ_posn *pos) { ln_get_  ## name ## _equ_coords(jd, pos); }  }}
+
+Ephemeris::Planet Ephemeris::planet(Planets which, const DateTime &when) const
+{
+  static map<Planets, PlanetData> planetsData { PLANET(Mercury, mercury), PLANET(Venus, venus), PLANET(Mars, mars), PLANET(Jupiter, jupiter), PLANET(Saturn, saturn), PLANET(Uranus, uranus), PLANET(Neptune, neptune), PLANET(Pluto, pluto) };
+  auto planetData = planetsData[which];
+  double jd = d->dateToJulian(when.utc, true);
+  ln_equ_posn equ_pos;
+  planetData.getCoordinates(jd, &equ_pos);
+  Planet planet;
+  planet.name = planetData.name;
+  planet.coordinates = { Angle::degrees(equ_pos.ra), Angle::degrees(equ_pos.dec) }; 
+  planet.rst = d->rst(when.localtime, planetData.getRST, true);
+  planet.magnitude = planetData.getMagnitude(jd);
+  return planet;
+}
 
 Ephemeris::LunarPhase Ephemeris::moonPhase( const boost::gregorian::date &date ) const
 {
