@@ -35,6 +35,7 @@ public:
     NgcObjectPtr object;
     Ephemeris::BestAltitude bestAltitude;
     std::string rowStyle;
+    boost::optional<Ephemeris::Planet> planet;
 
     // Display widgets
     Wt::WWidget *names(Session &session, std::function<void(Wt::WMouseEvent)> onClick = [](Wt::WMouseEvent){} ) const;

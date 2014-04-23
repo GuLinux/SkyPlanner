@@ -133,46 +133,63 @@ void AstroObjectsTable::Private::header()
 
 WWidget *AstroObjectsTable::AstroObject::names(Session &session, function<void(WMouseEvent)> onClick) const
 {
+  if(planet)
+    return new WText{WString::fromUTF8(planet->name) };
   return WW<ObjectNamesWidget>(new ObjectNamesWidget{object, session, astroSession}).setInline(true).onClick(onClick);
 }
 
 WString AstroObjectsTable::AstroObject::typeDescription() const
 {
+  if(planet)
+    return WString::tr("planet_type");
   return object->typeDescription(); 
 }
 
 Angle AstroObjectsTable::AstroObject::ar() const
 {
+  if(planet)
+    return planet->coordinates.rightAscension;
   return object->coordinates().rightAscension;
 }
 
 Angle AstroObjectsTable::AstroObject::dec() const
 {
+  if(planet)
+    return planet->coordinates.declination;
   return object->coordinates().declination;
 }
 
 ConstellationFinder::Constellation AstroObjectsTable::AstroObject::constellation() const
 {
+  if(planet)
+    return ConstellationFinder::getName(planet->coordinates);
   return object->constellation();
 }
 
 Angle AstroObjectsTable::AstroObject::angularSize() const
 {
+  // TODO: we have it, we just need to calculate it in ephemeris
   return Angle::degrees(object->angularSize());
 }
 
 double AstroObjectsTable::AstroObject::magnitude() const
 {
+  if(planet)
+    return planet->magnitude;
   return object->magnitude();
 }
 
 DateTime AstroObjectsTable::AstroObject::transitTime() const
 {
+  if(planet)
+    return planet->rst.transit;
   return bestAltitude.when;
 }
 
 Angle AstroObjectsTable::AstroObject::maxAltitude() const
 {
+  if(planet)
+    return planet->maxAltitude;
   return bestAltitude.coordinates.altitude;
 }
 
@@ -197,27 +214,29 @@ void AstroObjectsTable::populate(const vector<AstroObject> &objects, const Teles
     WTableRow *astroObjectRow = d->objectsTable->insertRow(d->objectsTable->rowCount());
     WTableCell *astroObjectCell = astroObjectRow->elementAt(0);
     astroObjectCell->setHidden(true);
-    WPushButton *toggleMoreInfo = WW<WPushButton>(row->elementAt(0)).css("btn btn-xs pull-right hidden-print").setTextFormat(XHTMLUnsafeText).setText("&#x25bc;").setAttribute("title", WString::tr("astroobject_extended_info_title").toUTF8() );
-
     Row objectRow{astroObject, row};
-    objectRow.toggleMoreInfo = [=] {
-      toggleMoreInfo->setText(!astroObjectCell->isVisible() ? "&#x25b2;" : "&#x25bc;");
-      toggleMoreInfo->toggleStyleClass("active", !astroObjectCell->isVisible());
-      if(astroObjectCell->isVisible()) {
-        astroObjectCell->clear();
-        astroObjectCell->setHidden(true);
-        return;
-      }
-      astroObjectCell->setHidden(false);
-      astroObjectCell->clear();
-      astroObjectCell->addWidget(new AstroObjectWidget(astroObject.object, astroObject.astroSession, d->session, timezone, telescope, {}, {WW<WPushButton>(WString::tr("buttons_close")).css("btn-xs").onClick([=](WMouseEvent){
-        astroObjectCell->clear();
-        astroObjectCell->setHidden(true);
-        toggleMoreInfo->removeStyleClass("active");
-        toggleMoreInfo->setText("&#x25bc");
-      }) } ));
-    };
-    toggleMoreInfo->clicked().connect(std::bind(objectRow.toggleMoreInfo));
+    if(astroObject.object) {
+      WPushButton *toggleMoreInfo = WW<WPushButton>(row->elementAt(0)).css("btn btn-xs pull-right hidden-print").setTextFormat(XHTMLUnsafeText).setText("&#x25bc;").setAttribute("title", WString::tr("astroobject_extended_info_title").toUTF8() );
+
+      objectRow.toggleMoreInfo = [=] {
+	toggleMoreInfo->setText(!astroObjectCell->isVisible() ? "&#x25b2;" : "&#x25bc;");
+	toggleMoreInfo->toggleStyleClass("active", !astroObjectCell->isVisible());
+	if(astroObjectCell->isVisible()) {
+	  astroObjectCell->clear();
+	  astroObjectCell->setHidden(true);
+	  return;
+	}
+	astroObjectCell->setHidden(false);
+	astroObjectCell->clear();
+	astroObjectCell->addWidget(new AstroObjectWidget(astroObject.object, astroObject.astroSession, d->session, timezone, telescope, {}, {WW<WPushButton>(WString::tr("buttons_close")).css("btn-xs").onClick([=](WMouseEvent){
+	  astroObjectCell->clear();
+	  astroObjectCell->setHidden(true);
+	  toggleMoreInfo->removeStyleClass("active");
+	  toggleMoreInfo->setText("&#x25bc");
+	}) } ));
+      };
+      toggleMoreInfo->clicked().connect(std::bind(objectRow.toggleMoreInfo));
+    }
 
     if(selection && selection.object == astroObject.object) {
       objectAddedRow = row;
