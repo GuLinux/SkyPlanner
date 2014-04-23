@@ -68,6 +68,8 @@ struct PlanetData {
 };
 };
 
+const vector<Ephemeris::Planets> Ephemeris::allPlanets = { Mercury, Venus, Mars, Jupiter, Saturn, Uranus, Neptune, Pluto };
+
 #define PLANET(Name, name) { Name, {#Name, [](double jd, ln_lnlat_posn *pos, ln_rst_time *rst) { return ln_get_ ## name ## _rst(jd, pos, rst); }, [](double jd){ return ln_get_ ## name ## _magnitude(jd); }, [](double jd, ln_equ_posn *pos) { ln_get_  ## name ## _equ_coords(jd, pos); }  }}
 
 Ephemeris::Planet Ephemeris::planet(Planets which, const DateTime &when) const
@@ -82,6 +84,13 @@ Ephemeris::Planet Ephemeris::planet(Planets which, const DateTime &when) const
   planet.coordinates = { Angle::degrees(equ_pos.ra), Angle::degrees(equ_pos.dec) }; 
   planet.rst = d->rst(when.localtime, planetData.getRST, true);
   planet.magnitude = planetData.getMagnitude(jd);
+
+  ln_lnlat_posn observer = d->lnGeoPosition();
+  ln_hrz_posn altAz;
+
+  ln_get_hrz_from_equ(&equ_pos, &observer, jd, &altAz);
+  planet.maxAltitude = Angle::degrees(altAz.alt);
+
   return planet;
 }
 

@@ -35,6 +35,9 @@ public:
     NgcObjectPtr object;
     Ephemeris::BestAltitude bestAltitude;
     std::string rowStyle;
+
+    // Display widgets
+//    Wt::WWidget *names() const;
   };
   struct Row {
     AstroObject astroObject;
