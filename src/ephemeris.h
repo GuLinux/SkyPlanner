@@ -51,6 +51,7 @@ class Ephemeris
       Angle maxAltitude;
       double magnitude;
       std::string name;
+      Angle diameter;
     };
     struct Darkness {
       DateTime begin;

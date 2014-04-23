@@ -65,16 +65,18 @@ struct PlanetData {
   function<int(double, ln_lnlat_posn *, ln_rst_time *)> getRST;
   function<double(double)> getMagnitude;
   function<void(double,ln_equ_posn *)> getCoordinates;
+  function<double(double)> getSemiDiameter;
 };
 };
 
 const vector<Ephemeris::Planets> Ephemeris::allPlanets = { Mercury, Venus, Mars, Jupiter, Saturn, Uranus, Neptune, Pluto };
 
-#define PLANET(Name, name) { Name, {#Name, [](double jd, ln_lnlat_posn *pos, ln_rst_time *rst) { return ln_get_ ## name ## _rst(jd, pos, rst); }, [](double jd){ return ln_get_ ## name ## _magnitude(jd); }, [](double jd, ln_equ_posn *pos) { ln_get_  ## name ## _equ_coords(jd, pos); }  }}
+#define PLANET(Name, name) { Name, {#Name, [](double jd, ln_lnlat_posn *pos, ln_rst_time *rst) { return ln_get_ ## name ## _rst(jd, pos, rst); }, [](double jd){ return ln_get_ ## name ## _magnitude(jd); }, [](double jd, ln_equ_posn *pos) { ln_get_  ## name ## _equ_coords(jd, pos); }, [=](double jd) { return ln_get_ ## name ## _sdiam(jd); }  }}
+#define B_PLANET(Name, name) { Name, {#Name, [](double jd, ln_lnlat_posn *pos, ln_rst_time *rst) { return ln_get_ ## name ## _rst(jd, pos, rst); }, [](double jd){ return ln_get_ ## name ## _magnitude(jd); }, [](double jd, ln_equ_posn *pos) { ln_get_  ## name ## _equ_coords(jd, pos); }, [=](double jd) { return ln_get_ ## name ## _equ_sdiam(jd); }  }}
 
 Ephemeris::Planet Ephemeris::planet(Planets which, const DateTime &when) const
 {
-  static map<Planets, PlanetData> planetsData { PLANET(Mercury, mercury), PLANET(Venus, venus), PLANET(Mars, mars), PLANET(Jupiter, jupiter), PLANET(Saturn, saturn), PLANET(Uranus, uranus), PLANET(Neptune, neptune), PLANET(Pluto, pluto) };
+  static map<Planets, PlanetData> planetsData { PLANET(Mercury, mercury), PLANET(Venus, venus), PLANET(Mars, mars), B_PLANET(Jupiter, jupiter), B_PLANET(Saturn, saturn), PLANET(Uranus, uranus), PLANET(Neptune, neptune), PLANET(Pluto, pluto) };
   auto planetData = planetsData[which];
   double jd = d->dateToJulian(when.utc, true);
   ln_equ_posn equ_pos;
@@ -84,6 +86,7 @@ Ephemeris::Planet Ephemeris::planet(Planets which, const DateTime &when) const
   planet.coordinates = { Angle::degrees(equ_pos.ra), Angle::degrees(equ_pos.dec) }; 
   planet.rst = d->rst(when.localtime, planetData.getRST, true);
   planet.magnitude = planetData.getMagnitude(jd);
+  planet.diameter = Angle::arcMinutes(planetData.getSemiDiameter(jd) * 2 / 60);
 
   ln_lnlat_posn observer = d->lnGeoPosition();
   ln_hrz_posn altAz;

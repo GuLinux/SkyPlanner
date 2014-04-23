@@ -275,6 +275,19 @@ void AstroSessionTab::Private::reload()
   }
   updateTimezone();
 
+  AstroObjectsTable *planetsTable = new AstroObjectsTable(session, {}, false, {}, {AstroObjectsTable::Names, AstroObjectsTable::AR, AstroObjectsTable::DEC, AstroObjectsTable::Constellation, AstroObjectsTable::Magnitude, AstroObjectsTable::AngularSize, AstroObjectsTable::TransitTime, AstroObjectsTable::MaxAltitude});
+
+  auto populatePlanets = [=] {
+    Ephemeris ephemeris({astroSession->position().latitude, astroSession->position().longitude}, timezone);
+    vector<AstroObjectsTable::AstroObject> planets;
+    for(auto planet: Ephemeris::allPlanets) {
+      AstroObjectsTable::AstroObject astroObject;
+      astroObject.planet = ephemeris.planet(planet, DateTime::fromLocal(astroSession->when(), timezone));
+      planets.push_back(astroObject);
+    }
+    planetsTable->populate(planets, {}, timezone);
+  };
+  populatePlanets();
 
   SelectObjectsWidget *addObjectsTabWidget = new SelectObjectsWidget(astroSession, session);
   placeWidget->placeChanged().connect([=](double lat, double lng, _n4) {
@@ -284,8 +297,10 @@ void AstroSessionTab::Private::reload()
     SkyPlanner::instance()->notification(WString::tr("notification_success_title"), WString::tr("placewidget_place_set_notification"), SkyPlanner::Notification::Success, 5);
     addObjectsTabWidget->populateFor(selectedTelescope, timezone);
     updatePositionDetails(positionDetails);
+    populatePlanets();
   });
   addPanel(WString::tr("astrosessiontab_add_observable_object"), addObjectsTabWidget, true, true, sessionContainer);
+  addPanel(WString::tr("astrosessiontab_planets_panel"), planetsTable, true, true, sessionContainer);
   addObjectsTabWidget->objectsListChanged().connect( [=](const AstroSessionObjectPtr &o, _n5) { populate(o); } );
   WTemplate *title = new WTemplate("<h3>${tr:astrosessiontab_objects_title} ${counter}</h3>", sessionContainer);
   title->addFunction("tr", &WTemplate::Functions::tr);

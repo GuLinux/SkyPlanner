@@ -168,7 +168,8 @@ ConstellationFinder::Constellation AstroObjectsTable::AstroObject::constellation
 
 Angle AstroObjectsTable::AstroObject::angularSize() const
 {
-  // TODO: we have it, we just need to calculate it in ephemeris
+  if(planet)
+    return planet->diameter;
   return Angle::degrees(object->angularSize());
 }
 

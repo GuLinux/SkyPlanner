@@ -116,6 +116,7 @@
 <message id="astrosessiontab_object_observed">✓ Osservato</message>
 <message id="astrosessiontab_object_not_observed">✗ Osservato</message>
 <message id="object_more_info">Altro...</message>
+<message id="astrosessiontab_planets_panel">Pianeti</message>
 
 <message id="astrosessiontab_preview_version">Anteprima con immagini</message>
 <message id="preview_back_to_astrosessiontab">Torna alla versione lista</message>
