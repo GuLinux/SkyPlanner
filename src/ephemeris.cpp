@@ -91,7 +91,7 @@ Ephemeris::Planet Ephemeris::planet(Planets which, const DateTime &when) const
   ln_lnlat_posn observer = d->lnGeoPosition();
   ln_hrz_posn altAz;
 
-  ln_get_hrz_from_equ(&equ_pos, &observer, jd, &altAz);
+  ln_get_hrz_from_equ(&equ_pos, &observer, d->dateToJulian(planet.rst.transit.utc, true), &altAz);
   planet.maxAltitude = Angle::degrees(altAz.alt);
 
   return planet;
