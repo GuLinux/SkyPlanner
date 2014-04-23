@@ -199,6 +199,11 @@ WWidget *AstroObjectsTable::AstroObject::difficultyWidget(const TelescopePtr &te
   return new ObjectDifficultyWidget{object, telescope, bestAltitude.coordinates.altitude.degrees() };
 }
 
+void AstroObjectsTable::setTableAttribute(const string &attributeName, const string &attributeValue)
+{
+  d->objectsTable->setAttributeValue(attributeName, attributeValue);
+}
+
 
 void AstroObjectsTable::populate(const vector<AstroObject> &objects, const TelescopePtr &telescope, const Timezone &timezone, const Page &page, const Selection &selection)
 {

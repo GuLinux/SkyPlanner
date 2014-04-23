@@ -49,6 +49,8 @@
 #warning "Using libharu < 2.3, without UTF-8 support, this might lead to undefined results"
 #endif
 #endif
+
+#include "widgets/astroobjectstable.h"
 #include "skyplanner.h"
 
 using namespace Wt;
@@ -160,6 +162,21 @@ void ExportAstroSessionResource::handleRequest(const Wt::Http::Request &request,
                          .arg(d->telescope->focalLength())
                          );
   }
+
+  printable.setCondition("have-planets", true);
+  AstroObjectsTable *planetsTable = new AstroObjectsTable(d->session, {}, false, {}, {AstroObjectsTable::Names, AstroObjectsTable::AR, AstroObjectsTable::DEC, AstroObjectsTable::Constellation, AstroObjectsTable::Magnitude, AstroObjectsTable::AngularSize, AstroObjectsTable::TransitTime, AstroObjectsTable::MaxAltitude});
+  planetsTable->setTableAttribute("border", "1");
+  vector<AstroObjectsTable::AstroObject> planets;
+  for(auto planet: Ephemeris::allPlanets) {
+    AstroObjectsTable::AstroObject astroObject;
+    astroObject.planet = ephemeris.planet(planet, DateTime::fromLocal(d->astroSession->when(), d->timezone));
+    planets.push_back(astroObject);
+  }
+  planetsTable->populate(planets, {}, d->timezone);
+  printable.bindWidget("planets-table", planetsTable);
+
+
+ 
 
   printable.bindString("moonPhase", WString::tr("astrosessiontab_moon_phase").arg(static_cast<int>(ephemeris.moonPhase(d->astroSession->date()).illuminated_fraction*100.)));
   printable.bindString("sessionDate", d->astroSession->wDateWhen().date().toString("dddd dd MMMM yyyy"));

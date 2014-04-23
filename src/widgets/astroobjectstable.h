@@ -97,6 +97,7 @@ public:
   Filters currentFilters() const;
   void setMaximumMagnitude(double magnitudeLimit);
   Wt::WContainerWidget *tableFooter() const;
+  void setTableAttribute(const std::string &attributeName, const std::string &attributeValue);
 private:
   D_PTR;
 };
