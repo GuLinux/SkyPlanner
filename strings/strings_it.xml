@@ -133,6 +133,7 @@
 <message id="object_column_names">Nomi</message>
 <message id="object_column_type">Tipo</message>
 <message id="object_column_constellation">Costellazione</message>
+<message id="object_column_constellation_short">Cost.</message>
 <message id="object_column_magnitude">Magnitudine</message>
 <message id="object_column_difficulty">Difficoltà</message>
 <message id="object_column_highest_time">Orario max. altezza</message>
@@ -266,6 +267,16 @@ Dopo aver aggiunto una nuova sessione, clicca sul suo nome per aggiungere oggett
 <message id="search_by_name_add_to_session_caption">Aggiungi oggetto a una sessione</message>
 <message id="search_by_name_no_user_text">Per aggiungere oggetti alle tue sessioni, registrati ed entra nel tuo account.</message>
 <message id="search_by_name_no_sessions_text">Devi prima aggiungere una sessione.</message>
+
+<message id="planet_mercury">Mercurio</message>
+<message id="planet_venus">Venere</message>
+<message id="planet_mars">Marte</message>
+<message id="planet_jupiter">Giove</message>
+<message id="planet_saturn">Saturno</message>
+<message id="planet_uranus">Urano</message>
+<message id="planet_neptune">Nettuno</message>
+<message id="planet_pluto">Plutone</message>
+
 
 
 </messages>

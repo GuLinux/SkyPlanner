@@ -112,22 +112,29 @@ const vector<AstroObjectsTable::Column> AstroObjectsTable::allColumns = {
 
 void AstroObjectsTable::Private::header()
 {
-  static map<Column, string> columnKey {
-    {Names, "object_column_names"},
-    {Type, "object_column_type"},
-    {AR, "object_column_ar"},
-    {DEC, "object_column_dec"},
-    {Constellation, "object_column_constellation"},
-    {AngularSize, "object_column_angular_size"},
-    {Magnitude, "object_column_magnitude"},
-    {TransitTime, "object_column_highest_time"},
-    {MaxAltitude, "object_column_max_altitude"},
-    {Difficulty, "object_column_difficulty"},
+  struct ColumnName {
+    string key;
+    string abbrevKey;
+    WString name() const { return WString::tr(key); }
+    WString shortName() const { return abbrevKey.empty() ? name() : WString::tr(abbrevKey); }
+  };
+  static map<Column, ColumnName> columnKey {
+    {Names, {"object_column_names"}},
+    {Type, {"object_column_type"}},
+    {AR, {"object_column_ar"}},
+    {DEC, {"object_column_dec"}},
+    {Constellation, {"object_column_constellation", "object_column_constellation_short"}},
+    {AngularSize, {"object_column_angular_size", "object_column_angular_size_short"}},
+    {Magnitude, {"object_column_magnitude", "object_column_magnitude_short"}},
+    {TransitTime, {"object_column_highest_time", "object_column_highest_time_short"}},
+    {MaxAltitude, {"object_column_max_altitude", "object_column_max_altitude_short"}},
+    {Difficulty, {"object_column_difficulty"}},
   };
   q->clear();
   int index = 0;
   for(auto column: columns) {
-    objectsTable->elementAt(0,index++)->addWidget(new WText{WString::tr(columnKey[column])});
+    objectsTable->elementAt(0,index)->addWidget(WW<WText>(columnKey[column].name()).addCss("hidden-print") );
+    objectsTable->elementAt(0,index++)->addWidget(WW<WText>(columnKey[column].shortName()).addCss("visible-print") );
   }
 }
 
@@ -135,7 +142,7 @@ void AstroObjectsTable::Private::header()
 WWidget *AstroObjectsTable::AstroObject::names(Session &session, function<void(WMouseEvent)> onClick) const
 {
   if(planet)
-    return new WText{WString::fromUTF8(planet->name) };
+    return new WText{WString::tr(format("planet_%s") % planet->name) };
   return WW<ObjectNamesWidget>(new ObjectNamesWidget{object, session, astroSession}).setInline(true).onClick(onClick);
 }
 

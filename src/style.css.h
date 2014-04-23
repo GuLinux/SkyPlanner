@@ -118,7 +118,7 @@ std::vector<uint8_t> styleCss() {
     .gm-style img {
       max-width: none;
     }
-    .link {
+    .link, .panel-heading {
       cursor: pointer;
     }
     .object-difficulty-box {

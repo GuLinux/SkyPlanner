@@ -69,14 +69,14 @@ struct PlanetData {
 };
 };
 
-const vector<Ephemeris::Planets> Ephemeris::allPlanets = { Mercury, Venus, Mars, Jupiter, Saturn, Uranus, Neptune, Pluto };
+const vector<Ephemeris::Planets> Ephemeris::allPlanets = { mercury, venus, mars, jupiter, saturn, uranus, neptune, pluto };
 
-#define PLANET(Name, name) { Name, {#Name, [](double jd, ln_lnlat_posn *pos, ln_rst_time *rst) { return ln_get_ ## name ## _rst(jd, pos, rst); }, [](double jd){ return ln_get_ ## name ## _magnitude(jd); }, [](double jd, ln_equ_posn *pos) { ln_get_  ## name ## _equ_coords(jd, pos); }, [=](double jd) { return ln_get_ ## name ## _sdiam(jd); }  }}
-#define B_PLANET(Name, name) { Name, {#Name, [](double jd, ln_lnlat_posn *pos, ln_rst_time *rst) { return ln_get_ ## name ## _rst(jd, pos, rst); }, [](double jd){ return ln_get_ ## name ## _magnitude(jd); }, [](double jd, ln_equ_posn *pos) { ln_get_  ## name ## _equ_coords(jd, pos); }, [=](double jd) { return ln_get_ ## name ## _equ_sdiam(jd); }  }}
+#define PLANET(name) { name, {#name, [](double jd, ln_lnlat_posn *pos, ln_rst_time *rst) { return ln_get_ ## name ## _rst(jd, pos, rst); }, [](double jd){ return ln_get_ ## name ## _magnitude(jd); }, [](double jd, ln_equ_posn *pos) { ln_get_  ## name ## _equ_coords(jd, pos); }, [=](double jd) { return ln_get_ ## name ## _sdiam(jd); }  }}
+#define B_PLANET(name) { name, {#name, [](double jd, ln_lnlat_posn *pos, ln_rst_time *rst) { return ln_get_ ## name ## _rst(jd, pos, rst); }, [](double jd){ return ln_get_ ## name ## _magnitude(jd); }, [](double jd, ln_equ_posn *pos) { ln_get_  ## name ## _equ_coords(jd, pos); }, [=](double jd) { return ln_get_ ## name ## _equ_sdiam(jd); }  }}
 
 Ephemeris::Planet Ephemeris::planet(Planets which, const DateTime &when) const
 {
-  static map<Planets, PlanetData> planetsData { PLANET(Mercury, mercury), PLANET(Venus, venus), PLANET(Mars, mars), B_PLANET(Jupiter, jupiter), B_PLANET(Saturn, saturn), PLANET(Uranus, uranus), PLANET(Neptune, neptune), PLANET(Pluto, pluto) };
+  static map<Planets, PlanetData> planetsData { PLANET(mercury), PLANET(venus), PLANET(mars), B_PLANET(jupiter), B_PLANET(saturn), PLANET(uranus), PLANET(neptune), PLANET(pluto) };
   auto planetData = planetsData[which];
   double jd = d->dateToJulian(when.utc, true);
   ln_equ_posn equ_pos;

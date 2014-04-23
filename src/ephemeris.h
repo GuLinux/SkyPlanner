@@ -43,7 +43,7 @@ class Ephemeris
       RiseTransitSet rst;
       operator bool() const;
     };
-    enum Planets { Mercury, Venus, Mars, Jupiter, Saturn, Uranus, Neptune, Pluto };
+    enum Planets { mercury, venus, mars, jupiter, saturn, uranus, neptune, pluto };
     static const std::vector<Planets> allPlanets;
     struct Planet {
       Coordinates::Equatorial coordinates;

@@ -93,6 +93,7 @@
 <message id="object_column_names">Names</message>
 <message id="object_column_type">Type</message>
 <message id="object_column_constellation">Constellation</message>
+<message id="object_column_constellation_short">Const.</message>
 <message id="object_column_magnitude">Magnitude</message>
 <message id="object_column_magnitude_short">Magn.</message>
 <message id="object_column_difficulty">Difficulty</message>
@@ -247,5 +248,15 @@ After you added a session, click it to add new objects.
 <message id="search_by_name_add_to_session_caption">Add object to session</message>
 <message id="search_by_name_no_user_text">To add objects to your sessions, please register and login to your account.</message>
 <message id="search_by_name_no_sessions_text">You need to add a session first.</message>
+
+
+<message id="planet_mercury">Mercury</message>
+<message id="planet_venus">Venus</message>
+<message id="planet_mars">Mars</message>
+<message id="planet_jupiter">Jupiter</message>
+<message id="planet_saturn">Saturn</message>
+<message id="planet_uranus">Uranus</message>
+<message id="planet_neptune">Neptune</message>
+<message id="planet_pluto">Pluto</message>
 
 </messages>
