@@ -130,6 +130,12 @@ void AstroObjectsTable::Private::header()
   }
 }
 
+
+WWidget *AstroObjectsTable::AstroObject::names(Session &session, function<void(WMouseEvent)> onClick) const
+{
+  return WW<ObjectNamesWidget>(new ObjectNamesWidget{object, session, astroSession}).setInline(true).onClick(onClick);
+}
+
 void AstroObjectsTable::populate(const vector<AstroObject> &objects, const TelescopePtr &telescope, const Timezone &timezone, const Page &page, const Selection &selection)
 {
   auto clearSelection = [=] {
@@ -178,14 +184,14 @@ void AstroObjectsTable::populate(const vector<AstroObject> &objects, const Teles
         return nullptr;
       return WW<WTableCell>(row->elementAt(hasColumn - begin(d->columns))).add(createWidget() ).get();
     };
-    addColumn(Names, [=] { return WW<ObjectNamesWidget>(new ObjectNamesWidget{astroObject.object, d->session, astroObject.astroSession}).setInline(true).onClick([=](WMouseEvent){
+    addColumn(Names, [=] { return astroObject.names(d->session, [=](WMouseEvent){
       if(d->selectedRow)
         d->selectedRow->removeStyleClass("info");
       if(objectAddedRow)
         objectAddedRow->removeStyleClass(selection.css);
       row->addStyleClass("info");
       d->selectedRow = row;
-    }).get(); });
+    }); });
     addColumn(Type, [=] { return new WText{astroObject.object->typeDescription() }; });
     addColumn(AR, [=] { return new WText{ Utils::htmlEncode( astroObject.object->coordinates().rightAscension.printable(Angle::Hourly) ) }; });
     addColumn(DEC, [=] { return new WText{ Utils::htmlEncode( WString::fromUTF8( astroObject.object->coordinates().declination.printable() )) }; });

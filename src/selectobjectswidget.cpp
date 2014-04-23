@@ -172,8 +172,7 @@ void SelectObjectsWidget::populateFor(const Dbo::ptr< Telescope > &telescope , T
   WApplication *app = wApp;
   boost::thread( [=] {
     boost::unique_lock<boost::mutex> lockCachePopulationMutex(d->suggestedObjectsListMutex);
-    boost::posix_time::ptime start = boost::posix_time::microsec_clock::local_time();
-    WServer::instance()->log("notice") << "Ephemeris cache calculation started.";
+    WServer::instance()->log("notice") << "Ephemeris cache calculation started, astroSession date: " << d->astroSession->when();
     Session ephemerisCacheSession;
     Dbo::Transaction t(ephemerisCacheSession);
     ephemerisCacheSession.execute("delete from ephemeris_cache WHERE astro_session_id = ?").bind(d->astroSession.id());
@@ -189,7 +188,6 @@ void SelectObjectsWidget::populateFor(const Dbo::ptr< Telescope > &telescope , T
       }
     }
     t.commit();
-    WServer::instance()->log("notice") << "Ephemeris cache calculation ended, elapsed: " << boost::posix_time::to_simple_string(boost::posix_time::microsec_clock::local_time() - start) << ", loaded " << loadedObjects << " objects";
     WServer::instance()->post(app->sessionId(), [=] {
       d->populateSuggestedObjectsTable();
       app->triggerUpdate();

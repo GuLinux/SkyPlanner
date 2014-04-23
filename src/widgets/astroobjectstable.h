@@ -37,7 +37,7 @@ public:
     std::string rowStyle;
 
     // Display widgets
-//    Wt::WWidget *names() const;
+    Wt::WWidget *names(Session &session, std::function<void(Wt::WMouseEvent)> onClick = [](Wt::WMouseEvent){} ) const;
   };
   struct Row {
     AstroObject astroObject;

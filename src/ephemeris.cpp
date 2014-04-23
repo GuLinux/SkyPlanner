@@ -207,6 +207,8 @@ Ephemeris::RiseTransitSet Ephemeris::Private::rst(const boost::gregorian::date &
 
 Ephemeris::RiseTransitSet Ephemeris::Private::rst(const boost::posix_time::ptime &when, RiseTransitSetFunction f, bool nightMode)
 {
+  if(when.is_not_a_date_time())
+    return {};
   ln_lnlat_posn where = lnGeoPosition();
   ln_rst_time rst;
 
