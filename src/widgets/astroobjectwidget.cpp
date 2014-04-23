@@ -62,7 +62,7 @@ void AstroObjectWidget::Private::init()
   content->addWidget(collapsed);
   content->addWidget(expanded);
   dssPage = new DSSPage(ngcObject, session, DSSPage::Options::embedded(downloadMutex));
-  info = WW<WTemplate>(WString::tr("astroobjectwidget")).css("col-xs-6 col-lg-7");
+  info = WW<WTemplate>(WString::tr("astroobjectwidget")).css("col-xs-7 col-lg-7");
   info->addFunction( "tr", &WTemplate::Functions::tr);
   info->bindWidget("title", names());
   info->bindString("ar", ngcObject->coordinates().rightAscension.printable(Angle::Hourly));
@@ -100,7 +100,7 @@ void AstroObjectWidget::Private::init()
     WTemplate *rowsTemplate = new WTemplate();
     stringstream rows;
     for(int index = 0; index<astroSessionObjectsWithDescription.size(); index++)
-      rows << format(R"(<tr class='other-desc' style='display: none;'><td><small class="astroobject_text">${object-description-header-%d}:</small></td><td><small class="astroobject_text">${object-description-%d}</small></td></tr>\n)") % index % index;
+      rows << format(R"(<tr class='other-desc' style='display: none;'><td><small class="astroobject_text">${object-description-header-%d}:</small></td><td><small class="astroobject_text">${object-description-%d}</small></td></tr>)") % index % index;
 
     rowsTemplate->setTemplateText(rows.str(), XHTMLUnsafeText);
     actionButtons.push_back(WW<WPushButton>(WString::tr("btn_other_users_descriptions")).addCss("btn-xs").onClick([=](WMouseEvent){
@@ -125,7 +125,7 @@ void AstroObjectWidget::Private::init()
     
     info->bindWidget("actions", actionsToolbar);
   }
-  row->addWidget(WW<WContainerWidget>().css("col-xs-6 col-lg-5").add(dssPage));
+  row->addWidget(WW<WContainerWidget>().css("col-xs-5 col-lg-5").add(dssPage));
   row->addWidget(info);
 }
 
