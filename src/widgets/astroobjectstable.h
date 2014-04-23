@@ -38,6 +38,12 @@ public:
 
     // Display widgets
     Wt::WWidget *names(Session &session, std::function<void(Wt::WMouseEvent)> onClick = [](Wt::WMouseEvent){} ) const;
+    Wt::WString typeDescription() const;
+    Angle ar() const;
+    Angle dec() const;
+    ConstellationFinder::Constellation constellation() const;    
+    Angle angularSize() const;
+    double magnitude() const;
   };
   struct Row {
     AstroObject astroObject;

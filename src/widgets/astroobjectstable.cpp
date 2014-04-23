@@ -136,6 +136,35 @@ WWidget *AstroObjectsTable::AstroObject::names(Session &session, function<void(W
   return WW<ObjectNamesWidget>(new ObjectNamesWidget{object, session, astroSession}).setInline(true).onClick(onClick);
 }
 
+WString AstroObjectsTable::AstroObject::typeDescription() const
+{
+  return object->typeDescription(); 
+}
+
+Angle AstroObjectsTable::AstroObject::ar() const
+{
+  return object->coordinates().rightAscension;
+}
+
+Angle AstroObjectsTable::AstroObject::dec() const
+{
+  return object->coordinates().declination;
+}
+
+ConstellationFinder::Constellation AstroObjectsTable::AstroObject::constellation() const
+{
+  return object->constellation();
+}
+
+Angle AstroObjectsTable::AstroObject::angularSize() const
+{
+}
+
+double AstroObjectsTable::AstroObject::magnitude() const
+{
+}
+
+
 void AstroObjectsTable::populate(const vector<AstroObject> &objects, const TelescopePtr &telescope, const Timezone &timezone, const Page &page, const Selection &selection)
 {
   auto clearSelection = [=] {
@@ -192,7 +221,7 @@ void AstroObjectsTable::populate(const vector<AstroObject> &objects, const Teles
       row->addStyleClass("info");
       d->selectedRow = row;
     }); });
-    addColumn(Type, [=] { return new WText{astroObject.object->typeDescription() }; });
+    addColumn(Type, [=] { return new WText{astroObject.typeDescription() }; });
     addColumn(AR, [=] { return new WText{ Utils::htmlEncode( astroObject.object->coordinates().rightAscension.printable(Angle::Hourly) ) }; });
     addColumn(DEC, [=] { return new WText{ Utils::htmlEncode( WString::fromUTF8( astroObject.object->coordinates().declination.printable() )) }; });
     addColumn(Constellation, [=] { return new WText{ WString::fromUTF8(astroObject.object->constellation().name) }; });
