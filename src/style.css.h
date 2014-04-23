@@ -52,6 +52,19 @@ std::vector<uint8_t> styleCss() {
      resize: none;
    }
 
+   @media print {
+     .planets-table {
+       font-size: 0.72em;
+     }
+     .panel-body {
+       padding: 0px;
+     }
+     .panel {
+       margin: 0px!important;
+       border: 0px;
+     }
+   }
+
    .astroobject-list-item {
 //     margin-top: 5px;
      padding: 5px;

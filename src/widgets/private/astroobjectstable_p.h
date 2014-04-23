@@ -44,6 +44,7 @@ class AstroObjectsTable::Private
     Filters filters() const;
     void header();
     Wt::WContainerWidget *tableFooter;
+    Wt::WContainerWidget *tableContainer;
   private:
     class AstroObjectsTable *const q; 
 };

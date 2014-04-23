@@ -98,6 +98,7 @@ public:
   void setMaximumMagnitude(double magnitudeLimit);
   Wt::WContainerWidget *tableFooter() const;
   void setTableAttribute(const std::string &attributeName, const std::string &attributeValue);
+  void setResponsive(bool responsive);
 private:
   D_PTR;
 };

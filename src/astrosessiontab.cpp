@@ -148,6 +148,17 @@ void AstroSessionTab::Private::reload()
   sessionContainer->addWidget(actionsContainer);
   Dbo::Transaction t(session);
 
+  auto populatePlanets = [=] (AstroObjectsTable *planetsTable) {
+    Ephemeris ephemeris({astroSession->position().latitude, astroSession->position().longitude}, timezone);
+    vector<AstroObjectsTable::AstroObject> planets;
+    for(auto planet: Ephemeris::allPlanets) {
+      AstroObjectsTable::AstroObject astroObject;
+      astroObject.planet = ephemeris.planet(planet, DateTime::fromLocal(astroSession->when(), timezone));
+      planets.push_back(astroObject);
+    }
+    planetsTable->populate(planets, {}, timezone);
+  };
+
   actionsContainer->addButton(WW<WPushButton>(WString::tr("astrosessiontab_change_name_or_date")).css("btn btn-sm").onClick([=](WMouseEvent){
     WDialog *changeNameOrDateDialog = new WDialog(WString::tr("astrosessiontab_change_name_or_date"));
     WLineEdit *sessionName = WW<WLineEdit>(astroSession->name()).css("input-block-level");
@@ -191,6 +202,18 @@ void AstroSessionTab::Private::reload()
     WContainerWidget *infoWidget = WW<WContainerWidget>().css("astroobjects-info-widget");
     updatePositionDetails(infoWidget, false);
     sessionPreviewContainer->addWidget(infoWidget);
+
+
+    AstroObjectsTable *planetsTable = new AstroObjectsTable(session, {}, false, {}, {AstroObjectsTable::Names, AstroObjectsTable::AR, AstroObjectsTable::DEC, AstroObjectsTable::Constellation, AstroObjectsTable::Magnitude, AstroObjectsTable::AngularSize, AstroObjectsTable::TransitTime, AstroObjectsTable::MaxAltitude});
+    planetsTable->addStyleClass("planets-table");
+    planetsTable->setResponsive(false);
+    WPanel *planetsPanel = new WPanel;
+    planetsPanel->setTitle(WString::tr("astrosessiontab_planets_panel"));
+    planetsPanel->setCollapsible(true);
+    planetsPanel->titleBarWidget()->addStyleClass("hidden-print");
+    planetsPanel->setCentralWidget(WW<WContainerWidget>().add(WW<WText>(WString("<h5>{1}</h5>").arg(WString::tr("astrosessiontab_planets_panel"))).css("visible-print") ).add(planetsTable));
+    sessionPreviewContainer->addWidget(planetsPanel);
+    populatePlanets(planetsTable);
     sessionPreviewContainer->addWidget(WW<WText>(WString::tr("dss-embed-menu-info-message")).css("hidden-print"));
 
     shared_ptr<mutex> downloadImagesMutex(new mutex);
@@ -205,6 +228,7 @@ void AstroSessionTab::Private::reload()
     vector<AstroSessionObjectElement> sessionObjects;
     {
       Ephemeris ephemeris({astroSession->position().latitude, astroSession->position().longitude}, timezone);
+
       transform(begin(sessionObjectsDbCollection), end(sessionObjectsDbCollection), back_inserter(sessionObjects), [&ephemeris](const dbo::ptr<AstroSessionObject> &o){
         return AstroSessionObjectElement{o, o->bestAltitude(ephemeris)};
       });
@@ -277,17 +301,8 @@ void AstroSessionTab::Private::reload()
 
   AstroObjectsTable *planetsTable = new AstroObjectsTable(session, {}, false, {}, {AstroObjectsTable::Names, AstroObjectsTable::AR, AstroObjectsTable::DEC, AstroObjectsTable::Constellation, AstroObjectsTable::Magnitude, AstroObjectsTable::AngularSize, AstroObjectsTable::TransitTime, AstroObjectsTable::MaxAltitude});
 
-  auto populatePlanets = [=] {
-    Ephemeris ephemeris({astroSession->position().latitude, astroSession->position().longitude}, timezone);
-    vector<AstroObjectsTable::AstroObject> planets;
-    for(auto planet: Ephemeris::allPlanets) {
-      AstroObjectsTable::AstroObject astroObject;
-      astroObject.planet = ephemeris.planet(planet, DateTime::fromLocal(astroSession->when(), timezone));
-      planets.push_back(astroObject);
-    }
-    planetsTable->populate(planets, {}, timezone);
-  };
-  populatePlanets();
+
+  populatePlanets(planetsTable);
 
   SelectObjectsWidget *addObjectsTabWidget = new SelectObjectsWidget(astroSession, session);
   placeWidget->placeChanged().connect([=](double lat, double lng, _n4) {
@@ -297,7 +312,7 @@ void AstroSessionTab::Private::reload()
     SkyPlanner::instance()->notification(WString::tr("notification_success_title"), WString::tr("placewidget_place_set_notification"), SkyPlanner::Notification::Success, 5);
     addObjectsTabWidget->populateFor(selectedTelescope, timezone);
     updatePositionDetails(positionDetails);
-    populatePlanets();
+    populatePlanets(planetsTable);
   });
   addPanel(WString::tr("astrosessiontab_add_observable_object"), addObjectsTabWidget, true, true, sessionContainer);
   addPanel(WString::tr("astrosessiontab_planets_panel"), planetsTable, true, true, sessionContainer);

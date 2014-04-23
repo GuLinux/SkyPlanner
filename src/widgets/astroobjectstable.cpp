@@ -60,7 +60,8 @@ AstroObjectsTable::AstroObjectsTable(Session &session, const vector<Action> &act
     d->filterByConstellation->changed().connect([=](_n6){ d->filtersChanged.emit(d->filters()); });
     container->addWidget(WW<WContainerWidget>().addCss("form-inline").add(d->filterByType).add(d->filterByMinimumMagnitude).add(d->filterByConstellation).add(d->filterByCatalogue));
   }
-  container->addWidget(WW<WContainerWidget>().addCss("table-responsive").add(d->objectsTable).add(d->tableFooter = WW<WContainerWidget>() ));
+  d->tableContainer = WW<WContainerWidget>().addCss("table-responsive").add(d->objectsTable).add(d->tableFooter = WW<WContainerWidget>() );
+  container->addWidget( d->tableContainer );
   setImplementation(container);
 }
 
@@ -202,6 +203,11 @@ WWidget *AstroObjectsTable::AstroObject::difficultyWidget(const TelescopePtr &te
 void AstroObjectsTable::setTableAttribute(const string &attributeName, const string &attributeValue)
 {
   d->objectsTable->setAttributeValue(attributeName, attributeValue);
+}
+
+void AstroObjectsTable::setResponsive(bool responsive)
+{
+  d->tableContainer->toggleStyleClass("table-responsive", responsive);
 }
 
 
