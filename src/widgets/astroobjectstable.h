@@ -44,6 +44,9 @@ public:
     ConstellationFinder::Constellation constellation() const;    
     Angle angularSize() const;
     double magnitude() const;
+    DateTime transitTime() const;
+    Angle maxAltitude() const;
+    Wt::WWidget *difficultyWidget(const TelescopePtr &telescope) const;
   };
   struct Row {
     AstroObject astroObject;

@@ -158,10 +158,27 @@ ConstellationFinder::Constellation AstroObjectsTable::AstroObject::constellation
 
 Angle AstroObjectsTable::AstroObject::angularSize() const
 {
+  return Angle::degrees(object->angularSize());
 }
 
 double AstroObjectsTable::AstroObject::magnitude() const
 {
+  return object->magnitude();
+}
+
+DateTime AstroObjectsTable::AstroObject::transitTime() const
+{
+  return bestAltitude.when;
+}
+
+Angle AstroObjectsTable::AstroObject::maxAltitude() const
+{
+  return bestAltitude.coordinates.altitude;
+}
+
+WWidget *AstroObjectsTable::AstroObject::difficultyWidget(const TelescopePtr &telescope) const
+{
+  return new ObjectDifficultyWidget{object, telescope, bestAltitude.coordinates.altitude.degrees() };
 }
 
 
@@ -222,15 +239,14 @@ void AstroObjectsTable::populate(const vector<AstroObject> &objects, const Teles
       d->selectedRow = row;
     }); });
     addColumn(Type, [=] { return new WText{astroObject.typeDescription() }; });
-    addColumn(AR, [=] { return new WText{ Utils::htmlEncode( astroObject.object->coordinates().rightAscension.printable(Angle::Hourly) ) }; });
-    addColumn(DEC, [=] { return new WText{ Utils::htmlEncode( WString::fromUTF8( astroObject.object->coordinates().declination.printable() )) }; });
-    addColumn(Constellation, [=] { return new WText{ WString::fromUTF8(astroObject.object->constellation().name) }; });
-    addColumn(AngularSize, [=] { return new WText{ Utils::htmlEncode( WString::fromUTF8( Angle::degrees(astroObject.object->angularSize()).printable() )) }; });
-    addColumn(Magnitude, [=] { return new WText{ astroObject.object->magnitude() > 90. ? "N/A" : (format("%.1f") % astroObject.object->magnitude()).str() }; });
-    auto bestAltitude = astroObject.bestAltitude;
-    addColumn(TransitTime, [=] { return new WText{ bestAltitude.when.str() }; });
-    addColumn(MaxAltitude, [=] { return new WText{ Utils::htmlEncode(WString::fromUTF8(bestAltitude.coordinates.altitude.printable() )) }; });
-    addColumn(Difficulty, [=] { return new ObjectDifficultyWidget{astroObject.object, telescope, bestAltitude.coordinates.altitude.degrees() }; }); 
+    addColumn(AR, [=] { return new WText{ Utils::htmlEncode( astroObject.ar().printable(Angle::Hourly)) }; });
+    addColumn(DEC, [=] { return new WText{ Utils::htmlEncode( WString::fromUTF8( astroObject.dec().printable() )) }; });
+    addColumn(Constellation, [=] { return new WText{ WString::fromUTF8(astroObject.constellation().name) }; });
+    addColumn(AngularSize, [=] { return new WText{ Utils::htmlEncode( WString::fromUTF8( astroObject.angularSize().printable() ) ) }; });
+    addColumn(Magnitude, [=] { return new WText{ astroObject.magnitude() > 90. ? "N/A" : (format("%.1f") % astroObject.magnitude()).str() }; });
+    addColumn(TransitTime, [=] { return new WText{ astroObject.transitTime().str() }; });
+    addColumn(MaxAltitude, [=] { return new WText{ Utils::htmlEncode(WString::fromUTF8( astroObject.maxAltitude().printable() )) }; });
+    addColumn(Difficulty, [=] { return astroObject.difficultyWidget(telescope); }); 
     
     if(d->actions.size() > 0) {
       if(d->actions.size() == 1) {
