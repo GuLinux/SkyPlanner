@@ -158,6 +158,7 @@ void AstroSessionsListTab::Private::populateSessions()
                astroSession.modify()->astroSessionObjects().erase(object);
                object.remove();
            }
+            session.execute("delete from ephemeris_cache where astro_session_id = ?").bind(astroSession.id());
             session.user().modify()->astroSessions().erase(astroSession);
             Dbo::ptr<AstroSession> s = astroSession;
             s.remove();

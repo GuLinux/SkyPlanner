@@ -172,7 +172,6 @@ void SelectObjectsWidget::populateFor(const Dbo::ptr< Telescope > &telescope , T
   WApplication *app = wApp;
   boost::thread( [=] {
     boost::unique_lock<boost::mutex> lockCachePopulationMutex(d->suggestedObjectsListMutex);
-    WServer::instance()->log("notice") << "Ephemeris cache calculation started, astroSession date: " << d->astroSession->when();
     Session ephemerisCacheSession;
     Dbo::Transaction t(ephemerisCacheSession);
     ephemerisCacheSession.execute("delete from ephemeris_cache WHERE astro_session_id = ?").bind(d->astroSession.id());
