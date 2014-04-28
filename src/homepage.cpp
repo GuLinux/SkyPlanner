@@ -62,4 +62,12 @@ void HomePage::Private::populate() {
   }
   content->bindString("login-menu-path", link.createCall("'/login/'"));
   content->bindString("sessions-menu-path", link.createCall("'/sessions/list/'"));
+
+  auto catalogues = session.find<Catalogue>().where("hidden < ?").bind(0xFF).orderBy("priority ASC").resultList();
+  content->setCondition("have-features-list", catalogues.size() > 0);
+  WContainerWidget *cataloguesWidget = WW<WContainerWidget>();
+  cataloguesWidget->setList(true);
+  content->bindWidget("included-catalogues", cataloguesWidget);
+  for(auto catalogue: catalogues) 
+    cataloguesWidget->addWidget(WW<WContainerWidget>().add(WW<WText>(WString::fromUTF8(catalogue->name() ))));
 }
