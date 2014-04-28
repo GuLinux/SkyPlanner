@@ -28,7 +28,7 @@ Dbo::collection< NebulaDenominationPtr> Catalogue::nebulae() const
   return _nebulae;
 }
 
-bool Catalogue::hidden() const
+Catalogue::HiddenMode Catalogue::hidden() const
 {
   return _hidden;
 }

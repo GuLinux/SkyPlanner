@@ -33,11 +33,12 @@ class Catalogue
 {
 public:
   enum SearchMode { ByName = 0x0, ByCatalog = 0x1, ByNameAndType = 0x2 };
+  enum HiddenMode { Visible = 0x0, HiddenSearch = 0x1, HiddenEverywhere = 0xFF };
   dbo::collection<dbo::ptr<NebulaDenomination>> nebulae() const;
   std::string name() const;
   std::string code() const;
   int priority() const;
-  bool hidden() const;
+  HiddenMode hidden() const;
   SearchMode searchMode() const;
   
     template<class Action>
@@ -52,7 +53,7 @@ public:
 private:
   std::string _name;
   std::string _code;
-  bool _hidden;
+  HiddenMode _hidden;
   int _priority;
   SearchMode _searchMode;
   dbo::collection<dbo::ptr<NebulaDenomination>> _nebulae;

@@ -270,7 +270,7 @@ void SelectObjectsWidget::Private::searchByCatalogueTab(Dbo::Transaction& transa
   WContainerWidget *addObjectByCatalogue = WW<WContainerWidget>();
   WComboBox *cataloguesCombo = new WComboBox();
   Dbo::QueryModel<CataloguePtr> *cataloguesModel = new Dbo::QueryModel<CataloguePtr>(q);
-  cataloguesModel->setQuery(session.find<Catalogue>().where("hidden = ?").bind(false).orderBy("priority asc"));
+  cataloguesModel->setQuery(session.find<Catalogue>().where("hidden = ?").bind(Catalogue::Visible).orderBy("priority asc"));
   cataloguesModel->addColumn("name");
   cataloguesModel->addColumn("id");
   WLineEdit *catalogueNumber = WW<WLineEdit>();

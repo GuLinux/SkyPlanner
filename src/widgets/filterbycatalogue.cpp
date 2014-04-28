@@ -50,7 +50,7 @@ FilterByCatalogue::FilterByCatalogue( Session &session, Wt::WContainerWidget *pa
   d->model->clear();
   d->model->appendRow(new WStandardItem(WString::tr("filter_by_catalogue_all")));
   Dbo::Transaction t(session);
-  for(auto catalogue: session.find<Catalogue>().where("hidden = ?").bind(false).orderBy("priority ASC").resultList() ) {
+  for(auto catalogue: session.find<Catalogue>().where("hidden = ?").bind(Catalogue::Visible).orderBy("priority ASC").resultList() ) {
     WStandardItem *item = new WStandardItem(WString::fromUTF8(catalogue->name() ));
     item->setData(catalogue);
     d->model->appendRow(item);
