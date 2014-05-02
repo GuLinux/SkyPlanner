@@ -95,7 +95,11 @@ void SendFeedbackPage::Private::feedbackForm(const Wt::Dbo::ptr<NgcObject> &obje
 
     WString body = WString::tr("feedback_email_message").arg(username).arg(userEmail).arg(objectData).arg(messageBody->text());
     message.setBody(body);
-    message.addRecipient(Mail::To, {"marco.gulino@gmail.com", "Marco Gulino"});
+    
+    string adminEmail, adminName;
+    wApp->readConfigurationProperty("admin-email", adminEmail);
+    wApp->readConfigurationProperty("admin-name", adminName);
+    message.addRecipient(Mail::To, {adminEmail, adminName});
     spLog("notice") << "email subject: " << message.subject();
     spLog("notice") << "email body   : " << body;
     if(client.connect()) {
