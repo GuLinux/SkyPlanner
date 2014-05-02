@@ -169,21 +169,24 @@ void SelectObjectsWidget::populateFor(const Dbo::ptr< Telescope > &telescope , T
   if(!d->astroSession->position()) return;
   d->suggestedObjectsTable->tableFooter()->addWidget(WW<WImage>("http://gulinux.net/loading_animation.gif").addCss("center-block"));
 
+  auto astroSessionId = d->astroSession.id();
   WApplication *app = wApp;
   boost::thread( [=] {
     boost::unique_lock<boost::mutex> lockCachePopulationMutex(d->suggestedObjectsListMutex);
     Session ephemerisCacheSession;
-    Dbo::Transaction t(ephemerisCacheSession);
-    ephemerisCacheSession.execute("delete from ephemeris_cache WHERE astro_session_id = ?").bind(d->astroSession.id());
 
-    Ephemeris ephemeris({d->astroSession->position().latitude, d->astroSession->position().longitude}, d->timezone);
-    auto twilight = ephemeris.astronomicalTwilight(d->astroSession->date());
+    Dbo::Transaction t(ephemerisCacheSession);
+    ephemerisCacheSession.execute("delete from ephemeris_cache WHERE astro_session_id = ?").bind(astroSessionId);
+    auto astroSession = ephemerisCacheSession.find<AstroSession>().where("id = ?").bind(astroSessionId).resultValue();
+
+    Ephemeris ephemeris({astroSession->position().latitude, astroSession->position().longitude}, d->timezone);
+    auto twilight = ephemeris.astronomicalTwilight(astroSession->date());
     long loadedObjects = 0;
     for(auto ngcObject: ephemerisCacheSession.find<NgcObject>().where("magnitude < ?").bind(magnitudeLimit).resultList()) {
       auto bestAltitude = ephemeris.findBestAltitude(ngcObject->coordinates(), twilight.set, twilight.rise);
       if(bestAltitude.coordinates.altitude.degrees() > 17.) {
         loadedObjects++;
-        ephemerisCacheSession.add(new EphemerisCache{bestAltitude, ngcObject, d->astroSession});
+        ephemerisCacheSession.add(new EphemerisCache{bestAltitude, ngcObject, astroSession});
       }
     }
     t.commit();
