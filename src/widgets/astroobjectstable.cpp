@@ -326,6 +326,10 @@ void AstroObjectsTable::populate(const vector<AstroObject> &objects, const Teles
       clearSelection();
       if(pageNumber<0 || pageNumber>=page.total) return;
       page.change(pageNumber);
+      wApp->doJavaScript(format(R"(
+	$(document.body).animate({
+	  'scrollTop':   $('#%s').offset().top
+	  }, 500);)") % d->objectsTable->id() );
     };
 
     auto add = [=] (const WString &text, bool condition, int newPage) {
