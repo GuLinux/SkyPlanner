@@ -75,6 +75,7 @@ public:
     double minimumMagnitude = -200;
     ConstellationFinder::Constellation constellation;
     CataloguePtr catalogue;
+    Angle minimumAltitude;
   };
   struct Page {
     long current = -1;

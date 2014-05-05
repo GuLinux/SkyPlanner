@@ -26,6 +26,9 @@
 #include <widgets/filterbycatalogue.h>
 #include "session.h"
 #include <Wt/WTable>
+#include <Wt/WStandardItemModel>
+#include <Wt/WStandardItem>
+#include <Wt/WComboBox>
 
 class AstroObjectsTable::Private
 {
@@ -45,6 +48,8 @@ class AstroObjectsTable::Private
     void header();
     Wt::WContainerWidget *tableFooter;
     Wt::WContainerWidget *tableContainer;
+    Wt::WStandardItemModel *minimumAltitudeModel;
+    Wt::WComboBox *minimumAltitude;
   private:
     class AstroObjectsTable *const q; 
 };

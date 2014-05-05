@@ -115,7 +115,8 @@ template<typename T> Dbo::Query<T> SelectObjectsWidget::Private::filterQuery(con
   vector<string> filterConditions{suggestedObjectsTable->currentFilters().types.size(), "?"};
   query.where("o.id = ephemeris_cache.objects_id")
     .where("astro_session_id = ?").bind(astroSession.id())
-    .where("magnitude >= ?").bind(suggestedObjectsTable->currentFilters().minimumMagnitude);
+    .where("magnitude >= ?").bind(suggestedObjectsTable->currentFilters().minimumMagnitude)
+    .where("ephemeris_cache.altitude >= ?").bind(suggestedObjectsTable->currentFilters().minimumAltitude.degrees());
   if(catalogue) {
     query.where("o.id = d.objects_id")
          .where("d.catalogues_id = ?").bind(catalogue.id());

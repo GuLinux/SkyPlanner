@@ -704,6 +704,7 @@ void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject
   sort(begin(astroObjects), end(astroObjects), [&](const AstroObjectsTable::AstroObject &a, const AstroObjectsTable::AstroObject &b){
     return a.bestAltitude.when < b.bestAltitude.when;
   });
+  astroObjects.erase(remove_if(begin(astroObjects), end(astroObjects), [&filters](const AstroObjectsTable::AstroObject &a){ return a.bestAltitude.coordinates.altitude < filters.minimumAltitude; }), end(astroObjects) );
   
   objectsCounter->setText(format("%d") % astroObjects.size());
 

@@ -277,6 +277,8 @@ Dopo aver aggiunto una nuova sessione, clicca sul suo nome per aggiungere oggett
 <message id="planet_neptune">Nettuno</message>
 <message id="planet_pluto">Plutone</message>
 
+<message id="minimum-altitude">Altezza Minima</message>
+
 
 
 </messages>

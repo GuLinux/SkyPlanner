@@ -25,6 +25,8 @@
 #include <Wt/WPushButton>
 #include <Wt/Utils>
 #include <Wt/WPopupMenu>
+#include <Wt/WComboBox>
+#include <Wt/WLabel>
 #include <Wt-Commons/wt_helpers.h>
 #include "models/Models"
 #include "widgets/astroobjectwidget.h"
@@ -55,10 +57,20 @@ AstroObjectsTable::AstroObjectsTable(Session &session, const vector<Action> &act
 
     d->filterByCatalogue = new FilterByCatalogue(session);
     d->filterByCatalogue->changed().connect([=](_n6){ d->filtersChanged.emit(d->filters()); });
-   
+    
+    d->minimumAltitudeModel = new WStandardItemModel(this);
+    d->minimumAltitude = new WComboBox();
+    d->minimumAltitude->setModel(d->minimumAltitudeModel);
+    for(Angle i=Angle::degrees(0); i<Angle::degrees(90); i+=Angle::degrees(10)) {
+      auto item = new WStandardItem(format("%d°") % i.degrees());
+      item->setData(i);
+      d->minimumAltitudeModel->appendRow(item);
+    }
+    d->minimumAltitude->activated().connect([=](int,_n5){ d->filtersChanged.emit(d->filters()); });
     d->filterByConstellation = new FilterByConstellation;
     d->filterByConstellation->changed().connect([=](_n6){ d->filtersChanged.emit(d->filters()); });
-    container->addWidget(WW<WContainerWidget>().addCss("form-inline").add(d->filterByType).add(d->filterByMinimumMagnitude).add(d->filterByConstellation).add(d->filterByCatalogue));
+    container->addWidget(WW<WContainerWidget>().addCss("form-inline").add(d->filterByType).add(d->filterByMinimumMagnitude)
+      .add(d->filterByConstellation).add(d->filterByCatalogue).add(new WLabel{WString::tr("minimum-altitude")}).add(d->minimumAltitude));
   }
   d->tableContainer = WW<WContainerWidget>().addCss("table-responsive").add(d->objectsTable).add(d->tableFooter = WW<WContainerWidget>() );
   container->addWidget( d->tableContainer );
@@ -73,6 +85,7 @@ AstroObjectsTable::Filters AstroObjectsTable::Private::filters() const
   _filters.catalogue = filterByCatalogue->selectedCatalogue();
   _filters.constellation = filterByConstellation->selectedConstellation();
   _filters.types = filterByType->selected();
+  _filters.minimumAltitude = boost::any_cast<Angle>(minimumAltitudeModel->item(minimumAltitude->currentIndex() )->data());
   return _filters;
 }
 

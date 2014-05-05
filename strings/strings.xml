@@ -259,4 +259,6 @@ After you added a session, click it to add new objects.
 <message id="planet_neptune">Neptune</message>
 <message id="planet_pluto">Pluto</message>
 
+<message id="minimum-altitude">Minimum Altitude</message>
+
 </messages>
