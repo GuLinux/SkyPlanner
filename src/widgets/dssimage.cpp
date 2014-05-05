@@ -292,6 +292,13 @@ void DSSImage::Private::showImageController()
   dialog->contents()->addWidget(content);
   downloadingFunctions[dialog] = [=](bool downloading) {
     dialog->setClosable(!downloading);
+    if(downloading) {
+      modalWidget = WW<WContainerWidget>().css("modal-layer");
+      wApp->root()->addWidget(modalWidget);
+    } else {
+      delete modalWidget;
+      modalWidget = nullptr;
+    }
     for(auto s: vector<string>{"zoom", "move-factor", "up-button", "down-button", "left-button", "right-button", "restore-default"})
       static_cast<WFormWidget*>(content->resolveWidget(s))->setEnabled(!downloading);
   };

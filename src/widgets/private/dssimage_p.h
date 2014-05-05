@@ -74,6 +74,7 @@ class DSSImage::Private
     bool aborted = false;
     Wt::Http::Client httpClient;
     std::map<Wt::WWidget*, std::function<void(bool)>> downloadingFunctions;
+    Wt::WContainerWidget *modalWidget = nullptr;
   private:
     class DSSImage *const q;
 };
