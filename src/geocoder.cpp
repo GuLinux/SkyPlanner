@@ -27,6 +27,12 @@ GeoCoder::~GeoCoder()
 {
 }
 
+GeoCoder::Place::operator bool() const
+{
+  if(city.empty() || country.empty()) return false;
+  return true;
+}
+
 GeoCoder::Place GeoCoder::reverse(const Coordinates::LatLng &latlng) const
 {
   stringstream out;

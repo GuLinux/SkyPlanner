@@ -250,6 +250,8 @@ void ExportAstroSessionResource::handleRequest(const Wt::Http::Request &request,
   printable.setCondition("render-type-pdf", d->reportType == PDF);
   printable.bindString("title", WString::fromUTF8(d->astroSession->name()));
   printable.setCondition("have-place", d->astroSession->position());
+  printable.setCondition("have-place-geocoding", !d->place.formattedAddress.empty() );
+  printable.bindString("place-geocoding", d->place.formattedAddress );
   printable.setCondition("have-telescope", d->telescope);
   if(d->telescope) {
     printable.bindString("printable_telescope_info", WString::tr("printable_telescope_info")
@@ -275,7 +277,7 @@ void ExportAstroSessionResource::handleRequest(const Wt::Http::Request &request,
  
 
   printable.bindString("moonPhase", WString::tr("astrosessiontab_moon_phase").arg(static_cast<int>(ephemeris.moonPhase(d->astroSession->date()).illuminated_fraction*100.)));
-  printable.bindString("sessionDate", d->astroSession->wDateWhen().date().toString("dddd dd MMMM yyyy"));
+  printable.bindString("sessionDate", d->astroSession->wDateWhen().toString("dddd dd MMMM yyyy"));
   printable.bindString("timezone_info", d->timezone ?  WString::tr("printable_timezone_info").arg(WString::fromUTF8(d->timezone.timeZoneName)) : WString());
   if(d->astroSession->position()) {
     auto sun = ephemeris.sun(d->astroSession->date());

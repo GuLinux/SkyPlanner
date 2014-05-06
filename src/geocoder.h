@@ -32,6 +32,7 @@ public:
     std::string region;
     std::string country;
     std::string formattedAddress;
+    operator bool() const;
   };
   GeoCoder(const std::string &apiKey);
   ~GeoCoder();

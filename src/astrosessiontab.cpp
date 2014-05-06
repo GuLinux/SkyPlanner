@@ -511,6 +511,7 @@ void AstroSessionTab::Private::printableVersion()
   printableDialog->footer()->addWidget(okButton = WW<WPushButton>(WString::tr("Wt.WMessageBox.Ok")).css("btn btn-primary").onClick([=](WMouseEvent){ printableDialog->accept(); }));
   printableDialog->footer()->addWidget(WW<WPushButton>(WString::tr("Wt.WMessageBox.Cancel")).css("btn btn-danger").onClick([=](WMouseEvent){ printableDialog->reject(); }));
   auto printableResource = new ExportAstroSessionResource(astroSession, session, timezone, q);
+  printableResource->setPlace(geoCoderPlace);
 #ifdef DISABLE_LIBHARU
 #define PDF_INDEX -1
 #warning "libharu Disabled, export to PDF will not be available"
@@ -618,6 +619,11 @@ void AstroSessionTab::Private::updatePositionDetails( WContainerWidget *position
   Ephemeris::RiseTransitSet moon = ephemeris.moon(astroSession->date());
   Ephemeris::LunarPhase lunarPhase = ephemeris.moonPhase(astroSession->date());
   Ephemeris::Darkness darkness = ephemeris.darknessHours(astroSession->date() );
+  if(!geoCoderPlace.formattedAddress.empty()) {
+    positionDetails->addWidget(new WText{geoCoderPlace.formattedAddress});
+    positionDetails->addWidget(new WBreak);
+  }
+    
   positionDetails->addWidget(new WText{WString::tr("printable_timezone_info").arg(WString::fromUTF8(timezone.timeZoneName))});
   positionDetails->addWidget(new WBreak);
   positionDetails->addWidget(new WText(WString(WString::tr("astrosessiontab_sun_info"))
