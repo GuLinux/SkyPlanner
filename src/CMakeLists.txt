@@ -28,6 +28,7 @@ set(SkyPlanner_SRCS
   Wt-Commons/wform.cpp
   homepage.cpp
   dss.cpp
+  geocoder.cpp
 )
 include(models/source_files.cmake)
 

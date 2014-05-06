@@ -77,6 +77,7 @@
 #include <Wt/WStackedWidget>
 #include "widgets/astroobjectwidget.h"
 #include "widgets/astroobjectstable.h"
+#include "geocoder.h"
 
 using namespace Wt;
 using namespace WtCommons;
@@ -267,11 +268,18 @@ void AstroSessionTab::Private::reload()
   WPushButton *exportButton = WW<WPushButton>(WString::tr("astrosessiontab_export")).css("btn btn-sm btn-info");
   WPopupMenu *exportMenu = new WPopupMenu;
   exportButton->setMenu(exportMenu);
-  WMenuItem *exportToCsv = exportMenu->addItem("CSV");
-  exportToCsvResource = new ExportAstroSessionResource(astroSession, session, timezone, exportToCsv);
-  exportToCsvResource->setReportType(ExportAstroSessionResource::CSV);
-  exportToCsv->setLink(exportToCsvResource);
-  exportToCsv->setLinkTarget(TargetNewWindow);
+  for(auto exportType: map<string, ExportAstroSessionResource::ReportType>{
+    {"CSV", ExportAstroSessionResource::CSV},
+    //{"KStars", ExportAstroSessionResource::KStars},
+  }) {
+    WMenuItem *exportMenuItem = exportMenu->addItem(exportType.first);
+    delete exportResources[exportType.second];
+    exportResources[exportType.second] = new ExportAstroSessionResource(astroSession, session, timezone, exportMenuItem);
+    exportResources[exportType.second]->setPlace(geoCoderPlace);
+    exportResources[exportType.second]->setReportType(exportType.second);
+    exportMenuItem->setLink(exportResources[exportType.second]);
+    exportMenuItem->setLinkTarget(TargetNewWindow);
+  }
   actionsContainer->addButton(exportButton);
 
   actionsContainer->addButton(WW<WPushButton>(WString::tr("buttons_close")).css("btn btn-warning btn-sm").onClick( [=](WMouseEvent){ close.emit(); } ));
@@ -473,14 +481,19 @@ void AstroSessionTab::Private::updateTimezone()
       stringstream data;
       Curl curl(data);
       bool getRequest = ! googleApiKey.empty() && curl.get(url).requestOk();
+      GeoCoder geocoder(googleApiKey);
+      geoCoderPlace = geocoder.reverse(astroSession->position());
+      spLog("notice") << "reverse geocoder lookup: " << geoCoderPlace;
 
       spLog("notice") << "get request: " << boolalpha << getRequest << ", http code: " << curl.httpResponseCode() << ", out: " << data.str();
       if(getRequest) {
         try {
           timezone = Timezone::from(data.str(), astroSession->position().latitude.degrees(), astroSession->position().longitude.degrees());
           timezonesCache[key] = timezone;
-          if(exportToCsvResource)
-            exportToCsvResource->setTimezone(timezone);
+	  for(auto resource: exportResources) {
+	    resource.second->setTimezone(timezone);
+	    resource.second->setPlace(geoCoderPlace);
+	  }
           spLog("notice") << "got timezone info: " << timezone;
         } catch(std::exception &e) {
           spLog("notice") << "Unable to parse json response into a timezone object: " << e.what();

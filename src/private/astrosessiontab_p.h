@@ -23,6 +23,9 @@
 #include <forecast.h>
 #include "types.h"
 #include "models/Models"
+#include "geocoder.h"
+
+#include "exportastrosessionresource.h"
 class FilterByConstellation;
 namespace Wt
 {
@@ -60,11 +63,12 @@ public:
     Timezone timezone;
     void updateTimezone();
     Wt::Signal<> close;
-    ExportAstroSessionResource *exportToCsvResource = 0;
+    std::map<ExportAstroSessionResource::ReportType, ExportAstroSessionResource*> exportResources;
     void remove(const Wt::Dbo::ptr<AstroSessionObject> &sessionObject, std::function<void()> runAfterRemove);
     Wt::WText *objectsCounter;
     AstroObjectsTable *astroObjectsTable;
     void setDescriptionDialog(const AstroSessionObjectPtr &astroSessionObject, std::function<void()> onUpdate = []{});
+    GeoCoder::Place geoCoderPlace;
 private:
     class AstroSessionTab* const q;
 };

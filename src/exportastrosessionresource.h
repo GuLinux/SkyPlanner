@@ -23,6 +23,7 @@
 #include <Wt/WResource>
 #include "utils/d_ptr.h"
 #include "types.h"
+#include "geocoder.h"
 
 class Session;
 class Telescope;
@@ -30,7 +31,7 @@ class AstroSession;
 class ExportAstroSessionResource : public Wt::WResource
 {
 public:
-  enum ReportType { HTML, PDF, CSV };
+  enum ReportType { HTML, PDF, CSV, KStars };
   ExportAstroSessionResource(const Wt::Dbo::ptr<AstroSession> &astroSession, Session &session, Timezone timezone, Wt::WObject *parent = 0);
   virtual ~ExportAstroSessionResource();
   virtual void handleRequest(const Wt::Http::Request &request, Wt::Http::Response &response);
@@ -40,6 +41,7 @@ public:
   void setFontScale(double fontScale);
   void setTimezone(const Timezone &timezone);
   void setNamesLimit(int namesLimit);
+  void setPlace(const GeoCoder::Place &place);
 private:
     D_PTR;
 };

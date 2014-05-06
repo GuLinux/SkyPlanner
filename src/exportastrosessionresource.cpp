@@ -99,6 +99,11 @@ void ExportAstroSessionResource::setNamesLimit(int namesLimit)
   d->namesLimit = namesLimit;
 }
 
+void ExportAstroSessionResource::setPlace(const GeoCoder::Place &place)
+{
+  d->place = place;
+}
+
 #ifndef DISABLE_LIBHARU
 namespace {
     void error_handler(HPDF_STATUS error_no, HPDF_STATUS detail_no, void *user_data) {
@@ -146,7 +151,98 @@ void ExportAstroSessionResource::handleRequest(const Wt::Http::Request &request,
     }
     return;
   }
-
+  if(d->reportType == KStars) {
+    auto kStarsName = [](NgcObject::NebulaType t) {
+      switch(t) {
+	case NgcObject::RedStar:
+	    return  "Star" ;
+	case NgcObject::NebOc:
+	    return  "Open Cluster" ;
+	case NgcObject::NebGc:
+	    return  "Globular Cluster" ;
+	case NgcObject::NebN:
+	    return  "Gaseous Nebula" ;
+	case NgcObject::NebPn:
+	    return  "Planetary Nebula" ;
+	case NgcObject::NebGx:
+	    return  "Galaxy" ;
+	case NgcObject::NebIg:
+	    return  "Galaxy" ;
+	case NgcObject::NebGalCluster:
+	    return  "Galaxy Cluster" ;
+	case NgcObject::Asterism:
+	    return  "Asterism" ;
+	case NgcObject::NebDn:
+	    return  "Dark Nebula" ;
+	    /* TODO
+	case MULT_STAR:
+	    return  "Multiple Star" ;
+	    */
+	default:
+	    return  "Unknown Type" ;
+      }
+    };
+    response.setMimeType("text/xml");
+    suggestFileName(format("%s.obslist") % d->astroSession->name());
+    response.out() << WString(R"(<?xml version="1.0"?>
+    <oal:observations xmlns:oal="http://observation.sourceforge.net/openastronomylog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:schemaLocation="http://observation.sourceforge.net/openastronomylog oal20.xsd" version="2.0">
+    <geodate>
+        <name><![CDATA[{1}]]></name>
+        <province><![CDATA[{2}]]></province>
+        <country><![CDATA[{3}]]></country>
+        <date><![CDATA[{4}]]></date>
+    </geodate>
+    <sites>
+    <site>
+      <name><![CDATA[{5}]]></name>
+      <longitude unit="deg">{6}</longitude>
+      <latitude unit="deg">{7}</latitude>
+      <timezone>{8}</timezone>
+    </site>
+    </sites>
+    <observers/>
+    <sessions/>
+    <targets>
+    )").arg(d->place.city).arg(d->place.province).arg(d->place.country).arg(d->astroSession->wDateWhen().toString("ddMMyyyy") )
+     .arg(d->place.city).arg(d->astroSession->position().longitude.degrees())
+     .arg(d->astroSession->position().latitude.degrees())
+     .arg(d->timezone.rawOffset/60) 
+    .toUTF8();
+    for(AstroSessionObjectPtr object: sessionObjects) {
+      response.out() << WString(R"(
+	  <target id="{1}" type="{2}">
+            <datasource><![CDATA[SkyPlanner]]></datasource>
+            <name><![CDATA[{3}]]></name>
+            <position>
+                <ra unit="rad">{4}</ra>
+                <dec unit="rad">{5}</dec>
+            </position>
+            <constellation><![CDATA[{6}]]></constellation>
+            <notes><![CDATA[{7}]]></notes>
+        </target>
+      )")
+      .arg(*object->ngcObject()->objectId())
+      .arg(kStarsName(object->ngcObject()->type()))
+      .arg(WString::fromUTF8(boost::algorithm::join(NgcObject::namesByCatalogueImportance(t, object->ngcObject()), ", ")))
+      .arg(object->coordinates().rightAscension.radians())
+      .arg(object->coordinates().declination.radians())
+      .arg(WString::fromUTF8(object->ngcObject()->constellation().name))
+      .arg(WString::fromUTF8(object->description()))
+      .toUTF8()
+      ;
+    };
+    
+    response.out() << R"(
+    </targets>
+    <scopes/>
+    <eyepieces/>
+    <lenses/>
+    <filters/>
+    <imagers/>
+    </oal:observations>
+    )";
+    return;
+  }
   WTemplate printable;
   printable.addFunction("tr", &WTemplate::Functions::tr);
   printable.setTemplateText(WString::tr("printable-session"), XHTMLUnsafeText);

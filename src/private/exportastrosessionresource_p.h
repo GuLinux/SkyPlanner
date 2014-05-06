@@ -36,6 +36,7 @@ public:
     ReportType reportType = HTML;
     double fontScale = 1.0;
     int namesLimit = 0;
+    GeoCoder::Place place;
 private:
     class ExportAstroSessionResource* const q;
 };
