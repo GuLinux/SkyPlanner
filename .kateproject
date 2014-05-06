@@ -1,5 +1,5 @@
 {
-  "name": "AstroPlanner",
+  "name": "SkyPlanner",
   "files": [ { "git": 1 } ],
   "build": "make all",
   "clean": "make clean"
