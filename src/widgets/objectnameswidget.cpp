@@ -112,7 +112,7 @@ void ObjectNamesWidget::Private::init(const NgcObjectPtr &object, const AstroSes
         catName = nebula->catalogue()->name();
         catNumber = *nebula->number();
         WMenuItem *ngcIcMenuItem = popup->addItem( "NGC-IC Project Page" );
-        ngcIcMenuItem->setLink( new AutoPostResource {"http://www.ngcicproject.org/ngcicdb.asp", {{"ngcicobject", *object->objectId()}}} );
+        ngcIcMenuItem->setLink( new AutoPostResource {"http://www.ngcicproject.org/ngcicdb.asp", {{"ngcicobject", format("%s%s") % nebula->catalogue()->code() % catNumber}}} );
         ngcIcMenuItem->setLinkTarget( TargetNewWindow );
         stringstream dsoBrowserLink;
         dsoBrowserLink << "http://dso-browser.com/dso/info/" << catName << "/" << catNumber;

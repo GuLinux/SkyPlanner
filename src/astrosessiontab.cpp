@@ -270,7 +270,9 @@ void AstroSessionTab::Private::reload()
   exportButton->setMenu(exportMenu);
   for(auto exportType: map<string, ExportAstroSessionResource::ReportType>{
     {"CSV", ExportAstroSessionResource::CSV},
-    //{"KStars", ExportAstroSessionResource::KStars},
+#ifndef PRODUCTION_MODE
+    {"KStars", ExportAstroSessionResource::KStars},
+#endif
   }) {
     WMenuItem *exportMenuItem = exportMenu->addItem(exportType.first);
     delete exportResources[exportType.second];
@@ -279,6 +281,11 @@ void AstroSessionTab::Private::reload()
     exportResources[exportType.second]->setReportType(exportType.second);
     exportMenuItem->setLink(exportResources[exportType.second]);
     exportMenuItem->setLinkTarget(TargetNewWindow);
+    if(exportType.second == ExportAstroSessionResource::KStars) {
+      exportMenuItem->triggered().connect([=](WMenuItem*, _n5) {
+	SkyPlanner::instance()->notification(WString::tr("notification_suggestion_title"), WString::tr("kstars_suggestion"), SkyPlanner::Notification::Information);
+      });
+    }
   }
   actionsContainer->addButton(exportButton);
 
