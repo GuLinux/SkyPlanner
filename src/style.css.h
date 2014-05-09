@@ -33,7 +33,7 @@ std::vector<uint8_t> styleCss() {
     .astroobjectwidget,print-no-break {
       page-break-inside:avoid;
     }
-    .dropdown-menu li {
+    .dropdown-menu li, .nav li {
       cursor: pointer;
     }
     .navbar .navbar-collapsed {
