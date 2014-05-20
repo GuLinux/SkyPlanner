@@ -54,6 +54,7 @@
 #include <Wt/WProgressBar>
 #include <Wt/WStandardItemModel>
 #include <Wt/WStandardItem>
+#include <Wt/WEnvironment>
 #include <Wt/WMessageBox>
 #include "utils/format.h"
 #include "astrosessiontab.h"
@@ -84,6 +85,7 @@ const string SkyPlanner::HOME_PATH = "/home/";
 SkyPlanner::SkyPlanner( const WEnvironment &environment )
   : WApplication( environment ), d( this )
 {
+  log("notice") << "Starting new application instance: referer=" << environment.referer() << ", ip=" << environment.headerValue("X-Forwarded-For") << ", user agent=" << environment.userAgent();
   addMetaHeader("viewport", "width=device-width, initial-scale=1, maximum-scale=1");
   string googleVerificationCode;
   if(readConfigurationProperty("google-site-verification", googleVerificationCode)) {
