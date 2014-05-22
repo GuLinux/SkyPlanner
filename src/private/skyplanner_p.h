@@ -46,6 +46,7 @@ public:
     Wt::Signal<> telescopesListChanged;
     std::set<std::shared_ptr<Notification>> shownNotifications;
     std::string lastNameSearch;
+    bool agentIsBot;
 private:
     class SkyPlanner* const q;
 };

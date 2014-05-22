@@ -85,7 +85,9 @@ const string SkyPlanner::HOME_PATH = "/home/";
 SkyPlanner::SkyPlanner( const WEnvironment &environment )
   : WApplication( environment ), d( this )
 {
-  log("notice") << "Starting new application instance: referer=" << environment.referer() << ", ip=" << environment.headerValue("X-Forwarded-For") << ", user agent=" << environment.userAgent();
+  d->agentIsBot = environment.agentIsSpiderBot();
+  if(!d->agentIsBot)
+    log("notice") << "Starting new application instance: referer=" << environment.referer() << ", ip=" << environment.headerValue("X-Forwarded-For") << ", user agent=" << environment.userAgent();
   addMetaHeader("viewport", "width=device-width, initial-scale=1, maximum-scale=1");
   string googleVerificationCode;
   if(readConfigurationProperty("google-site-verification", googleVerificationCode)) {
@@ -239,7 +241,8 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
   if(d->session.login().loggedIn())
     loginLogoutMessage();
   auto handlePath = [=](const string &newPath){
-    spLog("notice") << "newPath=" << newPath;
+    if(!d->agentIsBot)
+      spLog("notice") << "newPath=" << newPath;
     if(internalPathMatches("/dss")) {
       d->loadDSSPage(internalPathNextPart("/dss/"));
     }
