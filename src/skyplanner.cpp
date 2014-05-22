@@ -88,6 +88,8 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
   d->agentIsBot = environment.agentIsSpiderBot();
   if(!d->agentIsBot)
     log("notice") << "Starting new application instance: referer=" << environment.referer() << ", ip=" << environment.headerValue("X-Forwarded-For") << ", user agent=" << environment.userAgent();
+  else
+    log("notice") << "Spider bot visiting: " << environment.userAgent();
   addMetaHeader("viewport", "width=device-width, initial-scale=1, maximum-scale=1");
   string googleVerificationCode;
   if(readConfigurationProperty("google-site-verification", googleVerificationCode)) {
