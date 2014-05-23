@@ -31,7 +31,7 @@ class AstroSession;
 class ExportAstroSessionResource : public Wt::WResource
 {
 public:
-  enum ReportType { HTML, PDF, CSV, KStars };
+  enum ReportType { HTML, PDF, CSV, KStars, CartesDuCiel };
   ExportAstroSessionResource(const Wt::Dbo::ptr<AstroSession> &astroSession, Session &session, Timezone timezone, Wt::WObject *parent = 0);
   virtual ~ExportAstroSessionResource();
   virtual void handleRequest(const Wt::Http::Request &request, Wt::Http::Response &response);

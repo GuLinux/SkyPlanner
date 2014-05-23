@@ -270,6 +270,7 @@ void AstroSessionTab::Private::reload()
   exportButton->setMenu(exportMenu);
   for(auto exportType: map<string, ExportAstroSessionResource::ReportType>{
     {"CSV", ExportAstroSessionResource::CSV},
+    {"Cartes du Ciel", ExportAstroSessionResource::CartesDuCiel},
 #ifndef PRODUCTION_MODE
     {"KStars", ExportAstroSessionResource::KStars},
 #endif

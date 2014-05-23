@@ -151,6 +151,31 @@ void ExportAstroSessionResource::handleRequest(const Wt::Http::Request &request,
     }
     return;
   }
+
+  if(d->reportType == CartesDuCiel) {
+    response.out() << d->astroSession->name() << '\n';
+    response.setMimeType("text/plain");
+    suggestFileName(format("%s.txt") % d->astroSession->name() );
+    for(AstroSessionObjectPtr object: sessionObjects) {
+      string objectName;
+      vector<string> names; 
+      for(auto name: NgcObject::namesByCatalogueImportance(t, object->ngcObject())) {
+        if(name.size() < 32 && objectName.empty() ) {
+          objectName = name;
+        }
+        else if(boost::algorithm::join(names, ", ").size() + 2 + name.size() < 32)
+          names.push_back(name);
+      }
+      string description = boost::algorithm::join(names, ", ");
+      log("notice") << "remaining names: " << description;
+      if(! object->description().empty() && object->description().size() + description.size() < 32)
+       description += format("%s%s") % (description.empty() ? "" : ", ")  % object->description();
+      log("notice") << "Added description: " << description;
+      response.out() << format("%-32s%9.5f %9.5f %-32s%-32s\n") % objectName % object->coordinates().rightAscension.degrees() % object->coordinates().declination.degrees() %objectName % description;
+    }
+    return;
+  }
+
   if(d->reportType == KStars) {
     auto kStarsName = [](NgcObject::NebulaType t) {
       switch(t) {
