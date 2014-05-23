@@ -121,6 +121,7 @@ void ExportAstroSessionResource::handleRequest(const Wt::Http::Request &request,
   });
 
   if(d->reportType == CSV) {
+    setDispositionType(Attachment);
     suggestFileName(format("%s.csv") % d->astroSession->name());
     response.setMimeType("text/csv");
     vector<string> headers{"object_column_names", "object_column_ar", "object_column_dec", "object_column_constellation", "object_column_angular_size", "object_column_magnitude", "object_column_type"};
@@ -153,9 +154,10 @@ void ExportAstroSessionResource::handleRequest(const Wt::Http::Request &request,
   }
 
   if(d->reportType == CartesDuCiel) {
+    suggestFileName(format("%s.txt") % d->astroSession->name() );
     response.out() << d->astroSession->name() << '\n';
     response.setMimeType("text/plain");
-    suggestFileName(format("%s.txt") % d->astroSession->name() );
+
     for(AstroSessionObjectPtr object: sessionObjects) {
       string objectName;
       vector<string> names; 
@@ -167,16 +169,15 @@ void ExportAstroSessionResource::handleRequest(const Wt::Http::Request &request,
           names.push_back(name);
       }
       string description = boost::algorithm::join(names, ", ");
-      log("notice") << "remaining names: " << description;
       if(! object->description().empty() && object->description().size() + description.size() < 32)
        description += format("%s%s") % (description.empty() ? "" : ", ")  % object->description();
-      log("notice") << "Added description: " << description;
       response.out() << format("%-32s%9.5f %9.5f %-32s%-32s\n") % objectName % object->coordinates().rightAscension.degrees() % object->coordinates().declination.degrees() %objectName % description;
     }
     return;
   }
 
   if(d->reportType == KStars) {
+    setDispositionType(Attachment);
     auto kStarsName = [](NgcObject::NebulaType t) {
       switch(t) {
 	case NgcObject::RedStar:
