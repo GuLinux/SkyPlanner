@@ -306,6 +306,10 @@ void ExportAstroSessionResource::handleRequest(const Wt::Http::Request &request,
   printable.bindString("sessionDate", d->astroSession->wDateWhen().toString("dddd dd MMMM yyyy"));
   printable.bindString("timezone_info", d->timezone ?  WString::tr("printable_timezone_info").arg(WString::fromUTF8(d->timezone.timeZoneName)) : WString());
   if(d->astroSession->position()) {
+    printable.bindString("place-coordinates", WString::tr("astrosession_coordinates")
+    .arg(WString::fromUTF8(d->astroSession->position().latitude.printable()) )
+    .arg(WString::fromUTF8(d->astroSession->position().longitude.printable() ) )
+	      );
     auto sun = ephemeris.sun(d->astroSession->date());
     auto twilight = ephemeris.astronomicalTwilight(d->astroSession->date());
     auto moon = ephemeris.moon(d->astroSession->date());
