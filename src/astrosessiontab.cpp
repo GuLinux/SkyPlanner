@@ -631,7 +631,11 @@ void AstroSessionTab::Private::updatePositionDetails( WContainerWidget *position
     positionDetails->addWidget(new WText{geoCoderPlace.formattedAddress});
     positionDetails->addWidget(new WBreak);
   }
-    
+  positionDetails->addWidget(new WText{WString::tr("astrosession_coordinates")
+    .arg(WString::fromUTF8(astroSession->position().latitude.printable()) )
+    .arg(WString::fromUTF8(astroSession->position().longitude.printable() ) )});
+  positionDetails->addWidget(new WBreak);   
+  
   positionDetails->addWidget(new WText{WString::tr("printable_timezone_info").arg(WString::fromUTF8(timezone.timeZoneName))});
   positionDetails->addWidget(new WBreak);
   positionDetails->addWidget(new WText(WString(WString::tr("astrosessiontab_sun_info"))

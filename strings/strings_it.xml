@@ -282,5 +282,6 @@ Dopo aver aggiunto una nuova sessione, clicca sul suo nome per aggiungere oggett
 <message id="astroobject_rst">Sorge/Transita/Tramonta</message>
 <message id="circumpolar">circumpolare</message>
 <message id="never_rises">non sorge</message>
+<message id="astrosession_coordinates">Coordinate: latitudine {1}, longitudine {2}</message>
 
 </messages>

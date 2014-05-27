@@ -264,5 +264,6 @@ After you added a session, click it to add new objects.
 <message id="astroobject_rst">Rise/Transit/Set</message>
 <message id="circumpolar">circumpolar</message>
 <message id="never_rises">never rises</message>
+<message id="astrosession_coordinates">Coordinates: latitude {1}, longitude {2}</message>
 
 </messages>
