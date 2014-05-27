@@ -80,6 +80,15 @@ void AstroObjectWidget::Private::init()
 
     info->bindString("best_altitude_when", bestAltitude.when.str() );
     info->bindString("best_altitude", Utils::htmlEncode(WString::fromUTF8(bestAltitude.coordinates.altitude.printable() )) );
+    auto riseSet = [](const Ephemeris::RiseTransitSet &r, const DateTime &t) {
+      if(r.type == Ephemeris::RiseTransitSet::Normal)
+	return WString::fromUTF8(t.str(DateTime::HoursAndMinutes));
+      return r.type == Ephemeris::RiseTransitSet::CircumPolar ? WString::tr("circumpolar") : WString::tr("never_rises");
+    };
+    info->bindString("rst", Utils::htmlEncode(WString("{1} - {2} - {3}") 
+      .arg(riseSet(bestAltitude.rst, bestAltitude.rst.rise))
+      .arg(bestAltitude.rst.transit.str(DateTime::HoursAndMinutes))
+      .arg(riseSet(bestAltitude.rst, bestAltitude.rst.set)) ) );
     info->bindWidget("difficulty", new ObjectDifficultyWidget{ngcObject, telescope, bestAltitude.coordinates.altitude.degrees() } );
   }
   info->setCondition("has-catalogues-descriptions", ngcObject->descriptions().size() > 0);

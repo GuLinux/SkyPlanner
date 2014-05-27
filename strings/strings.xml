@@ -261,4 +261,8 @@ After you added a session, click it to add new objects.
 
 <message id="minimum-altitude">Minimum Altitude</message>
 
+<message id="astroobject_rst">Rise/Transit/Set</message>
+<message id="circumpolar">circumpolar</message>
+<message id="never_rises">never rises</message>
+
 </messages>

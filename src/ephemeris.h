@@ -28,9 +28,13 @@ class Ephemeris
 {
   public:
     struct RiseTransitSet {
+      enum Type { Normal, CircumPolar, NeverRises };
+      RiseTransitSet() = default;
+      RiseTransitSet(const DateTime &rise, const DateTime &transit, const DateTime &set, Type type = Normal) : rise(rise), transit(transit), set(set), type(type) {}
       DateTime rise;
       DateTime transit;
       DateTime set;
+      Type type = Normal;
     };
     struct LunarPhase {
       double illuminated_fraction;

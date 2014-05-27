@@ -136,7 +136,11 @@ Ephemeris::BestAltitude Ephemeris::findBestAltitude( const Coordinates::Equatori
 // TODO: hack, but it works. for now...
     while(result == 1) {
       result = ln_get_object_next_rst_horizon(jd, pos, &object, horizon, rst);
+      rst->rise = -1;
+      rst->set = -1;
       horizon += 5;
+      if(result != 1)
+	return 1;
     }
     return result;
   }, false);
@@ -186,6 +190,7 @@ double Ephemeris::Private::dateToJulian(const boost::posix_time::ptime &when, bo
 DateTime Ephemeris::Private::julianToDate(double jd) const
 {
   // TODO: local/UTC date support
+  if(jd < 0) return {};
   time_t utc_time;
   ln_get_timet_from_julian(jd, &utc_time);
   try {
@@ -216,13 +221,18 @@ Ephemeris::RiseTransitSet Ephemeris::Private::rst(const boost::posix_time::ptime
   ln_rst_time rst;
 
   // TODO: utc? local?
-  f(dateToJulian(when, true), &where, &rst);
+  auto result = f(dateToJulian(when, true), &where, &rst);
+  RiseTransitSet::Type type = RiseTransitSet::Normal;
+  if(result == 1)
+    type = RiseTransitSet::CircumPolar;
+  if(result == -1)
+    type = RiseTransitSet::NeverRises;
   if(nightMode && rst.rise < rst.set) {
     ln_rst_time nextDay_rst;
     f(dateToJulian(when + boost::posix_time::hours{24}), &where, &nextDay_rst);
-    return {julianToDate(nextDay_rst.rise), julianToDate(rst.transit), julianToDate(rst.set) };
+    return {julianToDate(nextDay_rst.rise), julianToDate(rst.transit), julianToDate(rst.set), type };
   }
-  return {julianToDate(rst.rise), julianToDate(rst.transit), julianToDate(rst.set) };
+  return {julianToDate(rst.rise), julianToDate(rst.transit), julianToDate(rst.set), type };
 }
 
 
