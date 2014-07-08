@@ -59,7 +59,7 @@
 #include "utils/format.h"
 #include "astrosessiontab.h"
 #include <boost/algorithm/string.hpp>
-
+#include <Wt/WMemoryResource>
 
 using namespace std;
 using namespace Wt;
@@ -94,6 +94,35 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
   string googleVerificationCode;
   if(readConfigurationProperty("google-site-verification", googleVerificationCode)) {
     addMetaHeader("google-site-verification", googleVerificationCode);
+  }
+
+  string googleAnalytics_ua, googleAnalytics_domain;
+  if(readConfigurationProperty("google-analytics-ua", googleAnalytics_ua) && readConfigurationProperty("google-analytics-domain", googleAnalytics_domain)) {
+
+    string analyticsCode = format(R"(
+//<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', '%s', '%s');
+  ga('require', 'linkid', 'linkid.js');
+  ga('require', 'displayfeatures');
+  ga('send', 'pageview');
+
+//</script>
+  )") % googleAnalytics_ua % googleAnalytics_domain;
+    vector<uint8_t> data;
+    copy(begin(analyticsCode), end(analyticsCode), back_inserter(data));
+    WMemoryResource *analyticsScriptResource = new WMemoryResource("application/javascript", data, this);
+    require(analyticsScriptResource->url(), "googleAnalytics");
+
+/*
+    WTemplate *googleAnalyticsSCript = new WTemplate;
+    googleAnalyticsSCript->setTemplateText(analyticsCode, XHTMLUnsafeText);
+    root()->addWidget(googleAnalyticsSCript);
+*/
   }
 
   string stringsDirectory = (boost::filesystem::current_path() / "strings").string();
@@ -265,6 +294,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
     spLog("notice") << "Search by name: original=" << searchByNameEdit->valueText();
     string nameToSearch = boost::algorithm::trim_copy(searchByNameEdit->valueText().toUTF8());
     searchByNameWidget->clear();
+    transform(nameToSearch.begin(), nameToSearch.end(), nameToSearch.begin(), ::tolower);
     
     spLog("notice") << "Search by name: original=" << searchByNameEdit->valueText() << ", trimmed: " << nameToSearch << ";";
     boost::replace_all(nameToSearch, "*", "%");
@@ -320,25 +350,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
   }
   handlePath(internalPath());
 
-  string googleAnalytics_ua, googleAnalytics_domain;
-  if(readConfigurationProperty("google-analytics-ua", googleAnalytics_ua) && readConfigurationProperty("google-analytics-domain", googleAnalytics_domain)) {
-    WTemplate *googleAnalyticsSCript = new WTemplate;
-    googleAnalyticsSCript->setTemplateText(format(R"(
-<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-  ga('create', '%s', '%s');
-  ga('require', 'linkid', 'linkid.js');
-  ga('require', 'displayfeatures');
-  ga('send', 'pageview');
-
-</script>
-  )") % googleAnalytics_ua % googleAnalytics_domain,  XHTMLUnsafeText);
-    root()->addWidget(googleAnalyticsSCript);
-  }
 }
 
 bool SkyPlanner::Private::searchByName(const string &name, AstroObjectsTable *table, int page)
