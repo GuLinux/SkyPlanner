@@ -297,7 +297,7 @@ void DSSImage::Private::showImageController()
 
 
 DSSImage::Private::DialogControl::DialogControl(WDialog *dialog, WTemplate *content)
-  : dialog(dialog), content(content), modalWidget( WW<WContainerWidget>().css("modal-layer-light").get() )
+  : dialog(dialog), content(content), modalWidget( WW<WContainerWidget>().css("modal-layer").get() )
 {
   wApp->root()->addWidget(modalWidget.get());
 }
@@ -305,8 +305,10 @@ DSSImage::Private::DialogControl::DialogControl(WDialog *dialog, WTemplate *cont
 void DSSImage::Private::DialogControl::downloadControl(bool downloading)
 {
   dialog->setClosable(!downloading);
-  modalWidget->removeStyleClass(downloading ? "modal-layer-light" : "modal-layer");
-  modalWidget->addStyleClass(downloading ? "modal-layer" : "modal-layer-light");
+  if(downloading)
+    modalWidget->addStyleClass("modal-layer-dark");
+  else
+    modalWidget->removeStyleClass("modal-layer-dark");
   for(auto s: vector<string>{"zoom", "move-factor", "up-button", "down-button", "left-button", "right-button", "restore-default"})
     static_cast<WFormWidget*>(content->resolveWidget(s))->setEnabled(!downloading);
 }

@@ -165,7 +165,7 @@ std::vector<uint8_t> styleCss() {
       box-shadow: inherit;
       -webkit-box-shadow: inherit;
     }
-    .modal-layer-light {
+    .modal-layer {
       z-index: 399!important;
       position: absolute;  /* makes the div go into a position that’s absolute to the browser viewing area */
       left: 0%; /* makes the div span all the way across the viewing area */
@@ -177,17 +177,10 @@ std::vector<uint8_t> styleCss() {
       width: 100%;
       height: 100%;
     }
-    .modal-layer {
-      z-index: 399!important;
-      position: absolute;  /* makes the div go into a position that’s absolute to the browser viewing area */
-      left: 0%; /* makes the div span all the way across the viewing area */
-      top: 0%; /* makes the div span all the way across the viewing area */
-      background-color: black;
+    .modal-layer-dark {
       -moz-opacity: 0.7; /* makes the div transparent, so you have a cool overlay effect */
       opacity: .70;
       filter: alpha(opacity=70);
-      width: 100%;
-      height: 100%;
     }
   );
   return std::vector<uint8_t>(css.begin(), css.end());
