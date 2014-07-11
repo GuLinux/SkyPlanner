@@ -40,9 +40,10 @@ class DSSImage::Private
     class DialogControl {
     public:
       DialogControl(Wt::WDialog *dialog, Wt::WTemplate *content);
-      void downloading();
-      void downloadFinished();
+      void downloading() { downloadControl(true); }
+      void downloadFinished() { downloadControl(false); }
     private:
+      void downloadControl(bool downloading);
       Wt::WTemplate *content;
       Wt::WDialog *dialog;
       std::shared_ptr<Wt::WContainerWidget> modalWidget;
