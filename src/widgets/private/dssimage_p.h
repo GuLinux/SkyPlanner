@@ -36,6 +36,17 @@ class DSSImage::Private
       private:
       void resize(const boost::filesystem::path &destination, const DSSImage::ImageOptions &imageOptions);
     };
+    
+    class DialogControl {
+    public:
+      DialogControl(Wt::WDialog *dialog, Wt::WTemplate *content);
+      void downloading();
+      void downloadFinished();
+    private:
+      Wt::WTemplate *content;
+      Wt::WDialog *dialog;
+      std::shared_ptr<Wt::WContainerWidget> modalWidget;
+    };
     static std::map<DSSImage::ImageSize, Image> imageSizeMap;
     static std::map<DSS::ImageVersion,std::string> imageVersionStrings;
 
@@ -73,8 +84,7 @@ class DSSImage::Private
     boost::thread downloadThread;
     bool aborted = false;
     Wt::Http::Client httpClient;
-    std::map<Wt::WWidget*, std::function<void(bool)>> downloadingFunctions;
-    Wt::WContainerWidget *modalWidget = nullptr;
+    std::shared_ptr<DialogControl> dialogControl;
   private:
     class DSSImage *const q;
 };

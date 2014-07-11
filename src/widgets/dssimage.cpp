@@ -68,7 +68,7 @@ DSSImage::~DSSImage()
 
 void DSSImage::Private::save(const boost::system::error_code &errorCode, const Http::Message &httpMessage)
 {
-  for(auto d: downloadingFunctions) d.second(false);
+  dialogControl->downloadFinished();
   if(errorCode != boost::system::errc::success) {
     WServer::instance()->log(aborted ? "notice" : "error") << "Download failed for " << imageLink() << ": " << errorCode.message(); 
     if(!aborted) failed.emit();
@@ -290,26 +290,40 @@ void DSSImage::Private::showImageController()
     reload();
   }) );
   dialog->contents()->addWidget(content);
-  downloadingFunctions[dialog] = [=](bool downloading) {
-    dialog->setClosable(!downloading);
-    if(downloading) {
-      modalWidget = WW<WContainerWidget>().css("modal-layer");
-      wApp->root()->addWidget(modalWidget);
-    } else {
-      delete modalWidget;
-      modalWidget = nullptr;
-    }
-    for(auto s: vector<string>{"zoom", "move-factor", "up-button", "down-button", "left-button", "right-button", "restore-default"})
-      static_cast<WFormWidget*>(content->resolveWidget(s))->setEnabled(!downloading);
-  };
-
-//  dialog->finished().connect([=](WDialog::DialogCode, _n5) { downloadingFunctions.erase(dialog); }); // TODO: verify if this is really needed
+  dialogControl.reset(new DialogControl(dialog, content));
+  dialog->finished().connect([=](WDialog::DialogCode, _n5) { dialogControl.reset(); });
   dialog->show();
 }
 
+
+DSSImage::Private::DialogControl::DialogControl(WDialog *dialog, WTemplate *content)
+  : dialog(dialog), content(content), modalWidget( WW<WContainerWidget>().css("modal-layer-light").get() )
+{
+  wApp->root()->addWidget(modalWidget.get());
+}
+
+void DSSImage::Private::DialogControl::downloading()
+{
+  dialog->setClosable(false);
+  modalWidget->removeStyleClass("modal-layer-light");
+  modalWidget->addStyleClass("modal-layer");
+  for(auto s: vector<string>{"zoom", "move-factor", "up-button", "down-button", "left-button", "right-button", "restore-default"})
+    static_cast<WFormWidget*>(content->resolveWidget(s))->setEnabled(false);
+}
+
+void DSSImage::Private::DialogControl::downloadFinished()
+{
+  dialog->setClosable(true);
+  modalWidget->removeStyleClass("modal-layer");
+  modalWidget->addStyleClass("modal-layer-light");
+  for(auto s: vector<string>{"zoom", "move-factor", "up-button", "down-button", "left-button", "right-button", "restore-default"})
+    static_cast<WFormWidget*>(content->resolveWidget(s))->setEnabled(true);
+}
+
+
 void DSSImage::Private::wtDownload()
 {
-  for(auto d: downloadingFunctions) d.second(true);
+  dialogControl->downloading();
   httpClient.abort();
   httpClient.get(imageLink()); 
 }

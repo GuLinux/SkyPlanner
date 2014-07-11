@@ -165,6 +165,18 @@ std::vector<uint8_t> styleCss() {
       box-shadow: inherit;
       -webkit-box-shadow: inherit;
     }
+    .modal-layer-light {
+      z-index: 399!important;
+      position: absolute;  /* makes the div go into a position that’s absolute to the browser viewing area */
+      left: 0%; /* makes the div span all the way across the viewing area */
+      top: 0%; /* makes the div span all the way across the viewing area */
+      background-color: black;
+      -moz-opacity: 0.2; /* makes the div transparent, so you have a cool overlay effect */
+      opacity: .20;
+      filter: alpha(opacity=20);
+      width: 100%;
+      height: 100%;
+    }
     .modal-layer {
       z-index: 399!important;
       position: absolute;  /* makes the div go into a position that’s absolute to the browser viewing area */
