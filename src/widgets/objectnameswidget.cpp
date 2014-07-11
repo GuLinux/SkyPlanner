@@ -42,6 +42,7 @@
 #include "widgets/dsspage.h"
 #include "sendfeedbackpage.hpp"
 #include "widgets/astroobjectwidget.h"
+#include "widgets/astroobjectstable.h"
 
 using namespace WtCommons;
 using namespace Wt;
@@ -98,6 +99,31 @@ void ObjectNamesWidget::Private::init(const NgcObjectPtr &object, const AstroSes
         menuItem->setLinkTarget( TargetNewWindow );
     };
     popup->addSectionHeader( WString::tr( "objectnames_more_info" ) )->addStyleClass("dropdown-header");
+    string haveGis;
+    if( wApp->readConfigurationProperty("have-gis", haveGis) && haveGis == "true") {
+      popup->addItem(WString::tr("objectnames_nearby_objects"))->triggered().connect([=](WMenuItem*, _n5){
+	WDialog *dialog = new WDialog();
+	dialog->setClosable(true);
+	AstroObjectsTable *table = new AstroObjectsTable(session, {}, false);
+	dialog->contents()->addWidget(table);
+	string query = R"(
+	  select o, 
+	  ST_Distance(coordinates_geom, (select coordinates_geom FROM objects where id = ? ) ) as dist
+	  from objects o
+	  where o.id <> ?
+	  order by dist asc 
+	  limit 15;
+	)";
+	Dbo::Transaction t( session );
+	auto objectsDbo = session.query<boost::tuple<NgcObjectPtr, double>>(query).bind(object.id()).bind(object.id()).resultList();
+	vector<AstroObjectsTable::AstroObject> objects;
+	transform(begin(objectsDbo), end(objectsDbo), back_inserter(objects), [&astroSession](const boost::tuple<NgcObjectPtr, double> &n){
+	  return AstroObjectsTable::AstroObject{astroSession, n.get<0>() };
+	} );
+	dialog->show();
+	table->populate(objects, TelescopePtr{}, Timezone{}); 
+      });
+    }
     WMenuItem *imagesMenuItem = popup->addItem( WString::tr( "objectnames_digitalized_sky_survey_menu" ) );
     imagesMenuItem->setLink(WLink(WLink::InternalPath, DSSPage::internalPath(object, t)));
 
