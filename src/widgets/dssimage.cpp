@@ -303,7 +303,7 @@ void DSSImage::Private::showImageController()
       static_cast<WFormWidget*>(content->resolveWidget(s))->setEnabled(!downloading);
   };
 
-  dialog->finished().connect([=](WDialog::DialogCode, _n5) { downloadingFunctions.erase(dialog); });
+//  dialog->finished().connect([=](WDialog::DialogCode, _n5) { downloadingFunctions.erase(dialog); }); // TODO: verify if this is really needed
   dialog->show();
 }
 

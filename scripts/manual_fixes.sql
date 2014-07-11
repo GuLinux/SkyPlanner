@@ -12,5 +12,6 @@ update catalogues set hidden = false, priority = -96, search_mode = 0 where code
 update catalogues set hidden = false, priority = -95, search_mode = 0 where code = 'A';
 update catalogues set hidden = false, priority = -94, search_mode = 0 where code = 'Arp';
 update catalogues set hidden = false, priority = -93, search_mode = 0 where code = 'UGC';
+insert into denominations (name, objects_id, catalogues_id) VALUES('UFO Galaxy', 2757, 2);
 
 END TRANSACTION;
