@@ -68,7 +68,8 @@ DSSImage::~DSSImage()
 
 void DSSImage::Private::save(const boost::system::error_code &errorCode, const Http::Message &httpMessage)
 {
-  dialogControl->downloadFinished();
+  if(dialogControl)
+    dialogControl->downloadFinished();
   if(errorCode != boost::system::errc::success) {
     WServer::instance()->log(aborted ? "notice" : "error") << "Download failed for " << imageLink() << ": " << errorCode.message(); 
     if(!aborted) failed.emit();
@@ -317,7 +318,8 @@ void DSSImage::Private::DialogControl::downloadControl(bool downloading)
 
 void DSSImage::Private::wtDownload()
 {
-  dialogControl->downloading();
+  if(dialogControl)
+    dialogControl->downloading();
   httpClient.abort();
   httpClient.get(imageLink()); 
 }
