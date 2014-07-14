@@ -54,19 +54,19 @@ class ObjectNamesWidget::Private
     Private( Session &session, ObjectNamesWidget *q ) : session( session ), q( q ) {}
     AstroSessionObjectPtr astroSessionObject;
     Session &session;
-    void init(const NgcObjectPtr &object, const AstroSessionPtr &astroSession, RenderType renderType, int limitNames);
+    void init(const NgcObjectPtr &object, const AstroSessionPtr &astroSession, const TelescopePtr &telescope, const Timezone &timezone, RenderType renderType, int limitNames);
   private:
     ObjectNamesWidget *const q;
 };
 
 
-ObjectNamesWidget::ObjectNamesWidget( const NgcObjectPtr &object, Session &session, const AstroSessionPtr &astroSession, RenderType renderType, int limitNames, WContainerWidget *parent )
+ObjectNamesWidget::ObjectNamesWidget( const NgcObjectPtr &object, Session &session, const AstroSessionPtr &astroSession, const Wt::Dbo::ptr<Telescope> &telescope, const Timezone &timezone, RenderType renderType, int limitNames, WContainerWidget *parent )
   : WContainerWidget( parent ), d( session, this )
 {
-  d->init(object, astroSession, renderType, limitNames);
+  d->init(object, astroSession, telescope, timezone, renderType, limitNames);
 }
 
-void ObjectNamesWidget::Private::init(const NgcObjectPtr &object, const AstroSessionPtr &astroSession, RenderType renderType, int limitNames)
+void ObjectNamesWidget::Private::init(const NgcObjectPtr &object, const AstroSessionPtr &astroSession, const TelescopePtr &telescope, const Timezone &timezone, RenderType renderType, int limitNames)
 {
   Dbo::Transaction t(session);
   auto names = NgcObject::namesByCatalogueImportance(t, object);
@@ -100,7 +100,7 @@ void ObjectNamesWidget::Private::init(const NgcObjectPtr &object, const AstroSes
     };
     popup->addSectionHeader( WString::tr( "objectnames_more_info" ) )->addStyleClass("dropdown-header");
     string haveGis;
-    if( wApp->readConfigurationProperty("have-gis", haveGis) && haveGis == "true") {
+    if( wApp->readConfigurationProperty("have-gis", haveGis) && haveGis == "true" && astroSession) {
       popup->addItem(WString::tr("objectnames_nearby_objects"))->triggered().connect([=](WMenuItem*, _n5){
 	WDialog *dialog = new WDialog();
 	dialog->setClosable(true);
@@ -108,20 +108,20 @@ void ObjectNamesWidget::Private::init(const NgcObjectPtr &object, const AstroSes
 	dialog->contents()->addWidget(table);
 	string query = R"(
 	  select o, 
-	  ST_Distance(coordinates_geom, (select coordinates_geom FROM objects where id = ? ) ) as dist
+	  ST_Distance(coordinates_geom, (select coordinates_geom FROM objects where id = ? ) ) dist
 	  from objects o
 	  where o.id <> ?
 	  order by dist asc 
-	  limit 15;
 	)";
 	Dbo::Transaction t( session );
-	auto objectsDbo = session.query<boost::tuple<NgcObjectPtr, double>>(query).bind(object.id()).bind(object.id()).resultList();
+	Ephemeris ephemeris{astroSession->position(), timezone};
+	auto objectsDbo = session.query<boost::tuple<NgcObjectPtr, double>>(query).bind(object.id()).bind(object.id()).limit(15).resultList();
 	vector<AstroObjectsTable::AstroObject> objects;
-	transform(begin(objectsDbo), end(objectsDbo), back_inserter(objects), [&astroSession](const boost::tuple<NgcObjectPtr, double> &n){
-	  return AstroObjectsTable::AstroObject{astroSession, n.get<0>() };
+	transform(begin(objectsDbo), end(objectsDbo), back_inserter(objects), [&astroSession, &ephemeris](const boost::tuple<NgcObjectPtr, double> &n){
+	  return AstroObjectsTable::AstroObject{astroSession, n.get<0>(), AstroSessionObject::bestAltitude(astroSession, n.get<0>(), ephemeris) };
 	} );
 	dialog->show();
-	table->populate(objects, TelescopePtr{}, Timezone{}); 
+	table->populate(objects, telescope, Timezone{}); 
       });
     }
     WMenuItem *imagesMenuItem = popup->addItem( WString::tr( "objectnames_digitalized_sky_survey_menu" ) );

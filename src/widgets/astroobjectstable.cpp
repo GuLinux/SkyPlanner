@@ -152,11 +152,11 @@ void AstroObjectsTable::Private::header()
 }
 
 
-WWidget *AstroObjectsTable::AstroObject::names(Session &session, function<void(WMouseEvent)> onClick) const
+WWidget *AstroObjectsTable::AstroObject::names(Session &session, const TelescopePtr &telescope, const Timezone &timezone, function<void(WMouseEvent)> onClick) const
 {
   if(planet)
     return new WText{WString::tr(format("planet_%s") % planet->name) };
-  return WW<ObjectNamesWidget>(new ObjectNamesWidget{object, session, astroSession}).setInline(true).onClick(onClick);
+  return WW<ObjectNamesWidget>(new ObjectNamesWidget{object, session, astroSession, telescope, timezone}).setInline(true).onClick(onClick);
 }
 
 WString AstroObjectsTable::AstroObject::typeDescription() const
@@ -281,7 +281,7 @@ void AstroObjectsTable::populate(const vector<AstroObject> &objects, const Teles
         return nullptr;
       return WW<WTableCell>(row->elementAt(hasColumn - begin(d->columns))).add(createWidget() ).get();
     };
-    addColumn(Names, [=] { return astroObject.names(d->session, [=](WMouseEvent){
+    addColumn(Names, [=] { return astroObject.names(d->session, telescope, timezone, [=](WMouseEvent){
       if(d->selectedRow)
         d->selectedRow->removeStyleClass("info");
       if(objectAddedRow)

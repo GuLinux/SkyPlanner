@@ -11,7 +11,9 @@ from objects INNER JOIN denominations on objects.id = denominations.objects_id o
 
 alter table objects add column coordinates_geom geometry
 
-update objects set coordinates_geom = ST_GeomFromText('POINT(' || ra || ' ' || dec || ')') where coordinates_geom is null;
+select *, ST_AsText(ST_GeomFromText('POINT(' || DEGREES(ra) || ' ' || DEGREES(dec) || ')')) as geom2 from objects where object_id = 'NGC224';
+
+update objects set coordinates_geom = ST_GeomFromText('POINT(' || DEGREES(ra) || ' ' || DEGREES(dec) || ')') where coordinates_geom is null;
 
 
 select objects.*, string_agg(denominations.name, ', ') as names , 

@@ -38,7 +38,7 @@ public:
     boost::optional<Ephemeris::Planet> planet;
 
     // Display widgets
-    Wt::WWidget *names(Session &session, std::function<void(Wt::WMouseEvent)> onClick = [](Wt::WMouseEvent){} ) const;
+    Wt::WWidget *names(Session &session, const TelescopePtr &telescope, const Timezone &timezone, std::function<void(Wt::WMouseEvent)> onClick = [](Wt::WMouseEvent){} ) const;
     Wt::WString typeDescription() const;
     Angle ar() const;
     Angle dec() const;
