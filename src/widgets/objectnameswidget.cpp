@@ -100,12 +100,16 @@ void ObjectNamesWidget::Private::init(const NgcObjectPtr &object, const AstroSes
     };
     popup->addSectionHeader( WString::tr( "objectnames_more_info" ) )->addStyleClass("dropdown-header");
     string haveGis;
-    if( wApp->readConfigurationProperty("have-gis", haveGis) && haveGis == "true" && astroSession) {
+    if( wApp->readConfigurationProperty("have-gis", haveGis) && haveGis == "true" ) {
       popup->addItem(WString::tr("objectnames_nearby_objects"))->triggered().connect([=](WMenuItem*, _n5){
-	WDialog *dialog = new WDialog();
-	dialog->setClosable(true);
-	AstroObjectsTable *table = new AstroObjectsTable(session, {}, false);
-	dialog->contents()->addWidget(table);
+	Dbo::Transaction t( session );
+	WDialog *dialog = new WDialog{ WString::tr("objectnames_nearby_objects_caption").arg( WString::fromUTF8(NgcObject::namesByCatalogueImportance(t, object)[0]) ) };
+	dialog->setClosable(true); 
+	dialog->setResizable(true); 
+	//AstroObjectsTable *table = new AstroObjectsTable(session, {}, false);
+	WMenu *namesList = WW<WMenu>().css("col-xs-3");
+	WContainerWidget *preview = WW<WContainerWidget>().css("col-xs-9");
+	dialog->contents()->addWidget(WW<WContainerWidget>().css("container-fluid").add(namesList).add(preview));
 	string query = R"(
 	  select o, 
 	  ST_Distance(coordinates_geom, (select coordinates_geom FROM objects where id = ? ) ) dist
@@ -113,15 +117,27 @@ void ObjectNamesWidget::Private::init(const NgcObjectPtr &object, const AstroSes
 	  where o.id <> ?
 	  order by dist asc 
 	)";
-	Dbo::Transaction t( session );
-	Ephemeris ephemeris{astroSession->position(), timezone};
+	//Ephemeris ephemeris{astroSession->position(), timezone};
 	auto objectsDbo = session.query<boost::tuple<NgcObjectPtr, double>>(query).bind(object.id()).bind(object.id()).limit(15).resultList();
+	for(auto o: objectsDbo) {
+	  auto names = NgcObject::namesByCatalogueImportance(t, o.get<0>());
+	  names.resize(min(names.size(), size_t{3}));
+	  auto item = namesList->addItem(boost::algorithm::join(names, ", "));
+	  item->addStyleClass("nearby-object-names");
+	  item->triggered().connect([=](WMenuItem*, _n5){
+	    //  (const Wt::Dbo::ptr<NgcObject> &object, const Wt::Dbo::ptr<AstroSession> &astroSession, Session &session, const Timezone &timezone, const Wt::Dbo::ptr<Telescope> &telescope, const std::shared_ptr<std::mutex> &downloadMutex = {}, const std::vector<Wt::WPushButton*> &actionButtons = {}, Wt::WContainerWidget *parent = 0);
+	    preview->clear();
+	    preview->addWidget(new AstroObjectWidget{o.get<0>(), astroSession, session, timezone, telescope, {} });
+	  });
+	}
+	/*
 	vector<AstroObjectsTable::AstroObject> objects;
 	transform(begin(objectsDbo), end(objectsDbo), back_inserter(objects), [&astroSession, &ephemeris](const boost::tuple<NgcObjectPtr, double> &n){
 	  return AstroObjectsTable::AstroObject{astroSession, n.get<0>(), AstroSessionObject::bestAltitude(astroSession, n.get<0>(), ephemeris) };
 	} );
+      */
 	dialog->show();
-	table->populate(objects, telescope, Timezone{}); 
+// 	table->populate(objects, telescope, Timezone{}); 
       });
     }
     WMenuItem *imagesMenuItem = popup->addItem( WString::tr( "objectnames_digitalized_sky_survey_menu" ) );

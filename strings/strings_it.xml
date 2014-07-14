@@ -284,4 +284,6 @@ Dopo aver aggiunto una nuova sessione, clicca sul suo nome per aggiungere oggett
 <message id="never_rises">non sorge</message>
 <message id="astrosession_coordinates">Coordinate: latitudine {1}, longitudine {2}</message>
 
+<message id="objectnames_nearby_objects">Oggetti nelle vicinanze</message>
+<message id="objectnames_nearby_objects_caption">Oggetti vicini a {1}</message>
 </messages>

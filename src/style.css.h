@@ -182,6 +182,9 @@ std::vector<uint8_t> styleCss() {
       opacity: .70;
       filter: alpha(opacity=70);
     }
+    .nearby-object-names a {
+      padding: 3px!important;
+    }
   );
   return std::vector<uint8_t>(css.begin(), css.end());
 }

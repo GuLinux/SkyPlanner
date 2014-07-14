@@ -266,4 +266,6 @@ After you added a session, click it to add new objects.
 <message id="never_rises">never rises</message>
 <message id="astrosession_coordinates">Coordinates: latitude {1}, longitude {2}</message>
 
+<message id="objectnames_nearby_objects">Nearby Objects</message>
+<message id="objectnames_nearby_objects_caption">Objects near {1}</message>
 </messages>
