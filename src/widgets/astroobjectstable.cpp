@@ -334,6 +334,7 @@ void AstroObjectsTable::populate(const vector<AstroObject> &objects, const Teles
 
     auto add = [=] (const WString &text, bool condition, int newPage) {
       WAnchor *link = WW<WAnchor>("", text);
+      link->addStyleClass("link");
       if(condition)
         link->clicked().connect([=](WMouseEvent){ if(condition) activatePage(newPage); });
       paginationWidget->addWidget(WW<WContainerWidget>().addCss(condition ? "pagination-item" : "pagination-item disabled").addCss(newPage == page.current ? "active" : "").add(link));
