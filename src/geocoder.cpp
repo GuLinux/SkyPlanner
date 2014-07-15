@@ -49,7 +49,6 @@ GeoCoder::Place GeoCoder::reverse(const Coordinates::LatLng &latlng) const
   if(o.get("status").orIfNull("") != "OK")
     return {};
   
-  spLog("notice") << "got location: " << out.str();
   Json::Array results = o.get("results");
   Place place;
   for(Json::Object result: results) {
