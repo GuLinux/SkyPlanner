@@ -33,6 +33,7 @@
 #include "widgets/objectnameswidget.h"
 #include "utils/format.h"
 #include "widgets/objectdifficultywidget.h"
+#include "widgets/objectpopupmenu.h"
 
 using namespace Wt;
 using namespace WtCommons;
@@ -156,7 +157,8 @@ WWidget *AstroObjectsTable::AstroObject::names(Session &session, const Telescope
 {
   if(planet)
     return new WText{WString::tr(format("planet_%s") % planet->name) };
-  return WW<ObjectNamesWidget>(new ObjectNamesWidget{object, session, astroSession, telescope, timezone}).setInline(true).onClick(onClick);
+  auto popup = new ObjectPopupMenu{object, astroSession, telescope, timezone, session};
+  return WW<ObjectNamesWidget>(new ObjectNamesWidget{object, session, popup}).setInline(true).onClick(onClick);
 }
 
 WString AstroObjectsTable::AstroObject::typeDescription() const

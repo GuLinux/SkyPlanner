@@ -325,7 +325,7 @@ void ExportAstroSessionResource::handleRequest(const Wt::Http::Request &request,
   for(auto sessionObject: sessionObjects) {
     WTemplate rowTemplate;
     rowTemplate.setTemplateText(WString::tr("printable-session-row"), XHTMLUnsafeText);
-    rowTemplate.bindWidget("namesWidget", new ObjectNamesWidget{sessionObject->ngcObject(), d->session, d->astroSession, d->telescope, d->timezone, ObjectNamesWidget::Printable, d->namesLimit});
+    rowTemplate.bindWidget("namesWidget", new ObjectNamesWidget{sessionObject->ngcObject(), d->session, nullptr , ObjectNamesWidget::Printable, d->namesLimit});
     rowTemplate.bindString("ar", sessionObject->coordinates().rightAscension.printable(Angle::Hourly));
     rowTemplate.bindWidget("dec", new WText{WString::fromUTF8( sessionObject->coordinates().declination.printable(Angle::Degrees, Angle::HTML) ) } );
     rowTemplate.bindString("constellation", ConstellationFinder::getName(sessionObject->coordinates()).name);

@@ -16,18 +16,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#ifndef OBJECTPOPUPMENU_H
+#define OBJECTPOPUPMENU_H
 
-#ifndef OBJECTNAMESWIDGET_H
-#define OBJECTNAMESWIDGET_H
-
-#include <Wt/WContainerWidget>
 #include "utils/d_ptr.h"
-class NgcObject;
+#include <Wt/WPopupMenu>
 class Session;
-class ObjectNamesWidget : public Wt::WContainerWidget {
+class NgcObject;
+class AstroSession;
+class Telescope;
+class Timezone;
+
+class ObjectPopupMenu : public Wt::WPopupMenu
+{
 public:
-  enum RenderType {Normal, Printable};
-  ObjectNamesWidget(const Wt::Dbo::ptr<NgcObject> &object, Session &session, Wt::WPopupMenu *popup = nullptr, RenderType renderType = Normal, int limitNames = 0, Wt::WContainerWidget *parent = nullptr);
-  ~ObjectNamesWidget();
+  ObjectPopupMenu( const Wt::Dbo::ptr<NgcObject> &object,  const Wt::Dbo::ptr<AstroSession> &astroSession, const Wt::Dbo::ptr<Telescope> &telescope, const Timezone &timezone,  Session &session );
+  virtual ~ObjectPopupMenu();
+private:
+    D_PTR;
 };
+
 #endif
+

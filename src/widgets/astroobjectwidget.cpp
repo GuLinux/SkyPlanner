@@ -54,7 +54,7 @@ void AstroObjectWidget::Private::init()
   content->addStyleClass("container-fluid astroobjectwidget");
   WContainerWidget *row = WW<WContainerWidget>().css("row print-no-break");
   expanded = WW<WContainerWidget>();
-  auto names = [=] { return new ObjectNamesWidget(ngcObject, session, astroSession, telescope, timezone, ObjectNamesWidget::Printable); }; 
+  auto names = [=] { return new ObjectNamesWidget(ngcObject, session, nullptr, ObjectNamesWidget::Printable); }; 
   collapsed = WW<WTemplate>("<small class=\"text-center astroobject_title\"><b>${title-widget} ${expand}</b></small>").setHidden(true).bindWidget("title-widget", names() ).bindWidget("expand", WW<WPushButton>(WString::tr("buttons_expand")).css("btn-xs hidden-print pull-right").onClick([=](WMouseEvent){ q->setCollapsed(false); }));
   Dbo::Transaction t(session);
   expanded->addWidget(WW<WTemplate>("<h4 class=\"row print-no-break hidden-print astroobject_title text-center\">${title-widget}</h4>").bindWidget("title-widget", names()) );

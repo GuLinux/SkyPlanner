@@ -17,17 +17,23 @@
  *
  */
 
-#ifndef OBJECTNAMESWIDGET_H
-#define OBJECTNAMESWIDGET_H
+#ifndef OBJECTPOPUPMENU_P_H
+#define OBJECTPOPUPMENU_P_H
 
-#include <Wt/WContainerWidget>
-#include "utils/d_ptr.h"
-class NgcObject;
-class Session;
-class ObjectNamesWidget : public Wt::WContainerWidget {
+#include "widgets/objectpopupmenu.h"
+#include "models/Models"
+#include "session.h"
+
+class ObjectPopupMenu::Private
+{
 public:
-  enum RenderType {Normal, Printable};
-  ObjectNamesWidget(const Wt::Dbo::ptr<NgcObject> &object, Session &session, Wt::WPopupMenu *popup = nullptr, RenderType renderType = Normal, int limitNames = 0, Wt::WContainerWidget *parent = nullptr);
-  ~ObjectNamesWidget();
+  Private(ObjectPopupMenu *q);
+
+private:
+  ObjectPopupMenu *q;
 };
-#endif
+
+#endif // OBJECTPOPUPMENU_P_H
+
+
+ 
