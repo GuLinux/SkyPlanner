@@ -322,7 +322,7 @@ void DSSImage::Private::DialogControl::downloadControl(bool downloading)
     modalWidget->addStyleClass("modal-layer-dark");
   else
     modalWidget->removeStyleClass("modal-layer-dark");
-  for(auto s: vector<string>{"zoom", "move-factor", "up-button", "down-button", "left-button", "right-button", "restore-default"})
+  for(auto s: vector<string>{"zoom", "zoom-button", "move-factor", "up-button", "down-button", "left-button", "right-button", "restore-default"})
     static_cast<WFormWidget*>(content->resolveWidget(s))->setEnabled(!downloading);
 }
 
