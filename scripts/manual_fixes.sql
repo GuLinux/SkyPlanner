@@ -12,6 +12,7 @@ update catalogues set hidden = false, priority = -96, search_mode = 0 where code
 update catalogues set hidden = false, priority = -95, search_mode = 0 where code = 'A';
 update catalogues set hidden = false, priority = -94, search_mode = 0 where code = 'Arp';
 update catalogues set hidden = false, priority = -93, search_mode = 0 where code = 'UGC';
-insert into denominations (name, objects_id, catalogues_id) VALUES('UFO Galaxy', 2757, 2);
+insert into denominations (name, objects_id, catalogues_id) VALUES('UFO Galaxy', (select id from objects where object_id = 'NGC 2683'), 2);
+insert into denominations (name, objects_id, catalogues_id) VALUES('Cat''s Eye Nebula', (select id from objects where object_id = 'NGC 6543'), 2)
 
 END TRANSACTION;

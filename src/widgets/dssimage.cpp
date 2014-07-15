@@ -239,12 +239,12 @@ void DSSImage::Private::showImageController()
   dialog->setClosable(true);
   WTemplate *content = new WTemplate(R"(
     <div class="container-fluid">
-      <table class="col-xs-2">
+      <table class="col-xs-3">
         <tr><td /><td>${up-button}</td><td /></tr>
         <tr><td>${left-button}</td><td /><td>${right-button}</td></tr>
         <tr><td /><td>${down-button}</td><td /></tr>
       </table>
-      <div class="col-xs-8">
+      <div class="col-xs-7">
         ${tr:imagecontrol-zoom-label}<br />
 	  <div class="input-group">${zoom}<span class="input-group-btn">${zoom-button}</span></div>
         <br />
@@ -254,6 +254,8 @@ void DSSImage::Private::showImageController()
       </div>
     </div>
   )");
+  
+  dialog->setWidth(500);
 
   content->addFunction("tr", &WTemplate::Functions::tr);
 

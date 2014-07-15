@@ -189,7 +189,7 @@ std::vector<uint8_t> styleCss() {
       padding: 0px!important;
     }
     .btn-move-arrow {
-      min-width: 50px;
+      min-width: 45px;
     }
   );
   return std::vector<uint8_t>(css.begin(), css.end());
