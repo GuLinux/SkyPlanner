@@ -113,8 +113,8 @@ Signal< NoClass > &AstroSessionTab::close() const
   return d->close;
 }
 
-
-AstroSessionObjectPtr AstroSessionTab::add(const NgcObjectPtr &ngcObject, const AstroSessionPtr &astroSession, Session &session, WTableRow *row)
+template<typename ObjectWidget>
+AstroSessionObjectPtr AstroSessionTab::add(const NgcObjectPtr &ngcObject, const AstroSessionPtr &astroSession, Session &session, ObjectWidget *objectWidget)
 {
   Dbo::Transaction t(session);
   int existing = session.query<int>("select count(*) from astro_session_object where astro_session_id = ? AND objects_id = ? ").bind(astroSession.id() ).bind(ngcObject.id() );
@@ -125,11 +125,15 @@ AstroSessionObjectPtr AstroSessionTab::add(const NgcObjectPtr &ngcObject, const 
   astroSession.modify()->astroSessionObjects().insert(new AstroSessionObject(ngcObject));
   auto astroSessionObject = session.find<AstroSessionObject>().where("astro_session_id = ?").bind(astroSession.id()).where("objects_id = ?").bind(ngcObject.id()).resultValue();
   t.commit();
-  row->addStyleClass("success");
+  if(objectWidget)
+    objectWidget->addStyleClass("success");
 
   return astroSessionObject;
 }
 
+template AstroSessionObjectPtr AstroSessionTab::add(const NgcObjectPtr &ngcObject, const AstroSessionPtr &astroSession, Session &session, WTableRow *objectWidget);
+template AstroSessionObjectPtr AstroSessionTab::add(const NgcObjectPtr &ngcObject, const AstroSessionPtr &astroSession, Session &session, WWidget *objectWidget);
+template AstroSessionObjectPtr AstroSessionTab::add(const NgcObjectPtr &ngcObject, const AstroSessionPtr &astroSession, Session &session, WMenuItem *objectWidget);
 
 void AstroSessionTab::Private::reload()
 {
@@ -370,6 +374,7 @@ void AstroSessionTab::Private::reload()
     actions.push_back(toggleObserved);
 }
   sessionContainer->addWidget(astroObjectsTable = new AstroObjectsTable(session, actions ));
+  astroObjectsTable->objectsListChanged().connect([=](const AstroSessionObjectPtr &o, _n5) { populate(o); });
   astroObjectsTable->filtersChanged().connect([=](AstroObjectsTable::Filters, _n5){ populate(); });
   WContainerWidget *telescopeComboContainer;
   WComboBox *telescopeCombo = new WComboBox;

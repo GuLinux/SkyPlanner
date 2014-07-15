@@ -50,6 +50,7 @@ class AstroObjectsTable::Private
     Wt::WContainerWidget *tableContainer;
     Wt::WStandardItemModel *minimumAltitudeModel;
     Wt::WComboBox *minimumAltitude;
+    Wt::Signal<AstroSessionObjectPtr> objectsListChanged;
   private:
     class AstroObjectsTable *const q; 
 };

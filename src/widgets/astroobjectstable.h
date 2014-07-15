@@ -26,6 +26,7 @@
 #include <functional>
 
 class Session;
+class ObjectPopupMenu;
 
 class AstroObjectsTable : public Wt::WCompositeWidget
 {
@@ -38,7 +39,7 @@ public:
     boost::optional<Ephemeris::Planet> planet;
 
     // Display widgets
-    Wt::WWidget *names(Session &session, const TelescopePtr &telescope, const Timezone &timezone, std::function<void(Wt::WMouseEvent)> onClick = [](Wt::WMouseEvent){} ) const;
+    Wt::WWidget *names(Session &session, ObjectPopupMenu *popupMenu, std::function<void(Wt::WMouseEvent)> onClick = [](Wt::WMouseEvent){} ) const;
     Wt::WString typeDescription() const;
     Angle ar() const;
     Angle dec() const;
@@ -100,6 +101,7 @@ public:
   Wt::WContainerWidget *tableFooter() const;
   void setTableAttribute(const std::string &attributeName, const std::string &attributeValue);
   void setResponsive(bool responsive);
+  Wt::Signal<Wt::Dbo::ptr<AstroSessionObject>> &objectsListChanged() const;
 private:
   D_PTR;
 };

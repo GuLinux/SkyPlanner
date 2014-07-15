@@ -26,12 +26,14 @@ class NgcObject;
 class AstroSession;
 class Telescope;
 class Timezone;
+class AstroSessionObject;
 
 class ObjectPopupMenu : public Wt::WPopupMenu
 {
 public:
   ObjectPopupMenu( const Wt::Dbo::ptr<NgcObject> &object,  const Wt::Dbo::ptr<AstroSession> &astroSession, const Wt::Dbo::ptr<Telescope> &telescope, const Timezone &timezone,  Session &session );
   virtual ~ObjectPopupMenu();
+  Wt::Signal<Wt::Dbo::ptr<AstroSessionObject>> &objectsListChanged() const;
 private:
     D_PTR;
 };

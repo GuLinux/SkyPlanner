@@ -153,12 +153,12 @@ void AstroObjectsTable::Private::header()
 }
 
 
-WWidget *AstroObjectsTable::AstroObject::names(Session &session, const TelescopePtr &telescope, const Timezone &timezone, function<void(WMouseEvent)> onClick) const
+WWidget *AstroObjectsTable::AstroObject::names(Session &session, ObjectPopupMenu *popupMenu, function<void(WMouseEvent)> onClick) const
 {
   if(planet)
     return new WText{WString::tr(format("planet_%s") % planet->name) };
-  auto popup = new ObjectPopupMenu{object, astroSession, telescope, timezone, session};
-  return WW<ObjectNamesWidget>(new ObjectNamesWidget{object, session, popup}).setInline(true).onClick(onClick);
+  
+  return WW<ObjectNamesWidget>(new ObjectNamesWidget{object, session, popupMenu}).setInline(true).onClick(onClick);
 }
 
 WString AstroObjectsTable::AstroObject::typeDescription() const
@@ -283,14 +283,18 @@ void AstroObjectsTable::populate(const vector<AstroObject> &objects, const Teles
         return nullptr;
       return WW<WTableCell>(row->elementAt(hasColumn - begin(d->columns))).add(createWidget() ).get();
     };
-    addColumn(Names, [=] { return astroObject.names(d->session, telescope, timezone, [=](WMouseEvent){
-      if(d->selectedRow)
-        d->selectedRow->removeStyleClass("info");
-      if(objectAddedRow)
-        objectAddedRow->removeStyleClass(selection.css);
-      row->addStyleClass("info");
-      d->selectedRow = row;
-    }); });
+    addColumn(Names, [=] {
+      auto popup = new ObjectPopupMenu{astroObject.object, astroObject.astroSession, telescope, timezone, d->session};
+      popup->objectsListChanged().connect([=](const AstroSessionObjectPtr &o, _n5) { d->objectsListChanged.emit(o); } );
+      return astroObject.names(d->session, popup, [=](WMouseEvent){
+	if(d->selectedRow)
+	  d->selectedRow->removeStyleClass("info");
+	if(objectAddedRow)
+	  objectAddedRow->removeStyleClass(selection.css);
+	row->addStyleClass("info");
+	d->selectedRow = row;
+      });
+    });
     addColumn(Type, [=] { return new WText{astroObject.typeDescription() }; });
     addColumn(AR, [=] { return new WText{ Utils::htmlEncode( astroObject.ar().printable(Angle::Hourly)) }; });
     addColumn(DEC, [=] { return new WText{ Utils::htmlEncode( WString::fromUTF8( astroObject.dec().printable() )) }; });
@@ -378,4 +382,9 @@ long AstroObjectsTable::Page::offset() const
 WContainerWidget *AstroObjectsTable::tableFooter() const
 {
   return d->tableFooter;
+}
+
+Signal<AstroSessionObjectPtr> &AstroObjectsTable::objectsListChanged() const
+{
+  return d->objectsListChanged;
 }

@@ -36,6 +36,7 @@
 #include "utils/autopostresource.h"
 #include "skyplanner.h"
 #include "sendfeedbackpage.hpp"
+#include "astrosessiontab.h"
 
 using namespace std;
 using namespace Wt;
@@ -71,10 +72,13 @@ ObjectPopupMenu::ObjectPopupMenu(const NgcObjectPtr &object,  const AstroSession
 	Dbo::Transaction t( session );
 	WDialog *dialog = new WDialog{ WString::tr("objectnames_nearby_objects_caption").arg( WString::fromUTF8(NgcObject::namesByCatalogueImportance(t, object)[0]) ) };
 	dialog->setClosable(true); 
-//	dialog->setResizable(true); 
-	WMenu *namesList = WW<WMenu>().css("col-xs-3");
+	dialog->setWidth(1100);
+	dialog->setResizable(true); 
+	WMenu *namesList = WW<WMenu>();
+	WContainerWidget *namesListContainer = WW<WContainerWidget>().css("col-xs-3").add(namesList);
 	WContainerWidget *preview = WW<WContainerWidget>().css("col-xs-9");
-	dialog->contents()->addWidget(WW<WContainerWidget>().css("container").add(namesList).add(preview));
+	dialog->contents()->addStyleClass("nearby-object-modal-body");
+	dialog->contents()->addWidget(WW<WContainerWidget>().css("container-fluid nearby-object-container").add(namesListContainer).add(preview));
 	string query = R"( select o, 
 	  ST_Distance(coordinates_geom, (select coordinates_geom FROM objects where id = ? ) ) dist
 	  from objects o where o.id <> ? order by dist asc )";
@@ -84,17 +88,21 @@ ObjectPopupMenu::ObjectPopupMenu(const NgcObjectPtr &object,  const AstroSession
 	  names.resize(min(names.size(), size_t{3}));
 	  auto item = namesList->addItem(boost::algorithm::join(names, ", "));
 	  item->addStyleClass("nearby-object-names");
-	  item->triggered().connect([=,&session](WMenuItem*, _n5){
+	  item->clicked().connect([=,&session](WMouseEvent){
 	    preview->clear();
-	    vector<WPushButton*> actions{ WW<WPushButton>(WString::tr("buttons_close")).css("btn-sm").onClick([=](WMouseEvent){ preview->clear(); }).get() };
+	    vector<WPushButton*> actions{ WW<WPushButton>(WString::tr("buttons_close")).css("btn-xs").onClick([=](WMouseEvent){ preview->clear(); }).get() };
 	    
 	    Dbo::Transaction t( session );
 	    if(astroSession && astroSession->astroSessionObjects().find().where("objects_id = ?").bind(o.get<0>().id()).resultList().size() == 0 ) {
-	      auto addToSessionAction = [=,&session](WMouseEvent){
-		Dbo::Transaction t( session );
-		wApp->log("notice") << "Adding object to session...";
-	      };
-	      actions.insert(actions.begin(), WW<WPushButton>(WString::tr("buttons_add")).css("btn-sm btn-success").onClick(addToSessionAction));
+	      WPushButton *addToSessionButton = WW<WPushButton>(WString::tr("buttons_add")).css("btn-xs btn-success");
+	      addToSessionButton->clicked().connect([=,&session](WMouseEvent){
+		auto astroSessionObject = AstroSessionTab::add(o.get<0>(), astroSession, session, item);
+		if(astroSessionObject) {
+		  d->objectsListChanged.emit(astroSessionObject);
+		  delete addToSessionButton;
+		}
+	      });
+	      actions.insert(actions.begin(), addToSessionButton);
 	    }
 	    preview->addWidget(new AstroObjectWidget{o.get<0>(), astroSession, session, timezone, telescope, {}, actions});
 	  });
@@ -183,4 +191,10 @@ ObjectPopupMenu::ObjectPopupMenu(const NgcObjectPtr &object,  const AstroSession
       addSectionHeader( WString::tr( "objectnames_feedback_title" ) )->addStyleClass("dropdown-header");
       addLink(WString::tr( "objectnames_feedback_menu" ), WLink(WLink::InternalPath, SendFeedbackPage::internalPath(object, &t)) );
     }
+}
+
+
+Signal<AstroSessionObjectPtr> &ObjectPopupMenu::objectsListChanged() const
+{
+  return d->objectsListChanged;
 }

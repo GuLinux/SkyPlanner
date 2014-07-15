@@ -182,8 +182,11 @@ std::vector<uint8_t> styleCss() {
       opacity: .70;
       filter: alpha(opacity=70);
     }
-    .nearby-object-names a {
+    .nearby-object-names a, .nearby-object-modal-body {
       padding: 3px!important;
+    }
+    .nearby-object-container {
+      padding: 0px!important;
     }
   );
   return std::vector<uint8_t>(css.begin(), css.end());

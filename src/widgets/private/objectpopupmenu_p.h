@@ -28,6 +28,7 @@ class ObjectPopupMenu::Private
 {
 public:
   Private(ObjectPopupMenu *q);
+  Wt::Signal<AstroSessionObjectPtr> objectsListChanged;
 
 private:
   ObjectPopupMenu *q;
