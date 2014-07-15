@@ -24,7 +24,7 @@ std::vector<uint8_t> styleCss() {
       color: #616161;
     }
     .dialog-popup-submenu {
-      z-index: 999!important;
+      z-index: 99999!important;
     }
 
     .navbar-toggle-fix {
