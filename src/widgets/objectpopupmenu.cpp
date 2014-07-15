@@ -114,7 +114,7 @@ ObjectPopupMenu::ObjectPopupMenu(const NgcObjectPtr &object,  const AstroSession
 	};
 	auto pagination = WW<WMenu>(Horizontal).css("pagination pagination-sm").get();
 	int pagesize = 15;
-	for(int i=0; i<10; i++) {
+	for(int i=0; i<7; i++) {
 	  auto item = pagination->addItem(format("%d") % (i+1) );
 	  if(i == 0) pagination->select(item);
 	  item->triggered().connect([=] (WMenuItem*, _n5) {
