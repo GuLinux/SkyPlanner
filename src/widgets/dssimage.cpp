@@ -68,8 +68,7 @@ DSSImage::~DSSImage()
 
 void DSSImage::Private::save(const boost::system::error_code &errorCode, const Http::Message &httpMessage)
 {
-  if(dialogControl)
-    dialogControl->downloadFinished();
+  shared_ptr<DialogControl::Finish> finishDialogControl(new DialogControl::Finish{dialogControl});
   if(errorCode != boost::system::errc::success) {
     WServer::instance()->log(aborted ? "notice" : "error") << "Download failed for " << imageLink() << ": " << errorCode.message(); 
     if(!aborted) failed.emit();
@@ -96,7 +95,7 @@ void DSSImage::Private::save(const boost::system::error_code &errorCode, const H
     return;
   
   WServer::instance()->log("notice") << " download successfully finished, calling setImageFromCache";
-  setImageFromCache();
+  setImageFromCache(finishDialogControl);
 
 
   wApp->triggerUpdate();
@@ -177,8 +176,9 @@ string DSSImage::Private::imageLink() const
   % objectRect % objectRect;
 }
 
-void DSSImage::Private::setImageFromCache()
+void DSSImage::Private::setImageFromCache(shared_ptr<DialogControl::Finish> finishDialogControl)
 {
+  (void) finishDialogControl;
   content->clear();
   string deployPath;
   _imageLink = linkFor(file());
@@ -238,7 +238,7 @@ void DSSImage::Private::showImageController()
   dialog->setModal(false);
   dialog->setClosable(true);
   WTemplate *content = new WTemplate(R"(
-    <div class="row">
+    <div class="container-fluid">
       <table class="col-xs-2">
         <tr><td /><td>${up-button}</td><td /></tr>
         <tr><td>${left-button}</td><td /><td>${right-button}</td></tr>
@@ -246,7 +246,8 @@ void DSSImage::Private::showImageController()
       </table>
       <div class="col-xs-8">
         ${tr:imagecontrol-zoom-label}<br />
-        ${zoom}<br />
+	  <div class="input-group">${zoom}<span class="input-group-btn">${zoom-button}</span></div>
+        <br />
         ${tr:imagecontrol-move-factor-label}<br />
         ${move-factor}<br />
         ${restore-default}<br />
@@ -263,6 +264,8 @@ void DSSImage::Private::showImageController()
   moveFactor->setRange(0, 100);
   
   auto moveBy = [=](int ar, int dec) {
+    if(dialogControl)
+      dialogControl->downloading();
     double ratio = static_cast<double>(moveFactor->value()) / 100.;
     double arcMinMove = imageOptions.size.arcMinutes() * ratio;
     imageOptions.coordinates.rightAscension += Angle::arcMinutes(static_cast<double>(ar) * arcMinMove);
@@ -272,19 +275,21 @@ void DSSImage::Private::showImageController()
   };
   zoomLevel->setValue(imageOptions.size.arcMinutes());
   moveFactor->setValue(10);
-  zoomLevel->valueChanged().connect([=](double v, _n5) {
-    imageOptions.size = Angle::arcMinutes( v ); 
+  content->bindWidget("zoom-button", WW<WPushButton>(WString::tr("buttons_set")).onClick([=](WMouseEvent){
+    dialogControl->downloading();
+    imageOptions.size = Angle::arcMinutes( zoomLevel->value() ); 
     spLog("notice") << "reloading with zoom level: " << imageOptions.size.arcMinutes() << " arcminutes";
     imageOptions.onViewPortChanged(imageOptions.coordinates, imageOptions.size);
     reload();
-  });
+  }));
   content->bindWidget("move-factor", moveFactor);
   content->bindWidget("zoom", zoomLevel);
-  content->bindWidget("up-button", WW<WPushButton>("DEC+").css("btn-sm btn-block").onClick([=](WMouseEvent) { moveBy(0, 1 ); }) );
-  content->bindWidget("down-button", WW<WPushButton>("DEC-").css("btn-sm btn-block").onClick([=](WMouseEvent) { moveBy(0, -1. ) ; }) );
-  content->bindWidget("left-button", WW<WPushButton>("AR-").css("btn-sm btn-block").onClick([=](WMouseEvent) { moveBy(-1. , 0); }) );
-  content->bindWidget("right-button", WW<WPushButton>("AR+").css("btn-sm btn-block").onClick([=](WMouseEvent) { moveBy(1 , 0); }) );
+  content->bindWidget("up-button", WW<WPushButton>("DEC+").css("btn-sm btn-block btn-move-arrow").onClick([=](WMouseEvent) { moveBy(0, 1 ); }) );
+  content->bindWidget("down-button", WW<WPushButton>("DEC-").css("btn-sm btn-block btn-move-arrow").onClick([=](WMouseEvent) { moveBy(0, -1. ) ; }) );
+  content->bindWidget("left-button", WW<WPushButton>("AR-").css("btn-sm btn-block btn-move-arrow").onClick([=](WMouseEvent) { moveBy(-1. , 0); }) );
+  content->bindWidget("right-button", WW<WPushButton>("AR+").css("btn-sm btn-block btn-move-arrow").onClick([=](WMouseEvent) { moveBy(1 , 0); }) );
   content->bindWidget("restore-default", WW<WPushButton>(WString::tr("restore_default_viewport")).css("btn-sm btn-block").onClick([=](WMouseEvent) {
+    dialogControl->downloading();
     imageOptions.coordinates = imageOptions.originalCoordinates.coordinates;
     imageOptions.size = imageOptions.originalCoordinates.size;
     imageOptions.onViewPortChanged(imageOptions.coordinates, imageOptions.size);
@@ -303,6 +308,11 @@ DSSImage::Private::DialogControl::DialogControl(WDialog *dialog, WTemplate *cont
   wApp->root()->addWidget(modalWidget.get());
 }
 
+DSSImage::Private::DialogControl::~DialogControl()
+{
+  downloadControl(false);
+}
+
 void DSSImage::Private::DialogControl::downloadControl(bool downloading)
 {
   dialog->setClosable(!downloading);
@@ -318,8 +328,6 @@ void DSSImage::Private::DialogControl::downloadControl(bool downloading)
 
 void DSSImage::Private::wtDownload()
 {
-  if(dialogControl)
-    dialogControl->downloading();
   httpClient.abort();
   httpClient.get(imageLink()); 
 }
@@ -346,6 +354,7 @@ void DSSImage::Private::curlDownload()
     fs::path downloadFile = fullFile();
 
     downloadThread = boost::thread([=] () mutable {
+      shared_ptr<DialogControl::Finish> finishDialogControl(new DialogControl::Finish{dialogControl});
       unique_ptr<unique_lock<mutex>> scheduledDownloadLock;
       if(downloadMutex) {
         scheduledDownloadLock.reset(new unique_lock<mutex>(*downloadMutex));
@@ -378,8 +387,9 @@ void DSSImage::Private::curlDownload()
                 return;
             }
             try {
+	      
               boost::filesystem::rename(downloadFile.string() + "_tmp", downloadFile.string());
-              setImageFromCache();
+              setImageFromCache(finishDialogControl);
             } catch(std::exception &e) {
               WServer::instance()->log("error") << "Error moving temp download file " << downloadFile.string() + "_tmp to " << downloadFile.string() << ": " << e.what();
             }
@@ -427,7 +437,8 @@ void DSSImage::Private::reload()
   container->addWidget(content);
 
   if(fs::exists(fullFile() )) {
-    setImageFromCache();
+    shared_ptr<DialogControl::Finish> finishDialogControl(new DialogControl::Finish{dialogControl});
+    setImageFromCache(finishDialogControl);
   }
   else {
     download();

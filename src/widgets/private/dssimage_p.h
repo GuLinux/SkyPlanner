@@ -40,9 +40,17 @@ class DSSImage::Private
     class DialogControl {
     public:
       DialogControl(Wt::WDialog *dialog, Wt::WTemplate *content);
+      virtual ~DialogControl();
       void downloading() { downloadControl(true); }
-      void downloadFinished() { downloadControl(false); }
+      class Finish {
+      public:
+	Finish(const std::shared_ptr<DialogControl> &dialogControl) : dialogControl(dialogControl) { }
+	~Finish() { if(dialogControl) dialogControl->downloadControl(false); }
+      private:
+	std::shared_ptr<DialogControl> dialogControl;
+      };
     private:
+      friend class Finish;
       void downloadControl(bool downloading);
       Wt::WTemplate *content;
       Wt::WDialog *dialog;
@@ -59,7 +67,7 @@ class DSSImage::Private
     void curlDownload();
     void wtDownload();
     void save(const boost::system::error_code &errorCode, const Wt::Http::Message &httpMessage);
-    void setImageFromCache();
+    void setImageFromCache(std::shared_ptr<DialogControl::Finish> finishDialogControl);
     Wt::WContainerWidget *content;
     int retry = 0;
 

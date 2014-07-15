@@ -32,6 +32,7 @@
 <message id="buttons_show_dss">Show image</message>
 <message id="buttons_extended_info">Extended Information</message>
 <message id="buttons_actions">Actions</message>
+<message id="buttons_set">set</message>
 
 <message id="astrosessionspage_sessions_list">Sessions List</message>
 <message id="astrosessionslisttab_name">Name</message>

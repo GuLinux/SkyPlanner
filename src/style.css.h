@@ -188,6 +188,9 @@ std::vector<uint8_t> styleCss() {
     .nearby-object-container {
       padding: 0px!important;
     }
+    .btn-move-arrow {
+      min-width: 50px;
+    }
   );
   return std::vector<uint8_t>(css.begin(), css.end());
 }
