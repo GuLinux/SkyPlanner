@@ -81,14 +81,13 @@ ObjectPopupMenu::ObjectPopupMenu(const NgcObjectPtr &object,  const AstroSession
 	dialog->contents()->addWidget(WW<WContainerWidget>().css("container-fluid nearby-object-container").add(namesListContainer).add(preview));
 	auto populateNearbyObjects = [=,&session] (int pageSize, int pageNumber) {
 	  Dbo::Transaction t( session );
-	  string query = R"( select o, 
-	    ST_Distance(coordinates_geom, (select coordinates_geom FROM objects where id = ? ) ) dist
-	    from objects o where o.id <> ? order by dist asc )";
+	  string query = R"( select o from objects o where o.id <> ?
+	  order by ST_Distance(coordinates_geom, (select coordinates_geom FROM objects where id = ? ) ) asc )";
 	  for(auto item: namesList->items()) delete item;
           preview->clear();
-	  auto objectsDbo = session.query<boost::tuple<NgcObjectPtr, double>>(query).bind(object.id()).bind(object.id()).limit(pageSize).offset(pageSize*pageNumber).resultList();
-	  for(auto o: objectsDbo) {
-	    auto names = NgcObject::namesByCatalogueImportance(t, o.get<0>());
+	  auto objectsDbo = session.query<NgcObjectPtr>(query).bind(object.id()).bind(object.id()).limit(pageSize).offset(pageSize*pageNumber).resultList();
+	  for(auto objectDbo: objectsDbo) {
+	    auto names = NgcObject::namesByCatalogueImportance(t, objectDbo);
 	    names.resize(min(names.size(), size_t{3}));
 	    auto item = namesList->addItem(boost::algorithm::join(names, ", "));
 	    item->addStyleClass("nearby-object-names");
@@ -97,10 +96,10 @@ ObjectPopupMenu::ObjectPopupMenu(const NgcObjectPtr &object,  const AstroSession
 	      vector<WPushButton*> actions{ WW<WPushButton>(WString::tr("buttons_close")).css("btn-xs").onClick([=](WMouseEvent){ preview->clear(); }).get() };
 	      
 	      Dbo::Transaction t( session );
-	      if(astroSession && astroSession->astroSessionObjects().find().where("objects_id = ?").bind(o.get<0>().id()).resultList().size() == 0 ) {
+	      if(astroSession && astroSession->astroSessionObjects().find().where("objects_id = ?").bind(objectDbo.id()).resultList().size() == 0 ) {
 		WPushButton *addToSessionButton = WW<WPushButton>(WString::tr("buttons_add")).css("btn-xs btn-success");
 		addToSessionButton->clicked().connect([=,&session](WMouseEvent){
-		  auto astroSessionObject = AstroSessionTab::add(o.get<0>(), astroSession, session, item);
+		  auto astroSessionObject = AstroSessionTab::add(objectDbo, astroSession, session, item);
 		  if(astroSessionObject) {
 		    d->objectsListChanged.emit(astroSessionObject);
 		    delete addToSessionButton;
@@ -108,7 +107,7 @@ ObjectPopupMenu::ObjectPopupMenu(const NgcObjectPtr &object,  const AstroSession
 		});
 		actions.insert(actions.begin(), addToSessionButton);
 	      }
-	      preview->addWidget(new AstroObjectWidget{o.get<0>(), astroSession, session, timezone, telescope, {}, actions});
+	      preview->addWidget(new AstroObjectWidget{objectDbo, astroSession, session, timezone, telescope, {}, actions});
 	    });
 	  }
 	};
