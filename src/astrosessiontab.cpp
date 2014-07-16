@@ -737,6 +737,7 @@ void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject
   transform(begin(sessionObjectsDbCollection), end(sessionObjectsDbCollection), back_inserter(astroObjects), [&ephemeris](const dbo::ptr<AstroSessionObject> &o){
     return AstroObjectsTable::AstroObject{o->astroSession(), o->ngcObject(), o->bestAltitude(ephemeris)};
   });
+  // TODO: replace sort with order_by on db
   sort(begin(astroObjects), end(astroObjects), [&](const AstroObjectsTable::AstroObject &a, const AstroObjectsTable::AstroObject &b){
     return a.bestAltitude.when < b.bestAltitude.when;
   });
