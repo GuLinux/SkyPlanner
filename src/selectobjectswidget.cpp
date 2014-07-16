@@ -307,10 +307,12 @@ void SelectObjectsWidget::Private::searchByCatalogueTab(Dbo::Transaction& transa
     dbo::collection<NgcObjectPtr> objects = query;
     Ephemeris ephemeris(astroSession->position(), timezone);
     auto twilight = ephemeris.astronomicalTwilight(astroSession->date());
-    for(auto object: objects) {
-      auto bestAltitude = ephemeris.findBestAltitude(object->coordinates(), twilight.set, twilight.rise);
-      resultsTable->populate({{astroSession, object, bestAltitude, styleFor(object, t)}}, selectedTelescope, timezone );
-    }
+    vector<AstroObjectsTable::AstroObject> astroObjects;
+    transform(begin(objects), end(objects), back_inserter(astroObjects), [=, &t, &ephemeris](const NgcObjectPtr &o) {
+      auto bestAltitude = ephemeris.findBestAltitude(o->coordinates(), twilight.set, twilight.rise);
+      return AstroObjectsTable::AstroObject{astroSession, o, bestAltitude, styleFor(o, t) };
+    });
+    resultsTable->populate(astroObjects, selectedTelescope, timezone);
   };
   catalogueNumber->changed().connect([=](...){ searchByCatalogueNumber(); });
   addObjectByCatalogue->addWidget(WW<WContainerWidget>().css("form-inline").add(cataloguesCombo).add(catalogueNumber)

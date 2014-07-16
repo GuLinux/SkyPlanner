@@ -15,4 +15,29 @@ update catalogues set hidden = false, priority = -93, search_mode = 0 where code
 insert into denominations (name, objects_id, catalogues_id) VALUES('UFO Galaxy', (select id from objects where object_id = 'NGC 2683'), 2);
 insert into denominations (name, objects_id, catalogues_id) VALUES('Cat''s Eye Nebula', (select id from objects where object_id = 'NGC 6543'), 2)
 
+update denominations set objects_id = (select id from objects where object_id = 'NGC 770'), comment = comment || ', Arp 78B' WHERE other_catalogues = 'NGC 0770'
+update denominations set objects_id = (select id from objects where object_id = 'NGC 772'), comment = comment || ', Arp 78A' WHERE other_catalogues = 'NGC 0772'
+
+update denominations set objects_id = (select id from objects where object_id = replace(denominations.other_catalogues, ' 0', ' ') ) where denominations.id in (
+  select denominations.id from denominations inner join objects on objects.object_id = replace(denominations.other_catalogues, ' 0', ' ') where other_catalogues like '%C 0%'
+)
+
+-- remove multiple spaces
+update denominations set name = regexp_replace(name, '\s{2,}', ' ') where name like '%  %'
+
+
+-- duplicates UGC-ARP
+update denominations den set objects_id = (select objects_id from denominations where name = replace(den.other_catalogues, ' 0', ' '))
+  where den.id in (
+select d.id
+  from denominations d left join objects on objects.id = (select objects_id from denominations where name = replace(d.other_catalogues, ' 0', ' '))
+  where d.other_catalogues like 'UGC 0%' AND NOT d.other_catalogues like '%;%' AND objects.id <> d.objects_id
+  )
+  
+
+-- Cleanup orphan objects
+delete from astro_session_object where objects_id in (select objects.id from objects left join denominations ON objects.id = denominations.objects_id where denominations.id is null);
+delete from objects where id in (select objects.id from objects left join denominations ON objects.id = denominations.objects_id where denominations.id is null)
+
+
 END TRANSACTION;
