@@ -718,11 +718,33 @@ void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject
   Dbo::Transaction t(session);
   Ephemeris ephemeris({astroSession->position().latitude, astroSession->position().longitude}, timezone);
   AstroSessionObject::generateEphemeris(ephemeris, astroSession, timezone, t);
-  
  
-  auto query = DboHelper::filterQuery<AstroSessionObjectPtr>(t, "select a from astro_session_object a inner join objects o on a.objects_id = o.id", filters)
+  AstroObjectsTable::Page page;
+  const string orderByClause{"transit_time ASC, ra asc, dec asc, constellation_abbrev asc"};
+  if(pageNumber >=0 ) {
+    long objectsCount = DboHelper::filterQuery<long>(t, "select count(*) from astro_session_object a inner join objects o on a.objects_id = o.id", filters).resultValue();
+    page = AstroObjectsTable::Page::fromCount(pageNumber, objectsCount, [=] (long pageNumber) { populate({}, pageNumber); });
+    if(addedObject) {
+      typedef boost::tuple<long,long> ObjectRowNumber;
+      auto objectsRowNumberIds = DboHelper::filterQuery<ObjectRowNumber>(t, format("SELECT a.id, ROW_NUMBER() OVER(ORDER BY %s)\
+	  FROM astro_session_object a inner join objects o on a.objects_id = o.id") % orderByClause, filters)
+	.where("astro_session_id = ?").bind(astroSession.id())
+	.resultList();
+      auto objectRowNumber = find_if(begin(objectsRowNumberIds), end(objectsRowNumberIds), [&addedObject](const ObjectRowNumber &o) { return o.get<0>() == addedObject.id(); } );
+      if(objectRowNumber != objectsRowNumberIds.end()) {
+	long addedObjectPage = (objectRowNumber->get<1>() -1)/ page.pageSize;
+	if(addedObjectPage != page.current) {
+	  WTimer::singleShot(500, [=](WMouseEvent) {
+	    populate(addedObject, addedObjectPage);
+	  });
+	  return;
+	}
+      }
+    }
+  }
+  auto query = DboHelper::filterQuery<AstroSessionObjectPtr>(t, "select a from astro_session_object a inner join objects o on a.objects_id = o.id", filters, page)
     .where("astro_session_id = ?").bind(astroSession.id())
-    .orderBy("transit_time ASC, ra asc, dec asc, constellation_abbrev asc");
+    .orderBy(orderByClause);
   
   auto sessionObjectsDbCollection = query.resultList();
   
@@ -733,37 +755,16 @@ void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject
   
   objectsCounter->setText(format("%d") % astroObjects.size());
 
-  AstroObjectsTable::Page page;
-  vector<AstroObjectsTable::AstroObject> pagedAstroObjects;
-  if(pageNumber >=0 ) {
-    page = AstroObjectsTable::Page::fromCount(pageNumber, astroObjects.size(), [=] (long pageNumber) { populate({}, pageNumber); });
-    if(addedObject) {
-      auto addedObjectPosition = find_if(begin(astroObjects), end(astroObjects), [=](const AstroObjectsTable::AstroObject &o) {
-        return o.astroSession == addedObject->astroSession() && o.object == addedObject->ngcObject();
-      });
-      auto position = addedObjectPosition - astroObjects.begin();
-      long addedObjectPage = position / page.pageSize;
-      if(addedObjectPage != page.current) {
-        WTimer::singleShot(500, [=](WMouseEvent) {
-          populate(addedObject, addedObjectPage);
-        });
-        return;
-      }
-    }
-    copy_n(astroObjects.begin() + (page.offset()), min(page.pageSize, astroObjects.size() - (page.offset())), back_inserter(pagedAstroObjects));
-  }
-
-
-  astroObjectsTable->populate(page ? pagedAstroObjects : astroObjects, selectedTelescope, timezone, page,
+  astroObjectsTable->populate(astroObjects, selectedTelescope, timezone, page,
     addedObject ? AstroObjectsTable::Selection{addedObject->ngcObject(), "success", [=](const AstroObjectsTable::Row &r) {
       SkyPlanner::instance()->notification(WString::tr("notification_success_title"), WString::tr("notification_object_added").arg(r.tableRow->id()), SkyPlanner::Notification::Information, 5);
     }} : AstroObjectsTable::Selection{} );
   if(page.total > 1) {
     if(page)
       astroObjectsTable->tableFooter()->addWidget(WW<WPushButton>(WString::tr("astrosessiontab_list_no_pagination")).addCss("btn-link").onClick([=](WMouseEvent){ populate({}, -1); }));
-    else
-      astroObjectsTable->tableFooter()->addWidget(WW<WPushButton>(WString::tr("astrosessiontab_list_pagination")).addCss("btn-link").onClick([=](WMouseEvent){ populate({}); }));
   }
+  if(pageNumber == -1 && astroObjects.size() > page.pageSize)
+    astroObjectsTable->tableFooter()->addWidget(WW<WPushButton>(WString::tr("astrosessiontab_list_pagination")).addCss("btn-link").onClick([=](WMouseEvent){ populate({}); }));
 }
 
 
