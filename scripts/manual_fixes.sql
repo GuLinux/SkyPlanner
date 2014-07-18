@@ -22,6 +22,16 @@ update denominations set objects_id = (select id from objects where object_id = 
   select denominations.id from denominations inner join objects on objects.object_id = replace(denominations.other_catalogues, ' 0', ' ') where other_catalogues like '%C 0%'
 )
 
+
+update denominations set objects_id = ( select objects_id from denominations where name = 'NGC 3184' ) WHERE name = 'MCG+07-21-037';
+insert into denominations 
+       (number, name      , objects_id                                                    , other_catalogues, comment                 , catalogues_id) 
+VALUES (3180  , 'NGC 3180', (select objects_id from denominations where name = 'NGC 3184'), 'NGC 3184'      , 'HII region of NGC 3184', (select id from catalogues WHERE name = 'NGC') )
+
+insert into denominations 
+       (number, name      , objects_id                                                    , other_catalogues, comment                 , catalogues_id) 
+VALUES (3181  , 'NGC 3181', (select objects_id from denominations where name = 'NGC 3184'), 'NGC 3184'      , 'HII region of NGC 3184', (select id from catalogues WHERE name = 'NGC') )
+
 -- remove multiple spaces
 update denominations set name = regexp_replace(name, '\s{2,}', ' ') where name like '%  %'
 

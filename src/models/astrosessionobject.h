@@ -43,11 +43,14 @@ public:
   void persist(Action& a) {
     dbo::field(a, _description, "description");
     dbo::field(a, _observed, "observed");
+    dbo::field(a, _transitTime, "transit_time");
+    dbo::field(a, _altitude, "altitude");
+    dbo::field(a, _azimuth, "azimuth");
     dbo::belongsTo(a, _astroSession);
     dbo::belongsTo(a, _ngcObject);
   }
   Coordinates::Equatorial coordinates() const;
-  Ephemeris::BestAltitude bestAltitude(const Ephemeris &ephemeris) const;
+  Ephemeris::BestAltitude bestAltitude(const Ephemeris &ephemeris, const Timezone &timezone) const;
   static Ephemeris::BestAltitude bestAltitude(const dbo::ptr<AstroSession> &astroSession, const dbo::ptr<NgcObject> &ngcObject, const Ephemeris &ephemeris);
   /** It's a simil-percentage evaluation:
     if we have a valid telescope here, and this object magnitude doesn't exceed its magnitude
@@ -56,11 +59,15 @@ public:
     If we don't have a telescope, we simply return -1.
   **/
   int32_t difficulty(const dbo::ptr<Telescope> &telescope) const;
+  static void cleanEphemeris(const dbo::ptr<AstroSession> &astroSession, dbo::Transaction &transaction);
+  static void generateEphemeris(const Ephemeris &ephemeris, const dbo::ptr<AstroSession> &astroSession, const Timezone &timezone, dbo::Transaction &transaction);
 private:
   dbo::ptr<AstroSession> _astroSession;
   dbo::ptr<NgcObject> _ngcObject;
   std::string _description;
   bool _observed = false;
+  boost::optional<double> _altitude, _azimuth;
+  boost::optional<boost::posix_time::ptime> _transitTime;
 };
 
 typedef dbo::ptr<AstroSessionObject> AstroSessionObjectPtr;

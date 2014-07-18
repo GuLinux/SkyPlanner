@@ -19,7 +19,10 @@
 
 #include "Models"
 #include <utils/utils.h>
+#include <Wt/Dbo/Transaction>
+#include <Wt/Dbo/Session>
 
+using namespace Wt;
 using namespace std;
 
 AstroSessionObject::AstroSessionObject()
@@ -52,10 +55,35 @@ Ephemeris::BestAltitude AstroSessionObject::bestAltitude(const AstroSessionPtr &
 {
   auto twilight = ephemeris.astronomicalTwilight(astroSession->date());
   return ephemeris.findBestAltitude( ngcObject->coordinates(), twilight.set, twilight.rise);
-} 
+}
 
-Ephemeris::BestAltitude AstroSessionObject::bestAltitude(const Ephemeris &ephemeris) const
+void AstroSessionObject::generateEphemeris(const Ephemeris &ephemeris, const AstroSessionPtr &astroSession, const Timezone &timezone, Dbo::Transaction &transaction)
 {
+  auto objects = transaction.session().find<AstroSessionObject>().where("astro_session_id = ? AND (transit_time is null OR altitude is null OR azimuth is null)").bind(astroSession.id()).resultList();
+  for(auto object: objects) {
+    auto bestAltitude = object->bestAltitude(ephemeris, timezone);
+    object.modify()->_transitTime.reset(bestAltitude.when.utc);
+    object.modify()->_altitude.reset(bestAltitude.coordinates.altitude.degrees());
+    object.modify()->_azimuth.reset(bestAltitude.coordinates.azimuth.degrees());
+  }
+}
+
+void AstroSessionObject::cleanEphemeris(const AstroSessionPtr &astroSession, Dbo::Transaction &transaction)
+{
+  // TODO: consistency hash: CAST("when" as TEXT) || '-LAT' || CAST(latitude as TEXT) || '-LNG'|| CAST(longitude as TEXT)
+  auto objects = transaction.session().find<AstroSessionObject>().where("astro_session_id = ?").bind(astroSession.id()).resultList();
+  for(auto object: objects) {
+    object.modify()->_transitTime.reset();
+    object.modify()->_altitude.reset();
+    object.modify()->_azimuth.reset();
+  }
+}
+
+
+Ephemeris::BestAltitude AstroSessionObject::bestAltitude(const Ephemeris &ephemeris, const Timezone &timezone) const
+{
+  if(_transitTime && _altitude && _azimuth)
+    return { {Angle::degrees(*_altitude), Angle::degrees(*_azimuth)},  DateTime::fromUTC(*_transitTime, timezone)};
   return bestAltitude(_astroSession, _ngcObject, ephemeris);
 }
 

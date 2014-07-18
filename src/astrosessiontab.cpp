@@ -173,6 +173,7 @@ void AstroSessionTab::Private::reload()
       Dbo::Transaction t(session);
       astroSession.modify()->setName(sessionName->text().toUTF8());
       astroSession.modify()->setDateTime(WDateTime{sessionDate->date()});
+      AstroSessionObject::cleanEphemeris(astroSession, t);
       changeNameOrDateDialog->accept();
       nameChanged.emit(astroSession->name());
       reload();
@@ -224,23 +225,22 @@ void AstroSessionTab::Private::reload()
     shared_ptr<mutex> downloadImagesMutex(new mutex);
     Dbo::Transaction t(session);
 
-    // TODO: filter this section too?
-    auto query = session.query<AstroSessionObjectPtr>("select a from astro_session_object a inner join objects on a.objects_id = objects.id")
-        .where("astro_session_id = ?").bind(astroSession.id());
-
-    auto sessionObjectsDbCollection = query.resultList();
     typedef pair<dbo::ptr<AstroSessionObject>, Ephemeris::BestAltitude> AstroSessionObjectElement;
     vector<AstroSessionObjectElement> sessionObjects;
+    // TODO: filter this section too?
     {
       Ephemeris ephemeris({astroSession->position().latitude, astroSession->position().longitude}, timezone);
+      AstroSessionObject::generateEphemeris(ephemeris, astroSession, timezone, t);
+      auto query = session.query<AstroSessionObjectPtr>("select a from astro_session_object a inner join objects on a.objects_id = objects.id")
+        .where("astro_session_id = ?").bind(astroSession.id());
+      query.orderBy("transit_time ASC, ra asc, dec asc, constellation_abbrev asc");
 
-      transform(begin(sessionObjectsDbCollection), end(sessionObjectsDbCollection), back_inserter(sessionObjects), [&ephemeris](const dbo::ptr<AstroSessionObject> &o){
-        return AstroSessionObjectElement{o, o->bestAltitude(ephemeris)};
+
+      auto sessionObjectsDbCollection = query.resultList();
+      transform(begin(sessionObjectsDbCollection), end(sessionObjectsDbCollection), back_inserter(sessionObjects), [=,&ephemeris,&t](const dbo::ptr<AstroSessionObject> &o){
+        return AstroSessionObjectElement{o, o->bestAltitude(ephemeris, timezone)};
       });
     }
-    sort(begin(sessionObjects), end(sessionObjects), [&](const AstroSessionObjectElement &a, const AstroSessionObjectElement &b){
-      return a.second.when < b.second.when;
-    });
     shared_ptr<set<AstroObjectWidget*>> astroObjectWidgets(new set<AstroObjectWidget*>());
     AstroObjectWidget *astroObjectWidget = nullptr;
     for(auto objectelement: sessionObjects) {
@@ -326,6 +326,8 @@ void AstroSessionTab::Private::reload()
 
   SelectObjectsWidget *addObjectsTabWidget = new SelectObjectsWidget(astroSession, session);
   placeWidget->placeChanged().connect([=](double lat, double lng, _n4) {
+    Dbo::Transaction t(session);
+    AstroSessionObject::cleanEphemeris(astroSession, t);
     updateTimezone();
     if(placeWidgetInstructions)
       placeWidgetInstructions->close();
@@ -714,6 +716,7 @@ void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject
     return;
   Dbo::Transaction t(session);
   Ephemeris ephemeris({astroSession->position().latitude, astroSession->position().longitude}, timezone);
+  AstroSessionObject::generateEphemeris(ephemeris, astroSession, timezone, t);
   
   auto query = session.query<AstroSessionObjectPtr>(format("select a from astro_session_object a inner join objects on a.objects_id = objects.id %s")
          % ( filters.catalogue? "inner join denominations on objects.id = denominations.objects_id" : "")
@@ -732,16 +735,16 @@ void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject
   if(filters.constellation)
     query.where("objects.constellation_abbrev = ?").bind(filters.constellation.abbrev);
 
+  if(filters.minimumAltitude.degrees() > 0)
+    query.where("altitude > ?").bind(filters.minimumAltitude.degrees() );
+  query.orderBy("transit_time ASC, ra asc, dec asc, constellation_abbrev asc");
+  
   auto sessionObjectsDbCollection = query.resultList();
+  
   vector<AstroObjectsTable::AstroObject> astroObjects;
-  transform(begin(sessionObjectsDbCollection), end(sessionObjectsDbCollection), back_inserter(astroObjects), [&ephemeris](const dbo::ptr<AstroSessionObject> &o){
-    return AstroObjectsTable::AstroObject{o->astroSession(), o->ngcObject(), o->bestAltitude(ephemeris)};
+  transform(begin(sessionObjectsDbCollection), end(sessionObjectsDbCollection), back_inserter(astroObjects), [=,&ephemeris, &t](const dbo::ptr<AstroSessionObject> &o){
+    return AstroObjectsTable::AstroObject{o->astroSession(), o->ngcObject(), o->bestAltitude(ephemeris, timezone)};
   });
-  // TODO: replace sort with order_by on db
-  sort(begin(astroObjects), end(astroObjects), [&](const AstroObjectsTable::AstroObject &a, const AstroObjectsTable::AstroObject &b){
-    return a.bestAltitude.when < b.bestAltitude.when;
-  });
-  astroObjects.erase(remove_if(begin(astroObjects), end(astroObjects), [&filters](const AstroObjectsTable::AstroObject &a){ return a.bestAltitude.coordinates.altitude < filters.minimumAltitude; }), end(astroObjects) );
   
   objectsCounter->setText(format("%d") % astroObjects.size());
 
