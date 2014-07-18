@@ -1,0 +1,2 @@
+#!/bin/bash
+echo 'delete from ephemeris_cache where transit_time < now();' | "$( dirname "$( readlink -f "$0")" )/psqlconsole" $@
