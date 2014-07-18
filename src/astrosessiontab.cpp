@@ -78,6 +78,7 @@
 #include "widgets/astroobjectwidget.h"
 #include "widgets/astroobjectstable.h"
 #include "geocoder.h"
+#include "dbohelper.h"
 
 using namespace Wt;
 using namespace WtCommons;
@@ -718,26 +719,10 @@ void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject
   Ephemeris ephemeris({astroSession->position().latitude, astroSession->position().longitude}, timezone);
   AstroSessionObject::generateEphemeris(ephemeris, astroSession, timezone, t);
   
-  auto query = session.query<AstroSessionObjectPtr>(format("select a from astro_session_object a inner join objects on a.objects_id = objects.id %s")
-         % ( filters.catalogue? "inner join denominations on objects.id = denominations.objects_id" : "")
-
-       )
-      .where("astro_session_id = ?").bind(astroSession.id())
-      .where("objects.magnitude > ?").bind(filters.minimumMagnitude);
-
-  if( filters.catalogue )
-    query.where("denominations.catalogues_id = ?").bind(filters.catalogue.id());
-  vector<string> filterByTypeConditionPlaceholders{filters.types.size(), "?"};
-  query.where(format("\"type\" IN (%s)") % boost::algorithm::join(filterByTypeConditionPlaceholders, ", "));
-  for(auto filter: filters.types)
-    query.bind(filter);
-
-  if(filters.constellation)
-    query.where("objects.constellation_abbrev = ?").bind(filters.constellation.abbrev);
-
-  if(filters.minimumAltitude.degrees() > 0)
-    query.where("altitude > ?").bind(filters.minimumAltitude.degrees() );
-  query.orderBy("transit_time ASC, ra asc, dec asc, constellation_abbrev asc");
+ 
+  auto query = DboHelper::filterQuery<AstroSessionObjectPtr>(t, "select a from astro_session_object a inner join objects o on a.objects_id = o.id", filters)
+    .where("astro_session_id = ?").bind(astroSession.id())
+    .orderBy("transit_time ASC, ra asc, dec asc, constellation_abbrev asc");
   
   auto sessionObjectsDbCollection = query.resultList();
   

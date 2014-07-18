@@ -28,7 +28,7 @@ public:
     std::string abbrev;
     std::string name;
     std::string genitive;
-    operator bool() { return !abbrev.empty() && !name.empty(); }
+    operator bool() const { return !abbrev.empty() && !name.empty(); }
     bool operator==(const Constellation &o) { return o.abbrev == abbrev; }
     bool operator!=(const Constellation &o) { return o.abbrev != abbrev; }
   };

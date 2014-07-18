@@ -55,6 +55,7 @@
 #include "widgets/astroobjectwidget.h"
 #include <Wt/WImage>
 #include "astrosessiontab.h"
+#include "dbohelper.h"
 
 using namespace Wt;
 using namespace WtCommons;
@@ -109,38 +110,22 @@ void SelectObjectsWidget::Private::suggestedObjects(Dbo::Transaction& transactio
   suggestedObjectsContainer->addWidget(suggestedObjectsTable);
 }
 
-template<typename T> Dbo::Query<T> SelectObjectsWidget::Private::filterQuery(const std::string &queryString)
-{
-  CataloguePtr catalogue = suggestedObjectsTable->currentFilters().catalogue;
-  Dbo::Query<T> query = session.query<T>( catalogue ? queryString + ", denominations d" : queryString);
-  vector<string> filterConditions{suggestedObjectsTable->currentFilters().types.size(), "?"};
-  query.where("o.id = ephemeris_cache.objects_id")
-    .where("astro_session_id = ?").bind(astroSession.id())
-    .where("magnitude >= ?").bind(suggestedObjectsTable->currentFilters().minimumMagnitude)
-    .where("ephemeris_cache.altitude >= ?").bind(suggestedObjectsTable->currentFilters().minimumAltitude.degrees());
-  if(catalogue) {
-    query.where("o.id = d.objects_id")
-         .where("d.catalogues_id = ?").bind(catalogue.id());
-  }
-  query.where(format("\"type\" IN (%s)") % boost::algorithm::join(filterConditions, ", ") );
-  for(auto filter: suggestedObjectsTable->currentFilters().types)
-    query.bind(filter);
-  if(suggestedObjectsTable->currentFilters().constellation)
-    query.where("constellation_abbrev = ?").bind(suggestedObjectsTable->currentFilters().constellation.abbrev);
-  return query;
-}
-
-
+  // .where("o.id = ephemeris_cache.objects_id")
+  // .where("astro_session_id = ?").bind(astroSession.id())
 
 void SelectObjectsWidget::Private::populateSuggestedObjectsTable( int pageNumber )
 {
     suggestedObjectsTable->clear();
-    if( suggestedObjectsTable->currentFilters().types.size() == 0) {
+    auto filters = suggestedObjectsTable->currentFilters();
+    if( filters.types.size() == 0) {
       suggestedObjectsTable->tableFooter()->addWidget(WW<WText>(WString::tr("suggested_objects_empty_list")));
       return;
     }
     Dbo::Transaction t(session);
-    long objectsCount = filterQuery<long>("select count(*) from objects o, ephemeris_cache").resultValue();
+    long objectsCount = DboHelper::filterQuery<long>(t, "select count(*) from objects o, ephemeris_cache", filters)
+      .where("o.id = ephemeris_cache.objects_id")
+      .where("astro_session_id = ?").bind(astroSession.id())
+      .resultValue();
     spLog("notice") << "objects count: " << objectsCount;
     if(objectsCount<=0) {
       suggestedObjectsTable->tableFooter()->addWidget(WW<WText>(WString::tr("suggested_objects_empty_list")));
@@ -148,7 +133,9 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsTable( int pageNumber
     }
   
     auto page = AstroObjectsTable::Page::fromCount(pageNumber, objectsCount, [=](long n) { populateSuggestedObjectsTable(n); } );
-    auto ngcObjectsQuery = filterQuery<NgcObjectPtr>("select o from objects o, ephemeris_cache").orderBy("magnitude asc").limit(page.pageSize).offset(page.pageSize * pageNumber);
+    auto ngcObjectsQuery = DboHelper::filterQuery<NgcObjectPtr>(t, "select o from objects o, ephemeris_cache", filters, page).orderBy("magnitude asc")
+      .where("o.id = ephemeris_cache.objects_id")
+      .where("astro_session_id = ?").bind(astroSession.id());
     suggestedObjectsTable->clear();
     auto results = ngcObjectsQuery.resultList();
     vector<AstroObjectsTable::AstroObject> astroObjects;

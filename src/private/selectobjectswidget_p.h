@@ -49,7 +49,6 @@ public:
     Timezone timezone;
     std::string lastSearch;
     Wt::WTableRow *selectedRow = 0;
-    template<typename T> Wt::Dbo::Query<T> filterQuery(const std::string &query);
     void addToSession(const Wt::Dbo::ptr<NgcObject> &object, Wt::WTableRow *row);
     AstroObjectsTable::Action addToSessionAction;
     void searchByName(const std::string &name, AstroObjectsTable *table, int page = 0);
