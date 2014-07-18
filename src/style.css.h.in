@@ -1,0 +1,13 @@
+ #ifndef STYLE_CSS_H
+#define STYLE_CSS_H
+#include <stdint.h>
+#include <string>
+#include <vector>
+
+std::vector<uint8_t> styleCss() {
+  std::string css = R"(
+    @STYLE_CSS_CONTENT@
+  )";
+  return std::vector<uint8_t>(css.begin(), css.end());
+}
+#endif

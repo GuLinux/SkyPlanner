@@ -33,7 +33,9 @@ set(SkyPlanner_SRCS
 include(models/source_files.cmake)
 
 
-
+EXEC_PROGRAM(cat ARGS ${CMAKE_SOURCE_DIR}/resources/style.css OUTPUT_VARIABLE STYLE_CSS_CONTENT)
+configure_file(style.css.h.in style.css.h @ONLY)
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 add_executable(SkyPlanner ${SkyPlanner_SRCS} ${SkyPlanner_MODELS_SRCS} ${AAPLUS_SRCS} ${Widgets_SRCS} )
 target_link_libraries(SkyPlanner ${Wt_LIBRARIES} ${Boost_LIBRARIES} ${HARU_LIBRARY} ${WIN32_LIBS} curl ${GRAPHICSMAGICK_LDFLAGS} nova)

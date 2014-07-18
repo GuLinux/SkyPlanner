@@ -42,6 +42,7 @@ public:
   Wt::WTabWidget *tabWidget;
   AstroSessionsListTab *astroSessionsListTab;
   void removeTab(const Wt::Dbo::ptr<AstroSession> &astroSession);
+  std::map<std::string,std::string> sessionsNamesCache;
 private:
   class AstroSessionsPage* const q;
 };

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <messages>
 <message id="application_title">SkyPlanner</message>
+<message id="session-application_title">{1} - SkyPlanner</message>
 <message id="mainmenu_login">Login</message>
 <message id="mainmenu_home">Home</message>
 <message id="mainmenu_my_sessions">My Sessions</message>

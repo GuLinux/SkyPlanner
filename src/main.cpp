@@ -26,7 +26,9 @@ int main(int argc, char **argv) {
         WServer server(argv[0]);
         server.setServerConfiguration(argc, argv, WTHTTP_CONFIGURATION);
         server.addResource(new NgcResource, "/ngc");
-	server.addResource(new WMemoryResource("text/css", styleCss()), "/skyplanner_style.css");
+	string noop;
+	if(! server.readConfigurationProperty("style-css-path", noop))
+	  server.addResource(new WMemoryResource("text/css", styleCss()), "/skyplanner_style.css");
         server.addEntryPoint(Wt::Application, createAstroPlanner);
         Session::configureAuth();
         if (server.start()) {

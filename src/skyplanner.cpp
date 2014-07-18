@@ -168,7 +168,9 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
 
   navBar->setResponsive( true );
   navBar->setTitle( WString::tr("application_title"), WLink(WLink::InternalPath, HOME_PATH) );
-  useStyleSheet( "/skyplanner_style.css" );
+  string styleCssPath = "/skyplanner_style.css";
+  readConfigurationProperty("style-css-path", styleCssPath);
+  useStyleSheet( styleCssPath );
   root()->addWidget(d->notifications = WW<WContainerWidget>().addCss("skyplanner-notifications"));
   d->widgets = WW<WStackedWidget>( root() ).addCss("contents");
   d->widgets->setTransitionAnimation({WAnimation::AnimationEffect::Fade});
@@ -272,6 +274,8 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
   if(d->session.login().loggedIn())
     loginLogoutMessage();
   auto handlePath = [=](const string &newPath){
+    spLog("notice") << " new path: " << newPath;
+    setTitle(WString::tr("application_title"));
     if(!d->agentIsBot)
       spLog("notice") << "newPath=" << newPath;
     if(internalPathMatches("/dss")) {
