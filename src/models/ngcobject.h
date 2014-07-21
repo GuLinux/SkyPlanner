@@ -97,6 +97,7 @@ public:
         dbo::field(a, _angularSize, "angular_size");
         dbo::field(a, _type, "type");
         dbo::field(a, _constellationAbbrev, "constellation_abbrev");
+        dbo::field(a, _extraData, "extra_data");
         dbo::hasMany(a, _nebulae, dbo::ManyToOne);
         dbo::hasMany(a, _astroSessionObjects, dbo::ManyToOne);
     }
@@ -119,6 +120,7 @@ private:
     dbo::collection<NebulaDenominationPtr> _astroSessionObjects;
     dbo::dbo_traits<NgcObject>::IdType _id;
     boost::optional<std::string> _constellationAbbrev;
+    boost::optional<std::string> _extraData;
 };
 
 
