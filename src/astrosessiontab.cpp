@@ -79,6 +79,7 @@
 #include "widgets/astroobjectstable.h"
 #include "geocoder.h"
 #include "dbohelper.h"
+#include "utils/utils.h"
 
 using namespace Wt;
 using namespace WtCommons;
@@ -725,20 +726,16 @@ void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject
   if(pageNumber >=0 ) {
     page = AstroObjectsTable::Page::fromCount(pageNumber, objectsCount, [=] (long pageNumber) { populate({}, pageNumber); });
     if(addedObject) {
-      typedef boost::tuple<long,long> ObjectRowNumber;
-      auto objectsRowNumberIds = DboHelper::filterQuery<ObjectRowNumber>(t, format("SELECT a.id, ROW_NUMBER() OVER(ORDER BY %s)\
-	  FROM astro_session_object a inner join objects o on a.objects_id = o.id") % orderByClause, filters)
-	.where("astro_session_id = ?").bind(astroSession.id())
-	.resultList();
-      auto objectRowNumber = find_if(begin(objectsRowNumberIds), end(objectsRowNumberIds), [&addedObject](const ObjectRowNumber &o) { return o.get<0>() == addedObject.id(); } );
-      if(objectRowNumber != objectsRowNumberIds.end()) {
-	long addedObjectPage = (objectRowNumber->get<1>() -1)/ page.pageSize;
-	if(addedObjectPage != page.current) {
-	  WTimer::singleShot(500, [=](WMouseEvent) {
-	    populate(addedObject, addedObjectPage);
-	  });
-	  return;
-	}
+      typedef Wt::Dbo::dbo_default_traits::IdType ObjectsId;
+      vector<ObjectsId> objectsIds; ::Utils::copy(DboHelper::filterQuery<ObjectsId>(t, "SELECT a.id FROM astro_session_object a inner join objects o on a.objects_id = o.id", filters)
+                                                  .where("astro_session_id = ?").bind(astroSession.id()).orderBy(orderByClause).resultList(), back_inserter(objectsIds) );
+      auto objectRowNumber = std::find(begin(objectsIds), end(objectsIds), addedObject.id() );
+      long addedObjectPage = objectRowNumber != objectsIds.end() ? std::distance(begin(objectsIds), objectRowNumber) / page.pageSize : page.current;
+      if(addedObjectPage != page.current) {
+        WTimer::singleShot(500, [=](WMouseEvent) {
+          populate(addedObject, addedObjectPage);
+        });
+        return;
       }
     }
   }

@@ -23,7 +23,7 @@
 #include <functional>
 #include <ios>
 #include <sstream>
-
+#include <algorithm>
 class Utils
 {
 public:
@@ -39,6 +39,8 @@ public:
   static std::string sanitizeForURL(const std::string &in, const std::string &replacement = "-");
   static std::string csv(const std::string &value, char separator=',');
   static std::string mcg_name_fix(const std::string &src);
+  template<typename T, typename E> static void copy(const T &source, E outputIterator) { std::copy(std::begin(source), std::end(source), outputIterator); }
+  template<typename T, typename E, typename F> static void copy_if(const T &source, E outputIterator, F condition) { std::copy_if(std::begin(source), std::end(source), outputIterator, condition); }
 };
 
 class Scope {
