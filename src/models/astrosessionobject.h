@@ -46,6 +46,7 @@ public:
     dbo::field(a, _transitTime, "transit_time");
     dbo::field(a, _altitude, "altitude");
     dbo::field(a, _azimuth, "azimuth");
+    dbo::field(a, _ephemeris_context_key, "ephemeris_context_key");
     dbo::belongsTo(a, _astroSession);
     dbo::belongsTo(a, _ngcObject);
   }
@@ -59,7 +60,6 @@ public:
     If we don't have a telescope, we simply return -1.
   **/
   int32_t difficulty(const dbo::ptr<Telescope> &telescope) const;
-  static void cleanEphemeris(const dbo::ptr<AstroSession> &astroSession, dbo::Transaction &transaction);
   static void generateEphemeris(const Ephemeris &ephemeris, const dbo::ptr<AstroSession> &astroSession, const Timezone &timezone, dbo::Transaction &transaction);
 private:
   dbo::ptr<AstroSession> _astroSession;
@@ -68,6 +68,7 @@ private:
   bool _observed = false;
   boost::optional<double> _altitude, _azimuth;
   boost::optional<boost::posix_time::ptime> _transitTime;
+  boost::optional<std::string> _ephemeris_context_key;
 };
 
 typedef dbo::ptr<AstroSessionObject> AstroSessionObjectPtr;

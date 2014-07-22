@@ -175,7 +175,6 @@ void AstroSessionTab::Private::reload()
       Dbo::Transaction t(session);
       astroSession.modify()->setName(sessionName->text().toUTF8());
       astroSession.modify()->setDateTime(WDateTime{sessionDate->date()});
-      AstroSessionObject::cleanEphemeris(astroSession, t);
       changeNameOrDateDialog->accept();
       nameChanged.emit(astroSession->name());
       reload();
@@ -329,11 +328,11 @@ void AstroSessionTab::Private::reload()
   SelectObjectsWidget *addObjectsTabWidget = new SelectObjectsWidget(astroSession, session);
   placeWidget->placeChanged().connect([=](double lat, double lng, _n4) {
     Dbo::Transaction t(session);
-    AstroSessionObject::cleanEphemeris(astroSession, t);
     updateTimezone();
     if(placeWidgetInstructions)
       placeWidgetInstructions->close();
     SkyPlanner::instance()->notification(WString::tr("notification_success_title"), WString::tr("placewidget_place_set_notification"), SkyPlanner::Notification::Success, 5);
+    populate();
     addObjectsTabWidget->populateFor(selectedTelescope, timezone);
     updatePositionDetails(positionDetails);
     populatePlanets(planetsTable);

@@ -21,6 +21,7 @@
 #include <utils/utils.h>
 #include <Wt/Dbo/Transaction>
 #include <Wt/Dbo/Session>
+#include <Wt/WServer>
 
 using namespace Wt;
 using namespace std;
@@ -59,26 +60,22 @@ Ephemeris::BestAltitude AstroSessionObject::bestAltitude(const AstroSessionPtr &
 
 void AstroSessionObject::generateEphemeris(const Ephemeris &ephemeris, const AstroSessionPtr &astroSession, const Timezone &timezone, Dbo::Transaction &transaction)
 {
-  auto objects = transaction.session().find<AstroSessionObject>().where("astro_session_id = ? AND (transit_time is null OR altitude is null OR azimuth is null)").bind(astroSession.id()).resultList();
+  string cacheKey = transaction.session().query<string>(R"(SELECT CAST("when" as TEXT) || '-LAT' || CAST(latitude as TEXT) || '-LNG'|| CAST(longitude as TEXT) FROM astro_session WHERE id = ?)")
+      .bind(astroSession.id());
+  WServer::instance()->log("notice") << __PRETTY_FUNCTION__ << ": got astrosession location/date key: " << cacheKey;
+  auto objects = transaction.session().find<AstroSessionObject>().where("astro_session_id = ? AND ( \
+    ephemeris_context_key IS NULL OR ephemeris_context_key <>  ? OR transit_time is null OR altitude is null OR azimuth is null) ").bind(astroSession.id()).bind(cacheKey).resultList();
+
+  WServer::instance()->log("notice") << __PRETTY_FUNCTION__ << ": objects count: " << objects.size();
+
   for(auto object: objects) {
     auto bestAltitude = object->bestAltitude(ephemeris, timezone);
     object.modify()->_transitTime.reset(bestAltitude.when.utc);
     object.modify()->_altitude.reset(bestAltitude.coordinates.altitude.degrees());
     object.modify()->_azimuth.reset(bestAltitude.coordinates.azimuth.degrees());
+    object.modify()->_ephemeris_context_key.reset(cacheKey);
   }
 }
-
-void AstroSessionObject::cleanEphemeris(const AstroSessionPtr &astroSession, Dbo::Transaction &transaction)
-{
-  // TODO: consistency hash: CAST("when" as TEXT) || '-LAT' || CAST(latitude as TEXT) || '-LNG'|| CAST(longitude as TEXT)
-  auto objects = transaction.session().find<AstroSessionObject>().where("astro_session_id = ?").bind(astroSession.id()).resultList();
-  for(auto object: objects) {
-    object.modify()->_transitTime.reset();
-    object.modify()->_altitude.reset();
-    object.modify()->_azimuth.reset();
-  }
-}
-
 
 Ephemeris::BestAltitude AstroSessionObject::bestAltitude(const Ephemeris &ephemeris, const Timezone &timezone) const
 {
