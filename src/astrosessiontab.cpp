@@ -721,8 +721,8 @@ void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject
  
   AstroObjectsTable::Page page;
   const string orderByClause{"transit_time ASC, ra asc, dec asc, constellation_abbrev asc"};
+  long objectsCount = DboHelper::filterQuery<long>(t, "select count(*) from astro_session_object a inner join objects o on a.objects_id = o.id", filters).resultValue();
   if(pageNumber >=0 ) {
-    long objectsCount = DboHelper::filterQuery<long>(t, "select count(*) from astro_session_object a inner join objects o on a.objects_id = o.id", filters).resultValue();
     page = AstroObjectsTable::Page::fromCount(pageNumber, objectsCount, [=] (long pageNumber) { populate({}, pageNumber); });
     if(addedObject) {
       typedef boost::tuple<long,long> ObjectRowNumber;
@@ -753,7 +753,7 @@ void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject
     return AstroObjectsTable::AstroObject{o->astroSession(), o->ngcObject(), o->bestAltitude(ephemeris, timezone)};
   });
   
-  objectsCounter->setText(format("%d") % astroObjects.size());
+  objectsCounter->setText(format("%d") % objectsCount);
 
   astroObjectsTable->populate(astroObjects, selectedTelescope, timezone, page,
     addedObject ? AstroObjectsTable::Selection{addedObject->ngcObject(), "success", [=](const AstroObjectsTable::Row &r) {
