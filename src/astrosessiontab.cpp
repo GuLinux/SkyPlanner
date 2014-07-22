@@ -721,7 +721,8 @@ void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject
  
   AstroObjectsTable::Page page;
   const string orderByClause{"transit_time ASC, ra asc, dec asc, constellation_abbrev asc"};
-  long objectsCount = DboHelper::filterQuery<long>(t, "select count(*) from astro_session_object a inner join objects o on a.objects_id = o.id", filters).resultValue();
+  long objectsCount = DboHelper::filterQuery<long>(t, "select count(*) from astro_session_object a inner join objects o on a.objects_id = o.id", filters)
+      .where("astro_session_id = ?").bind(astroSession.id()).resultValue();
   if(pageNumber >=0 ) {
     page = AstroObjectsTable::Page::fromCount(pageNumber, objectsCount, [=] (long pageNumber) { populate({}, pageNumber); });
     if(addedObject) {
