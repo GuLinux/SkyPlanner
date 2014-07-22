@@ -98,31 +98,20 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
 
   string googleAnalytics_ua, googleAnalytics_domain;
   if(readConfigurationProperty("google-analytics-ua", googleAnalytics_ua) && readConfigurationProperty("google-analytics-domain", googleAnalytics_domain)) {
-
-    string analyticsCode = format(R"(
-//<script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-  ga('create', '%s', '%s');
-  ga('require', 'linkid', 'linkid.js');
-  ga('require', 'displayfeatures');
-  ga('send', 'pageview');
-
-//</script>
-  )") % googleAnalytics_ua % googleAnalytics_domain;
     vector<uint8_t> data;
-    copy(begin(analyticsCode), end(analyticsCode), back_inserter(data));
+    ::Utils::copy((format(R"(
+       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+       (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+       m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+       })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+       ga('create', '%s', '%s');
+       ga('require', 'linkid', 'linkid.js');
+       ga('require', 'displayfeatures');
+       ga('send', 'pageview');
+       )") % googleAnalytics_ua % googleAnalytics_domain).str(), back_inserter(data));
     WMemoryResource *analyticsScriptResource = new WMemoryResource("application/javascript", data, this);
     require(analyticsScriptResource->url(), "googleAnalytics");
-
-/*
-    WTemplate *googleAnalyticsSCript = new WTemplate;
-    googleAnalyticsSCript->setTemplateText(analyticsCode, XHTMLUnsafeText);
-    root()->addWidget(googleAnalyticsSCript);
-*/
   }
 
   string stringsDirectory = (boost::filesystem::current_path() / "strings").string();
