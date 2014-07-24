@@ -52,6 +52,7 @@ int main(int argc, char **argv)
                                                                     comment,
                                                                     boost::optional<string>{}
                                                                   ));
+        object.modify()->nebulae().insert(denomination);
         denominations[row["Barn"].value] = denomination;
       }
     }
