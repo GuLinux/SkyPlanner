@@ -48,7 +48,7 @@ int main(int argc, char **argv)
         NebulaDenominationPtr denomination = vizier.session().add(new NebulaDenomination(
                                                                     catalogue,
                                                                     {row["Barn"].value},
-                                                                    string{"Barnard "} + row["Barn"].value,
+                                                                    string{"B "} + row["Barn"].value,
                                                                     comment,
                                                                     boost::optional<string>{}
                                                                   ));
