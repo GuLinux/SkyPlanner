@@ -122,8 +122,7 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsTable( int pageNumber
       return;
     }
     Dbo::Transaction t(session);
-    long objectsCount = DboHelper::filterQuery<long>(t, "select count(*) from objects o, ephemeris_cache", filters)
-      .where("o.id = ephemeris_cache.objects_id")
+    long objectsCount = DboHelper::filterQuery<long>(t, "select count(*) from objects o INNER JOIN ephemeris_cache on o.id = ephemeris_cache.objects_id", filters)
       .where("astro_session_id = ?").bind(astroSession.id())
       .resultValue();
     spLog("notice") << "objects count: " << objectsCount;
