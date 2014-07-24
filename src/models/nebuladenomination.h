@@ -30,11 +30,14 @@ namespace dbo = Wt::Dbo;
 class NebulaDenomination
 {
 public:
+  NebulaDenomination() = default;
+  NebulaDenomination(const dbo::ptr<Catalogue> &catalogue, boost::optional<std::string> number, std::string name, boost::optional<std::string> comment, boost::optional<std::string> otherCatalogues);
   dbo::ptr<Catalogue> catalogue() const;
   boost::optional<std::string> number() const;
   std::string name() const;
   boost::optional<std::string> comment() const;
   dbo::ptr<NgcObject> ngcObject() const;
+  void setComment(const std::string &comment);
   template<class Action>
   void persist(Action& a) {
     dbo::field(a, _number, "number");

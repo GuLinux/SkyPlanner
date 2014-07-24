@@ -42,7 +42,12 @@ namespace Wt
 class Session : public Wt::Dbo::Session
 {
 public:
+  enum Provider {
+    Sqlite3,
+    Postgres,
+  };
     Session();
+    Session(const std::string &connection, Provider provider);
     ~Session();
     Wt::Auth::AbstractUserDatabase& users();
     Wt::Auth::Login& login();

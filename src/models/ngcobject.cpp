@@ -24,6 +24,15 @@
 
 using namespace std;
 
+NgcObject::NgcObject(Angle rightAscension, Angle declination, float magnitude, Angle angularSize, NebulaType nebulaType,
+          const boost::optional<string> &objectId,
+          const boost::optional<string> &constellationAbbrev,
+          const boost::optional<string> &extraData)
+  : _rightAscension(rightAscension.radians() ), _declination(declination.radians() ), _magnitude(magnitude), _angularSize(angularSize.degrees() ),
+    _type(nebulaType), _objectId(objectId), _constellationAbbrev(constellationAbbrev), _extraData(extraData)
+{
+}
+
 NgcObject::NgcObject()
 {
 }

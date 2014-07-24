@@ -42,56 +42,72 @@
 using namespace std;
 using namespace Wt;
 
-Session::Private::Private() {
+Session::Private::Private(Session *q) : q(q) {
 }
 
-
-Session::Session()
+void Session::Private::init(const string &connectionString, Session::Provider provider)
 {
 #ifdef HAVE_WT_POSTGRES
-  string connectionString;
-  if(WServer::instance()->readConfigurationProperty("psql-connection", connectionString)) {
-    d->connection = make_shared<Dbo::backend::Postgres>(connectionString);
+  if(provider == Session::Postgres) {
+    connection = make_shared<Dbo::backend::Postgres>(connectionString);
   } else {
-    d->connection = make_shared<Dbo::backend::Sqlite3>("SkyPlanner.sqlite");
+    connection = make_shared<Dbo::backend::Sqlite3>(connectionString);
   }
 #else
-  d->connection = make_shared<Dbo::backend::Sqlite3>("SkyPlanner.sqlite");
+  if(provider == Session::Postgres)
+    throw runtime_error("Error! SkyPlanner was compiled without postgresql support");
+  connection = make_shared<Dbo::backend::Sqlite3>(connection);
 #endif
-  setConnection(*d->connection);
-  d->connection->setProperty("show-queries", "false");
-  mapClass<Catalogue>("catalogues");
-  mapClass<NgcObject>("objects");
-  mapClass<NebulaDenomination>("denominations");
-  mapClass<User>("user");
-  mapClass<User::Setting>("user_settings");
-  mapClass<Telescope>("telescope");
-  mapClass<AuthInfo>("auth_info");
-  mapClass<AuthInfo::AuthIdentityType>("auth_identity");
-  mapClass<AuthInfo::AuthTokenType>("auth_token");
-  mapClass<AstroSession>("astro_session");
-  mapClass<AstroSessionObject>("astro_session_object");
-  mapClass<EphemerisCache>("ephemeris_cache");
-  mapClass<ViewPort>("objects_viewport");
-  d->users = new UserDatabase(*this);
+  q->setConnection(*connection);
+  connection->setProperty("show-queries", "false");
+  q->mapClass<Catalogue>("catalogues");
+  q->mapClass<NgcObject>("objects");
+  q->mapClass<NebulaDenomination>("denominations");
+  q->mapClass<User>("user");
+  q->mapClass<User::Setting>("user_settings");
+  q->mapClass<Telescope>("telescope");
+  q->mapClass<AuthInfo>("auth_info");
+  q->mapClass<AuthInfo::AuthIdentityType>("auth_identity");
+  q->mapClass<AuthInfo::AuthTokenType>("auth_token");
+  q->mapClass<AstroSession>("astro_session");
+  q->mapClass<AstroSessionObject>("astro_session_object");
+  q->mapClass<EphemerisCache>("ephemeris_cache");
+  q->mapClass<ViewPort>("objects_viewport");
+  users = new UserDatabase(*q);
   static bool creationScriptPrinted = false;
   static bool createTablesExecuted = false;
   if(!creationScriptPrinted) {
     cerr << "Tables creation script: " << endl;
     cerr << "-----------------------------------------------" << endl;
-    cerr << tableCreationSql() << endl;
+    cerr << q->tableCreationSql() << endl;
     cerr << "-----------------------------------------------" << endl;
     creationScriptPrinted = true;
   }
   if(!createTablesExecuted) {
     createTablesExecuted = true;
     try {
-      createTables();
+      q->createTables();
     } catch(Dbo::Exception &e) {
       cerr << "Creation script failed, perhaps schema is already existing?" << endl;
       cerr << "Error details: " << e.what() << endl;
     }
   }
+}
+
+Session::Session() : d(this)
+{
+  Provider provider = Sqlite3;
+  string connectionString = "SkyPlanner.sqlite";
+#ifdef HAVE_WT_POSTGRES
+  if(WServer::instance()->readConfigurationProperty("psql-connection", connectionString))
+    provider = Postgres;
+#endif
+  d->init(connectionString, provider);
+}
+
+Session::Session(const string &connection, Provider provider) : d(this)
+{
+  d->init(connection, provider);
 }
 
 const std::vector<const Auth::OAuthService*> &Session::oAuth()

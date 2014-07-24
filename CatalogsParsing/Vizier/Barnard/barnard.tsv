@@ -1,0 +1,654 @@
+#
+#   VizieR Astronomical Server vizier.u-strasbg.fr
+#    Date: 2014-07-24T13:47:02 [V1.99+ (14-Oct-2013)]
+#   In case of problem, please report to:	cds-question@unistra.fr
+#
+#
+#Coosys	J2000:	eq_FK5 J2000
+#INFO	votable-version=1.99+ (14-Oct-2013)	
+#INFO	-ref=VIZ53d0be517ba2	
+#INFO	-out.max=unlimited	
+#INFO	queryParameters=19	
+#-oc.form=dec
+#-out.max=unlimited
+#-out.add=_r
+#-out.add=_RAJ,_DEJ
+#-order=I
+#-nav=cat:VII/220A&tab:{VII/220A/barnard}&tab:{VII/220A/notes}&key:source=VII/220A/barnard&key:source=VII/220A/notes&HTTPPRM:&&-ref=VIZ53d0be517ba2&-out.max=100&-out.form=ascii - 999'filled&-out.add=_r&-out.add=_RAJ,_DEJ&-order=I&-oc.form=sexa&-c.eq=J2000&-c.r=  2&-c.u=arcmin&-c.geom=r&-out.src=VII/220A/barnard,VII/220A/notes&-out=Barn&-joincol={VII/220A/barnard}.{Barn}&-out=Diam&-out=_RA.icrs&-out=_DE.icrs&-out=Text&-meta=1u&-meta.ucd=2&-meta=1&-meta.foot=1&-usenav=1&-bmark=POST&
+#-c.eq=J2000
+#-c.r=  2
+#-c.u=arcmin
+#-c.geom=r
+#-source= VII/220A/barnard VII/220A/notes
+#-order=I
+#-out.src=VII/220A/barnard,VII/220A/notes
+#-out=Barn
+#-joincol={VII/220A/barnard}.{Barn}
+#-out=Diam
+#-out=_RA.icrs
+#-out=_DE.icrs
+#-out=Text
+#
+
+#RESOURCE=join
+#Name: #Join
+#Title:  Join tables VII/220A/barnard,VII/220A/notes
+#
+#Coosys	B1875:	eq_FK4 B1875
+#Table	VII_220A_barnard_VII_220A_notes:
+#Name: VII/220A/barnard,VII/220A/notes
+#Title:
+#Column	_RAJ2000{1}	(F6.2)	Right ascension (FK5, Equinox=J2000.0) (computed by VizieR, not part of the original data)	[ucd=pos.eq.ra]
+#Column	_DEJ2000{1}	(F6.2)	Declination (FK5, Equinox=J2000.0) (computed by VizieR, not part of the original data)	[ucd=pos.eq.dec]
+#Column	Barn{1}	(A4)	[ 0-9a]! Barnard number	[ucd=meta.id;meta.main]
+#Column	Diam{1}	(F5.1)	? Diameter of the nebula	[ucd=phys.angSize]
+#Column	_RA.icrs{1}	(A8)	Right ascension (ICRS) (computed by VizieR, not part of the original data)	[ucd=pos.eq.ra]
+#Column	_DE.icrs{1}	(A6)	Declination (ICRS) (computed by VizieR, not part of the original data)	[ucd=pos.eq.dec]
+#Column	Text{2}	(a74)	Text of note	[ucd=meta.note]
+_DEJ2000	_RAJ2000	Barn	Diam	_RA.icrs	_DE.icrs	Text
+deg	deg	 	arcmin	"h:m:s"	"d:m:s"	
+------	------	----	-----	--------	------	--------------------------------------------------------------------------
++31.1592	053.2392	  1 	 30.0	03 32 57.4	+31 09 33	Large, indefinite
++32.3246	053.3803	  2 	 20.0	03 33 31.3	+32 19 29	Indefinite; elongated SE and NW
++31.9755	055.0080	  3 	 20.0	03 40 01.9	+31 58 32	Irregular, dark space in nebula; curved, bright strip of nebulosity in SW
++31.9755	055.0080	  3 	 20.0	03 40 01.9	+31 58 32	side
++31.7989	056.0100	  4 	     	03 44 02.4	+31 47 56	Very large; indefinite
++32.8894	056.9711	  5 	 60.0	03 47 53.1	+32 53 22	Indefinite; elongated NE and SW; Eta Persei (BD +32 667, mag 5.8) near NE
++32.8894	056.9711	  5 	 60.0	03 47 53.1	+32 53 22	side
++56.1203	059.0975	  6 	     	03 56 23.4	+56 07 13	Round; indefinite
++28.5618	064.3540	  7 	     	04 17 25.0	+28 33 43	Large, irregular, with brighter condensation (B 10) in SE part
++55.2470	064.4620	  8 	     	04 17 50.9	+55 14 49	Center of a dark, irregular lane about 2.6 degrees long and 22' + or -
++55.2470	064.4620	  8 	     	04 17 50.9	+55 14 49	across; very much like the dark lanes E. of Rho Ophiuchi
++55.0606	064.7372	  9 	     	04 18 56.9	+55 03 38	Dark, irregular vacancy. This is the middle of a great vacancy extending
++55.0606	064.7372	  9 	     	04 18 56.9	+55 03 38	east and west, the continuous part of which is 2.5 degrees long and about
++55.0606	064.7372	  9 	     	04 18 56.9	+55 03 38	.5 degree wide. It really extends in a more or less broken form for about
++55.0606	064.7372	  9 	     	04 18 56.9	+55 03 38	6 degrees. There is a wide region extending south of it for a couple of
++55.0606	064.7372	  9 	     	04 18 56.9	+55 03 38	degrees, nearly to the star BD +53 750 (magnitude 5.0) whose position is
++55.0606	064.7372	  9 	     	04 18 56.9	+55 03 38	4h6m58s, N 53 18' (1875.0). To the east it breaks up into more or less
++55.0606	064.7372	  9 	     	04 18 56.9	+55 03 38	separate spots, somewhat resembling those at the east end of the great
++55.0606	064.7372	  9 	     	04 18 56.9	+55 03 38	lane from Rho Ophiuchi, but unlike that lane it does not originate in a
++55.0606	064.7372	  9 	     	04 18 56.9	+55 03 38	larger vacant space or a nebula. Its borders are not so definite as the
++55.0606	064.7372	  9 	     	04 18 56.9	+55 03 38	Rho Ophiuchi lane. It is approximately bounded by the coordinates 3h58m,
++55.0606	064.7372	  9 	     	04 18 56.9	+55 03 38	N54.7 and 4h20m, N54.8. The individual positions of some of the spots are
++55.0606	064.7372	  9 	     	04 18 56.9	+55 03 38	given in the catalogue.
++28.2750	064.6718	 10 	  8.0	04 18 41.2	+28 16 30	The brightest part of B 7
++55.0397	066.6553	 11 	     	04 26 37.3	+55 02 23	East end of irregular lane, B 8
++54.2475	067.4475	 12 	 24.0	04 29 47.4	+54 14 51	Isolated dark spot SE of B 11; irregularly round with extension E. from
++54.2475	067.4475	 12 	 24.0	04 29 47.4	+54 14 51	the NE side
++54.8934	067.8255	 13 	 11.0	04 31 18.1	+54 53 36	Irregular; irregularly darker inside with a rather sharp, short, narrow
++54.8934	067.8255	 13 	 11.0	04 31 18.1	+54 53 36	extension toward the S.
++25.7490	069.9959	 14 	  3.0	04 39 59.0	+25 44 56	Very small, bright nebula; a bright spot in the dark nebula B 22.
++25.7490	069.9959	 14 	  3.0	04 39 59.0	+25 44 56	(Position given in Astrophysical Journal, 49, 14, (1919ApJ....49....1B) in
++25.7490	069.9959	 14 	  3.0	04 39 59.0	+25 44 56	error by 10m in right ascension.)
++46.6237	067.9832	 15 	 13.0	04 31 56.0	+46 37 25	Elliptical; diameter 15' x 10' slightly NW and SE. One of the finest
++46.6237	067.9832	 15 	 13.0	04 31 56.0	+46 37 25	examples of a dark object seen against the ordinary sky and away from the
++46.6237	067.9832	 15 	 13.0	04 31 56.0	+46 37 25	Milky Way. The background on which the stars shine is uniform over the
++46.6237	067.9832	 15 	 13.0	04 31 56.0	+46 37 25	entire plate. The object is in a region somewhat larger than itself, where
++46.6237	067.9832	 15 	 13.0	04 31 56.0	+46 37 25	there are relatively few stars, and is black by contrast with the sky
++46.6237	067.9832	 15 	 13.0	04 31 56.0	+46 37 25	alone. It clearly shows the presence of a feeble uniform luminosity in
++46.6237	067.9832	 15 	 13.0	04 31 56.0	+46 37 25	space which, from the appearance of similar objects in widely different
++46.6237	067.9832	 15 	 13.0	04 31 56.0	+46 37 25	parts of the sky, leads to the belief that this feeble illumination of
++46.6237	067.9832	 15 	 13.0	04 31 56.0	+46 37 25	distant space is universal. If this object were seen against the star
++46.6237	067.9832	 15 	 13.0	04 31 56.0	+46 37 25	clouds of the Milky Way it would appear strikingly black.
++46.6056	068.1084	 16 	     	04 32 26.0	+46 36 20	Very small; elongated N and S; close to SE edge of B 15
++46.5221	068.1274	 17 	     	04 32 30.6	+46 31 19	Very small; elongated N and S; close to E edge of B 15
++24.3569	067.8054	 18 	 60.0	04 31 13.3	+24 21 25	Group of dark spots
++26.2668	068.4162	 19 	 60.0	04 33 39.9	+26 16 01	Large, indefinite
++50.9766	069.2688	 20 	 60.0	04 37 04.5	+50 58 36	In S part of larger, relatively vacant area; this is the dark object
++50.9766	069.2688	 20 	 60.0	04 37 04.5	+50 58 36	mentioned by Espin in Monthly Notices, 58, 334, (1898MNRAS..58..334E). It
++50.9766	069.2688	 20 	 60.0	04 37 04.5	+50 58 36	is close north of a small group of faint stars and is 6' or 8' in
++50.9766	069.2688	 20 	 60.0	04 37 04.5	+50 58 36	diameter. In a somewhat larger vacant space (sic). It is not so definite
++50.9766	069.2688	 20 	 60.0	04 37 04.5	+50 58 36	as B 15.
++55.3582	069.4902	 21 	 10.0	04 37 57.6	+55 21 30	Indefinite; irregularly round
++26.0528	069.6661	 22 	120.0	04 38 39.9	+26 03 10	Irregular; unequally dark; extended SE and NW; this is a very large region
++26.0528	069.6661	 22 	120.0	04 38 39.9	+26 03 10	of obscure nebulosity with several darker streaks in it trending
++26.0528	069.6661	 22 	120.0	04 38 39.9	+26 03 10	northwest. It is partly separated from another starless region lying about
++26.0528	069.6661	 22 	120.0	04 38 39.9	+26 03 10	2 degrees to the west and north. Near the middle of the first of these
++26.0528	069.6661	 22 	120.0	04 38 39.9	+26 03 10	regions is a small luminous nebula with a faint fan-shaped extension for
++26.0528	069.6661	 22 	120.0	04 38 39.9	+26 03 10	10' to the northeast (B 14). This is undoubtedly a brighter condensation
++26.0528	069.6661	 22 	120.0	04 38 39.9	+26 03 10	of the great obscuring mass surrounding it. The position of this small
++26.0528	069.6661	 22 	120.0	04 38 39.9	+26 03 10	nebula is 4h32m20s, N25 30' (1875.0).
++29.8810	070.1393	 23 	  5.0	04 40 33.4	+29 52 52	Sharply pointed to the SE; BD +29 728 (magnitude 6.5) in N part
++29.7411	070.7220	 24 	  8.0	04 42 53.3	+29 44 28	Sharply pointed to the S
++46.0165	073.0169	 25 	  8.0	04 52 04.1	+46 00 59	Irregularly round; a good example of a dark or more or less starless
++46.0165	073.0169	 25 	  8.0	04 52 04.1	+46 00 59	region
++30.6241	073.6591	 26 	  5.0	04 54 38.2	+30 37 27	Irregular; B 26, 27, 28 are close NW of BD +30 741 (mag 6.8), which is
++30.6241	073.6591	 26 	  5.0	04 54 38.2	+30 37 27	involved in feeble nebulosity
++30.5560	073.7833	 27 	  5.0	04 55 08.0	+30 33 22	Irregular
++30.6372	073.9684	 28 	  4.0	04 55 52.4	+30 38 14	Irregular
++31.5899	076.5973	 29 	 10.0	05 06 23.3	+31 35 24	Round; indefinite
++12.7673	082.5687	 30 	 67.0	05 30 16.5	+12 46 02	Large dark area with few stars. There is a nebulous border, .5 degree
++12.7673	082.5687	 30 	 67.0	05 30 16.5	+12 46 02	wide, to the semi-vacant region extending 1 degree east and north from BD
++12.7673	082.5687	 30 	 67.0	05 30 16.5	+12 46 02	+12 803 (magnitude 7.0). Apparently this nebulous border extends many
++12.7673	082.5687	 30 	 67.0	05 30 16.5	+12 46 02	degrees east in a very diffused manner. There is a narrow dark lane
++12.7673	082.5687	 30 	 67.0	05 30 16.5	+12 46 02	extending south from the semi-vacant region, running close west of BD +12
++12.7673	082.5687	 30 	 67.0	05 30 16.5	+12 46 02	803 to a point nearly 1 degree south of BD +12 801 (mag 6.9). There is a
++12.7673	082.5687	 30 	 67.0	05 30 16.5	+12 46 02	small fan-shaped nebula close north of a small star in the position
++12.7673	082.5687	 30 	 67.0	05 30 16.5	+12 46 02	5h24m30s, +12 3.9' (1875.0). A small strip of nebulosity extends 5'
++12.7673	082.5687	 30 	 67.0	05 30 16.5	+12 46 02	southwest from this star. These two nebulae are probably the brighter
++12.7673	082.5687	 30 	 67.0	05 30 16.5	+12 46 02	parts of a large obscure nebulosity.
++12.7620	083.0063	 31 	 30.0	05 32 01.5	+12 45 43	Extended NE and SW; the E. and darkest part of B 30
++12.4283	083.0355	 32 	     	05 32 08.5	+12 25 42	Dark projection from S. end of B 31 to the E.
+ -2.4658	085.2205	 33 	  4.0	05 40 52.9	-02 27 57	Dark mass, on nebulous strip extending S from Zeta Orionis (see
+ -2.4658	085.2205	 33 	  4.0	05 40 52.9	-02 27 57	Astrophysical Journal, 38, 500, (1913ApJ....38..496B), and Plate XX)
++32.6457	085.8777	 34 	 20.0	05 43 30.6	+32 38 45	Round; starless; indefinite
+ +9.0544	086.3777	 35 	 15.0	05 45 30.6	+09 03 16	Elongated E and W, 20'x10', with an extension SE; three small stars N of
+ +9.0544	086.3777	 35 	 15.0	05 45 30.6	+09 03 16	it
+ +7.4247	087.4410	 36 	120.0	05 49 45.8	+07 25 29	Irregular, narrow dark lane, NE and SW. The NE end connects brokenly with
+ +7.4247	087.4410	 36 	120.0	05 49 45.8	+07 25 29	B 35. Well shown on Plate 21, Lick Observatory Publications, 11, 1913.
++10.4774	098.2290	 37 	175.0	06 32 55.0	+10 28 39	Irregular, semi-vacant region. This region is abruptly terminated on the S
++10.4774	098.2290	 37 	175.0	06 32 55.0	+10 28 39	side by the nebulosity extending north from 15 Monocerotis. Its west side
++10.4774	098.2290	 37 	175.0	06 32 55.0	+10 28 39	ends abruptly at 6h22m15s, +12 26' (1875.0). B 37, 38, and 39 are shown in
++10.4774	098.2290	 37 	175.0	06 32 55.0	+10 28 39	Plates 28 and 29, Lick Observatory Publications, 11, 1913.
++11.0751	098.4239	 38 	 60.0	06 33 41.7	+11 04 31	Irregular vacancy. This seems to refer to a portion of B 37.
++10.3287	099.5101	 39 	     	06 38 02.4	+10 19 43	Small, sharply defined, elongated spot in the nebulosity NW of 15
++10.3287	099.5101	 39 	     	06 38 02.4	+10 19 43	Monocerotis
+-18.9687	243.6617	 40 	 15.0	16 14 38.8	-18 58 07	Diffused dark spot; small star in it. This spot and B 41 are connected
+-18.9687	243.6617	 40 	 15.0	16 14 38.8	-18 58 07	with the great nebula about Nu Scorpii and are doubtless denser opaque
+-18.9687	243.6617	 40 	 15.0	16 14 38.8	-18 58 07	masses of the nebula. There is a larger dark region belonging to this same
+-18.9687	243.6617	 40 	 15.0	16 14 38.8	-18 58 07	system in 16h23m, -19 30' (1875.0) (B 43), from which broken dark lanes
+-18.9687	243.6617	 40 	 15.0	16 14 38.8	-18 58 07	somewhat like those from Rho Ophiuchi, though less marked, run eastward
+-18.9687	243.6617	 40 	 15.0	16 14 38.8	-18 58 07	for some degrees.
+-19.6313	245.5735	 41 	 45.0	16 22 17.6	-19 37 53	Diffused dark spot
+-23.4394	246.3735	 42 	     	16 25 29.6	-23 26 22	Great nebula of Mu Ophiuchi; this object is put in the list because,
+-23.4394	246.3735	 42 	     	16 25 29.6	-23 26 22	though not wholly dark, it is partly so, and the evident obscuration
+-23.4394	246.3735	 42 	     	16 25 29.6	-23 26 22	produced by it puts it in the class for which the catalogue is made. The
+-23.4394	246.3735	 42 	     	16 25 29.6	-23 26 22	semi-vacant region in which this, the great nebula of Rho Ophiuchi, lies
+-23.4394	246.3735	 42 	     	16 25 29.6	-23 26 22	is about 3.5 degrees in diameter. For references to the visual discovery
+-23.4394	246.3735	 42 	     	16 25 29.6	-23 26 22	and early observations of this strange region see Astronomische
+-23.4394	246.3735	 42 	     	16 25 29.6	-23 26 22	Nachrichten, 138, 211, 1895; Popular Astronomy 5, 227, 1897; 14, 581,
+-23.4394	246.3735	 42 	     	16 25 29.6	-23 26 22	1906; Lick Observatory Publications, 11, 19, 1913 and Plate 36.
+-19.7757	247.5790	 43 	     	16 30 19.0	-19 46 33	Large dark region
+-24.0806	250.1401	 44 	     	16 40 33.6	-24 04 50	Dark lane E. from Rho Ophiuchi region. This is the middle of the main part
+-24.0806	250.1401	 44 	     	16 40 33.6	-24 04 50	of the great vacant lane that runs east from the region of Rho Ophiuchi.
+-24.0806	250.1401	 44 	     	16 40 33.6	-24 04 50	It is about 32' wide and has its beginning in a vacant area in which is
+-24.0806	250.1401	 44 	     	16 40 33.6	-24 04 50	the star 22 Scorpii (CD -24 12695, magnitude 5.5). It runs slightly
+-24.0806	250.1401	 44 	     	16 40 33.6	-24 04 50	northeast to about 16h40m, -23 40' (1875.0). From this point it extends in
+-24.0806	250.1401	 44 	     	16 40 33.6	-24 04 50	a broken chain of dark spots to a little south of B 63. Its total length
+-24.0806	250.1401	 44 	     	16 40 33.6	-24 04 50	is therefore about 10 degrees.
+-40.3368	251.1878	 44a	  5.0	16 44 45.1	-40 20 13	Irregular; sharpest on SE side; CD -40 10662 (mag 9.0) close N. Apparently
+-40.3368	251.1878	 44a	  5.0	16 44 45.1	-40 20 13	a real, dark object.
+-21.5970	251.6094	 45 	120.0	16 46 26.3	-21 35 49	Rather definite; Extended NE and SW with an irregular projection SW that
+-21.5970	251.6094	 45 	120.0	16 46 26.3	-21 35 49	connects it with the Rho Ophiuchi region. This appears to be a real, dark
+-21.5970	251.6094	 45 	120.0	16 46 26.3	-21 35 49	object.
+-22.7326	254.3040	 46 	     	16 57 13.0	-22 43 57	Irregular; definite; a string of small stars in the middle
+-22.6420	254.9287	 47 	 15.0	16 59 42.9	-22 38 31	Irregular; definite; connected with B 51 by two sharp lanes
+-40.6880	255.4253	 48 	 40.0	17 01 42.1	-40 41 17	Fairly well defined; 15' W and N of CD -40 11088 (magnitude 8); seems to
+-40.6880	255.4253	 48 	 40.0	17 01 42.1	-40 41 17	be a real object
+-33.2677	255.6648	 49 	     	17 02 39.5	-33 16 04	Small; close SE of and involving CD -33 11668 (magnitude 9.3).
+-34.3837	255.7255	 50 	 15.0	17 02 54.1	-34 23 01	Large, irregular dark space; this is an irregular square, sharply defined
+-34.3837	255.7255	 50 	 15.0	17 02 54.1	-34 23 01	on the east side and diffused on the west, where there are broken
+-34.3837	255.7255	 50 	 15.0	17 02 54.1	-34 23 01	extensions for 30'. The star CD -34 11418 (magnitude 9.8) is near the
+-34.3837	255.7255	 50 	 15.0	17 02 54.1	-34 23 01	middle. The stars CD -34 11422 (magnitude 9.8) and -34 11427 (magnitude
+-34.3837	255.7255	 50 	 15.0	17 02 54.1	-34 23 01	9.9) are on the eastern border.
+-22.2606	256.1836	 51 	 20.0	17 04 44.1	-22 15 38	Definite; one of a straggling group toward the eastern end of the dark
+-22.2606	256.1836	 51 	 20.0	17 04 44.1	-22 15 38	lane from Rho Ophiuchi. Two irregular, dark lanes run west from it to B
+-22.2606	256.1836	 51 	 20.0	17 04 44.1	-22 15 38	47.
+-33.5907	256.5471	 53 	 60.0	17 06 11.3	-33 35 27	Large; diffuse; extended N and S by 30'; curved toward the E at N end
+-34.2563	256.6420	 54 	  5.0	17 06 34.1	-34 15 23	Small; round; close S. of magnitude 11 star
+-32.0032	256.8881	 55 	 16.0	17 07 33.1	-32 00 12	Irregular; best defined SE.; CD -31 13582 (magnitude 8.9) near the center
+-32.0995	257.2028	 56 	  3.0	17 08 48.7	-32 05 58	Small; close E of CD -31 13609 (magnitude 9.0). This seems to be a real
+-32.0995	257.2028	 56 	  3.0	17 08 48.7	-32 05 58	object
+-22.8333	257.0927	 57 	  5.0	17 08 22.2	-22 50 00	Elongated NE and SW
+-40.4100	257.8011	 58 	 30.0	17 11 12.3	-40 24 36	Slightly extended N and S; a darker core at NE side
+-27.4914	257.8484	 59 	 60.0	17 11 23.6	-27 29 29	Sink hole; at the W end of a wide broken lane from B 78
+-22.4397	257.9633	 60 	 13.0	17 11 51.2	-22 26 23	Curved; extended NE and SW; this and B 57 are the most distinct of a group
+-22.4397	257.9633	 60 	 13.0	17 11 51.2	-22 26 23	of dark spots SW of the square end of B 63.
+-20.4802	258.7499	 61 	     	17 15 00.0	-20 28 49	Small; elongated E and W
+-20.8766	259.0514	 62 	 19.0	17 16 12.3	-20 52 36	Very black in NW part; brightest of three stars in S part is BD -20 4690
+-20.8766	259.0514	 62 	 19.0	17 16 12.3	-20 52 36	(magnitude 9.4). Apparently a real object.
+-21.4759	259.1180	 63 	 60.0	17 16 28.3	-21 28 33	Large, definite, curved figure, convex to N; the W end abrupt; 97' E and
+-21.4759	259.1180	 63 	 60.0	17 16 28.3	-21 28 33	W, 19' wide
+-18.4898	259.3280	 64 	     	17 17 18.7	-18 29 23	Cometary; W of M 9; This object is somewhat cometary in form and has a
+-18.4898	259.3280	 64 	     	17 17 18.7	-18 29 23	very black core or head that sharply abuts against the thick stratum of
+-18.4898	259.3280	 64 	     	17 17 18.7	-18 29 23	stars; from this it spreads out into a large dark area with much dark
+-18.4898	259.3280	 64 	     	17 17 18.7	-18 29 23	detail, filling quite a space close southwest of M 9. It thus resembles a
+-18.4898	259.3280	 64 	     	17 17 18.7	-18 29 23	dark comet with a dense and well-defined head and diffused widening tail.
+-18.4898	259.3280	 64 	     	17 17 18.7	-18 29 23	The position of the head is 17h9m57s, -18 20.6 (1875.0).
+-26.7003	259.9019	 65 	 12.0	17 19 36.4	-26 42 01	Definite; elongated; 12' E and W
+-26.8993	259.9883	 66 	  8.0	17 19 57.2	-26 53 58	Definite; extended E and W; CD -26 12082 (magnitude 8.7) 5' from SE edge
+-26.8630	260.2381	 67 	     	17 20 57.1	-26 51 47	Definite; extended N and S; connects B 65 and 66
+-21.8913	260.6253	 67a	 13.0	17 22 30.1	-21 53 29	Irregular; definite; BD -21 4591 (magnitude 9.5) in spot, near SE edge
+-23.7911	260.6520	 68 	  4.0	17 22 36.5	-23 47 28	Small; irregular; sharply defined; about 20' SW of B 72
+-23.9235	260.7331	 69 	     	17 22 56.0	-23 55 25	Very small; irregular; sharply defined; extends N and S 4'
+-24.0384	260.8849	 70 	  4.0	17 23 32.4	-24 02 18	Sharply defined on W side
+-24.0065	260.7593	 71 	  1.0	17 23 02.2	-24 00 24	Very small; extends 1.25', plus or minus
+-23.6215	260.8998	 72 	     	17 23 36.0	-23 37 17	S-shaped; this is a striking object. It is a thin, curved black marking,
+-23.6215	260.8998	 72 	     	17 23 36.0	-23 37 17	the exact form of the letter S or the figure 5, as the imagination or
+-23.6215	260.8998	 72 	     	17 23 36.0	-23 37 17	point of view may dictate. The SE branch runs E for some distance passing
+-23.6215	260.8998	 72 	     	17 23 36.0	-23 37 17	close S of the star CD -23 13376 (magnitude 9.1). Its average thickness is
+-23.6215	260.8998	 72 	     	17 23 36.0	-23 37 17	about 2'-3'. The position in the catalogue is for the southern part of the
+-23.6215	260.8998	 72 	     	17 23 36.0	-23 37 17	figure, or the bottom of the S (see Astrophysical Journal, 49,
+-23.6215	260.8998	 72 	     	17 23 36.0	-23 37 17	(1919ApJ....49....1B), Plate III).
+-24.2866	261.0345	 73 	  1.0	17 24 08.3	-24 17 12	Very small; extended N and S 4'
+-24.2003	261.2835	 74 	     	17 25 08.0	-24 12 01	Slightly curved, extending 5' N from CD -24 13325 (magnitude 7.1).
+-24.2003	261.2835	 74 	     	17 25 08.0	-24 12 01	Sharpest on W and S sides
+-22.0329	261.3237	 75 	     	17 25 17.7	-22 01 59	Curved and scalloped marking; BD -21 4598 (magnitude 8.3) on N edge (see
+-22.0329	261.3237	 75 	     	17 25 17.7	-22 01 59	Astrophysical Journal, 49, Plate II, 1(1919ApJ....49....1B))
+-24.4154	261.4117	 76 	     	17 25 38.8	-24 24 56	Irregular, narrow black strip, 30' long E and W
+-23.8565	262.1544	 77 	 60.0	17 28 37.1	-23 51 23	Indefinite; connected by a vacant strip with B 78
+-25.5943	263.1806	 78 	180.0	17 32 43.3	-25 35 39	Very large; CD -26 12152 (magnitude 6.2) S of the middle. This vacant
+-25.5943	263.1806	 78 	180.0	17 32 43.3	-25 35 39	region, with its extension to the west running south of Theta Ophiuchi, is
+-25.5943	263.1806	 78 	180.0	17 32 43.3	-25 35 39	visible to the naked eye (see Popular Astronomy, 14, 580, 1906.)
+-19.6131	264.3468	 79 	 30.0	17 37 23.2	-19 36 47	30' long SE and NW; narrow; sharply defined
+-21.2789	264.4281	 80 	  2.0	17 37 42.7	-21 16 44	Small, definite; 3' x 1', SW and NE; close SE of BD -21 4674 (magnitude
+-21.2789	264.4281	 80 	  2.0	17 37 42.7	-21 16 44	8.1).
+-23.9266	264.6365	 81 	     	17 38 32.8	-23 55 36	Very small; diffused; close SW of NGC 6401
+-23.7764	264.6552	 82 	     	17 38 37.3	-23 46 35	Small; angular; well defined; 8' N of NGC 6401
+-24.1753	264.7444	 83 	  7.0	17 38 58.6	-24 10 31	Irregular; several small stars in it; narrow extension to the S
+-20.0058	266.3282	 83a	  4.0	17 45 18.8	-20 00 21	Small; definite; diam. 4', N and S; about 5' SE of BD -19 4698 (magnitude
+-20.0058	266.3282	 83a	  4.0	17 45 18.8	-20 00 21	9.5).
+-20.2525	266.6067	 84 	     	17 46 25.6	-20 15 09	Irregular looped figure; sharply defined; 22' long E and W; extension from
+-20.2525	266.6067	 84 	     	17 46 25.6	-20 15 09	it 20' toward the NW. BD -20 4865 (magnitude 8.2) near W end and BD -20
+-20.2525	266.6067	 84 	     	17 46 25.6	-20 15 09	4860 (magnitude 9.1) near east end.
+-17.6683	269.4058	 84a	 16.0	17 57 37.4	-17 40 06	Round; diam. 16', with extension 45' S; BD -17 4967 (magnitude 9.1) in
+-17.6683	269.4058	 84a	 16.0	17 57 37.4	-17 40 06	center; perhaps some detail in it
+-23.0208	270.6050	 85 	     	18 02 25.2	-23 01 15	Trifid nebula. This is the southern part of the Trifid nebula, NGC 6514.
+-23.0208	270.6050	 85 	     	18 02 25.2	-23 01 15	The dark markings in this nebula are too well known to insert in this
+-23.0208	270.6050	 85 	     	18 02 25.2	-23 01 15	catalogue.
+-27.8694	270.7565	 86 	  5.0	18 03 01.6	-27 52 10	Diam. 5'; edge of diffused nebulosity. For the visual discovery of this
+-27.8694	270.7565	 86 	  5.0	18 03 01.6	-27 52 10	object see Astronomische Nachrichten 108, 370, 1884.
+-32.4997	271.0444	 87 	     	18 04 10.7	-32 29 59	"Parrot's head"; CD -3 13679 (magnitude 9.3) central; several smaller
+-32.4997	271.0444	 87 	     	18 04 10.7	-32 29 59	stars in it CD -32 13666 (magnitude 9.6) on NW edge. CD -32 13687 (9.6) on
+-32.4997	271.0444	 87 	     	18 04 10.7	-32 29 59	SE edge.
+-24.1144	271.1459	 88 	  2.0	18 04 35.0	-24 06 52	Extended N and S; 2.7'x0.5'; in M8. There are other well-known markings in
+-24.1144	271.1459	 88 	  2.0	18 04 35.0	-24 06 52	this nebula. This one and B 89 are given as illustrations of dark markings
+-24.1144	271.1459	 88 	  2.0	18 04 35.0	-24 06 52	in the sky shown in relief against a nebulous or other luminous
+-24.1144	271.1459	 88 	  2.0	18 04 35.0	-24 06 52	background. In this case there may be non-luminous opaque parts of the
+-24.1144	271.1459	 88 	  2.0	18 04 35.0	-24 06 52	nebula itself.
+-24.3631	271.2495	 89 	  0.5	18 04 59.9	-24 21 47	Very small, diam. 0.5'; in M8
+-28.2809	272.5588	 90 	  3.0	18 10 14.1	-28 16 51	Irregular; elongated; 3' N and S
+-23.6975	272.5315	 91 	  5.0	18 10 07.6	-23 41 51	Diam. 5'; edge of diffused nebulosity
+-18.2305	273.8968	 92 	 12.0	18 15 35.2	-18 13 50	Black spot; 15' N and S, 9' E and W
+-18.0598	274.2236	 93 	  2.0	18 16 53.7	-18 03 35	Cometary; a sharply defined black head 2' in diam., with a diffused tail
+-18.0598	274.2236	 93 	  2.0	18 16 53.7	-18 03 35	15' long running S; 20' NE of B 92
+-10.6653	276.4735	 94 	 15.0	18 25 53.6	-10 39 55	Roundish; diam. 15'; indefinite
+-11.7496	276.3996	 95 	 30.0	18 25 35.9	-11 44 59	Large; indefinite; diam. 30'; elongated
+-10.2971	276.6022	 96 	     	18 26 24.5	-10 17 49	Small; indefinite; elongated E and W
+ -9.9223	277.2724	 97 	 60.0	18 29 05.4	-09 55 20	Irregular; not ver definite; diam. 1 degree
+-26.0610	278.3184	 98 	  3.0	18 33 16.4	-26 03 39	Very small; black; sharply defined; diam . 3'
+-21.4772	278.3232	 99 	  7.0	18 33 17.6	-21 28 38	Definite; 11' long E. and W., 3' wide; E end is the larger, with a faint
+-21.4772	278.3232	 99 	  7.0	18 33 17.6	-21 28 38	star in it
+ -9.1447	278.1710	100 	 16.0	18 32 41.0	-09 08 41	Definite; irregular; curved; 16' long NW and SE
+ -8.8114	278.1668	101 	  8.0	18 32 40.0	-08 48 41	Definite; irregular; 13' long NE and SW; 4' wide; separated from B100 by a
+ -8.8114	278.1668	101 	  8.0	18 32 40.0	-08 48 41	scattering of small stars
+-13.7466	279.4242	102 	  5.0	18 37 41.8	-13 44 48	Rather definite; elongated NE and SW, 8' x 3'
+ -6.6742	279.8570	103 	  4.0	18 39 25.7	-06 40 27	Irregular; diam. 4'; one small star in it
+ -4.5338	281.8309	104 	 16.0	18 47 19.4	-04 32 02	Small, definite, caret-shaped object
+ -6.9161	281.9346	105 	  0.5	18 47 44.3	-06 54 58	Very small; diam. .5'; close NE of BD -7 4710 (magnitude 8.9)
+ -5.0793	282.2082	106 	  2.0	18 48 50.0	-05 04 46	Diam. 2'; extended N and S; free of stars
+ -5.0106	282.3782	107 	  5.0	18 49 30.8	-05 00 38	Irregular; diam. 5'; free of stars
+ -6.3106	282.3939	108 	  3.0	18 49 34.5	-06 18 38	Very small; diam. 3'; not black; two narrow diverging lanes extending to
+ -6.3106	282.3939	108 	  3.0	18 49 34.5	-06 18 38	the N; some small stars in it
+ -7.5606	282.4006	109 	  0.7	18 49 36.2	-07 33 38	Irregular; diam. .7'; close E of BD -07 4726 (magnitude 8.0)
+ -4.7921	282.5339	110 	 11.0	18 50 08.1	-04 47 32	Irregular; diam. 11';
+ -4.9573	282.6609	111 	120.0	18 50 38.6	-04 57 26	Region 2 degrees in diam., full of dark structures
+ -6.6726	282.7856	112 	 18.0	18 51 08.6	-06 40 21	Diffused dark region; diam. 18' plus or minus; perhaps due to want of
+ -6.6726	282.7856	112 	 18.0	18 51 08.6	-06 40 21	stars
+ -4.3216	282.8532	113 	 16.0	18 51 24.8	-04 19 18	Irregular; diam. 16'; small star in W part
+ -6.9499	283.2972	114 	  6.0	18 53 11.3	-06 56 59	Diam. 6'; BD -7 4754 (magnitude 9.2) near middle; BD -7 4755 (magnitude
+ -6.9499	283.2972	114 	  6.0	18 53 11.3	-06 56 59	9.1) on S edge
+ -6.6661	283.3313	115 	  6.0	18 53 19.5	-06 39 58	Very small and black. Very narrow, running N and S for 7'; width 1.4'. It
+ -6.6661	283.3313	115 	  6.0	18 53 19.5	-06 39 58	is in a small vacant region.
+ -7.1821	283.3875	116 	     	18 53 33.0	-07 10 56	Narrow, semi-vacant region extending 20' S from BD -7 4755 (magnitude 9.1)
+ -7.4150	283.4319	117 	  1.0	18 53 43.7	-07 24 54	Round; very black; diam. 1'; sharply defined
+ -4.8482	283.4261	117a	  7.0	18 53 42.3	-04 50 53	Black; irregular; diam. 7'
+ -7.4477	283.4823	118 	  2.0	18 53 55.8	-07 26 52	Definite; diam. 2'; more definite and blacker than B 117
+ -4.5455	283.6516	119 	     	18 54 36.4	-04 32 44	Very small; close NW of BD -4 4623 (magnitude 9.2)
+ -5.1787	283.6634	119a	 30.0	18 54 39.2	-05 10 43	Irregular dark region; diam. .5 degree; liberally sprinkled with stars in
+ -5.1787	283.6634	119a	 30.0	18 54 39.2	-05 10 43	its NW half; several dark lanes in SE part
+ -4.5946	283.7231	120 	     	18 54 53.5	-04 35 41	Very small; close SE of BD -4 4623 (magnitude 9.2); E side bounded by a
+ -4.5946	283.7231	120 	     	18 54 53.5	-04 35 41	curve of very small stars
+ -4.6097	283.8565	121 	     	18 55 25.6	-04 36 35	Small dusky spot; magnitude 12 star in center
+ -4.7556	284.2041	122 	  4.0	18 56 49.0	-04 45 20	Small; diam. 4'; narrow extension 4' N
+ -4.7198	284.4161	123 	  1.5	18 57 39.9	-04 43 11	Roundish; diam. 1.5'; a narrow spur 4'-5' long from its NE edge; a narrow
+ -4.7198	284.4161	123 	  1.5	18 57 39.9	-04 43 11	lane 18' long and 1.5' wide from its W side to the NW
+ -4.3530	284.4242	124 	  3.0	18 57 41.8	-04 21 11	Small, dark spot; diam. 3'
+ -4.3844	284.5913	125 	  9.0	18 58 21.9	-04 23 04	Dark; lune shaped; 9' E and W; fairly well-defined on N border; some faint
+ -4.3844	284.5913	125 	  9.0	18 58 21.9	-04 23 04	stars in it
+ -4.5324	284.7596	126 	  8.0	18 59 02.3	-04 31 57	Dusky; round; rather definite; diam. 8'
+ -5.4418	285.3828	127 	  4.5	19 01 31.9	-05 26 30	Irregular; diam. 4.5'
+ -4.5746	285.4184	128 	 10.0	19 01 40.4	-04 34 29	Irregular; dusky; fairly well defined; diam. 10'
+ -5.3068	285.5187	129 	  5.0	19 02 04.5	-05 18 25	Very black; sharply defined; diam. 5'; a small star at the W end
+ -5.5739	285.4844	130 	  7.0	19 01 56.2	-05 34 26	dusky; not well defined; length 7'
+ -4.3729	285.5660	131 	  3.0	19 02 15.8	-04 22 22	Black spot, about 2'x4'
+ -4.4331	286.1166	132 	 16.0	19 04 28.0	-04 25 59	Dark; fairly well-defined. Tadpole-shaped, 16' long E and W. Diameter of
+ -4.4331	286.1166	132 	 16.0	19 04 28.0	-04 25 59	the larger (E) part 8', with BD -4 4680 (magnitude 9.0) in center.
+ -6.8948	286.5539	133 	     	19 06 12.9	-06 53 41	Cometary; close W of BD -7 4852 (magnitude 9.2)
+ -6.2428	286.7211	134 	  6.0	19 06 53.1	-06 14 34	Round; diam. 6'; dark, but not sharply defined; a small star on S edge; a
+ -6.2428	286.7211	134 	  6.0	19 06 53.1	-06 14 34	similar one on N edge
+ -3.9241	286.8854	135 	 13.0	19 07 32.5	-03 55 27	Dusky spot; diam. 13'; BD -4 4698 (magnitude 9.2) on N border; BD -4 4702
+ -3.9241	286.8854	135 	 13.0	19 07 32.5	-03 55 27	(magnitude 9.2) on SE edge
+ -4.0037	287.2072	136 	  8.0	19 08 49.7	-04 00 13	Dusky spot; diam. 8'; 10 mag. star near middle
+ -1.3327	289.0009	137 	     	19 16 00.2	-01 19 58	Projection near S end of B 138
+ +0.2186	289.0997	138 	180.0	19 16 23.9	+00 13 07	Great curved, semi-vacant lane over 3 degrees in length
+ -1.4102	289.5018	139 	     	19 18 00.4	-01 24 37	Narrow black spot; 10 mag star on SE edge
+ +5.2287	289.9546	140 	 60.0	19 19 49.1	+05 13 43	Semi-vacant region; diam. 1 degree
+ +1.8963	290.0472	141 	 20.0	19 20 11.3	+01 53 47	Semi-vacant region; N of the N end of B 138; diam. 20'
++10.5185	294.9222	142 	 40.0	19 39 41.3	+10 31 06	Large; irregular; about 40' E and W; BD +10 4016 in E part
++11.0066	295.3545	143 	 30.0	19 41 25.1	+11 00 24	Rather narrow, angular marking; the outline of a square 30' in diameter,
++11.0066	295.3545	143 	 30.0	19 41 25.1	+11 00 24	with the W side missing
++35.3384	299.6723	144 	270.0	19 58 41.4	+35 20 18	Large, semi-vacant region, 6 x 3 degrees, NE and SW; rather definite at NE
++35.3384	299.6723	144 	270.0	19 58 41.4	+35 20 18	end; diffused to the SE
++37.6828	300.7055	145 	 45.0	20 02 49.3	+37 40 58	Sharply defined; 3/4 degree long E and W
++36.0177	300.8709	146 	     	20 03 29.0	+36 01 04	Very small; like a dark border to the SW side of the star BD +35 3930
++36.0177	300.8709	146 	     	20 03 29.0	+36 01 04	(magnitude 7.0)
++35.3764	301.7098	147 	 11.0	20 06 50.3	+35 22 35	Very narrow sinuous dark lane 11' long E and W; BD +34 3871 (magnitude
++35.3764	301.7098	147 	 11.0	20 06 50.3	+35 22 35	8.3) at W end
++59.6285	311.9288	148 	  3.0	20 47 42.9	+59 37 43	Very small; round; indefinite; diam. 3'
++59.5315	312.2575	149 	  2.0	20 49 01.8	+59 31 53	Very small; round; indefinite; diam. 2'. This spot and B 148 each in a
++59.5315	312.2575	149 	  2.0	20 49 01.8	+59 31 53	larger dusky space
++60.3019	312.6653	150 	 60.0	20 50 39.7	+60 18 07	Curved dark marking; 1 degree long
++56.3225	317.0568	151 	 60.0	21 08 13.6	+56 19 21	Very small; very dark; diam. 1 degree; about 14' N of BD +55 2529
++56.3225	317.0568	151 	 60.0	21 08 13.6	+56 19 21	(magnitude 7.5); apparently a real object in a slightly larger vacancy
++61.7360	318.6231	152 	  9.0	21 14 29.5	+61 44 09	Small; 15'x3' SE and NW
++56.4483	320.2635	153 	 60.0	21 21 03.3	+56 26 54	Black; irregular; diam. 1 degree; 5' S of BD +55 2565 (magnitude 7.4)
++56.6156	320.3438	154 	  8.0	21 21 22.5	+56 36 56	Narrow; 8' long NE and SW; BD +55 2565 (magnitude 7.4) at the S end
++44.9685	323.0353	155 	 13.0	21 32 08.5	+44 58 07	Round; diam. 13'; indefinite; four small stars in a line crossing it E and
++44.9685	323.0353	155 	 13.0	21 32 08.5	+44 58 07	W
++45.5886	323.4974	156 	  8.0	21 33 59.4	+45 35 19	Diam. 8'; sharp pointed to N; BD +44 3865 (magnitude 4.1) in center
++54.6719	323.4231	157 	  5.0	21 33 41.5	+54 40 19	Round; diam. 5'; 8' plus or minus W of BD +54 2576 (magnitude 8.3); a
++54.6719	323.4231	157 	  5.0	21 33 41.5	+54 40 19	semicircle of faint stars forms the western border
++43.4110	324.3065	158 	  3.0	21 37 13.6	+43 24 39	Dark spot; diam. 3'; similar to those in the region of B 159. There are
++43.4110	324.3065	158 	  3.0	21 37 13.6	+43 24 39	some others N and W of this
++43.2297	324.5949	159 	 25.0	21 38 22.8	+43 13 47	Irregular partially vacant region; diam. 25'
++56.2298	324.4955	160 	 31.0	21 37 58.9	+56 13 47	Large, dark; irregular; diam. 31' NE and SW
++57.8174	325.0923	161 	  3.0	21 40 22.2	+57 49 03	Small, black spot. This is one of the comet-shaped objects. The head is
++57.8174	325.0923	161 	  3.0	21 40 22.2	+57 49 03	very sharp and black, 3' across. This extends north for some 3', then
++57.8174	325.0923	161 	  3.0	21 40 22.2	+57 49 03	widens out into a less dense tail about 13' long.
++56.3187	325.2884	162 	 13.0	21 41 09.2	+56 19 07	Very thin, curved dark strip, 13' N and S; a curve of small stars on the
++56.3187	325.2884	162 	 13.0	21 41 09.2	+56 19 07	SW end
++56.7038	325.5419	163 	     	21 42 10.0	+56 42 14	Small; very black; pointed to the S; two dark streams running from this to
++56.7038	325.5419	163 	     	21 42 10.0	+56 42 14	the N
++51.0942	326.6328	164 	 20.0	21 46 31.9	+51 05 39	V-shaped vacancy; 20' N and S
++60.2155	327.2338	165 	 18.0	21 48 56.1	+60 12 56	Length E and W 18', width 1'; BD +59 2424 (magnitude 7.8) near the E end
++60.0857	327.7716	166 	  5.0	21 51 05.2	+60 05 09	Round; diam 5'; small star on SW edge
++60.0705	327.9925	167 	  5.0	21 51 58.2	+60 04 14	Small; irregularly round; diam 5'; about 7' N of BD +59 2427 (magnitude
++60.0705	327.9925	167 	  5.0	21 51 58.2	+60 04 14	7.7)
++47.2719	328.3361	168 	 10.0	21 53 20.7	+47 16 19	Small nebula at E end of dark lane. This nebula is 10' in diameter with
++47.2719	328.3361	168 	 10.0	21 53 20.7	+47 16 19	over a dozen stars of different magnitudes in it. There is no central
++47.2719	328.3361	168 	 10.0	21 53 20.7	+47 16 19	condensation, nor does the nebula condense about any of the stars. There
++47.2719	328.3361	168 	 10.0	21 53 20.7	+47 16 19	are some dark markings in it. The dark lane is 1.7 degrees long and 9'
++47.2719	328.3361	168 	 10.0	21 53 20.7	+47 16 19	wide (see Lick Observatory Publications, 11, Plate 81).
++58.7646	329.7203	169 	 60.0	21 58 52.9	+58 45 53	Elliptical black ring; diam. 1 degree. This incloses an "island" of small
++58.7646	329.7203	169 	 60.0	21 58 52.9	+58 45 53	stars. The dark ring is broadest on its east side where its thickness is
++58.7646	329.7203	169 	 60.0	21 58 52.9	+58 45 53	22'. The northern part is very black and straight. BD +58 2371 (magnitude
++58.7646	329.7203	169 	 60.0	21 58 52.9	+58 45 53	8.5) is in the northeast part of the "island" of stars.
++58.9633	329.5122	170 	 15.0	21 58 02.9	+58 57 48	Irregular black strip 26' long NE and SW, 4' wide. This is the northwest
++58.9633	329.5122	170 	 15.0	21 58 02.9	+58 57 48	border of the island of small stars. It is sharply defined and darker than
++58.9633	329.5122	170 	 15.0	21 58 02.9	+58 57 48	the sky.
++58.8683	330.3283	171 	 91.0	22 01 18.8	+58 52 06	Irregular, broken region; diam. 19'; at the E end of the "island" of small
++58.8683	330.3283	171 	 91.0	22 01 18.8	+58 52 06	stars
++59.6775	331.8706	173 	  4.0	22 07 28.9	+59 40 39	Diam. 4'; rather definite; a small star on N edge and one on SW edge
++59.0772	331.8331	174 	 19.0	22 07 19.9	+59 04 38	Narrow; irregular; 19' long NE and SW
++69.9375	333.5037	175 	 60.0	22 14 00.9	+69 56 15	Large; diam. 1 degree; bright nebula in N part. This is a large dark spot,
++69.9375	333.5037	175 	 60.0	22 14 00.9	+69 56 15	extended north and south, 62' in its largest diameter. In its upper part
++69.9375	333.5037	175 	 60.0	22 14 00.9	+69 56 15	is the star BD +69 1231 (magnitude 8.8), which is nebulous. This is
++69.9375	333.5037	175 	 60.0	22 14 00.9	+69 56 15	apparently a large dark nebula, the brighter part of which forms the star
++69.9375	333.5037	175 	 60.0	22 14 00.9	+69 56 15	+69 1231. In Monthly Notices, 69 (1908MNRAS..69..117W), Dr. Max Wolf gives
++69.9375	333.5037	175 	 60.0	22 14 00.9	+69 56 15	a photograph of the nebula, stating that the object was discovered by Dr.
++69.9375	333.5037	175 	 60.0	22 14 00.9	+69 56 15	Kopff at Heidelberg on October 12, 1908. It is conspicuous on a photograph
++69.9375	333.5037	175 	 60.0	22 14 00.9	+69 56 15	of mine made with the Willard lens at the Lick Observatory, September 24,
++69.9375	333.5037	175 	 60.0	22 14 00.9	+69 56 15	1895, with 5h0m exposure. It is also shown on a photograph of mine made
++69.9375	333.5037	175 	 60.0	22 14 00.9	+69 56 15	with the Bruce telescope, July 20, 1904, with an exposure of 3h1m. By
++69.9375	333.5037	175 	 60.0	22 14 00.9	+69 56 15	inadvertence reference to this object was omitted in Lick Observatory
++69.9375	333.5037	175 	 60.0	22 14 00.9	+69 56 15	Publications, 11, where it is cut out by the matting in Plate 83.
++57.0892	033.2503	201 	 10.0	02 13 00.1	+57 05 21	Small; diam. 10'; 45' W of NGC 869
++30.2765	051.4114	202 	 22.0	03 25 38.7	+30 16 35	Elongated NW and SE, 33'x12'
++30.7761	051.4595	203 	     	03 25 50.3	+30 46 34	Elongated E and W; BD +30 539 (magnitude 9.0) in N edge
++30.1865	052.1218	204 	 14.0	03 28 29.2	+30 11 11	Irregular; diam. 14' plus or minus; 15' SW of BD +29 566 (magnitude 6.8)
++31.1031	052.1335	205 	 15.0	03 28 32.0	+31 06 11	Two dark strips, 15' long N and S, with BD +30 547 (magnitude 9.3) between
++31.1031	052.1335	205 	 15.0	03 28 32.0	+31 06 11	them; close SW of BD +30 548 (neb.)
++30.1849	052.2891	206 	  5.0	03 29 09.4	+30 11 06	Diffused; diam. 5' plus or minus
++26.3459	061.1476	207 	     	04 04 35.4	+26 20 45	Small black spot, elongated nearly N and S; 7' N of BD +25 670 (magnitude
++26.3459	061.1476	207 	     	04 04 35.4	+26 20 45	8.3)
++25.1607	062.8872	208 	     	04 11 32.9	+25 09 39	Darker spot in dark lane
++28.3254	063.0969	209 	     	04 12 23.2	+28 19 31	Center of a broad extension from B 7, toward the W
++25.0666	063.8886	210 	     	04 15 33.3	+25 04 00	Darker spot in dark lane
++27.8123	064.3017	211 	     	04 17 12.4	+27 48 44	North end of dark lane running SE from B 7; extends from position given to
++27.8123	064.3017	211 	     	04 17 12.4	+27 48 44	4h20m0s, +25 50' (B 217)
++25.3066	064.8109	212 	     	04 19 14.6	+25 18 24	Darker spot in dark lane
++27.0515	065.2941	213 	     	04 21 10.6	+27 03 05	Dark spot in lane
++28.5495	065.4822	214 	  5.0	04 21 55.7	+28 32 58	Diam. 5'; close N of BD +28 645 (magnitude 9.1)
++25.0448	065.8934	215 	     	04 23 34.4	+25 02 41	Darker spot in dark lane
++26.6271	065.9985	216 	     	04 23 59.6	+26 37 37	Dark spot in lane
++26.1169	066.9105	217 	     	04 27 38.5	+26 07 01	Southeast end of dark lane running from B 7
++26.2822	067.0380	218 	 15.0	04 28 09.1	+26 16 56	Triangular; diam. 15'; extension to the S
++29.5971	068.7147	219 	120.0	04 34 51.5	+29 35 50	Partly vacant space; 55' x 3 degrees, NE and SW
++25.9947	070.3751	220 	  7.0	04 41 30.0	+25 59 41	Round, diam. 7'; feebler extension runs NW for 1 degree; BD +25 723
++25.9947	070.3751	220 	  7.0	04 41 30.0	+25 59 41	(magnitude 8.3) near W edge
++31.7380	071.0035	221 	 45.0	04 44 00.8	+31 44 17	Partly vacant region; diam. about 3/4 degree
++32.1674	077.0993	222 	 10.0	05 08 23.8	+32 10 03	Round; indefinite; diam. 10'
+ +8.3267	080.3668	223 	  8.0	05 21 28.0	+08 19 36	Fan-shaped nebula; diam. 8' plus or minus. This nebula is close southwest
+ +8.3267	080.3668	223 	  8.0	05 21 28.0	+08 19 36	of, and apparently attached to, BD +8 933 (magnitude 6.5). It is possibly
+ +8.3267	080.3668	223 	  8.0	05 21 28.0	+08 19 36	the bright part of an obscuring nebula.
++10.6195	080.9786	224 	 20.0	05 23 54.9	+10 37 10	Indefinite; diam. 20'
++11.6044	082.2414	225 	     	05 28 57.9	+11 36 16	South end of extension running S for 35' from B 30
++33.7001	084.1442	226 	 17.0	05 36 34.6	+33 42 00	Dark spot; diam. 17'; S of M 36
++19.6554	091.8494	227 	 12.0	06 07 23.9	+19 39 20	Round, diam. 12'; one or two faint stars in it
+-34.5135	236.2413	228 	240.0	15 44 57.9	-34 30 49	Large vacant region about 4 degrees long NW and SE. This vacant region is
+-34.5135	236.2413	228 	240.0	15 44 57.9	-34 30 49	about 4 degrees long, extending from RA=15h31m, dec=-32 45' to RA=15h43m,
+-34.5135	236.2413	228 	240.0	15 44 57.9	-34 30 49	dec=-35 30'. Its average width is about 1/2 degree. It is strongest marked
+-34.5135	236.2413	228 	240.0	15 44 57.9	-34 30 49	at the north end. There are fragments of other dark markings several
+-34.5135	236.2413	228 	240.0	15 44 57.9	-34 30 49	degrees west of this.
+-27.3111	244.4204	229 	 45.0	16 17 40.9	-27 18 40	Indefinite, partially vacant region; diam. 3/4 degree
+-16.7843	246.7908	230 	 60.0	16 27 09.8	-16 47 03	Round; diam. about 1 degree
+-35.4210	249.6013	231 	 30.0	16 38 24.3	-35 25 16	Dusky; diam. 30'; sharpest on W side, diffuses to the E
+-39.8230	250.9353	232 	 10.0	16 43 44.5	-39 49 23	Dusky; 10' N and S; 2 small stars in it
+-35.4030	251.1893	233 	 37.0	16 44 45.4	-35 24 11	Diffused; 55' N and S; 20' wide
+-30.4810	251.6107	234 	 18.0	16 46 26.6	-30 28 52	Narrow; nearly 1/2 degree long, 6' wide
+-44.4806	251.7767	235 	  7.0	16 47 06.4	-44 28 50	Diam. 7'; elongated NE and SW; darkest part at SW end
+-29.8072	252.2268	236 	     	16 48 54.4	-29 48 26	Center of system of indistinct dark lanes
+-29.9739	252.2294	237 	 37.0	16 48 55.0	-29 58 26	Dark lane N of CD -30 13487 (magnitude 8.0). Beginning about 10' NW of CD
+-29.9739	252.2294	237 	 37.0	16 48 55.0	-29 58 26	-30 13487 (magnitude 8.0) this dark lane runs NE for 37' and then turns
+-29.9739	252.2294	237 	 37.0	16 48 55.0	-29 58 26	abruptly to the E for 18'. Beginning about 10' northwest of CD -30 13487
+-29.9739	252.2294	237 	 37.0	16 48 55.0	-29 58 26	(magnitude 8.0), this dark lane runs northeast for 37' and then turns
+-29.9739	252.2294	237 	 37.0	16 48 55.0	-29 58 26	abruptly to the east for 18'.
+-23.1301	253.0908	238 	 13.0	16 52 21.8	-23 07 48	Irregular; diam. 13'; BD -22 4323 (magnitude 8.0) on NW edge
+-31.1231	253.7507	239 	 15.0	16 55 00.2	-31 07 23	Curved; 15' long; very black and narrow; rimmed with stars on S and E
+-31.1231	253.7507	239 	 15.0	16 55 00.2	-31 07 23	sides
+-35.3610	254.8236	240 	 20.0	16 59 17.7	-35 21 40	Black; diam. 20'
+-30.1934	254.8635	241 	 12.0	16 59 27.2	-30 11 36	Dusky; diffused; 18' long E and W, 6' wide; about 20' W of M 62
+-32.4271	256.2772	242 	 19.0	17 05 06.5	-32 25 38	Dusky; elongated E and W, 30'x8'
+-29.5798	257.4421	243 	 25.0	17 09 46.1	-29 34 47	Very irregular; diam. 25'
+-28.4098	257.7162	244 	 25.0	17 10 51.9	-28 24 35	Irregular; sharpest on W side; about 30' long N and S, 20' wide; from S
+-28.4098	257.7162	244 	 25.0	17 10 51.9	-28 24 35	end a narrow projection runs W for about 10'
+-29.4067	257.9820	245 	  8.0	17 11 55.7	-29 24 24	Round; diffused; diam. 8'; several bright stars in it
+-22.6558	258.0080	246 	 15.0	17 12 01.9	-22 39 21	Irregular; diam. about 15'
+-30.2533	258.2791	247 	  4.0	17 13 07.0	-30 15 12	Black; diam. 4'
+-28.9866	258.2676	248 	 10.0	17 13 04.2	-28 59 12	Irregular; 10' E and W
+-29.1533	258.2702	249 	 13.0	17 13 04.8	-29 09 12	Very thin, short, black line, 5' long, 20' plus or minus wide 25' NW of
+-29.1533	258.2702	249 	 13.0	17 13 04.8	-29 09 12	NGC 6304; small star at NE end
+-28.4033	258.2586	250 	 15.0	17 13 02.1	-28 24 12	Diffused; diam. 15'
+-20.1503	258.4535	251 	 13.0	17 13 48.8	-20 09 01	Dusky; elongated NE and SW, 20'x5'
+-32.1470	258.8273	252 	 20.0	17 15 18.6	-32 08 49	Triangular; 20' N and S; eastern side diffused. Abrupt dark marking in a
+-32.1470	258.8273	252 	 20.0	17 15 18.6	-32 08 49	bright, apparently nebulous, region. CD -31 13763 (magnitude 7.7) near
+-32.1470	258.8273	252 	 20.0	17 15 18.6	-32 08 49	northeast end.
+-22.5621	258.8828	253 	 60.0	17 15 31.9	-22 33 44	Irregular dark region; diam. nearly 1 degree; BD -22 4307 (magnitude 8.8)
+-22.5621	258.8828	253 	 60.0	17 15 31.9	-22 33 44	in western part
+-30.1314	260.1217	254 	 40.0	17 20 29.2	-30 07 53	Irregular; diffused; elongated E and W, 1 degree x 20'
+-23.4638	260.1468	255 	  5.0	17 20 35.2	-23 27 50	Dusky; diam. 5'
+-28.8261	260.5517	256 	 50.0	17 22 12.4	-28 49 34	Very irregular and diffused; 50' E and W; BD -28 13101 (magnitude 7.7)
+-28.8261	260.5517	256 	 50.0	17 22 12.4	-28 49 34	near E end
+-35.6251	260.6947	257 	 15.0	17 22 46.7	-35 37 30	Dusky spot; diam. 15'; about 10' NW of CD -35 11505 (magnitude 6.7)
+-34.7244	260.7412	258 	 40.0	17 22 57.9	-34 43 28	Irregular area of dark markings; diam. 40' plus or minus
+-19.2925	260.5064	259 	 30.0	17 22 01.5	-19 17 33	Irregular dark area; diam. 1/2 degree; BD -19 4605 (magnitude 6.5) on W
+-19.2925	260.5064	259 	 30.0	17 22 01.5	-19 17 33	border; BD -19 4617 (magnitude 7.8) in E part
+-25.6180	261.2040	260 	 10.0	17 24 49.0	-25 37 05	Diffused; elongated N and S, 12'x7'
+-23.0337	261.2669	261 	 10.0	17 25 04.0	-23 02 01	Elongated E and W, 14'x5'; diffused on S side, reaching almost to CD -23
+-23.0337	261.2669	261 	 10.0	17 25 04.0	-23 02 01	13378 (magnitude 7.6), about 18' SE of the center
+-22.6156	261.3861	262 	 30.0	17 25 32.7	-22 36 56	Large dark region; diam 1/2 degree; diffused except on N border. A
+-22.6156	261.3861	262 	 30.0	17 25 32.7	-22 36 56	hooklike projection from the west side, with the star BD -22 4338
+-22.6156	261.3861	262 	 30.0	17 25 32.7	-22 36 56	(magnitude 9.6) on west end of this hook.
+-42.7802	261.7352	263 	 30.0	17 26 56.5	-42 46 49	Diam. 30' NE and SW
+-25.5275	261.8033	264 	 10.0	17 27 12.8	-25 31 39	Narrow; black; 10' E and W; bends N at E end; 15' W of CD -25 12179
+-25.5275	261.8033	264 	 10.0	17 27 12.8	-25 31 39	(magnitude 7.3)
+-25.1929	261.9027	265 	 12.0	17 27 36.6	-25 11 35	Irregular; 18' N and S; 7' wide; diffused on E side; about 5' W of CD -25
+-25.1929	261.9027	265 	 12.0	17 27 36.6	-25 11 35	12171 (magnitude 9.2)
+-20.9411	262.0300	266 	 30.0	17 28 07.2	-20 56 28	Curved; 30' long NE and SW; BD -20 4775 (magnitude 7.8) just S of S edge
+-25.2235	262.1325	267 	  4.0	17 28 31.8	-25 13 25	Small; very black; elongated NW and SE, 5'x3'; CD -25 12177 (magnitude
+-25.2235	262.1325	267 	  4.0	17 28 31.8	-25 13 25	9.3) at NW end
+-20.5144	262.8581	268 	 75.0	17 31 26.0	-20 30 52	Irregular dark area, 1 3/4 degree N and S; 50' wide
+-22.7622	263.0562	269 	 60.0	17 32 13.5	-22 45 44	Dusky region, 1 degree long NW and SE; BD -22 4369 (magnitude 7.5) near SE
+-22.7622	263.0562	269 	 60.0	17 32 13.5	-22 45 44	end
+-19.5938	263.1792	270 	 11.0	17 32 43.0	-19 35 38	Round; diam. 11'; in NE part of B 268
+-34.2571	263.5702	271 	120.0	17 34 16.9	-34 15 26	Dusky; curved; 2 degrees N and S; 10' plus or minus wide; CD -33 12241
+-34.2571	263.5702	271 	120.0	17 34 16.9	-34 15 26	(magnitude 8.7) near N end
+-23.4127	264.3998	272 	 45.0	17 37 36.0	-23 24 46	Region of irregular dark markings; diam. 45'; CD -23 13469 (magnitude 8.0)
+-23.4127	264.3998	272 	 45.0	17 37 36.0	-23 24 46	near middle
+-33.3443	264.6221	273 	 15.0	17 38 29.3	-33 20 40	Dark spot at N end of B 271; diam. 15'
+-22.7280	264.5151	274 	 18.0	17 38 03.6	-22 43 41	Triangular; definite; 18' N and S; BD -22 4383 (magnitude 7.5) in N end
+-32.3261	264.7465	275 	 13.0	17 38 59.2	-32 19 34	Round; diam. 13'; about 20' W of M 6
+-19.8229	264.9125	276 	 45.0	17 39 39.0	-19 49 22	Broken region of dark markings; diam. 3/4 degree; BD -19 4677 (magnitude
+-19.8229	264.9125	276 	 45.0	17 39 39.0	-19 49 22	8.3) in NW part
+-23.0699	265.1871	277 	 18.0	17 40 44.9	-23 04 12	Narrow; 18' long E and W; BD -22 4387 (magnitude 8.3) at W end. A less
+-23.0699	265.1871	277 	 18.0	17 40 44.9	-23 04 12	distinct branch running 30' plus or minus to the SE forms a large V, open
+-23.0699	265.1871	277 	 18.0	17 40 44.9	-23 04 12	to the E
+-32.3150	265.6638	278 	 15.0	17 42 39.3	-32 18 54	Round; diam. 15'; about 30' E of M 6
+-22.5583	266.1387	279 	 60.0	17 44 33.3	-22 33 30	Irregular dark area; diam. 1 degree; BD -22 4405 (magnitude 7.3) near N
+-22.5583	266.1387	279 	 60.0	17 44 33.3	-22 33 30	edge; BD -22 4411 (magnitude 8.7) in E part
+-20.7236	266.2380	280 	 60.0	17 44 57.1	-20 43 25	Irregular dusky area; diam. 1 degree plus or minus
+-23.7183	266.6972	281 	     	17 46 47.3	-23 43 06	Dark loop close E of CD -23 13548 (magnitude 8.1)
+-23.4628	267.1521	282 	 18.0	17 48 36.5	-23 27 46	18' long NE and SW; sharp on NW side; CD -23 13589 (magnitude 8.0) near SE
+-23.4628	267.1521	282 	 18.0	17 48 36.5	-23 27 46	end
+-33.8724	267.8171	283 	 75.0	17 51 16.1	-33 52 21	Irregular, dusky area 1 1/2 degree plus or minus E and W, 1 degree N and S
+-14.3741	267.5288	284 	 25.0	17 50 06.9	-14 22 27	Curved; 35' NE and SW, 5' wide; outline sharp except at SW end; BD -14
+-14.3741	267.5288	284 	 25.0	17 50 06.9	-14 22 27	4780 (magnitude 8.0) about 5' NW of the center
+-12.8697	267.8845	285 	 15.0	17 51 32.3	-12 52 11	Diffused; diam. 15'
+-35.6171	268.2654	286 	 15.0	17 53 03.7	-35 37 02	Diffused; diam. 15' plus or minus; CD -35 12013 (magnitude 7.1) in SW part
+-35.1962	268.6121	287 	 30.0	17 54 26.9	-35 11 46	Irregular, semi-vacancy; diam. 1/2 degree plus or minus; SE of M 7
+-37.0884	269.2767	288 	  2.0	17 57 06.4	-37 05 18	Black; diam. 2'; diffuses toward NE; 25' SW of CD -36 12060 (magnitude
+-37.0884	269.2767	288 	  2.0	17 57 06.4	-37 05 18	6.3)
+-29.0224	269.1534	289 	 25.0	17 56 36.8	-29 01 20	Dark space between clouds, about 7'x35'
+-37.1483	269.8364	290 	  3.0	17 59 20.7	-37 08 54	Very small; diam. 3' plus or minus; extends N faintly for 25' to and
+-37.1483	269.8364	290 	  3.0	17 59 20.7	-37 08 54	beyond CD -36 12060 (magnitude 6.3)
+-33.8967	269.9310	291 	  5.0	17 59 43.4	-33 53 48	Small, round, black; diam. 5'. CD -33 12697 (magnitude 8.3) is on the east
+-33.8967	269.9310	291 	  5.0	17 59 43.4	-33 53 48	edge of this spot; a very faint star in the center. A dark lane 2' wide
+-33.8967	269.9310	291 	  5.0	17 59 43.4	-33 53 48	runs southerly from the spot for a distance of 25' and ends in a dark
+-33.8967	269.9310	291 	  5.0	17 59 43.4	-33 53 48	broken region. From the eastern side of the lane, 8' south of the star, a
+-33.8967	269.9310	291 	  5.0	17 59 43.4	-33 53 48	similar dark lane runs easterly, then north, for 35', ending in the broken
+-33.8967	269.9310	291 	  5.0	17 59 43.4	-33 53 48	region B 292.
+-33.3441	270.1422	292 	 60.0	18 00 34.1	-33 20 39	Irregular, broken, dark region; diam. 1 degree
+-35.3424	270.3028	293 	 18.0	18 01 12.7	-35 20 33	Dusky; curved; like an inverted U, 18' across; CD -35 21259 (magnitude
+-35.3424	270.3028	293 	 18.0	18 01 12.7	-35 20 33	8.5) near the center
+-28.6075	270.3763	294 	  3.0	18 01 30.3	-28 36 27	Definite; diam. 3'; star in SW part
+-31.1665	271.0220	295 	 50.0	18 04 05.3	-31 10 00	Irregular, dark region, diam. 50'; full of rich, soft details of an
+-31.1665	271.0220	295 	 50.0	18 04 05.3	-31 10 00	apparently nebulous character
+-24.5326	271.0187	296 	  4.0	18 04 04.5	-24 31 57	Narrow; black; 6'x1'; on S edge of M 8
+-18.7479	271.0872	297 	 75.0	18 04 20.9	-18 44 53	Region of irregular, dark markings, 2 degrees E of M 23; 1 1/2 degree E
+-18.7479	271.0872	297 	 75.0	18 04 20.9	-18 44 53	and W and about 1 degree N and S
+-30.0964	271.2961	298 	  4.0	18 05 11.1	-30 05 47	Small; diam. 4'; 5' SE of NGC 6528
+-27.2926	271.5852	299 	     	18 06 20.4	-27 17 34	Several small spots in star cloud, each about 3' in diameter
+-32.6578	271.7555	300 	     	18 07 01.3	-32 39 28	Broken dark region about 30' E of B 87
+-18.7010	272.2116	301 	 30.0	18 08 50.8	-18 42 03	Dusky lane; 45' plus or minus long NE and SW; 2' wide
+-23.9669	272.3063	302 	 30.0	18 09 13.5	-23 58 01	Dark spot; diam. about 1/2 degree; close N of CD -24 13962 (magnitude 7.8)
+-23.9995	272.3692	303 	  1.0	18 09 28.6	-23 59 58	Very black; lune shaped, convex to E; diameter about 1'; 3' SE of CD -24
+-23.9995	272.3692	303 	  1.0	18 09 28.6	-23 59 58	13962 (magnitude 7.8)
+-18.7206	273.3368	304 	     	18 13 20.8	-18 43 14	Dusky lanes in star cloud extending toward the SW from B 92 for 1 1/2
+-18.7206	273.3368	304 	     	18 13 20.8	-18 43 14	degrees
+-31.8013	273.6574	305 	 13.0	18 14 37.8	-31 48 05	Dark; irregular; diam. 13'. Dark streamers radiate from this spot to the
+-31.8013	273.6574	305 	 13.0	18 14 37.8	-31 48 05	north for more than 3/4 degree and broken ones for 1/2 degree toward the
+-31.8013	273.6574	305 	 13.0	18 14 37.8	-31 48 05	southwest.
+-25.7140	273.9360	306 	  4.0	18 15 44.6	-25 42 50	Small, narrow, black; 4' long NE and SW; CD -25 12920 (magnitude 8.2) 5'
+-25.7140	273.9360	306 	  4.0	18 15 44.6	-25 42 50	SW of W end; similar to B 249
+-17.9545	274.6597	307 	  6.0	18 18 38.3	-17 57 16	Narrow, dusky mark in star cloud; 6' long NE and SW
+-22.2367	274.7852	308 	  6.0	18 19 08.5	-22 14 12	Curved; dusky; 7' E and W, 5' wide
+-24.0247	275.7856	309 	  5.0	18 23 08.5	-24 01 29	Irregular; dusky; diam. 5'
+-18.5862	277.5548	310 	  2.0	18 30 13.2	-18 35 10	Diam. 2'; small star near center; 20' SW of BD -18 4988 (magnitude 6.0)
+-17.6687	277.6134	311 	  6.0	18 30 27.2	-17 40 07	Black; elliptical; diam. 6' NE and SW; in a semi-vacant strip 35' long
+-15.5801	278.0441	312 	 75.0	18 32 10.6	-15 34 48	Large, dark area; 1 3/4 degree NW and SE, about 30' wide. This dark area
+-15.5801	278.0441	312 	 75.0	18 32 10.6	-15 34 48	is almost elliptical in form. It is sharply defined on its north and
+-15.5801	278.0441	312 	 75.0	18 32 10.6	-15 34 48	northwest sides, but is diffused to the south, and elsewhere. There is a
+-15.5801	278.0441	312 	 75.0	18 32 10.6	-15 34 48	heavy sprinkling of small stars all over it.
+-15.6854	278.9868	313 	 15.0	18 35 56.8	-15 41 07	Narrow; curved; 15' E and W
+ -9.7149	279.2695	314 	 35.0	18 37 04.7	-09 42 53	Irregular, dusky marking; 35' long NE and SW
+-20.0333	280.5770	315 	  5.0	18 42 18.5	-20 02 00	Round; dark; diam. 5'
+ -2.1333	280.4605	316 	  6.0	18 41 50.5	-02 08 00	Dark; diam. 6'; sharp on its S end, gradually diffusing to the N into a
+ -2.1333	280.4605	316 	  6.0	18 41 50.5	-02 08 00	wide open space
+-14.2058	281.4416	317 	 20.0	18 45 46.0	-14 12 21	Dusky; 30' NE and SW, 5' wide
+ -6.3935	282.4282	318 	 60.0	18 49 42.8	-06 23 37	Long, straight, dark line. This dusky line, just S of M 11, extends E and
+ -6.3935	282.4282	318 	 60.0	18 49 42.8	-06 23 37	W for about 1 1/2 degrees. It is uniformly about 2' wide.
+ -1.2697	282.9919	319 	  7.0	18 51 58.1	-01 16 11	Thin, curved, dark marking; length 7'; BD -1 3586 (magnitude 9.5) at the
+ -1.2697	282.9919	319 	  7.0	18 51 58.1	-01 16 11	NE end
+ -5.8510	283.1965	320 	 15.0	18 52 47.2	-05 51 04	Irregular; diam. 15' plus or minus; BD -6 4941 (magnitude 7.5) near
+ -5.8510	283.1965	320 	 15.0	18 52 47.2	-05 51 04	center; at S end of the large crescent-shaped marking, B 111
+-11.2977	283.5084	321 	 13.0	18 54 02.0	-11 17 52	Dusky; 15' long E and W, 7' wide; BD -11 4795 (magnitude 7.8) near W end
+ -4.4587	283.9464	322 	  2.0	18 55 47.1	-04 27 31	Very small; black; diam. 2'; at NE end of the "crescent", B 111
+ -3.4200	284.3923	323 	 17.0	18 57 34.2	-03 25 12	A dark parallelogram, 17' N and S; BD -3 4423 (magnitude 9.2) in W part
+ -2.9979	284.8456	324 	 30.0	18 59 23.0	-02 59 53	Definite, dusky loop. The crooked dusky lane forming this marking is 2'-4'
+ -2.9979	284.8456	324 	 30.0	18 59 23.0	-02 59 53	wide. The length of the E side is 35'. The conspicuous star in the NE part
+ -2.9979	284.8456	324 	 30.0	18 59 23.0	-02 59 53	of the loop is BD -3 4439 (magnitude 7.4).
+ -4.0632	284.9749	325 	 15.0	18 59 54.0	-04 03 47	Irregular; dusky; 15' NW and SE
+ -0.3859	285.8565	326 	 20.0	19 03 25.6	-00 23 09	Narrow; 25' long E and W; 3' wide
+ -5.1332	286.1123	327 	 25.0	19 04 27.0	-05 07 59	Curved, dusky lane; 30' N and S; 3' wide
+ -4.2487	286.2060	328 	  4.0	19 04 49.5	-04 14 55	Small, black; diam. 4'; 13' S of BD -4 4684 (magnitude 5.7)
+ +3.1915	286.7481	329 	  6.0	19 06 59.5	+03 11 29	Dusky spot in star cloud; diam. 6' plus or minus; BD +2 3789 (magnitude
+ +3.1915	286.7481	329 	  6.0	19 06 59.5	+03 11 29	9.0) near E edge
+ +7.5615	289.8900	330 	 30.0	19 19 33.6	+07 33 41	Dark; round; diam. 30'; BD +7 4028 (magnitude 7.8) on NE border
+ +7.5801	291.5157	331 	 40.0	19 26 03.8	+07 34 48	Dusky, narrow lane 1 degree long NW and SE, 3' wide
+ +8.7523	292.0025	332 	     	19 28 00.6	+08 45 08	Area of dark lanes. A black spot, connected with these lanes, is located
+ +8.7523	292.0025	332 	     	19 28 00.6	+08 45 08	about 15' N of BD +8 4112 (magnitude 7.5)
++10.6717	292.2304	333 	 60.0	19 28 55.3	+10 40 18	Area of irregular dark lanes; diam. 1 degree plus or minus; these
++10.6717	292.2304	333 	 60.0	19 28 55.3	+10 40 18	irregular lanes have a uniform width of about 2' or 3'
++12.3225	293.7751	334 	  3.0	19 35 06.0	+12 19 21	Small, dark marking; diam. 3'
+ +7.6105	294.2255	335 	  6.0	19 36 54.1	+07 36 38	Small; very black; diam. 6'; in a slightly larger dusky area; BD +7 4151
+ +7.6105	294.2255	335 	  6.0	19 36 54.1	+07 36 38	(magnitude 7.8) near its SW edge
++12.3436	294.1711	336 	  2.0	19 36 41.1	+12 20 37	Dark; diam. 1'-2'; in a slightly larger vacant space; BD +11 3912
++12.3436	294.1711	336 	  2.0	19 36 41.1	+12 20 37	(magnitude 8.6) in SW part
++12.3945	294.2539	337 	  3.0	19 37 00.9	+12 23 40	Dark; diam. 3', with narrow extension for 17' to NW. This small spot, with
++12.3945	294.2539	337 	  3.0	19 37 00.9	+12 23 40	its narrow extension, is in a relatively darker space in the star cloud.
+ +7.4609	295.7616	338 	  8.0	19 43 02.8	+07 27 39	Dusky; diam. 8'; just S of BD +7 4191 (magnitude 8.8); in S part of B 339
+ +8.2970	296.0108	339 	 60.0	19 44 02.6	+08 17 49	Broken, dusky region covering more than 1 degree
++11.4100	297.1852	340 	  7.0	19 48 44.5	+11 24 36	Irregular, curved; diam. 7'; 25' S of BD +11 3994 (magnitude 5.8); a
++11.4100	297.1852	340 	  7.0	19 48 44.5	+11 24 36	narrow extension for 15' to the N
++34.2818	297.5053	341 	 30.0	19 50 01.3	+34 16 54	Narrow, dark lane, about 30' E and W. This is one of several similar dark
++34.2818	297.5053	341 	 30.0	19 50 01.3	+34 16 54	lines in this region. They are very clear cut and narrow, not more than
++34.2818	297.5053	341 	 30.0	19 50 01.3	+34 16 54	1.5' wide.
++41.2005	302.3782	342 	  4.0	20 09 30.8	+41 12 02	Small, dark marking; 4' E and W
++40.2771	303.3584	343 	 13.0	20 13 26.0	+40 16 38	Elongated; 13' long NW and SE; sharpest at SE end; several stars in S
++40.2771	303.3584	343 	 13.0	20 13 26.0	+40 16 38	part; 10' plus or minus E of BD +39 4082 (magnitude 7.5)
++40.2175	304.0509	344 	  7.0	20 16 12.2	+40 13 03	Dusky spot, 7' long; like an arrowhead, pointed SW; small star at NE end
++46.5634	305.2511	345 	 15.0	20 21 00.3	+46 33 48	Curved; convex to the E; 15' long; bordered by two parallel curves of
++46.5634	305.2511	345 	 15.0	20 21 00.3	+46 33 48	small stars
++43.7440	306.6919	346 	 10.0	20 26 46.1	+43 44 39	Curved, black spot; diam. 10'; embraces to the N a triangular mass of
++43.7440	306.6919	346 	 10.0	20 26 46.1	+43 44 39	small stars
++39.9145	307.1157	347 	  1.0	20 28 27.8	+39 54 52	Dark streak in nebulous cloud; less than 1' wide, extending 10' SW from BD
++39.9145	307.1157	347 	  1.0	20 28 27.8	+39 54 52	+39 4206 (magnitude 8.8)
++42.0957	308.6095	348 	 60.0	20 34 26.3	+42 05 45	Narrow, dusky; nearly 1 degree long NE and SW. The southwest end of this
++42.0957	308.6095	348 	 60.0	20 34 26.3	+42 05 45	dusky lane curves west and then north, curving around the star BD +41 3799
++42.0957	308.6095	348 	 60.0	20 34 26.3	+42 05 45	(magnitude 6.7).
++43.9594	311.8507	349 	  6.0	20 47 24.2	+43 57 34	Small, curved, dusky; diam. 6'. Elongated north and south, with dusky
++43.9594	311.8507	349 	  6.0	20 47 24.2	+43 57 34	extension running 15' NW. A short line of small stars close west.
++45.8801	312.2780	350 	  3.0	20 49 06.7	+45 52 48	Small, round, dusky; diam. 3'; 14' S of BD +45 3291 (magnitude 5.6)
++47.4044	313.1148	351 	 20.0	20 52 27.5	+47 24 16	Crooked, dusky lane, 3' wide, 25' long NE and SW; 1/2 degree W of BD +46
++47.4044	313.1148	351 	 20.0	20 52 27.5	+47 24 16	3111 (magnitude 6.0)
++45.8980	314.2948	352 	 22.0	20 57 10.7	+45 53 53	Large; black; diam. 22'; sharply defined on SE side; a row of five stars
++45.8980	314.2948	352 	 22.0	20 57 10.7	+45 53 53	runs nearly N and S across its E end
++45.4818	314.3443	353 	  9.0	20 57 22.6	+45 28 54	Definite; dusky; 12' N and S; 6' wide
++58.1515	314.5545	354 	 60.0	20 58 13.1	+58 09 05	Dusky; irregular; 1 degree NE and SW
++43.1865	314.9084	355 	  5.0	20 59 38.0	+43 11 11	Dark; definite; 5' E and W; like a letter V - the open end toward the E
++46.6875	314.9950	356 	 24.0	20 59 58.8	+46 41 15	Irregular; dusky; diam. 24; BD +46 3141 (magnitude 7.6) on SE border;
++46.6875	314.9950	356 	 24.0	20 59 58.8	+46 41 15	irregular extension for 1 1/2 degree toward the NE
++55.5714	314.9668	357 	 30.0	20 59 52.0	+55 34 17	Irregular; dusky; diam. 30; BD +55 2495 (magnitude 7.9) in NW edge; BD +54
++55.5714	314.9668	357 	 30.0	20 59 52.0	+55 34 17	2455 (magnitude 9.0) near center
++43.2827	316.4191	358 	 20.0	21 05 40.6	+43 16 58	Diam. 20'; diffuses to NE; a curve of stars along N edge; BD +42 3960
++43.2827	316.4191	358 	 20.0	21 05 40.6	+43 16 58	(magnitude 9.5) at W side
++57.1696	316.6956	359 	 20.0	21 06 46.9	+57 10 11	Narrow; dusky; 20' long NE and SW; BD +56 2527 (magnitude 8.7) about 7' W
++57.1696	316.6956	359 	 20.0	21 06 46.9	+57 10 11	of SW end
++56.5051	316.9674	360 	 54.0	21 07 52.2	+56 30 18	Irregular, dark marking. This, together with the dusky space in which B
++56.5051	316.9674	360 	 54.0	21 07 52.2	+56 30 18	151 is located, forms an irregular, zigzag marking 54' long.
++47.4310	318.1908	361 	 20.0	21 12 45.8	+47 25 52	Round; diam. 20'; irreg. extension to W for 1/2 degree, plus or minus
++50.2034	320.9906	362 	 15.0	21 23 57.7	+50 12 12	Elongated; 15' NE and SW; BD +49 3517 (magnitude 9.0) on NE edge
++48.9384	321.2243	363 	 40.0	21 24 53.8	+48 56 18	Irregular; dusky; 40' long NE and SW; BD +48 3390 (magnitude 5.5) 7' plus
++48.9384	321.2243	363 	 40.0	21 24 53.8	+48 56 18	or minus E of SE side
++54.5560	323.5185	364 	 75.0	21 34 04.5	+54 33 21	Region of many small dark lanes; diam. 1 1/4 degree
++56.7243	323.7228	365 	 22.0	21 34 53.5	+56 43 27	Dark S-shaped object; 22' long N and S; BD +55 2604 (magnitude 9.0) near
++56.7243	323.7228	365 	 22.0	21 34 53.5	+56 43 27	SW end
++59.5676	325.0894	366 	 10.0	21 40 21.5	+59 34 03	Roundish; dusky; diam. 10'; 12' S of BD +59 2409 (magnitude 6.9); two
++59.5676	325.0894	366 	 10.0	21 40 21.5	+59 34 03	small stars on N border
++57.1743	326.1022	367 	  5.0	21 44 24.5	+57 10 28	Small; dark; 5' NW and SE; about 5' NW of BD +56 2635 (magnitude 9.5)
++58.9853	327.7316	368 	 14.0	21 50 55.6	+58 59 07	Dusky spot, 14' long NE and SW; a row of small stars in it; about 4' SW of
++58.9853	327.7316	368 	 14.0	21 50 55.6	+58 59 07	BD +58 2340 (magnitude 9.0)
++56.0224	333.9772	369 	  5.0	22 15 54.5	+56 01 21	Round; dusky; diam. 5'; about 13' NE of BD +55 2709 (magnitude 7.8)
++56.6458	338.7114	370 	     	22 34 50.7	+56 38 45	Region of narrow dark lanes
+

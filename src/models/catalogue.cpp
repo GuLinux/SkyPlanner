@@ -22,6 +22,10 @@
 using namespace Wt;
 using namespace std;
 
+Catalogue::Catalogue(const std::string &name, const std::string &code, int priority, SearchMode searchMode, HiddenMode hiddenMode)
+  : _name(name), _code(code), _priority(priority), _searchMode(searchMode), _hidden(hiddenMode)
+{
+}
 
 Dbo::collection< NebulaDenominationPtr> Catalogue::nebulae() const
 {

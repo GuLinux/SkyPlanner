@@ -112,6 +112,10 @@ public:
     std::vector<CatalogueDescription> descriptions() const;
     ConstellationFinder::Constellation constellation() const;
     void updateConstellation();
+    NgcObject(Angle rightAscension, Angle declination, float magnitude, Angle angularSize, NebulaType nebulaType,
+              const boost::optional<std::string> &objectId = boost::optional<std::string>(),
+              const boost::optional<std::string> &constellationAbbrev = boost::optional<std::string>(),
+              const boost::optional<std::string> &extraData = boost::optional<std::string>());
 private:
     boost::optional<std::string> _objectId;
     float _rightAscension, _declination, _magnitude, _angularSize;

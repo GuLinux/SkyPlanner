@@ -34,6 +34,8 @@ class Catalogue
 public:
   enum SearchMode { ByName = 0x0, ByCatalog = 0x1, ByNameAndType = 0x2 };
   enum HiddenMode { Visible = 0x0, HiddenSearch = 0x1, HiddenEverywhere = 0xFF };
+  Catalogue() = default;
+  Catalogue(const std::string &name, const std::string &code, int priority, SearchMode searchMode, HiddenMode hiddenMode);
   dbo::collection<dbo::ptr<NebulaDenomination>> nebulae() const;
   std::string name() const;
   std::string code() const;

@@ -22,6 +22,13 @@
 
 using namespace std;
 using namespace Wt;
+
+
+NebulaDenomination::NebulaDenomination(const CataloguePtr &catalogue, boost::optional<string> number, std::string name, boost::optional<string> comment, boost::optional<string> otherCatalogues)
+  : _catalogue(catalogue), _number(number), _name(name), _comment(comment), _otherCatalogues(otherCatalogues)
+{
+}
+
 CataloguePtr NebulaDenomination::catalogue() const
 {
   return _catalogue;
@@ -59,4 +66,9 @@ string NebulaDenomination::search() const {
     case Catalogue::ByNameAndType:
       return format("%s %s") % _ngcObject->typeDescription().toUTF8() % name();
  }
+}
+
+void NebulaDenomination::setComment(const string &comment)
+{
+  _comment.reset(comment);
 }
