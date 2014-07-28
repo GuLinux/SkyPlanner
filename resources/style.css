@@ -33,6 +33,14 @@
     .pagination-item a {
 //      min-width: 3em;
     }
+    .close-inline {
+      float: none;
+    }
+    .filter-container {
+      display:inline-block;
+      background-color: rgb(108, 121, 133);
+    }
+    
     @media (min-width: 768px) {
       .navbar .navbar-collapsed {
         display: block!important;

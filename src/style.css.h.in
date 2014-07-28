@@ -1,4 +1,4 @@
- #ifndef STYLE_CSS_H
+#ifndef STYLE_CSS_H
 #define STYLE_CSS_H
 #include <stdint.h>
 #include <string>
@@ -6,7 +6,7 @@
 
 std::vector<uint8_t> styleCss() {
   std::string css = R"(
-    @STYLE_CSS_CONTENT@
+    /* STYLE_CSS_CONTENT */
   )";
   return std::vector<uint8_t>(css.begin(), css.end());
 }

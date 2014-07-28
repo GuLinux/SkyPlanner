@@ -33,8 +33,13 @@ set(SkyPlanner_SRCS
 include(models/source_files.cmake)
 
 
-EXEC_PROGRAM(cat ARGS ${CMAKE_SOURCE_DIR}/resources/style.css OUTPUT_VARIABLE STYLE_CSS_CONTENT)
-configure_file(style.css.h.in style.css.h @ONLY)
+add_custom_command(OUTPUT style.css.h COMMAND ${CMAKE_SOURCE_DIR}/scripts/create-style-css
+                                              ${CMAKE_SOURCE_DIR}/src/style.css.h.in 
+                                              ${CMAKE_SOURCE_DIR}/resources/style.css 
+                                              ${CMAKE_SOURCE_DIR}/build/src/style.css.h
+                                              )
+add_custom_target(clean-style-css COMMAND rm -f ${CMAKE_CURRENT_BINARY_DIR}/style.css.h SOURCES ${CMAKE_SOURCE_DIR}/resources/style.css)
+add_custom_target(regen-style-css DEPENDS clean-style-css style.css.h)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 add_executable(SkyPlanner ${SkyPlanner_SRCS} ${SkyPlanner_MODELS_SRCS} ${AAPLUS_SRCS} ${Widgets_SRCS} )
