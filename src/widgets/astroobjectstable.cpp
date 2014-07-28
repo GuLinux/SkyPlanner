@@ -51,6 +51,10 @@ AstroObjectsTable::AstroObjectsTable(Session &session, const vector<Action> &act
   d->objectsTable->setHeaderCount(1);
   WContainerWidget *container = WW<WContainerWidget>();
   if(showFilters) {
+    WPushButton *filtersButton = WW<WPushButton>(WString::tr("filters"));
+    WContainerWidget *filtersBar = WW<WContainerWidget>().setInline(true);
+    WPopupMenu *availableFilters = WW<WPopupMenu>();
+    filtersButton->setMenu(availableFilters);
     d->filterByType = new FilterByTypeWidget(initialTypes);
     d->filterByType->changed().connect([=](_n6){ d->filtersChanged.emit(d->filters()); });
     d->filterByMinimumMagnitude = new FilterByMagnitudeWidget({WString::tr("not_set"), {}, WString::tr("minimum_magnitude_label")}, {0, 20});
@@ -70,7 +74,25 @@ AstroObjectsTable::AstroObjectsTable(Session &session, const vector<Action> &act
     d->minimumAltitude->activated().connect([=](int,_n5){ d->filtersChanged.emit(d->filters()); });
     d->filterByConstellation = new FilterByConstellation;
     d->filterByConstellation->changed().connect([=](_n6){ d->filtersChanged.emit(d->filters()); });
-    container->addWidget(WW<WContainerWidget>().addCss("form-inline").add(d->filterByType).add(d->filterByMinimumMagnitude)
+    auto filterItem = [=] (const WString &text, WWidget *widget) {
+      WMenuItem *item = availableFilters->addItem(text);
+      item->triggered().connect([=](WMenuItem *i, _n5) {
+        availableFilters->setItemHidden(item, true);
+        WContainerWidget *container = WW<WContainerWidget>().add(widget).setInline(true);
+        WPushButton *closeButton = WW<WPushButton>().css("close").onClick([=](WMouseEvent){
+          container->removeWidget(widget);
+          delete container;
+          availableFilters->setItemHidden(item, false);
+        }) ;
+        closeButton->setTextFormat(XHTMLUnsafeText);
+        closeButton->setText("&times;");
+        container->addWidget(WW<WContainerWidget>().setInline(true).add(closeButton));
+        filtersBar->addWidget(container);
+      });
+    };
+    filterItem(WString::tr("filter_by_type_menu"), d->filterByType);
+
+    container->addWidget(WW<WContainerWidget>().addCss("form-inline").add(filtersButton).add(filtersBar).add(d->filterByMinimumMagnitude)
       .add(d->filterByConstellation).add(d->filterByCatalogue).add(new WLabel{WString::tr("minimum-altitude")}).add(d->minimumAltitude));
   }
   d->tableContainer = WW<WContainerWidget>().addCss("table-responsive").add(d->objectsTable).add(d->tableFooter = WW<WContainerWidget>() );
