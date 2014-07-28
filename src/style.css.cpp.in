@@ -1,0 +1,11 @@
+//STYLE_CSS_CPP_BEGIN
+#include "style.css.h"
+using namespace std;
+vector<uint8_t> SkyPlannerStyle::css() {
+  std::string css = R"(
+    /* STYLE_CSS_CONTENT */
+  )";
+  return vector<uint8_t>(css.begin(), css.end());
+}
+
+//STYLE_CSS_CPP_END

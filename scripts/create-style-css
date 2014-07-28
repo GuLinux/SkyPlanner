@@ -3,10 +3,10 @@ TEMPLATE="$1"
 CSS="$2"
 OUTPUT="$3"
 
-if ! [ -r "$OUTPUT" ] || [ "$CSS" -nt "$OUTPUT" ]; then
-  awk "/#ifndef/,/\/\* STYLE_CSS_CONTENT \*\//" "$TEMPLATE" > "$OUTPUT"
+#if ! [ -r "$OUTPUT" ] || [ "$CSS" -nt "$OUTPUT" ]; then
+  awk "/STYLE_CSS_CPP_BEGIN/,/\/\* STYLE_CSS_CONTENT \*\//" "$TEMPLATE" > "$OUTPUT"
   cat "$CSS" >> "$OUTPUT"
-  awk '/\/\* STYLE_CSS_CONTENT \*\//,/#endif/' "$TEMPLATE" >> "$OUTPUT"
-fi
+  awk '/\/\* STYLE_CSS_CONTENT \*\//,/STYLE_CSS_CPP_END/' "$TEMPLATE" >> "$OUTPUT"
+#fi
 
 

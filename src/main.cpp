@@ -28,7 +28,7 @@ int main(int argc, char **argv) {
         server.addResource(new NgcResource, "/ngc");
 	string noop;
 	if(! server.readConfigurationProperty("style-css-path", noop))
-	  server.addResource(new WMemoryResource("text/css", styleCss()), "/skyplanner_style.css");
+	  server.addResource(new WMemoryResource("text/css", SkyPlannerStyle::css()), "/skyplanner_style.css");
         server.addEntryPoint(Wt::Application, createAstroPlanner);
         Session::configureAuth();
         if (server.start()) {
