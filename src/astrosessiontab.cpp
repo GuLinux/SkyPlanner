@@ -165,7 +165,7 @@ void AstroSessionTab::Private::reload()
     planetsTable->populate(planets, {}, timezone);
   };
 
-  auto changeNameOrDateButton = WW<WPushButton>(WString::tr("astrosessiontab_change_name_or_date")).css("btn btn-sm").onClick([=](WMouseEvent){
+  auto changeNameOrDateButton = WW<WPushButton>(WString::tr("astrosessiontab_change_name_or_date")).css("btn btn-xs").onClick([=](WMouseEvent){
     WDialog *changeNameOrDateDialog = new WDialog(WString::tr("astrosessiontab_change_name_or_date"));
     WLineEdit *sessionName = WW<WLineEdit>(astroSession->name()).css("input-block-level");
     WDateEdit *sessionDate = WW<WDateEdit>().css("input-block-level");
@@ -185,7 +185,7 @@ void AstroSessionTab::Private::reload()
     changeNameOrDateDialog->show();
   });
 
-  auto previewVersionButton = WW<WPushButton>(WString::tr("astrosessiontab_preview_version")).css("btn-primary btn-sm").onClick([=](WMouseEvent){
+  auto previewVersionButton = WW<WPushButton>(WString::tr("astrosessiontab_preview_version")).css("btn-primary btn-xs").onClick([=](WMouseEvent){
     spLog("notice") << "Switching to preview version..";
     sessionPreviewContainer->clear();
     sessionPreviewContainer->setStyleClass("astroobjects-list");
@@ -269,11 +269,11 @@ void AstroSessionTab::Private::reload()
     sessionStacked->setCurrentWidget(sessionPreviewContainer);
   });
 
-  auto printableVersionButton = WW<WPushButton>(WString::tr("astrosessiontab_printable_version")).css("btn btn-info btn-sm").onClick( [=](WMouseEvent){ printableVersion(); } );
+  auto printableVersionButton = WW<WPushButton>(WString::tr("astrosessiontab_printable_version")).css("btn btn-info btn-xs").onClick( [=](WMouseEvent){ printableVersion(); } );
 
 
 
-  WPushButton *exportButton = WW<WPushButton>(WString::tr("astrosessiontab_export")).css("btn btn-sm btn-info");
+  WPushButton *exportButton = WW<WPushButton>(WString::tr("astrosessiontab_export")).css("btn btn-xs btn-info");
   WPopupMenu *exportMenu = new WPopupMenu;
   exportButton->setMenu(exportMenu);
   for(auto exportType: map<string, ExportAstroSessionResource::ReportType>{
@@ -297,7 +297,7 @@ void AstroSessionTab::Private::reload()
     }
   }
 
-  auto closeButton = WW<WPushButton>(WString::tr("buttons_close")).css("btn btn-warning btn-sm").onClick( [=](WMouseEvent){ close.emit(); } );
+  auto closeButton = WW<WPushButton>(WString::tr("buttons_close")).css("btn btn-warning btn-xs").onClick( [=](WMouseEvent){ close.emit(); } );
 
   WForm *actionsContainer = WW<WForm>(WForm::Inline).setMargin(10);
   WToolBar *actionsToolbar = new WToolBar();
@@ -392,7 +392,7 @@ void AstroSessionTab::Private::reload()
   astroObjectsTable->objectsListChanged().connect([=](const AstroSessionObjectPtr &o, _n5) { populate(o); });
   astroObjectsTable->filtersChanged().connect([=](AstroObjectsTable::Filters, _n5){ populate(); });
   WContainerWidget *telescopeComboContainer;
-  WComboBox *telescopeCombo = new WComboBox;
+  WComboBox *telescopeCombo = WW<WComboBox>().css("input-sm");
   WStandardItemModel *telescopesModel = new WStandardItemModel(sessionContainer);
   telescopeCombo->setModel(telescopesModel);
   WLabel *telescopeComboLabel = WW<WLabel>(WString::tr("astrosessiontab__telescope_label")).setMargin(10);
