@@ -157,7 +157,7 @@
 <message id="notification_suggestion_title">Suggerimento</message>
 
 <message id="notification_object_already_added">Oggetto già aggiunto a questa sessione.</message>
-<message id="notification_object_added">Oggetto aggiunto con successo alla sessione.<br /><a class="link" onclick="$(document.body).animate({'scrollTop': $('#{1}').offset().top}, 500);"><strong>Vai all'oggetto aggiunto</strong></a>.</message>
+<message id="notification_object_added">Oggetto aggiunto con successo alla sessione.<br /><a class="link alert-link" onclick="$(document.body).animate({'scrollTop': $('#{1}').offset().top}, 500);"><strong>Vai all'oggetto aggiunto</strong></a>.</message>
 
 <message id="filters">Filtri</message>
 <message id="filter_by_constellation_all">Tutte le Constellazioni</message>
