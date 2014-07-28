@@ -279,7 +279,8 @@ void DSSImage::Private::showImageController()
   zoomLevel->setValue(imageOptions.size.arcMinutes());
   moveFactor->setValue(10);
   content->bindWidget("zoom-button", WW<WPushButton>(WString::tr("buttons_set")).onClick([=](WMouseEvent){
-    dialogControl->downloading();
+    if(dialogControl)
+      dialogControl->downloading();
     imageOptions.size = Angle::arcMinutes( zoomLevel->value() ); 
     spLog("notice") << "reloading with zoom level: " << imageOptions.size.arcMinutes() << " arcminutes";
     imageOptions.onViewPortChanged(imageOptions.coordinates, imageOptions.size);
