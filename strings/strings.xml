@@ -119,7 +119,7 @@
 <message id="notification_suggestion_title">Suggestion</message>
 
 <message id="notification_object_already_added">Object already added to this session, skipping.</message>
-<message id="notification_object_added">Object successfully added to this session.<br /><a class="link" onclick="$(document.body).animate({'scrollTop': $('#{1}').offset().top}, 500);"><strong>Jump to added object</strong></a>.</message>
+<message id="notification_object_added">Object successfully added to this session.<br /><a class="alert-link link" onclick="$(document.body).animate({'scrollTop': $('#{1}').offset().top}, 500);"><strong>Jump to added object</strong></a>.</message>
 
 <message id="filters">Filters</message>
 <message id="filter_by_type_title">Filter By Type</message>

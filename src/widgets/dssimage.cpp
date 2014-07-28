@@ -89,6 +89,10 @@ void DSSImage::Private::save(const boost::system::error_code &errorCode, const H
   }
   WServer::instance()->log("notice") << imageLink() << " correctly downloaded, saving to " << fullFile();
   ofstream out(fullFile().string() );
+  if(!out) {
+    WServer::instance()->log("error") << "Error saving to " << fullFile() << ": " << strerror( errno );
+    return;
+  }
   out << httpMessage.body();
   out.flush();
   out.close();
@@ -97,7 +101,6 @@ void DSSImage::Private::save(const boost::system::error_code &errorCode, const H
   
   WServer::instance()->log("notice") << " download successfully finished, calling setImageFromCache";
   setImageFromCache(finishDialogControl);
-
 
   wApp->triggerUpdate();
 }

@@ -259,6 +259,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
     setMenuItemsVisibility();
     loginLogoutMessage();
     if(d->session.login().loggedIn() && d->initialInternalPath.size()) {
+      spLog("notice") << "User logged in, setting internal path to previous value: " << d->initialInternalPath;
       setInternalPath(d->initialInternalPath, true);
       d->initialInternalPath = string{};
     }
