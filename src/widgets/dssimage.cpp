@@ -53,6 +53,7 @@ namespace fs = boost::filesystem;
 DSSImage::Private::Private( const DSSImage::ImageOptions &imageOptions, const shared_ptr<mutex> &downloadMutex, DSSImage *q )
   : imageOptions(imageOptions), downloadMutex(downloadMutex), q( q )
 {
+  this->imageOptions.size = min(imageOptions.size, Angle::arcMinutes(75));
   httpClient.setTimeout(120);
   httpClient.setMaximumResponseSize(1024*1024*40);
   httpClient.done().connect(bind(&DSSImage::Private::save, this, placeholders::_1, placeholders::_2));

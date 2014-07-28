@@ -275,6 +275,8 @@ void SelectObjectsWidget::Private::searchByCatalogueTab(Dbo::Transaction& transa
 
   cataloguesCombo->setModel(cataloguesModel);
   auto searchByCatalogueNumber = [=] {
+    if(cataloguesCombo->currentText().empty())
+      return;
     Dbo::Transaction t(session);
     string key = string("_bycat: ") + cataloguesCombo->currentText().toUTF8() + catalogueNumber->text().toUTF8();
     if(lastSearch == key)
