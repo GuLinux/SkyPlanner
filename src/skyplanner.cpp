@@ -85,12 +85,11 @@ const string SkyPlanner::HOME_PATH = "/home/";
 SkyPlanner::SkyPlanner( const WEnvironment &environment )
   : WApplication( environment ), d( this )
 {
+  d->initialInternalPath = internalPath();
   d->agentIsBot = environment.agentIsSpiderBot() || environment.userAgent().find("Baiduspider") != string::npos || environment.userAgent().find("YandexBot") != string::npos;
   if(!d->agentIsBot)
-    log("notice") << "Starting new application instance: referer=" << environment.referer() << ", ip=" << environment.headerValue("X-Forwarded-For") << ", user agent=" << environment.userAgent();
-  else
-    log("notice") << "Spider bot visiting: " << environment.userAgent();
-  addMetaHeader("viewport", "width=device-width, initial-scale=1, maximum-scale=1");
+    log("notice") << "Starting new application instance: referer=" << environment.referer() << ", ip=" << environment.headerValue("X-Forwarded-For")
+                  << ", user agent=" << environment.userAgent() << ", internal path=" << d->initialInternalPath;
   string googleVerificationCode;
   if(readConfigurationProperty("google-site-verification", googleVerificationCode)) {
     addMetaHeader("google-site-verification", googleVerificationCode);
@@ -152,6 +151,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
       }
     }
   }
+
 
   WNavigationBar *navBar = WW<WNavigationBar>(root()).addCss( "navbar-inverse" );
 
@@ -258,6 +258,10 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
       setInternalPath(HOME_PATH, true);
     setMenuItemsVisibility();
     loginLogoutMessage();
+    if(d->session.login().loggedIn() && d->initialInternalPath.size()) {
+      setInternalPath(d->initialInternalPath, true);
+      d->initialInternalPath = string{};
+    }
   });
   setMenuItemsVisibility();
   if(d->session.login().loggedIn())

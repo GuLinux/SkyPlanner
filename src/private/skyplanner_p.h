@@ -47,6 +47,7 @@ public:
     std::set<std::shared_ptr<Notification>> shownNotifications;
     std::string lastNameSearch;
     bool agentIsBot;
+    std::string initialInternalPath;
 private:
     class SkyPlanner* const q;
 };

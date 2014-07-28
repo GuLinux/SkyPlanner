@@ -151,8 +151,7 @@ void AstroSessionTab::Private::reload()
     wApp->setInternalPath("/login");
     return;
   }
-  WForm *actionsContainer = WW<WForm>(WForm::Inline).setMargin(10);
-  sessionContainer->addWidget(actionsContainer);
+
   Dbo::Transaction t(session);
 
   auto populatePlanets = [=] (AstroObjectsTable *planetsTable) {
@@ -166,7 +165,7 @@ void AstroSessionTab::Private::reload()
     planetsTable->populate(planets, {}, timezone);
   };
 
-  actionsContainer->addButton(WW<WPushButton>(WString::tr("astrosessiontab_change_name_or_date")).css("btn btn-sm").onClick([=](WMouseEvent){
+  auto changeNameOrDateButton = WW<WPushButton>(WString::tr("astrosessiontab_change_name_or_date")).css("btn btn-sm").onClick([=](WMouseEvent){
     WDialog *changeNameOrDateDialog = new WDialog(WString::tr("astrosessiontab_change_name_or_date"));
     WLineEdit *sessionName = WW<WLineEdit>(astroSession->name()).css("input-block-level");
     WDateEdit *sessionDate = WW<WDateEdit>().css("input-block-level");
@@ -184,8 +183,9 @@ void AstroSessionTab::Private::reload()
     form->bindWidget("sessionDate", sessionDate);
     changeNameOrDateDialog->contents()->addWidget(form);
     changeNameOrDateDialog->show();
-  }));
-  actionsContainer->addButton(WW<WPushButton>(WString::tr("astrosessiontab_preview_version")).css("btn-primary btn-sm").onClick([=](WMouseEvent){
+  });
+
+  auto previewVersionButton = WW<WPushButton>(WString::tr("astrosessiontab_preview_version")).css("btn-primary btn-sm").onClick([=](WMouseEvent){
     spLog("notice") << "Switching to preview version..";
     sessionPreviewContainer->clear();
     sessionPreviewContainer->setStyleClass("astroobjects-list");
@@ -267,8 +267,11 @@ void AstroSessionTab::Private::reload()
       astroObjectWidget->addStyleClass("astroobject-last-list-item");
     invertAllButton->clicked().connect([=](WMouseEvent){ for(auto a: *astroObjectWidgets) a->toggleInvert(); } );
     sessionStacked->setCurrentWidget(sessionPreviewContainer);
-  }));
-  actionsContainer->addButton(WW<WPushButton>(WString::tr("astrosessiontab_printable_version")).css("btn btn-info btn-sm").onClick( [=](WMouseEvent){ printableVersion(); } ));
+  });
+
+  auto printableVersionButton = WW<WPushButton>(WString::tr("astrosessiontab_printable_version")).css("btn btn-info btn-sm").onClick( [=](WMouseEvent){ printableVersion(); } );
+
+
 
   WPushButton *exportButton = WW<WPushButton>(WString::tr("astrosessiontab_export")).css("btn btn-sm btn-info");
   WPopupMenu *exportMenu = new WPopupMenu;
@@ -293,10 +296,19 @@ void AstroSessionTab::Private::reload()
       });
     }
   }
-  actionsContainer->addButton(exportButton);
 
-  actionsContainer->addButton(WW<WPushButton>(WString::tr("buttons_close")).css("btn btn-warning btn-sm").onClick( [=](WMouseEvent){ close.emit(); } ));
+  auto closeButton = WW<WPushButton>(WString::tr("buttons_close")).css("btn btn-warning btn-sm").onClick( [=](WMouseEvent){ close.emit(); } );
 
+  WForm *actionsContainer = WW<WForm>(WForm::Inline).setMargin(10);
+  WToolBar *actionsToolbar = new WToolBar();
+  sessionContainer->addWidget(actionsContainer);
+  actionsToolbar->addButton(changeNameOrDateButton);
+  actionsToolbar->addButton(previewVersionButton);
+  actionsToolbar->addButton(printableVersionButton);
+  actionsToolbar->addButton(exportButton);
+  actionsToolbar->addButton(closeButton);
+
+  actionsContainer->add(actionsToolbar, string{}, false);
   
   WContainerWidget *sessionInfo = WW<WContainerWidget>();
   sessionInfo->addWidget(new WText{WLocalDateTime(astroSession->wDateWhen().date(), astroSession->wDateWhen().time())
