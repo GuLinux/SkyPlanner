@@ -38,12 +38,12 @@
     }
     .filter-container {
       display:inline-block;
-      background-color: rgb(108, 121, 133);
-      height: 40px;
+      background-color: rgb(149, 156, 162);
+      height: 36px;
     }
     .magnitude-slider {
-      height: 34px;
-      max-height: 34px;
+      height: 28px;
+      max-height: 28px;
     }
     
     @media (min-width: 768px) {
@@ -195,6 +195,11 @@
     .btn-move-arrow {
       min-width: 45px;
     }
-    .filter_widget_link {
+    .filter-widget-link {
         color: aliceblue;
+        font-weight: bold;
+    }
+    .filter-widget-link:hover {
+    color: white;
+    font-weight: bold;
     }

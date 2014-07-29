@@ -21,7 +21,7 @@ FilterByTypeWidget::Private::Private(const set<NgcObject::NebulaType> &initialSe
 FilterByTypeWidget::FilterByTypeWidget(const set<NgcObject::NebulaType> &initialSelection, WContainerWidget *parent)
   : WCompositeWidget(parent), d(initialSelection, this)
 {
-  WPushButton *astroTypeButton = WW<WPushButton>(WString::tr("filter_by_type_button")).css("btn-link filter_widget_link");
+  WPushButton *astroTypeButton = WW<WPushButton>(WString::tr("filter_by_type_button")).css("btn-sm btn-link filter-widget-link");
   astroTypeButton->clicked().connect([=](const WMouseEvent &e) {
     set<NgcObject::NebulaType> initialSelection = d->nebulaTypeFilters;
     WDialog *dialog = new WDialog(WString::tr("filter_by_type_title"));

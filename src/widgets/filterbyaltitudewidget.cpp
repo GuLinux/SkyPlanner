@@ -20,7 +20,7 @@ FilterByAltitudeWidget::FilterByAltitudeWidget(const WString &labelText, const A
   : d(initial, this)
 {
   d->altitudeModel = new WStandardItemModel(this);
-  d->altitudeCombo = new WComboBox();
+  d->altitudeCombo = WW<WComboBox>().css("input-sm");
   d->altitudeCombo->setModel(d->altitudeModel);
   for(Angle i=Angle::degrees(0); i<Angle::degrees(90); i+=steps ) {
     auto item = new WStandardItem(format("%d°") % i.degrees());

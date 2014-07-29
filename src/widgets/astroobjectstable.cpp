@@ -51,9 +51,9 @@ AstroObjectsTable::AstroObjectsTable(Session &session, const vector<Action> &act
   d->objectsTable->setHeaderCount(1);
   WContainerWidget *container = WW<WContainerWidget>();
   if(showFilters) {
-    d->filtersBar = WW<WContainerWidget>().setInline(true);
+    d->filtersBar = WW<WContainerWidget>().css("hidden-print").setInline(true);
     d->availableFilters = WW<WPopupMenu>();
-    WPushButton *filtersButton = WW<WPushButton>(WString::tr("filters")).onClick([=](const WMouseEvent &e) { d->availableFilters->popup(e); });
+    WPushButton *filtersButton = WW<WPushButton>(WString::tr("filters")).css("btn-sm hidden-print").onClick([=](const WMouseEvent &e) { d->availableFilters->popup(e); });
     d->filterByType = new FilterByTypeWidget(initialTypes);
     d->filterByType->changed().connect([=](_n6){ d->filtersChanged.emit(d->filters()); });
     d->filterByMinimumMagnitude = new FilterByMagnitudeWidget({WString::tr("not_set"), {}, WString::tr("minimum_magnitude_label")}, {0, 20});
@@ -71,7 +71,7 @@ AstroObjectsTable::AstroObjectsTable(Session &session, const vector<Action> &act
     d->addFilterItem(WString::tr("filter_by_catalogue_menu"), d->filterByCatalogue);
     d->addFilterItem(WString::tr("filter_by_minimum_altitude_menu"), d->filterByMinimumAltitude);
 
-    container->addWidget(WW<WContainerWidget>().addCss("form-inline").add(filtersButton).add(d->filtersBar) );
+    container->addWidget(WW<WContainerWidget>().addCss("form-inline hidden-print").add(filtersButton).add(d->filtersBar) );
   }
   d->tableContainer = WW<WContainerWidget>().addCss("table-responsive").add(d->objectsTable).add(d->tableFooter = WW<WContainerWidget>() );
   container->addWidget( d->tableContainer );
@@ -83,7 +83,7 @@ template<typename T> void AstroObjectsTable::Private::addFilterItem(const Wt::WS
   WMenuItem *item = availableFilters->addItem(text);
   item->triggered().connect([=](WMenuItem *i, _n5) {
     availableFilters->setItemHidden(item, true);
-    WContainerWidget *container = WW<WContainerWidget>().add(filterWidget).setInline(true).css("filter-container badge");
+    WContainerWidget *container = WW<WContainerWidget>().add(filterWidget).setInline(true).css("filter-container badge hidden-print");
     WPushButton *closeButton = WW<WPushButton>().css("close close-inline").onClick([=](WMouseEvent){
       container->removeWidget(filterWidget);
       delete container;
