@@ -71,6 +71,7 @@ public:
     std::function<void(Row)> onClick;
     std::string buttonCss;
     std::function<void(Wt::WMenuItem *, Row)> onMenuItemCreated = [](Wt::WMenuItem*, Row) {};
+    std::function<void(Wt::WPushButton *, Row)> onButtonCreated = [](Wt::WPushButton*, Row) {};
   };
   struct Filters {
     std::set<NgcObject::NebulaType> types;
