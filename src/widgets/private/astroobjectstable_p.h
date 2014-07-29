@@ -35,10 +35,10 @@
 class AstroObjectsTable::Private
 {
   public:
-    Private(Session &session, const std::vector<AstroObjectsTable::Action> &actions, const std::vector<AstroObjectsTable::Column> &columns, AstroObjectsTable *q );
+    Private(Session &session, const std::vector<AstroObjectsTable::Action> &actions, const std::list<Column> &columns, AstroObjectsTable *q );
     Session &session;
     std::vector<AstroObjectsTable::Action> actions; 
-    std::vector<AstroObjectsTable::Column> columns;
+    std::list<AstroObjectsTable::Column> columns;
     Wt::WTable *objectsTable;
     Wt::WTableRow *selectedRow = nullptr;
     FilterByTypeWidget *filterByType;
@@ -58,6 +58,8 @@ class AstroObjectsTable::Private
     Wt::WPopupMenu *availableFilters;
     Wt::WContainerWidget *filtersBar;
     template<typename T> void addFilterItem(const Wt::WString &text, T *filterWidget);
+
+    bool forceActionsAsToolBar = false;
   private:
     class AstroObjectsTable *const q; 
 };

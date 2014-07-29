@@ -373,7 +373,8 @@ void AstroSessionTab::Private::reload()
       remove(sessionObject, [=] { populate(); });
     } },
   };
-  if(astroSession->wDateWhen() < WDateTime::currentDateTime()) {
+  bool isPastSession = astroSession->wDateWhen() < WDateTime::currentDateTime();
+  if(isPastSession) {
     AstroObjectsTable::Action toggleObserved = AstroObjectsTable::Action{"astrosessiontab_object_observed_menu", [=](const AstroObjectsTable::Row &r) {
       Dbo::Transaction t(session);
       auto o = session.find<AstroSessionObject>().where("objects_id = ?").bind(r.astroObject.object.id()).where("astro_session_id = ?").bind(r.astroObject.astroSession.id()).resultValue();
@@ -387,8 +388,13 @@ void AstroSessionTab::Private::reload()
       menuItem->setChecked(o->observed());
     };
     actions.push_back(toggleObserved);
-}
-  sessionContainer->addWidget(astroObjectsTable = new AstroObjectsTable(session, actions ));
+  }
+  auto columns = AstroObjectsTable::allColumns;
+  if(isPastSession)
+    columns.remove_if([](AstroObjectsTable::Column c){ return c == AstroObjectsTable::Difficulty || c == AstroObjectsTable::TransitTime || c == AstroObjectsTable::MaxAltitude; });
+
+  sessionContainer->addWidget(astroObjectsTable = new AstroObjectsTable(session, actions, true, NgcObject::allNebulaTypes(), columns ));
+  astroObjectsTable->forceActionsAsToolBar(isPastSession); 
   astroObjectsTable->objectsListChanged().connect([=](const AstroSessionObjectPtr &o, _n5) { populate(o); });
   astroObjectsTable->filtersChanged().connect([=](AstroObjectsTable::Filters, _n5){ populate(); });
   WContainerWidget *telescopeComboContainer;

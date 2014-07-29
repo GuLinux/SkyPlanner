@@ -53,7 +53,7 @@ public:
     AstroObjectsTable::Action addToSessionAction;
     void searchByName(const std::string &name, AstroObjectsTable *table, int page = 0);
     std::string styleFor(const NgcObjectPtr &object, Wt::Dbo::Transaction &t) const;
-    std::vector<AstroObjectsTable::Column> columns;
+    std::list<AstroObjectsTable::Column> columns;
 private:
     class SelectObjectsWidget* const q;
 };

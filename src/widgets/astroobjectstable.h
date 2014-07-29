@@ -92,10 +92,10 @@ public:
     long offset() const;
   };
   enum Column { Names, Type, AR, DEC, Constellation, AngularSize, Magnitude, TransitTime, MaxAltitude, Difficulty };
-  static const std::vector<Column> allColumns;
+  static const std::list<Column> allColumns;
   AstroObjectsTable(Session &session, const std::vector<Action> &actions = {}, bool showFilters = true,
                     const std::set<NgcObject::NebulaType> &initialTypes = NgcObject::allNebulaTypes(),
-                    const std::vector<AstroObjectsTable::Column> &columns = allColumns,
+                    const std::list<AstroObjectsTable::Column> &columns = allColumns,
                     Wt::WContainerWidget *parent = 0);
   void populate(const std::vector<AstroObject> &objects, const TelescopePtr &telescope, const Timezone &timezone, const Page &page = {}, const Selection &selection = {});
   void clear();
@@ -106,6 +106,7 @@ public:
   void setTableAttribute(const std::string &attributeName, const std::string &attributeValue);
   void setResponsive(bool responsive);
   Wt::Signal<Wt::Dbo::ptr<AstroSessionObject>> &objectsListChanged() const;
+  void forceActionsAsToolBar(bool force);
 private:
   D_PTR;
 };

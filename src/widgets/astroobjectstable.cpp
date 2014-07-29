@@ -27,6 +27,7 @@
 #include <Wt/WPopupMenu>
 #include <Wt/WComboBox>
 #include <Wt/WLabel>
+#include <Wt/WToolBar>
 #include <Wt-Commons/wt_helpers.h>
 #include "models/Models"
 #include "widgets/astroobjectwidget.h"
@@ -39,12 +40,12 @@ using namespace Wt;
 using namespace WtCommons;
 using namespace std;
 
-AstroObjectsTable::Private::Private( Session &session, const vector< AstroObjectsTable::Action > &actions, const vector< AstroObjectsTable::Column > &columns, AstroObjectsTable *q )
+AstroObjectsTable::Private::Private( Session &session, const vector< AstroObjectsTable::Action > &actions, const list< AstroObjectsTable::Column > &columns, AstroObjectsTable *q )
  : session(session), actions(actions), columns(columns), q(q)
 {
 }
 
-AstroObjectsTable::AstroObjectsTable(Session &session, const vector<Action> &actions, bool showFilters, const set<NgcObject::NebulaType> &initialTypes, const vector<Column> &columns, WContainerWidget *parent)
+AstroObjectsTable::AstroObjectsTable(Session &session, const vector<Action> &actions, bool showFilters, const set<NgcObject::NebulaType> &initialTypes, const std::list<Column> &columns, WContainerWidget *parent)
   : WCompositeWidget(parent), d(session, actions, columns, this)
 {
   d->objectsTable = WW<WTable>().addCss("table table-hover astroobjects-table");
@@ -160,7 +161,7 @@ void AstroObjectsTable::clear()
   d->objectsTable->clear();
 }
 
-const vector<AstroObjectsTable::Column> AstroObjectsTable::allColumns = {
+const list<AstroObjectsTable::Column> AstroObjectsTable::allColumns = {
   Names, Type, AR, DEC, Constellation, AngularSize, Magnitude, TransitTime, MaxAltitude, Difficulty
 };
 
@@ -321,7 +322,7 @@ void AstroObjectsTable::populate(const vector<AstroObject> &objects, const Teles
       auto hasColumn = std::find(begin(d->columns), end(d->columns), column);
       if(hasColumn == end(d->columns))
         return nullptr;
-      return WW<WTableCell>(row->elementAt(hasColumn - begin(d->columns))).add(createWidget() ).get();
+      return WW<WTableCell>(row->elementAt(distance(begin(d->columns), hasColumn))).add(createWidget() ).get();
     };
     addColumn(Names, [=] {
       auto popup = new ObjectPopupMenu{astroObject.object, astroObject.astroSession, telescope, timezone, d->session};
@@ -349,14 +350,22 @@ void AstroObjectsTable::populate(const vector<AstroObject> &objects, const Teles
       if(d->actions.size() == 1) {
         row->elementAt(d->columns.size())->addWidget(WW<WPushButton>(WString::tr(d->actions[0].name)).addCss("btn-xs").addCss(d->actions[0].buttonCss).onClick([=](WMouseEvent) { d->actions[0].onClick(objectRow); }));
       } else {
-        WPopupMenu *actionsMenu = new WPopupMenu;
-        WPushButton *actionsButton = WW<WPushButton>(WString::tr("buttons_actions")).css("btn-xs").onClick([=](WMouseEvent e) {actionsMenu->popup(e); });
-        row->elementAt(d->columns.size())->addWidget(actionsButton);
-        for(auto action: d->actions) {
-          auto menuItem = actionsMenu->addItem(WString::tr(action.name));
-          menuItem->addStyleClass(action.buttonCss);
-          menuItem->triggered().connect([=](WMenuItem*, _n5) { action.onClick(objectRow); });
-          action.onMenuItemCreated(menuItem, objectRow);
+        if(d->forceActionsAsToolBar) {
+          WToolBar *toolbar = WW<WToolBar>();
+          row->elementAt(d->columns.size())->addWidget(toolbar);
+          for(auto action: d->actions) {
+            toolbar->addButton(WW<WPushButton>(WString::tr(action.name)).addCss("btn-xs").addCss(action.buttonCss).onClick([=](WMouseEvent) { action.onClick(objectRow); }) );
+          }
+        } else {
+          WPopupMenu *actionsMenu = new WPopupMenu;
+          WPushButton *actionsButton = WW<WPushButton>(WString::tr("buttons_actions")).css("btn-xs").onClick([=](WMouseEvent e) {actionsMenu->popup(e); });
+          row->elementAt(d->columns.size())->addWidget(actionsButton);
+          for(auto action: d->actions) {
+            auto menuItem = actionsMenu->addItem(WString::tr(action.name));
+            menuItem->addStyleClass(action.buttonCss);
+            menuItem->triggered().connect([=](WMenuItem*, _n5) { action.onClick(objectRow); });
+            action.onMenuItemCreated(menuItem, objectRow);
+          }
         }
       }
     }
@@ -427,4 +436,10 @@ WContainerWidget *AstroObjectsTable::tableFooter() const
 Signal<AstroSessionObjectPtr> &AstroObjectsTable::objectsListChanged() const
 {
   return d->objectsListChanged;
+}
+
+
+void AstroObjectsTable::forceActionsAsToolBar(bool force)
+{
+  d->forceActionsAsToolBar = force;
 }
