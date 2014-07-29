@@ -132,8 +132,7 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsTable( int pageNumber
     }
   
     auto page = AstroObjectsTable::Page::fromCount(pageNumber, objectsCount, [=](long n) { populateSuggestedObjectsTable(n); } );
-    auto ngcObjectsQuery = DboHelper::filterQuery<NgcObjectPtr>(t, "select o from objects o, ephemeris_cache", filters, page).orderBy("magnitude asc")
-      .where("o.id = ephemeris_cache.objects_id")
+    auto ngcObjectsQuery = DboHelper::filterQuery<NgcObjectPtr>(t, "select o from objects o inner join ephemeris_cache on ephemeris_cache.objects_id = o.id", filters, page).orderBy("magnitude asc")
       .where("astro_session_id = ?").bind(astroSession.id());
     suggestedObjectsTable->clear();
     auto results = ngcObjectsQuery.resultList();

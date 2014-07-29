@@ -49,6 +49,9 @@ public:
       query.where("constellation_abbrev = ?").bind(filters.constellation.abbrev);
     if(page)
       query.limit(page.pageSize).offset(page.pageSize * page.current);
+    if( !boost::logic::indeterminate(filters.observed)) {
+      query.where( format("(select count(*) from astro_session_object where objects_id = o.id AND observed = 1) %s 0") % (filters.observed ? ">" : "=") );
+    }
     return query;
   }
 };

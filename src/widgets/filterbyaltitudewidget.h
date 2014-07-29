@@ -16,7 +16,7 @@ public:
     Angle steps;
   };
 
-  explicit FilterByAltitudeWidget(const Wt::WString &labelText, const AvailableAngles &availableAngles);
+  explicit FilterByAltitudeWidget(const Wt::WString &labelText, const AvailableAngles &availableAngles, Wt::WContainerWidget *parent = 0);
   ~FilterByAltitudeWidget();
   Wt::Signal<> &changed() const;
   void resetDefaultValue();

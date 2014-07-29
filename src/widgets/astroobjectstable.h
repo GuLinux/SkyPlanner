@@ -24,6 +24,7 @@
 #include "utils/d_ptr.h"
 #include "models/Models"
 #include <functional>
+#include <boost/logic/tribool.hpp>
 
 class Session;
 class ObjectPopupMenu;
@@ -79,6 +80,7 @@ public:
     CataloguePtr catalogue;
     Angle minimumAltitude;
     Angle maximumAltitude = Angle::degrees(90);
+    boost::logic::tribool observed = boost::logic::indeterminate;
   };
   struct Page {
     long current = -1;

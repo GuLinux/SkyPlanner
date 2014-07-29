@@ -284,5 +284,12 @@ After you added a session, click it to add new objects.
 <message id="filter_by_catalogue_menu">by catalogue</message>
 <message id="filter_by_minimum_altitude_menu">by minimum altitude</message>
 <message id="filter_by_maximum_altitude_menu">by maximum altitude</message>
+<message id="filter_by_observed_in_any_session">by past observations</message>
+
+<message id="observed-in-any-session">observed in the past</message>
+
+<message id="observed_any">don't filter</message>
+<message id="observed_yes">already observed</message>
+<message id="observed_no">never observed</message>
 
 </messages>

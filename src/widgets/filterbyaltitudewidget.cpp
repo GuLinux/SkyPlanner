@@ -16,8 +16,8 @@ FilterByAltitudeWidget::Private::Private(const Angle &initialValue, FilterByAlti
 {
 }
 
-FilterByAltitudeWidget::FilterByAltitudeWidget(const WString &labelText, const AvailableAngles &availableAngles)
-  : d(availableAngles.initial, this)
+FilterByAltitudeWidget::FilterByAltitudeWidget(const WString &labelText, const AvailableAngles &availableAngles, WContainerWidget *parent)
+  : WCompositeWidget(parent), d(availableAngles.initial, this)
 {
   d->altitudeModel = new WStandardItemModel(this);
   d->altitudeCombo = WW<WComboBox>().css("input-sm");

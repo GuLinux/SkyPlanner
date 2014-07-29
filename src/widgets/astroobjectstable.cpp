@@ -75,6 +75,9 @@ AstroObjectsTable::AstroObjectsTable(Session &session, const vector<Action> &act
     d->filterByMaximumAltitude = new FilterByAltitudeWidget{WString::tr("maximum-altitude"), {Angle::degrees(90), Angle::degrees(10), Angle::degrees(90)} };
     d->filterByMaximumAltitude->changed().connect([=](_n6){ d->filtersChanged.emit(d->filters()); });
 
+    d->filterByObserved = new FilterByObservedWidget{WString::tr("observed-in-any-session")};
+    d->filterByObserved->changed().connect([=](_n6){ d->filtersChanged.emit(d->filters()); });
+
     d->addFilterItem(WString::tr("filter_by_type_menu"), d->filterByType);
     d->addFilterItem(WString::tr("filter_by_minimum_magnitude_menu"), d->filterByMinimumMagnitude);
     d->addFilterItem(WString::tr("filter_by_maximum_magnitude_menu"), d->filterByMaximumMagnitude);
@@ -82,6 +85,7 @@ AstroObjectsTable::AstroObjectsTable(Session &session, const vector<Action> &act
     d->addFilterItem(WString::tr("filter_by_catalogue_menu"), d->filterByCatalogue);
     d->addFilterItem(WString::tr("filter_by_minimum_altitude_menu"), d->filterByMinimumAltitude);
     d->addFilterItem(WString::tr("filter_by_maximum_altitude_menu"), d->filterByMaximumAltitude);
+    d->addFilterItem(WString::tr("filter_by_observed_in_any_session"), d->filterByObserved);
 
     container->addWidget(WW<WContainerWidget>().addCss("form-inline hidden-print").add(filtersButton).add(d->filtersBar) );
   }
@@ -122,6 +126,7 @@ AstroObjectsTable::Filters AstroObjectsTable::Private::filters() const
   _filters.types = filterByType->selected();
   _filters.minimumAltitude = filterByMinimumAltitude->currentValue();
   _filters.maximumAltitude = filterByMaximumAltitude->currentValue();
+  _filters.observed = filterByObserved->value();
   return _filters;
 }
 

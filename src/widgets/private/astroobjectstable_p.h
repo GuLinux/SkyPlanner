@@ -25,6 +25,7 @@
 #include <widgets/filterbycatalogue.h>
 #include <widgets/filterbyaltitudewidget.h>
 #include <widgets/filterbyconstellation.h>
+#include <widgets/filterbyobservedwidget.h>
 #include "session.h"
 #include <Wt/WTable>
 #include <Wt/WStandardItemModel>
@@ -47,6 +48,7 @@ class AstroObjectsTable::Private
     FilterByCatalogue *filterByCatalogue;
     FilterByAltitudeWidget *filterByMinimumAltitude;
     FilterByAltitudeWidget *filterByMaximumAltitude;
+    FilterByObservedWidget *filterByObserved;
     Wt::Signal<Filters> filtersChanged;
     Filters filters() const;
     void header();

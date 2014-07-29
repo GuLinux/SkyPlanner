@@ -300,5 +300,12 @@ Dopo aver aggiunto una nuova sessione, clicca sul suo nome per aggiungere oggett
 <message id="filter_by_catalogue_menu">per catalogo</message>
 <message id="filter_by_minimum_altitude_menu">per altezza minima</message>
 <message id="filter_by_maximum_altitude_menu">per altezza massima</message>
+<message id="filter_by_observed_in_any_session">per osservazioni passate</message>
+
+<message id="observed-in-any-session">osservati in passato</message>
+
+<message id="observed_any">non filtrare</message>
+<message id="observed_yes">già osservati</message>
+<message id="observed_no">mai osservati</message>
 
 </messages>
