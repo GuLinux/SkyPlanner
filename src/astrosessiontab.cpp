@@ -137,55 +137,8 @@ template AstroSessionObjectPtr AstroSessionTab::add(const NgcObjectPtr &ngcObjec
 template AstroSessionObjectPtr AstroSessionTab::add(const NgcObjectPtr &ngcObject, const AstroSessionPtr &astroSession, Session &session, WWidget *objectWidget);
 template AstroSessionObjectPtr AstroSessionTab::add(const NgcObjectPtr &ngcObject, const AstroSessionPtr &astroSession, Session &session, WMenuItem *objectWidget);
 
-void AstroSessionTab::Private::reload()
+void AstroSessionTab::Private::previewVersion(bool showPlanets, bool onlyObserved)
 {
-  q->clear();
-  WStackedWidget *sessionStacked = new WStackedWidget;
-  WContainerWidget *sessionContainer = new WContainerWidget;
-  WContainerWidget *sessionPreviewContainer = new WContainerWidget;
-  sessionStacked->addWidget(sessionContainer);
-  sessionStacked->addWidget(sessionPreviewContainer);
-
-  q->addWidget(sessionStacked);
-  if(!session.user()) {
-    wApp->setInternalPath("/login");
-    return;
-  }
-
-  Dbo::Transaction t(session);
-
-  auto populatePlanets = [=] (AstroObjectsTable *planetsTable) {
-    Ephemeris ephemeris({astroSession->position().latitude, astroSession->position().longitude}, timezone);
-    vector<AstroObjectsTable::AstroObject> planets;
-    for(auto planet: Ephemeris::allPlanets) {
-      AstroObjectsTable::AstroObject astroObject;
-      astroObject.planet = ephemeris.planet(planet, DateTime::fromLocal(astroSession->when(), timezone));
-      planets.push_back(astroObject);
-    }
-    planetsTable->populate(planets, {}, timezone);
-  };
-
-  auto changeNameOrDateButton = WW<WPushButton>(WString::tr("astrosessiontab_change_name_or_date")).css("btn btn-xs").onClick([=](WMouseEvent){
-    WDialog *changeNameOrDateDialog = new WDialog(WString::tr("astrosessiontab_change_name_or_date"));
-    WLineEdit *sessionName = WW<WLineEdit>(astroSession->name()).css("input-block-level");
-    WDateEdit *sessionDate = WW<WDateEdit>().css("input-block-level");
-    sessionDate->setDate(astroSession->wDateWhen().date());
-    changeNameOrDateDialog->footer()->addWidget(WW<WPushButton>(WString::tr("Wt.WMessageBox.Ok")).css("btn btn-primary").onClick([=](WMouseEvent){
-      Dbo::Transaction t(session);
-      astroSession.modify()->setName(sessionName->text().toUTF8());
-      astroSession.modify()->setDateTime(WDateTime{sessionDate->date()});
-      changeNameOrDateDialog->accept();
-      nameChanged.emit(astroSession->name());
-      reload();
-    }));
-    WTemplate *form = new WTemplate("<form><fieldset><label>Name</label>${sessionName}<label>Date</label>${sessionDate}</fieldset></form>");
-    form->bindWidget("sessionName", sessionName);
-    form->bindWidget("sessionDate", sessionDate);
-    changeNameOrDateDialog->contents()->addWidget(form);
-    changeNameOrDateDialog->show();
-  });
-
-  auto previewVersionButton = WW<WPushButton>(WString::tr("astrosessiontab_preview_version")).css("btn-primary btn-xs").onClick([=](WMouseEvent){
     spLog("notice") << "Switching to preview version..";
     sessionPreviewContainer->clear();
     sessionPreviewContainer->setStyleClass("astroobjects-list");
@@ -210,17 +163,18 @@ void AstroSessionTab::Private::reload()
     updatePositionDetails(infoWidget, false);
     sessionPreviewContainer->addWidget(infoWidget);
 
-
-    AstroObjectsTable *planetsTable = new AstroObjectsTable(session, {}, false, {}, {AstroObjectsTable::Names, AstroObjectsTable::AR, AstroObjectsTable::DEC, AstroObjectsTable::Constellation, AstroObjectsTable::Magnitude, AstroObjectsTable::AngularSize, AstroObjectsTable::TransitTime, AstroObjectsTable::MaxAltitude});
-    planetsTable->addStyleClass("planets-table");
-    planetsTable->setResponsive(false);
-    WPanel *planetsPanel = new WPanel;
-    planetsPanel->setTitle(WString::tr("astrosessiontab_planets_panel"));
-    planetsPanel->setCollapsible(true);
-    planetsPanel->titleBarWidget()->addStyleClass("hidden-print");
-    planetsPanel->setCentralWidget(WW<WContainerWidget>().add(WW<WText>(WString("<h5>{1}</h5>").arg(WString::tr("astrosessiontab_planets_panel"))).css("visible-print") ).add(planetsTable));
-    sessionPreviewContainer->addWidget(planetsPanel);
-    populatePlanets(planetsTable);
+    if(showPlanets) {
+      AstroObjectsTable *planetsTable = new AstroObjectsTable(session, {}, false, {}, {AstroObjectsTable::Names, AstroObjectsTable::AR, AstroObjectsTable::DEC, AstroObjectsTable::Constellation, AstroObjectsTable::Magnitude, AstroObjectsTable::AngularSize, AstroObjectsTable::TransitTime, AstroObjectsTable::MaxAltitude});
+      planetsTable->addStyleClass("planets-table");
+      planetsTable->setResponsive(false);
+      WPanel *planetsPanel = new WPanel;
+      planetsPanel->setTitle(WString::tr("astrosessiontab_planets_panel"));
+      planetsPanel->setCollapsible(true);
+      planetsPanel->titleBarWidget()->addStyleClass("hidden-print");
+      planetsPanel->setCentralWidget(WW<WContainerWidget>().add(WW<WText>(WString("<h5>{1}</h5>").arg(WString::tr("astrosessiontab_planets_panel"))).css("visible-print") ).add(planetsTable));
+      sessionPreviewContainer->addWidget(planetsPanel);
+      populatePlanets(planetsTable);
+    }
     sessionPreviewContainer->addWidget(WW<WText>(WString::tr("dss-embed-menu-info-message")).css("hidden-print"));
 
     shared_ptr<mutex> downloadImagesMutex(new mutex);
@@ -234,6 +188,8 @@ void AstroSessionTab::Private::reload()
       AstroSessionObject::generateEphemeris(ephemeris, astroSession, timezone, t);
       auto query = session.query<AstroSessionObjectPtr>("select a from astro_session_object a inner join objects on a.objects_id = objects.id")
         .where("astro_session_id = ?").bind(astroSession.id());
+      if(onlyObserved)
+        query.where("observed = ?").bind(true);
       query.orderBy("transit_time ASC, ra asc, dec asc, constellation_abbrev asc");
 
 
@@ -267,6 +223,63 @@ void AstroSessionTab::Private::reload()
       astroObjectWidget->addStyleClass("astroobject-last-list-item");
     invertAllButton->clicked().connect([=](WMouseEvent){ for(auto a: *astroObjectWidgets) a->toggleInvert(); } );
     sessionStacked->setCurrentWidget(sessionPreviewContainer);
+}
+
+void AstroSessionTab::Private::populatePlanets(AstroObjectsTable* planetsTable)
+{
+    Ephemeris ephemeris({astroSession->position().latitude, astroSession->position().longitude}, timezone);
+    vector<AstroObjectsTable::AstroObject> planets;
+    for(auto planet: Ephemeris::allPlanets) {
+      AstroObjectsTable::AstroObject astroObject;
+      astroObject.planet = ephemeris.planet(planet, DateTime::fromLocal(astroSession->when(), timezone));
+      planets.push_back(astroObject);
+    }
+    planetsTable->populate(planets, {}, timezone);
+}
+
+
+void AstroSessionTab::Private::reload()
+{
+  q->clear();
+  sessionStacked = new WStackedWidget;
+  sessionContainer = new WContainerWidget;
+  sessionPreviewContainer = new WContainerWidget;
+  sessionStacked->addWidget(sessionContainer);
+  sessionStacked->addWidget(sessionPreviewContainer);
+
+  q->addWidget(sessionStacked);
+  if(!session.user()) {
+    wApp->setInternalPath("/login");
+    return;
+  }
+
+  Dbo::Transaction t(session);
+
+  auto changeNameOrDateButton = WW<WPushButton>(WString::tr("astrosessiontab_change_name_or_date")).css("btn btn-xs").onClick([=](WMouseEvent){
+    WDialog *changeNameOrDateDialog = new WDialog(WString::tr("astrosessiontab_change_name_or_date"));
+    WLineEdit *sessionName = WW<WLineEdit>(astroSession->name()).css("input-block-level");
+    WDateEdit *sessionDate = WW<WDateEdit>().css("input-block-level");
+    sessionDate->setDate(astroSession->wDateWhen().date());
+    changeNameOrDateDialog->footer()->addWidget(WW<WPushButton>(WString::tr("Wt.WMessageBox.Ok")).css("btn btn-primary").onClick([=](WMouseEvent){
+      Dbo::Transaction t(session);
+      astroSession.modify()->setName(sessionName->text().toUTF8());
+      astroSession.modify()->setDateTime(WDateTime{sessionDate->date()});
+      changeNameOrDateDialog->accept();
+      nameChanged.emit(astroSession->name());
+      reload();
+    }));
+    WTemplate *form = new WTemplate("<form><fieldset><label>Name</label>${sessionName}<label>Date</label>${sessionDate}</fieldset></form>");
+    form->bindWidget("sessionName", sessionName);
+    form->bindWidget("sessionDate", sessionDate);
+    changeNameOrDateDialog->contents()->addWidget(form);
+    changeNameOrDateDialog->show();
+  });
+
+  auto previewVersionButton = WW<WPushButton>(WString::tr("astrosessiontab_preview_version")).css("btn-primary btn-xs").onClick([=](WMouseEvent){
+    previewVersion();
+  });
+  auto reportButton = WW<WPushButton>(WString::tr("astrosessiontab_report")).css("btn-primary btn-xs").onClick([=](WMouseEvent){
+    previewVersion(false, true);
   });
 
   auto printableVersionButton = WW<WPushButton>(WString::tr("astrosessiontab_printable_version")).css("btn btn-info btn-xs").onClick( [=](WMouseEvent){ printableVersion(); } );
@@ -304,6 +317,8 @@ void AstroSessionTab::Private::reload()
   sessionContainer->addWidget(actionsContainer);
   actionsToolbar->addButton(changeNameOrDateButton);
   actionsToolbar->addButton(previewVersionButton);
+  if(astroSession->wDateWhen() < WDateTime::currentDateTime())
+    actionsToolbar->addButton(reportButton);
   actionsToolbar->addButton(printableVersionButton);
   actionsToolbar->addButton(exportButton);
   actionsToolbar->addButton(closeButton);

@@ -79,6 +79,7 @@
 <message id="astrosessiontab_object_observed">✓ not observed</message>
 <message id="astrosessiontab_object_not_observed">✗ observed</message>
 <message id="astrosessiontab_object_report">report</message>
+<message id="astrosessiontab_report">Report</message>
 
 <message id="astrosessiontab_preview_version">Preview with images</message>
 <message id="preview_back_to_astrosessiontab">Back to list version</message>
