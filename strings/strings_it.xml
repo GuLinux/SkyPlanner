@@ -42,7 +42,8 @@
 
 
 <message id="not_set">non impostato</message>
-<message id="minimum_magnitude_label">Magnitudine minima: </message>
+<message id="minimum_magnitude_label">magnitudine minima: </message>
+<message id="maximum_magnitude_label">magnitudine massima: </message>
 
 <message id="mainmenu_my_sessions">Le Mie Osservazioni</message>
 <message id="mainmenu_my_telescopes">I Miei Telescopi</message>
@@ -278,7 +279,8 @@ Dopo aver aggiunto una nuova sessione, clicca sul suo nome per aggiungere oggett
 <message id="planet_neptune">Nettuno</message>
 <message id="planet_pluto">Plutone</message>
 
-<message id="minimum-altitude">Altezza Minima</message>
+<message id="minimum-altitude">altezza minima</message>
+<message id="maximum-altitude">altezza massima</message>
 
 <message id="astroobject_rst">Sorge/Transita/Tramonta</message>
 <message id="circumpolar">circumpolare</message>
@@ -296,7 +298,7 @@ Dopo aver aggiunto una nuova sessione, clicca sul suo nome per aggiungere oggett
 <message id="filter_by_maximum_magnitude_menu">per magnitudine massima</message>
 <message id="filter_by_constellation_menu">per costellazione</message>
 <message id="filter_by_catalogue_menu">per catalogo</message>
-<message id="filter_by_minimum_altitude_menu">per altitudine minima</message>
-<message id="filter_by_maximum_altitude_menu">per altitudine massima</message>
+<message id="filter_by_minimum_altitude_menu">per altezza minima</message>
+<message id="filter_by_maximum_altitude_menu">per altezza massima</message>
 
 </messages>

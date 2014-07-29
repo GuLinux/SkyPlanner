@@ -16,16 +16,18 @@ FilterByAltitudeWidget::Private::Private(const Angle &initialValue, FilterByAlti
 {
 }
 
-FilterByAltitudeWidget::FilterByAltitudeWidget(const WString &labelText, const Angle &initial, const Angle &steps)
-  : d(initial, this)
+FilterByAltitudeWidget::FilterByAltitudeWidget(const WString &labelText, const AvailableAngles &availableAngles)
+  : d(availableAngles.initial, this)
 {
   d->altitudeModel = new WStandardItemModel(this);
   d->altitudeCombo = WW<WComboBox>().css("input-sm");
   d->altitudeCombo->setModel(d->altitudeModel);
-  for(Angle i=Angle::degrees(0); i<Angle::degrees(90); i+=steps ) {
+  for(Angle i=availableAngles.start; i<=availableAngles.end; i+=availableAngles.steps ) {
     auto item = new WStandardItem(format("%d°") % i.degrees());
     item->setData(i);
     d->altitudeModel->appendRow(item);
+    if(i == availableAngles.initial)
+      d->altitudeCombo->setCurrentIndex(d->altitudeModel->rowCount()-1);
   }
   d->altitudeCombo->activated().connect([=](int,_n5){ d->changed.emit(); });
   setImplementation(WW<WContainerWidget>().setInline(true).add(new WLabel{labelText}).add(d->altitudeCombo));

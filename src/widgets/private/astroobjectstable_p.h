@@ -42,9 +42,11 @@ class AstroObjectsTable::Private
     Wt::WTableRow *selectedRow = nullptr;
     FilterByTypeWidget *filterByType;
     FilterByMagnitudeWidget *filterByMinimumMagnitude;
+    FilterByMagnitudeWidget *filterByMaximumMagnitude;
     FilterByConstellation *filterByConstellation;
     FilterByCatalogue *filterByCatalogue;
     FilterByAltitudeWidget *filterByMinimumAltitude;
+    FilterByAltitudeWidget *filterByMaximumAltitude;
     Wt::Signal<Filters> filtersChanged;
     Filters filters() const;
     void header();

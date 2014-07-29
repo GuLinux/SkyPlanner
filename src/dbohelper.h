@@ -35,8 +35,11 @@ public:
     CataloguePtr catalogue = filters.catalogue;
     Dbo::Query<T> query = transaction.session().query<T>( catalogue ? baseQuery + " inner join denominations d on d.objects_id = o.id" : baseQuery);
     vector<string> filterConditions{filters.types.size(), "?"};
-    query.where("magnitude >= ?").bind(filters.minimumMagnitude)
-      .where("altitude >= ?").bind(filters.minimumAltitude.degrees());
+    query
+      .where("magnitude >= ?").bind(filters.minimumMagnitude)
+      .where("magnitude <= ?").bind(filters.maximumMagnitude)
+      .where("altitude >= ?").bind(filters.minimumAltitude.degrees())
+      .where("altitude <= ?").bind(filters.maximumAltitude.degrees());
     if(catalogue)
       query.where("d.catalogues_id = ?").bind(catalogue.id());
     query.where(format("\"type\" IN (%s)") % boost::algorithm::join(filterConditions, ", ") );

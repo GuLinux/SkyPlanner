@@ -9,7 +9,8 @@
 <message id="mainmenu_my_settings">Settings</message>
 <message id="mainmenu_feedback">Feedback</message>
 <message id="not_set">not set</message>
-<message id="minimum_magnitude_label">Minimum Magnitude: </message>
+<message id="minimum_magnitude_label">minimum magnitude: </message>
+<message id="maximum_magnitude_label">maximum magnitude: </message>
 
 <message id="mainmenu_logout">Logout</message>
 <message id="telescopes_telescope_name">Telescope Name</message>
@@ -261,7 +262,8 @@ After you added a session, click it to add new objects.
 <message id="planet_neptune">Neptune</message>
 <message id="planet_pluto">Pluto</message>
 
-<message id="minimum-altitude">Minimum Altitude</message>
+<message id="minimum-altitude">minimum altitude</message>
+<message id="maximum-altitude">maximum altitude</message>
 
 <message id="astroobject_rst">Rise/Transit/Set</message>
 <message id="circumpolar">circumpolar</message>

@@ -6,6 +6,7 @@
 #include <Wt/WSlider>
 #include <Wt/WText>
 #include "utils/format.h"
+#include "skyplanner.h"
 
 using namespace Wt;
 using namespace WtCommons;
@@ -48,11 +49,12 @@ FilterByMagnitudeWidget::FilterByMagnitudeWidget(const Options &options, const R
 
 void FilterByMagnitudeWidget::Private::checkValue()
 {
+  spLog("notice") << " magnitude: " << q->magnitude() << ", minimum: " << magnitudeSlider->minimum() << ", maximum: " << magnitudeSlider->maximum() << "minText: " << minimumValueText << ", maxText: " << maximumValueText;
   valueLabel->setText(format("%.1f") % q->magnitude() );
-  if(q->magnitude() == magnitudeSlider->minimum() && !minimumValueText.empty())
+  if(q->magnitude()*10 == magnitudeSlider->minimum() && !minimumValueText.empty())
     valueLabel->setText(minimumValueText);
-  if(q->magnitude() == magnitudeSlider->maximum() && !maximumValueText.empty())
-    valueLabel->setText(minimumValueText);
+  if(q->magnitude()*10 == magnitudeSlider->maximum() && !maximumValueText.empty())
+    valueLabel->setText(maximumValueText);
 }
 
 FilterByMagnitudeWidget::~FilterByMagnitudeWidget()

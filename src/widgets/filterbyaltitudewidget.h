@@ -7,7 +7,16 @@
 
 class FilterByAltitudeWidget : public Wt::WCompositeWidget {
 public:
-  explicit FilterByAltitudeWidget(const Wt::WString &labelText, const Angle &initial, const Angle &steps = Angle::degrees(10));
+  struct AvailableAngles {
+    AvailableAngles(const Angle &initial, const Angle &start, const Angle &end, const Angle &steps = Angle::degrees(10))
+      : initial(initial), start(start), end(end), steps(steps) {}
+    Angle initial;
+    Angle start;
+    Angle end;
+    Angle steps;
+  };
+
+  explicit FilterByAltitudeWidget(const Wt::WString &labelText, const AvailableAngles &availableAngles);
   ~FilterByAltitudeWidget();
   Wt::Signal<> &changed() const;
   void resetDefaultValue();

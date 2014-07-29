@@ -74,9 +74,11 @@ public:
   struct Filters {
     std::set<NgcObject::NebulaType> types;
     double minimumMagnitude = -200;
+    double maximumMagnitude = 100;
     ConstellationFinder::Constellation constellation;
     CataloguePtr catalogue;
     Angle minimumAltitude;
+    Angle maximumAltitude = Angle::degrees(90);
   };
   struct Page {
     long current = -1;

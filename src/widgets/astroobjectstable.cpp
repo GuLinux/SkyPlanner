@@ -56,20 +56,32 @@ AstroObjectsTable::AstroObjectsTable(Session &session, const vector<Action> &act
     WPushButton *filtersButton = WW<WPushButton>(WString::tr("filters")).css("btn-sm hidden-print").onClick([=](const WMouseEvent &e) { d->availableFilters->popup(e); });
     d->filterByType = new FilterByTypeWidget(initialTypes);
     d->filterByType->changed().connect([=](_n6){ d->filtersChanged.emit(d->filters()); });
-    d->filterByMinimumMagnitude = new FilterByMagnitudeWidget({WString::tr("not_set"), {}, WString::tr("minimum_magnitude_label")}, {0, 20});
+
+    d->filterByMinimumMagnitude = new FilterByMagnitudeWidget({WString::tr("not_set"), {}, WString::tr("minimum_magnitude_label")}, {-2, 20});
     d->filterByMinimumMagnitude->changed().connect([=](double, _n5){ d->filtersChanged.emit(d->filters()); });
+
+    d->filterByMaximumMagnitude = new FilterByMagnitudeWidget({{}, WString::tr("not_set"), WString::tr("maximum_magnitude_label")}, {-2, 20}, 20);
+    d->filterByMaximumMagnitude->changed().connect([=](double, _n5){ d->filtersChanged.emit(d->filters()); });
+
     d->filterByConstellation = new FilterByConstellation;
     d->filterByConstellation->changed().connect([=](_n6){ d->filtersChanged.emit(d->filters()); });
 
     d->filterByCatalogue = new FilterByCatalogue(session);
     d->filterByCatalogue->changed().connect([=](_n6){ d->filtersChanged.emit(d->filters()); });
-    d->filterByMinimumAltitude = new FilterByAltitudeWidget{WString::tr("minimum-altitude"), Angle::degrees(0)};
+
+    d->filterByMinimumAltitude = new FilterByAltitudeWidget{WString::tr("minimum-altitude"), {Angle::degrees(0), Angle::degrees(0), Angle::degrees(80)} };
     d->filterByMinimumAltitude->changed().connect([=](_n6){ d->filtersChanged.emit(d->filters()); });
+
+    d->filterByMaximumAltitude = new FilterByAltitudeWidget{WString::tr("maximum-altitude"), {Angle::degrees(90), Angle::degrees(10), Angle::degrees(90)} };
+    d->filterByMaximumAltitude->changed().connect([=](_n6){ d->filtersChanged.emit(d->filters()); });
+
     d->addFilterItem(WString::tr("filter_by_type_menu"), d->filterByType);
     d->addFilterItem(WString::tr("filter_by_minimum_magnitude_menu"), d->filterByMinimumMagnitude);
+    d->addFilterItem(WString::tr("filter_by_maximum_magnitude_menu"), d->filterByMaximumMagnitude);
     d->addFilterItem(WString::tr("filter_by_constellation_menu"), d->filterByConstellation);
     d->addFilterItem(WString::tr("filter_by_catalogue_menu"), d->filterByCatalogue);
     d->addFilterItem(WString::tr("filter_by_minimum_altitude_menu"), d->filterByMinimumAltitude);
+    d->addFilterItem(WString::tr("filter_by_maximum_altitude_menu"), d->filterByMaximumAltitude);
 
     container->addWidget(WW<WContainerWidget>().addCss("form-inline hidden-print").add(filtersButton).add(d->filtersBar) );
   }
@@ -102,10 +114,14 @@ AstroObjectsTable::Filters AstroObjectsTable::Private::filters() const
   Filters _filters;
   if(!filterByMinimumMagnitude->isMinimum())
     _filters.minimumMagnitude = filterByMinimumMagnitude->magnitude();
+  if(!filterByMaximumMagnitude->isMaximum())
+    _filters.maximumMagnitude = filterByMaximumMagnitude->magnitude();
+
   _filters.catalogue = filterByCatalogue->selectedCatalogue();
   _filters.constellation = filterByConstellation->selectedConstellation();
   _filters.types = filterByType->selected();
   _filters.minimumAltitude = filterByMinimumAltitude->currentValue();
+  _filters.maximumAltitude = filterByMaximumAltitude->currentValue();
   return _filters;
 }
 
