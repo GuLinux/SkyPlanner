@@ -8,11 +8,14 @@ namespace Wt {
 class FilterByMagnitudeWidget::Private
 {
 public:
-  Private(FilterByMagnitudeWidget *q);
+  Private(double initialValue, FilterByMagnitudeWidget *q);
   Wt::Signal<double> changed;
   Wt::WString minimumValueText;
   Wt::WString maximumValueText;
   Wt::WSlider *magnitudeSlider;
+  Wt::WText *valueLabel;
+  double initialValue;
+  void checkValue();
 private:
   FilterByMagnitudeWidget *q;
 };

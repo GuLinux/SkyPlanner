@@ -33,6 +33,7 @@ public:
   virtual ~FilterByCatalogue();
   CataloguePtr selectedCatalogue() const;
   Wt::Signal<> &changed() const;
+  void resetDefaultValue();
 private:
     D_PTR;
 };

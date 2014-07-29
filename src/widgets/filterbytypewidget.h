@@ -12,6 +12,7 @@ public:
   ~FilterByTypeWidget();
   Wt::Signal<> &changed() const;
   std::set<NgcObject::NebulaType> selected() const;
+  void resetDefaultValue();
 private:
   D_PTR;
 };

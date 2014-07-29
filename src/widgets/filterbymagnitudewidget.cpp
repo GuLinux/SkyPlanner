@@ -11,7 +11,7 @@ using namespace Wt;
 using namespace WtCommons;
 using namespace std;
 
-FilterByMagnitudeWidget::Private::Private(FilterByMagnitudeWidget *q): q(q)
+FilterByMagnitudeWidget::Private::Private(double initialValue, FilterByMagnitudeWidget *q): initialValue(initialValue), q(q)
 {
 }
 
@@ -21,36 +21,38 @@ FilterByMagnitudeWidget::FilterByMagnitudeWidget(const Options &options, const R
 }
 
 FilterByMagnitudeWidget::FilterByMagnitudeWidget(const Options &options, const Range &range, double initialValue, WContainerWidget *parent)
-  : WCompositeWidget(parent), d(this)
+  : WCompositeWidget(parent), d(initialValue, this)
 {
-  WText *valueLabel = WW<WText>().css("badge");
-  d->magnitudeSlider = WW<WSlider>().css("form-slider");
+  d->valueLabel = WW<WText>().css("badge");
+  d->magnitudeSlider = WW<WSlider>().css("form-slider magnitude-slider");
   d->magnitudeSlider->setNativeControl(false);
   setRange(range);
   d->minimumValueText = options.minimumValueText;
   d->maximumValueText = options.maximumValueText;
 
 
-  auto checkValue = [=] {
-    valueLabel->setText(format("%.1f") % magnitude() );
-    if(magnitude() == d->magnitudeSlider->minimum() && !d->minimumValueText.empty())
-      valueLabel->setText(d->minimumValueText);
-    if(magnitude() == d->magnitudeSlider->maximum() && !d->maximumValueText.empty())
-      valueLabel->setText(d->minimumValueText);
-  };
   d->magnitudeSlider->setValue(initialValue*10.);
-  checkValue();
+  d->checkValue();
 
   d->magnitudeSlider->valueChanged().connect([=](int value, _n5){
-    checkValue();
+    d->checkValue();
     d->changed.emit(magnitude());
   });
 #ifndef PRODUCTION_MODE
 #warning Logging magnitudeSlider sliderMoved
   d->magnitudeSlider->sliderMoved().connect("function(a, b) { console.log(a); console.log(b); var lastSliderMoved = b; }");
 #endif
-  setImplementation(WW<WContainerWidget>().setInline(true).add(new WText{WString("<small>{1}</small>").arg(options.labelText)}).add(d->magnitudeSlider).add(valueLabel));
+  setImplementation(WW<WContainerWidget>().setInline(true).add(new WText{WString("<small>{1}</small>").arg(options.labelText)}).add(d->magnitudeSlider).add(d->valueLabel));
   d->magnitudeSlider->setInline(true);
+}
+
+void FilterByMagnitudeWidget::Private::checkValue()
+{
+  valueLabel->setText(format("%.1f") % q->magnitude() );
+  if(q->magnitude() == magnitudeSlider->minimum() && !minimumValueText.empty())
+    valueLabel->setText(minimumValueText);
+  if(q->magnitude() == magnitudeSlider->maximum() && !maximumValueText.empty())
+    valueLabel->setText(minimumValueText);
 }
 
 FilterByMagnitudeWidget::~FilterByMagnitudeWidget()
@@ -94,4 +96,9 @@ bool FilterByMagnitudeWidget::isMaximum() const
 }
 
 
-
+void FilterByMagnitudeWidget::resetDefaultValue()
+{
+  d->magnitudeSlider->setValue(d->initialValue*10.);
+  d->checkValue();
+  d->changed.emit(magnitude());
+}

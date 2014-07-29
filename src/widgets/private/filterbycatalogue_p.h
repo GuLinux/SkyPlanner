@@ -28,8 +28,8 @@ class FilterByCatalogue::Private
     Private( Session &session, FilterByCatalogue *q );
     Session &session;
     Wt::Signal<> changed;
-    CataloguePtr selected;
     Wt::WStandardItemModel *model;
+    Wt::WComboBox *cataloguesCombo;
   private:
     class FilterByCatalogue *const q;
 };

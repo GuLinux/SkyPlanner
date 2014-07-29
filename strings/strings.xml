@@ -124,8 +124,8 @@
 <message id="filters">Filters</message>
 <message id="filter_by_type_title">Filter By Type</message>
 <message id="filter_by_constellation_all">All Constellations</message>
-<message id="filter_by_constellation">Filter By Constellation</message>
-<message id="filter_by_catalogue">Filter By Catalogue</message>
+<message id="filter_by_constellation">Constellation</message>
+<message id="filter_by_catalogue">Catalogue</message>
 <message id="filter_by_catalogue_all">all catalogues</message>
 
 <message id="select_objects_widget_best_visible_objects">Best Visible Objects</message>
@@ -270,4 +270,17 @@ After you added a session, click it to add new objects.
 
 <message id="objectnames_nearby_objects">Nearby Objects</message>
 <message id="objectnames_nearby_objects_caption">Objects near {1}</message>
+
+
+
+<message id="filter_by_type_button">set type...</message>
+
+<message id="filter_by_type_menu">by type</message>
+<message id="filter_by_minimum_magnitude_menu">by minimum magnitude</message>
+<message id="filter_by_maximum_magnitude_menu">maximum magnitude</message>
+<message id="filter_by_constellation_menu">by constellation</message>
+<message id="filter_by_catalogue_menu">by catalogue</message>
+<message id="filter_by_minimum_altitude_menu">by minimum altitude</message>
+<message id="filter_by_maximum_altitude_menu">by maximum altitude</message>
+
 </messages>

@@ -22,8 +22,9 @@
 #include "widgets/astroobjectstable.h"
 #include <widgets/filterbytypewidget.h>
 #include <widgets/filterbymagnitudewidget.h>
-#include "filterbyconstellation_p.h"
 #include <widgets/filterbycatalogue.h>
+#include <widgets/filterbyaltitudewidget.h>
+#include <widgets/filterbyconstellation.h>
 #include "session.h"
 #include <Wt/WTable>
 #include <Wt/WStandardItemModel>
@@ -43,14 +44,16 @@ class AstroObjectsTable::Private
     FilterByMagnitudeWidget *filterByMinimumMagnitude;
     FilterByConstellation *filterByConstellation;
     FilterByCatalogue *filterByCatalogue;
+    FilterByAltitudeWidget *filterByMinimumAltitude;
     Wt::Signal<Filters> filtersChanged;
     Filters filters() const;
     void header();
     Wt::WContainerWidget *tableFooter;
     Wt::WContainerWidget *tableContainer;
-    Wt::WStandardItemModel *minimumAltitudeModel;
-    Wt::WComboBox *minimumAltitude;
     Wt::Signal<AstroSessionObjectPtr> objectsListChanged;
+    Wt::WPopupMenu *availableFilters;
+    Wt::WContainerWidget *filtersBar;
+    template<typename T> void addFilterItem(const Wt::WString &text, T *filterWidget);
   private:
     class AstroObjectsTable *const q; 
 };

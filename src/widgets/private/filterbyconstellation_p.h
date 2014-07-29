@@ -29,6 +29,7 @@ class FilterByConstellation::Private
     ConstellationFinder::Constellation selected;
     Filter filter = [](const ConstellationFinder::Constellation &) { return true; };
     Wt::WStandardItemModel *model;
+    Wt::WComboBox *constellationsCombo;
   private:
     class FilterByConstellation *const q;
 };

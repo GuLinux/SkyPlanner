@@ -161,9 +161,9 @@
 
 <message id="filters">Filtri</message>
 <message id="filter_by_constellation_all">Tutte le Constellazioni</message>
-<message id="filter_by_constellation">Filtra per Constellazione</message>
+<message id="filter_by_constellation">Constellazione</message>
 <message id="filter_by_type_title">Filtra Per Tipo</message>
-<message id="filter_by_catalogue">Filtra per Catalogo</message>
+<message id="filter_by_catalogue">Catalogo</message>
 <message id="filter_by_catalogue_all">tutti i cataloghi</message>
 
 <message id="select_objects_widget_best_visible_objects">Migliori Oggetti Visibili</message>
@@ -287,4 +287,16 @@ Dopo aver aggiunto una nuova sessione, clicca sul suo nome per aggiungere oggett
 
 <message id="objectnames_nearby_objects">Oggetti nelle vicinanze</message>
 <message id="objectnames_nearby_objects_caption">Oggetti vicini a {1}</message>
+
+<message id="filter_by_type_button">imposta tipo...</message>
+
+
+<message id="filter_by_type_menu">per tipo</message>
+<message id="filter_by_minimum_magnitude_menu">per magnitudine minima</message>
+<message id="filter_by_maximum_magnitude_menu">per magnitudine massima</message>
+<message id="filter_by_constellation_menu">per costellazione</message>
+<message id="filter_by_catalogue_menu">per catalogo</message>
+<message id="filter_by_minimum_altitude_menu">per altitudine minima</message>
+<message id="filter_by_maximum_altitude_menu">per altitudine massima</message>
+
 </messages>

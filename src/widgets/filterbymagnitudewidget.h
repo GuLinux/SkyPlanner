@@ -26,6 +26,7 @@ public:
   bool isMinimum() const;
   bool isMaximum() const;
   Wt::Signal<double> &changed() const;
+  void resetDefaultValue();
 private:
   D_PTR;
 };

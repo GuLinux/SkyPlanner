@@ -51,56 +51,50 @@ AstroObjectsTable::AstroObjectsTable(Session &session, const vector<Action> &act
   d->objectsTable->setHeaderCount(1);
   WContainerWidget *container = WW<WContainerWidget>();
   if(showFilters) {
-    WContainerWidget *filtersBar = WW<WContainerWidget>().setInline(true);
-    WPopupMenu *availableFilters = WW<WPopupMenu>();
-    WPushButton *filtersButton = WW<WPushButton>(WString::tr("filters")).onClick([=](const WMouseEvent &e) { availableFilters->popup(e); });
+    d->filtersBar = WW<WContainerWidget>().setInline(true);
+    d->availableFilters = WW<WPopupMenu>();
+    WPushButton *filtersButton = WW<WPushButton>(WString::tr("filters")).onClick([=](const WMouseEvent &e) { d->availableFilters->popup(e); });
     d->filterByType = new FilterByTypeWidget(initialTypes);
     d->filterByType->changed().connect([=](_n6){ d->filtersChanged.emit(d->filters()); });
     d->filterByMinimumMagnitude = new FilterByMagnitudeWidget({WString::tr("not_set"), {}, WString::tr("minimum_magnitude_label")}, {0, 20});
     d->filterByMinimumMagnitude->changed().connect([=](double, _n5){ d->filtersChanged.emit(d->filters()); });
+    d->filterByConstellation = new FilterByConstellation;
+    d->filterByConstellation->changed().connect([=](_n6){ d->filtersChanged.emit(d->filters()); });
 
     d->filterByCatalogue = new FilterByCatalogue(session);
     d->filterByCatalogue->changed().connect([=](_n6){ d->filtersChanged.emit(d->filters()); });
-    
-    d->minimumAltitudeModel = new WStandardItemModel(this);
-    d->minimumAltitude = new WComboBox();
-    d->minimumAltitude->setModel(d->minimumAltitudeModel);
-    for(Angle i=Angle::degrees(0); i<Angle::degrees(90); i+=Angle::degrees(10)) {
-      auto item = new WStandardItem(format("%d°") % i.degrees());
-      item->setData(i);
-      d->minimumAltitudeModel->appendRow(item);
-    }
-    d->minimumAltitude->activated().connect([=](int,_n5){ d->filtersChanged.emit(d->filters()); });
-    d->filterByConstellation = new FilterByConstellation;
-    d->filterByConstellation->changed().connect([=](_n6){ d->filtersChanged.emit(d->filters()); });
-    auto filterItem = [=] (const WString &text, WWidget *widget) {
-      WMenuItem *item = availableFilters->addItem(text);
-      item->triggered().connect([=](WMenuItem *i, _n5) {
-        availableFilters->setItemHidden(item, true);
-        WContainerWidget *container = WW<WContainerWidget>().add(widget).setInline(true).css("filter-container badge");
-        WPushButton *closeButton = WW<WPushButton>().css("close close-inline").onClick([=](WMouseEvent){
-          container->removeWidget(widget);
-          delete container;
-          availableFilters->setItemHidden(item, false);
-        }) ;
-        closeButton->setTextFormat(XHTMLUnsafeText);
-        closeButton->setText("&times;");
-        container->addWidget(WW<WContainerWidget>().setInline(true).add(closeButton));
-        filtersBar->addWidget(container);
-      });
-    };
-    WContainerWidget *minimumAltitudeWidget = WW<WContainerWidget>().setInline(true).add(new WLabel{WString::tr("minimum-altitude")}).add(d->minimumAltitude);
-    filterItem(WString::tr("filter_by_type_menu"), d->filterByType);
-    filterItem(WString::tr("filter_by_minimum_magnitude_menu"), d->filterByMinimumMagnitude);
-    filterItem(WString::tr("filter_by_constellation_menu"), d->filterByConstellation);
-    filterItem(WString::tr("filter_by_catalogue_menu"), d->filterByCatalogue);
-    filterItem(WString::tr("filter_by_minimum_altitude_menu"), minimumAltitudeWidget);
+    d->filterByMinimumAltitude = new FilterByAltitudeWidget{WString::tr("minimum-altitude"), Angle::degrees(0)};
+    d->filterByMinimumAltitude->changed().connect([=](_n6){ d->filtersChanged.emit(d->filters()); });
+    d->addFilterItem(WString::tr("filter_by_type_menu"), d->filterByType);
+    d->addFilterItem(WString::tr("filter_by_minimum_magnitude_menu"), d->filterByMinimumMagnitude);
+    d->addFilterItem(WString::tr("filter_by_constellation_menu"), d->filterByConstellation);
+    d->addFilterItem(WString::tr("filter_by_catalogue_menu"), d->filterByCatalogue);
+    d->addFilterItem(WString::tr("filter_by_minimum_altitude_menu"), d->filterByMinimumAltitude);
 
-    container->addWidget(WW<WContainerWidget>().addCss("form-inline").add(filtersButton).add(filtersBar) );
+    container->addWidget(WW<WContainerWidget>().addCss("form-inline").add(filtersButton).add(d->filtersBar) );
   }
   d->tableContainer = WW<WContainerWidget>().addCss("table-responsive").add(d->objectsTable).add(d->tableFooter = WW<WContainerWidget>() );
   container->addWidget( d->tableContainer );
   setImplementation(container);
+}
+
+template<typename T> void AstroObjectsTable::Private::addFilterItem(const Wt::WString &text, T *filterWidget)
+{
+  WMenuItem *item = availableFilters->addItem(text);
+  item->triggered().connect([=](WMenuItem *i, _n5) {
+    availableFilters->setItemHidden(item, true);
+    WContainerWidget *container = WW<WContainerWidget>().add(filterWidget).setInline(true).css("filter-container badge");
+    WPushButton *closeButton = WW<WPushButton>().css("close close-inline").onClick([=](WMouseEvent){
+      container->removeWidget(filterWidget);
+      delete container;
+      availableFilters->setItemHidden(item, false);
+      filterWidget->resetDefaultValue();
+    }) ;
+    closeButton->setTextFormat(XHTMLUnsafeText);
+    closeButton->setText("&times;");
+    container->addWidget(WW<WContainerWidget>().setInline(true).add(closeButton));
+    filtersBar->addWidget(container);
+  });
 }
 
 AstroObjectsTable::Filters AstroObjectsTable::Private::filters() const
@@ -111,7 +105,7 @@ AstroObjectsTable::Filters AstroObjectsTable::Private::filters() const
   _filters.catalogue = filterByCatalogue->selectedCatalogue();
   _filters.constellation = filterByConstellation->selectedConstellation();
   _filters.types = filterByType->selected();
-  _filters.minimumAltitude = boost::any_cast<Angle>(minimumAltitudeModel->item(minimumAltitude->currentIndex() )->data());
+  _filters.minimumAltitude = filterByMinimumAltitude->currentValue();
   return _filters;
 }
 

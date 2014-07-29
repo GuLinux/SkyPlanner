@@ -35,6 +35,7 @@ public:
   void setFilter(const Filter &filter);
   Wt::Signal<> &changed() const;
   void reload();
+  void resetDefaultValue();
 private:
     D_PTR;
 };

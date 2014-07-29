@@ -39,13 +39,10 @@ FilterByCatalogue::Private::Private( Session &session, FilterByCatalogue *q ) : 
 
 FilterByCatalogue::FilterByCatalogue( Session &session, Wt::WContainerWidget *parent ): WCompositeWidget( parent ), d(session, this)
 {
-  WComboBox *cataloguesCombo = WW<WComboBox>().css("input-sm");
-  d->model = new WStandardItemModel(cataloguesCombo);
-  cataloguesCombo->setModel(d->model);
-  cataloguesCombo->activated().connect([=](int index, _n5){
-    d->selected = index==0 ? CataloguePtr() : boost::any_cast<CataloguePtr>(d->model->item(index)->data() );
-    d->changed.emit();
-  });
+  d->cataloguesCombo = WW<WComboBox>().css("input-sm");
+  d->model = new WStandardItemModel(d->cataloguesCombo);
+  d->cataloguesCombo->setModel(d->model);
+  d->cataloguesCombo->activated().connect([=](int index, _n5) { d->changed.emit(); });
 
   d->model->clear();
   d->model->appendRow(new WStandardItem(WString::tr("filter_by_catalogue_all")));
@@ -56,7 +53,7 @@ FilterByCatalogue::FilterByCatalogue( Session &session, Wt::WContainerWidget *pa
     d->model->appendRow(item);
   }
 
-  setImplementation(WW<WContainerWidget>().setInline(true).add(new WLabel(WString("<small>{1}</small>").arg(WString::tr("filter_by_catalogue")))).add(cataloguesCombo));
+  setImplementation(WW<WContainerWidget>().setInline(true).add(new WLabel(WString("<small>{1}</small>").arg(WString::tr("filter_by_catalogue")))).add(d->cataloguesCombo));
 }
 
 FilterByCatalogue::~FilterByCatalogue()
@@ -70,7 +67,12 @@ Signal< NoClass > &FilterByCatalogue::changed() const
 }
 CataloguePtr FilterByCatalogue::selectedCatalogue() const
 {
-  return d->selected;
+  return d->cataloguesCombo->currentIndex()==0 ? CataloguePtr{} : boost::any_cast<CataloguePtr>(d->model->item(d->cataloguesCombo->currentIndex())->data() );;
 }
 
+void FilterByCatalogue::resetDefaultValue()
+{
+  d->cataloguesCombo->setCurrentIndex(0);
+  d->changed.emit();
+}
 

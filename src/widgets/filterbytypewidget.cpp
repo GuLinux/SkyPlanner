@@ -14,14 +14,14 @@ using namespace std;
 using namespace Wt;
 using namespace WtCommons;
 
-FilterByTypeWidget::Private::Private(const set<NgcObject::NebulaType> &initialSelection, FilterByTypeWidget *q): nebulaTypeFilters(initialSelection), q(q)
+FilterByTypeWidget::Private::Private(const set<NgcObject::NebulaType> &initialSelection, FilterByTypeWidget *q): nebulaTypeFilters(initialSelection), initialSelection(initialSelection), q(q)
 {
 }
 
 FilterByTypeWidget::FilterByTypeWidget(const set<NgcObject::NebulaType> &initialSelection, WContainerWidget *parent)
   : WCompositeWidget(parent), d(initialSelection, this)
 {
-  WPushButton *astroTypeButton = WW<WPushButton>(WString::tr("object_column_type")).css("btn-sm");
+  WPushButton *astroTypeButton = WW<WPushButton>(WString::tr("filter_by_type_button")).css("btn-link filter_widget_link");
   astroTypeButton->clicked().connect([=](const WMouseEvent &e) {
     set<NgcObject::NebulaType> initialSelection = d->nebulaTypeFilters;
     WDialog *dialog = new WDialog(WString::tr("filter_by_type_title"));
@@ -70,4 +70,10 @@ Wt::Signal<> &FilterByTypeWidget::changed() const
 set<NgcObject::NebulaType> FilterByTypeWidget::selected() const
 {
   return d->nebulaTypeFilters;
+}
+
+void FilterByTypeWidget::resetDefaultValue()
+{
+  d->nebulaTypeFilters = d->initialSelection;
+  d->changed.emit();
 }
