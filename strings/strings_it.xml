@@ -115,8 +115,8 @@
 <message id="astrosessiontab_printable_version_dialog_export_as">Esporta come...</message>
 <message id="astrosessiontab_information_panel">Informazioni</message>
 <message id="astrosessiontab_object_observed_menu">Osservato</message>
-<message id="astrosessiontab_object_observed">✓ Osservato</message>
-<message id="astrosessiontab_object_not_observed">✗ Osservato</message>
+<message id="astrosessiontab_object_observed">✓ osservato</message>
+<message id="astrosessiontab_object_not_observed">✗ non osservato</message>
 <message id="object_more_info">Altro...</message>
 <message id="astrosessiontab_planets_panel">Pianeti</message>
 

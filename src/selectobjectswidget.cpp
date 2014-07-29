@@ -63,7 +63,7 @@ using namespace std;
 
 
 SelectObjectsWidget::Private::Private(const Dbo::ptr< AstroSession >& astroSession, Session& session, SelectObjectsWidget* q) : astroSession(astroSession), session(session),
-  addToSessionAction("buttons_add", [=](const AstroObjectsTable::Row &r){ addToSession(r.astroObject.object, r.tableRow);  }, "btn-primary" ),  q(q)
+  addToSessionAction("buttons_add", [=](const AstroObjectsTable::Row &r, WWidget*){ addToSession(r.astroObject.object, r.tableRow);  }, "btn-primary" ),  q(q)
 {
   columns = {  AstroObjectsTable::Names, AstroObjectsTable::Type, AstroObjectsTable::Constellation, AstroObjectsTable::AngularSize, 
     AstroObjectsTable::Magnitude, AstroObjectsTable::TransitTime, AstroObjectsTable::MaxAltitude, AstroObjectsTable::Difficulty};

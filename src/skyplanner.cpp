@@ -300,7 +300,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
       return;
     }
     
-    AstroObjectsTable *resultsTable = new AstroObjectsTable(d->session, {{"buttons_add", [=](const AstroObjectsTable::Row &r){
+    AstroObjectsTable *resultsTable = new AstroObjectsTable(d->session, {{"buttons_add", [=](const AstroObjectsTable::Row &r, WWidget*){
       if(!d->session.user()) {
         WMessageBox *msg = new WMessageBox(WString::tr("search_by_name_add_to_session_caption"), WString::tr("search_by_name_no_user_text"), Information, Ok);
         msg->button(Ok)->clicked().connect([=](WMouseEvent){msg->accept();});

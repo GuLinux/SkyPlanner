@@ -361,13 +361,13 @@ void AstroSessionTab::Private::reload()
     sessionContainer->addWidget(  new WText(WString::tr("printable_timezone_info").arg(WString::fromUTF8(timezone.timeZoneName))));
 
   vector<AstroObjectsTable::Action> actions = {
-    {"buttons_extended_info", [](const AstroObjectsTable::Row &r) { r.toggleMoreInfo(); } },
-    {"description", [=](const AstroObjectsTable::Row &r) {
+    {"buttons_extended_info", [](const AstroObjectsTable::Row &r, WWidget*) { r.toggleMoreInfo(); } },
+    {"description", [=](const AstroObjectsTable::Row &r, WWidget*) {
       Dbo::Transaction t(session);
       auto sessionObject = session.find<AstroSessionObject>().where("objects_id = ?").bind(r.astroObject.object.id()).where("astro_session_id = ?").bind(r.astroObject.astroSession.id()).resultValue();
       setDescriptionDialog(sessionObject);
     } },
-    {"buttons_remove", [=](const AstroObjectsTable::Row &r) {
+    {"buttons_remove", [=](const AstroObjectsTable::Row &r, WWidget*) {
       Dbo::Transaction t(session);
       auto sessionObject = session.find<AstroSessionObject>().where("objects_id = ?").bind(r.astroObject.object.id()).where("astro_session_id = ?").bind(r.astroObject.astroSession.id()).resultValue();
       remove(sessionObject, [=] { populate(); });
@@ -375,17 +375,21 @@ void AstroSessionTab::Private::reload()
   };
   bool isPastSession = astroSession->wDateWhen() < WDateTime::currentDateTime();
   if(isPastSession) {
-    AstroObjectsTable::Action toggleObserved = AstroObjectsTable::Action{"astrosessiontab_object_observed_menu", [=](const AstroObjectsTable::Row &r) {
+    AstroObjectsTable::Action toggleObserved = AstroObjectsTable::Action{"astrosessiontab_object_observed_menu", [=](const AstroObjectsTable::Row &r, WWidget *w) {
       Dbo::Transaction t(session);
       auto o = session.find<AstroSessionObject>().where("objects_id = ?").bind(r.astroObject.object.id()).where("astro_session_id = ?").bind(r.astroObject.astroSession.id()).resultValue();
       o.modify()->setObserved(!o->observed());
       t.commit();
+      WPushButton *b = reinterpret_cast<WPushButton*>(w);
+      b->setText(o->observed() ? WString::tr("astrosessiontab_object_observed") : WString::tr("astrosessiontab_object_not_observed"));
+      b->toggleStyleClass("btn-success", o->observed());
     }};
-    toggleObserved.onMenuItemCreated = [=](WMenuItem *menuItem, const AstroObjectsTable::Row &row) {
-      menuItem->setCheckable(true);
+    toggleObserved.onButtonCreated = [=](WPushButton *b, const AstroObjectsTable::Row &row) {
       Dbo::Transaction t(session);
       auto o = session.find<AstroSessionObject>().where("objects_id = ?").bind(row.astroObject.object.id()).where("astro_session_id = ?").bind(row.astroObject.astroSession.id()).resultValue();
-      menuItem->setChecked(o->observed());
+      b->setChecked(o->observed());
+      b->setText(o->observed() ? WString::tr("astrosessiontab_object_observed") : WString::tr("astrosessiontab_object_not_observed"));
+      b->toggleStyleClass("btn-success", o->observed());
     };
     actions.push_back(toggleObserved);
   }

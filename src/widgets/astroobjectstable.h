@@ -66,12 +66,12 @@ public:
   };
   struct Action {
     Action() = default;
-    Action(const std::string &name, std::function<void(Row)> onClick, const std::string buttonCss = std::string{}) : name(name), onClick(onClick), buttonCss(buttonCss) {}
+    Action(const std::string &name, std::function<void(Row, Wt::WWidget*)> onClick, const std::string buttonCss = std::string{}) : name(name), onClick(onClick), buttonCss(buttonCss) {}
     std::string name;
-    std::function<void(Row)> onClick;
+    std::function<void(Row, WWidget*)> onClick;
     std::string buttonCss;
     std::function<void(Wt::WMenuItem *, Row)> onMenuItemCreated = [](Wt::WMenuItem*, Row) {};
-    std::function<void(Wt::WPushButton *, Row)> onButtonCreated = [](Wt::WPushButton*, Row) {};
+    std::function<void(Wt::WPushButton *, Row)>  onButtonCreated = [](Wt::WPushButton*, Row) {};
   };
   struct Filters {
     std::set<NgcObject::NebulaType> types;

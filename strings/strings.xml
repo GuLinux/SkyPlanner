@@ -76,8 +76,8 @@
 <message id="astrosessiontab_printable_version_dialog_export_as">Export as...</message>
 <message id="astrosessiontab_information_panel">Information</message>
 <message id="astrosessiontab_object_observed_menu">Observed</message>
-<message id="astrosessiontab_object_observed">✓ Observed</message>
-<message id="astrosessiontab_object_not_observed">✗ Observed</message>
+<message id="astrosessiontab_object_observed">✓ not observed</message>
+<message id="astrosessiontab_object_not_observed">✗ observed</message>
 
 <message id="astrosessiontab_preview_version">Preview with images</message>
 <message id="preview_back_to_astrosessiontab">Back to list version</message>

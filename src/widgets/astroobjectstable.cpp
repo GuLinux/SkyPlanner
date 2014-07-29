@@ -346,15 +346,22 @@ void AstroObjectsTable::populate(const vector<AstroObject> &objects, const Teles
     addColumn(MaxAltitude, [=] { return new WText{ Utils::htmlEncode(WString::fromUTF8( astroObject.maxAltitude().printable() )) }; });
     addColumn(Difficulty, [=] { return astroObject.difficultyWidget(telescope); }); 
     
+    auto createButton = [=] (const Action &action) {
+      WPushButton *button = WW<WPushButton>(WString::tr(action.name)).addCss("btn-xs").addCss(action.buttonCss);
+      button->clicked().connect([=](WMouseEvent) { action.onClick(objectRow, button); });
+      action.onButtonCreated(button, objectRow);
+      return button;
+    };
+    
     if(d->actions.size() > 0) {
       if(d->actions.size() == 1) {
-        row->elementAt(d->columns.size())->addWidget(WW<WPushButton>(WString::tr(d->actions[0].name)).addCss("btn-xs").addCss(d->actions[0].buttonCss).onClick([=](WMouseEvent) { d->actions[0].onClick(objectRow); }));
+        row->elementAt(d->columns.size())->addWidget(createButton(d->actions[0]));
       } else {
         if(d->forceActionsAsToolBar) {
           WToolBar *toolbar = WW<WToolBar>();
           row->elementAt(d->columns.size())->addWidget(toolbar);
           for(auto action: d->actions) {
-            toolbar->addButton(WW<WPushButton>(WString::tr(action.name)).addCss("btn-xs").addCss(action.buttonCss).onClick([=](WMouseEvent) { action.onClick(objectRow); }) );
+            toolbar->addButton(createButton(action));
           }
         } else {
           WPopupMenu *actionsMenu = new WPopupMenu;
@@ -363,7 +370,7 @@ void AstroObjectsTable::populate(const vector<AstroObject> &objects, const Teles
           for(auto action: d->actions) {
             auto menuItem = actionsMenu->addItem(WString::tr(action.name));
             menuItem->addStyleClass(action.buttonCss);
-            menuItem->triggered().connect([=](WMenuItem*, _n5) { action.onClick(objectRow); });
+            menuItem->triggered().connect([=](WMenuItem*, _n5) { action.onClick(objectRow, menuItem); });
             action.onMenuItemCreated(menuItem, objectRow);
           }
         }
