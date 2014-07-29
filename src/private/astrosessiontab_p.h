@@ -67,7 +67,26 @@ public:
     void remove(const Wt::Dbo::ptr<AstroSessionObject> &sessionObject, std::function<void()> runAfterRemove);
     Wt::WText *objectsCounter;
     AstroObjectsTable *astroObjectsTable;
-    void setDescriptionDialog(const AstroSessionObjectPtr &astroSessionObject, std::function<void()> onUpdate = []{});
+    struct SetDescription {
+      typedef std::function<void(Wt::Dbo::Transaction &t, const AstroSessionObjectPtr &o, const Wt::WString &txt)> EditTextField;
+      typedef std::function<std::string(Wt::Dbo::Transaction &t, const AstroSessionObjectPtr &o)> GetTextField;
+      SetDescription(const std::string &title, const std::string &notification, GetTextField getDescription, EditTextField editTextField, std::function<void()> onUpdate)
+      : title(title), notification(notification), getDescription(getDescription), editTextField(editTextField), onUpdate(onUpdate) {}
+      static SetDescription description(std::function< void() > onUpdate = []{}) {
+        return {"object_notes", "notification_description_saved", [](Wt::Dbo::Transaction &t, const AstroSessionObjectPtr &o){ return o->description(); },
+        [](Wt::Dbo::Transaction &t, const AstroSessionObjectPtr &o, const Wt::WString &txt){ o.modify()->setDescription(txt.toUTF8());}, onUpdate};
+      }
+      static SetDescription report(std::function< void() > onUpdate = []{}) {
+        return {"astrosessiontab_object_report", "notification_report_saved", [](Wt::Dbo::Transaction &t, const AstroSessionObjectPtr &o){ return o->report() ? *o->report() : std::string{}; },
+        [](Wt::Dbo::Transaction &t, const AstroSessionObjectPtr &o, const Wt::WString &txt){ o.modify()->setReport(txt.toUTF8());}, onUpdate};
+      }
+      std::string title;
+      std::string notification;
+      EditTextField editTextField;
+      GetTextField getDescription;
+      std::function< void() > onUpdate = [] {};
+    };
+    void setDescriptionDialog(const AstroSessionObjectPtr& astroSessionObject, const SetDescription &setDescription);
     GeoCoder::Place geoCoderPlace;
 private:
     class AstroSessionTab* const q;

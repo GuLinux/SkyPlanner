@@ -78,6 +78,7 @@
 <message id="astrosessiontab_object_observed_menu">Observed</message>
 <message id="astrosessiontab_object_observed">✓ not observed</message>
 <message id="astrosessiontab_object_not_observed">✗ observed</message>
+<message id="astrosessiontab_object_report">report</message>
 
 <message id="astrosessiontab_preview_version">Preview with images</message>
 <message id="preview_back_to_astrosessiontab">Back to list version</message>
@@ -137,6 +138,7 @@
 <message id="select_objects_widget_add_by_name_too_many">Too many result. Please use a more specific search.</message>
 <message id="object_notes">Your notes and description</message>
 <message id="notification_description_saved">Description saved!</message>
+<message id="notification_report_saved">Report saved!</message>
 <message id="description">Description</message>
 <message id="placewidget_maps_instructions">Just click a point on the map to set the observation place. Use the search box to find places by name.</message>
 <message id="placewidget_instructions_notification">Click anywhere on the map to set the observation place, to receive suggestions and ephemeris for the selected position.<br />Use the search box to find places by name.</message>

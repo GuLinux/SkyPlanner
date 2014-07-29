@@ -346,8 +346,9 @@ void AstroObjectsTable::populate(const vector<AstroObject> &objects, const Teles
     addColumn(MaxAltitude, [=] { return new WText{ Utils::htmlEncode(WString::fromUTF8( astroObject.maxAltitude().printable() )) }; });
     addColumn(Difficulty, [=] { return astroObject.difficultyWidget(telescope); }); 
     
-    auto createButton = [=] (const Action &action) {
+    auto createButton = [=,&objectRow] (const Action &action) {
       WPushButton *button = WW<WPushButton>(WString::tr(action.name)).addCss("btn-xs").addCss(action.buttonCss);
+      objectRow.actions[action.name] = button;
       button->clicked().connect([=](WMouseEvent) { action.onClick(objectRow, button); });
       action.onButtonCreated(button, objectRow);
       return button;
@@ -369,6 +370,7 @@ void AstroObjectsTable::populate(const vector<AstroObject> &objects, const Teles
           row->elementAt(d->columns.size())->addWidget(actionsButton);
           for(auto action: d->actions) {
             auto menuItem = actionsMenu->addItem(WString::tr(action.name));
+            objectRow.actions[action.name] = menuItem;
             menuItem->addStyleClass(action.buttonCss);
             menuItem->triggered().connect([=](WMenuItem*, _n5) { action.onClick(objectRow, menuItem); });
             action.onMenuItemCreated(menuItem, objectRow);

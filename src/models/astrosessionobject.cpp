@@ -113,3 +113,11 @@ void AstroSessionObject::setObserved(bool observed)
   _observed = observed;
 }
 
+boost::optional< string > AstroSessionObject::report() const
+{
+  return _report;
+}
+void AstroSessionObject::setReport(const string& report)
+{
+  _report = report;
+}

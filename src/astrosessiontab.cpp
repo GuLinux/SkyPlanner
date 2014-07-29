@@ -258,7 +258,7 @@ void AstroSessionTab::Private::reload()
       collapseButton->clicked().connect([=](WMouseEvent) { astroObjectWidget->setCollapsed(!astroObjectWidget->isCollapsed()); });
       editDescriptionButton->clicked().connect([=](WMouseEvent) {
         Dbo::Transaction t(session);
-        setDescriptionDialog(objectelement.first, [=] { astroObjectWidget->reload(); });
+        setDescriptionDialog(objectelement.first, SetDescription::description( [=] { astroObjectWidget->reload(); }));
       });
       astroObjectWidgets->insert(astroObjectWidget);
       sessionPreviewContainer->addWidget(astroObjectWidget);
@@ -365,7 +365,7 @@ void AstroSessionTab::Private::reload()
     {"description", [=](const AstroObjectsTable::Row &r, WWidget*) {
       Dbo::Transaction t(session);
       auto sessionObject = session.find<AstroSessionObject>().where("objects_id = ?").bind(r.astroObject.object.id()).where("astro_session_id = ?").bind(r.astroObject.astroSession.id()).resultValue();
-      setDescriptionDialog(sessionObject);
+      setDescriptionDialog(sessionObject, SetDescription::description());
     } },
     {"buttons_remove", [=](const AstroObjectsTable::Row &r, WWidget*) {
       Dbo::Transaction t(session);
@@ -375,22 +375,32 @@ void AstroSessionTab::Private::reload()
   };
   bool isPastSession = astroSession->wDateWhen() < WDateTime::currentDateTime();
   if(isPastSession) {
+    auto toggleObservedStyle = [=](const AstroObjectsTable::Row &r, bool observed) {
+      WPushButton *b = reinterpret_cast<WPushButton*>(r.actions.at("astrosessiontab_object_observed_menu"));
+      b->setText(observed ? WString::tr("astrosessiontab_object_observed") : WString::tr("astrosessiontab_object_not_observed"));
+      b->toggleStyleClass("btn-success", observed);
+      r.actions.at("buttons_remove")->setHidden(observed);
+      r.actions.at("astrosessiontab_object_report")->setHidden(!observed);
+    };
+    AstroObjectsTable::Action objectReport = AstroObjectsTable::Action{"astrosessiontab_object_report", [=](const AstroObjectsTable::Row &r, WWidget *w) {
+      Dbo::Transaction t(session);
+      auto o = session.find<AstroSessionObject>().where("objects_id = ?").bind(r.astroObject.object.id()).where("astro_session_id = ?").bind(r.astroObject.astroSession.id()).resultValue();
+      setDescriptionDialog(o, SetDescription::report());
+    }};
     AstroObjectsTable::Action toggleObserved = AstroObjectsTable::Action{"astrosessiontab_object_observed_menu", [=](const AstroObjectsTable::Row &r, WWidget *w) {
       Dbo::Transaction t(session);
       auto o = session.find<AstroSessionObject>().where("objects_id = ?").bind(r.astroObject.object.id()).where("astro_session_id = ?").bind(r.astroObject.astroSession.id()).resultValue();
       o.modify()->setObserved(!o->observed());
       t.commit();
       WPushButton *b = reinterpret_cast<WPushButton*>(w);
-      b->setText(o->observed() ? WString::tr("astrosessiontab_object_observed") : WString::tr("astrosessiontab_object_not_observed"));
-      b->toggleStyleClass("btn-success", o->observed());
+      toggleObservedStyle(r, o->observed());
     }};
     toggleObserved.onButtonCreated = [=](WPushButton *b, const AstroObjectsTable::Row &row) {
       Dbo::Transaction t(session);
       auto o = session.find<AstroSessionObject>().where("objects_id = ?").bind(row.astroObject.object.id()).where("astro_session_id = ?").bind(row.astroObject.astroSession.id()).resultValue();
-      b->setChecked(o->observed());
-      b->setText(o->observed() ? WString::tr("astrosessiontab_object_observed") : WString::tr("astrosessiontab_object_not_observed"));
-      b->toggleStyleClass("btn-success", o->observed());
+      toggleObservedStyle(row, o->observed());
     };
+    actions.push_back(objectReport);
     actions.push_back(toggleObserved);
   }
   auto columns = AstroObjectsTable::allColumns;
@@ -462,20 +472,21 @@ void AstroSessionTab::Private::reload()
 }
 
 
-void AstroSessionTab::Private::setDescriptionDialog( const AstroSessionObjectPtr &astroSessionObject, function< void() > onUpdate )
+void AstroSessionTab::Private::setDescriptionDialog( const AstroSessionObjectPtr& astroSessionObject, const AstroSessionTab::Private::SetDescription& setDescription )
 {
-  WDialog *editDescriptionDialog = WW<WDialog>(WString::tr("object_notes"));
+  Dbo::Transaction t(session);
+  WDialog *editDescriptionDialog = WW<WDialog>(WString::tr(setDescription.title));
   editDescriptionDialog->resize({60, WLength::Percentage}, {50, WLength::Percentage});
-  WTextArea *descriptionTextArea = WW<WTextArea>(WString::fromUTF8(astroSessionObject->description())).css("input-block-level resize-none");
+  WTextArea *descriptionTextArea = WW<WTextArea>(WString::fromUTF8(setDescription.getDescription(t, astroSessionObject))).css("input-block-level resize-none");
   descriptionTextArea->setHeight({100, WLength::Percentage});
   editDescriptionDialog->contents()->addWidget(descriptionTextArea);
   editDescriptionDialog->footer()->addWidget(WW<WPushButton>(WString::tr("buttons_close")).css("btn-sm").onClick([=](WMouseEvent){ editDescriptionDialog->reject(); }));
   editDescriptionDialog->footer()->addWidget( WW<WPushButton>(WString::tr("buttons_save")).css("btn-sm btn-primary").onClick([=](WMouseEvent){
     editDescriptionDialog->accept();
     Dbo::Transaction t(session);
-    astroSessionObject.modify()->setDescription(descriptionTextArea->text().toUTF8());
-    SkyPlanner::instance()->notification(WString::tr("notification_success_title"), WString::tr("notification_description_saved"), SkyPlanner::Notification::Success, 5);
-    onUpdate();
+    setDescription.editTextField(t, astroSessionObject, descriptionTextArea->text());
+    SkyPlanner::instance()->notification(WString::tr("notification_success_title"), WString::tr(setDescription.notification), SkyPlanner::Notification::Success, 5);
+    setDescription.onUpdate();
   }));
   editDescriptionDialog->show();
 }

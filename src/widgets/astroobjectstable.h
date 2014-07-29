@@ -55,6 +55,7 @@ public:
     AstroObject astroObject;
     Wt::WTableRow *tableRow;
     std::function<void()> toggleMoreInfo;
+    std::map<std::string, Wt::WWidget*> actions;
   };
   struct Selection {
     Selection() = default;

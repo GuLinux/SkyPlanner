@@ -35,13 +35,16 @@ public:
   dbo::ptr<NgcObject> ngcObject() const;
   dbo::ptr<AstroSession> astroSession() const;
   std::string description() const;
+  boost::optional<std::string> report() const;
   void setDescription(const std::string &description);
+  void setReport(const std::string &report);
   bool observed() const;
   void setObserved(bool observed = true);
   
   template<typename Action>
   void persist(Action& a) {
     dbo::field(a, _description, "description");
+    dbo::field(a, _report, "report");
     dbo::field(a, _observed, "observed");
     dbo::field(a, _transitTime, "transit_time");
     dbo::field(a, _altitude, "altitude");
@@ -69,6 +72,7 @@ private:
   boost::optional<double> _altitude, _azimuth;
   boost::optional<boost::posix_time::ptime> _transitTime;
   boost::optional<std::string> _ephemeris_context_key;
+  boost::optional<std::string> _report;
 };
 
 typedef dbo::ptr<AstroSessionObject> AstroSessionObjectPtr;
