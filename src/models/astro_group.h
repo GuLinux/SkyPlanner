@@ -11,6 +11,8 @@ struct AstroGroup {
   TelescopePtr telescope;
   Timezone timezone;
 
+  AstroGroup(const AstroSessionPtr &astroSession, const TelescopePtr &telescope = {}, const Timezone &timezone = {})
+    : _astroSession(astroSession), telescope(telescope), timezone(timezone) {}
   AstroGroup(const AstroSessionPtr &astroSession, const NgcObjectPtr &object, const TelescopePtr &telescope = {}, const Timezone &timezone = {})
     : _astroSession(astroSession), _object(object), telescope(telescope), timezone(timezone) {}
   AstroGroup(const AstroSessionObjectPtr &astroSessionObject, const TelescopePtr &telescope = {}, const Timezone &timezone = {})
