@@ -176,11 +176,25 @@ void AstroSessionTab::Private::previewVersion(bool isReport)
       sessionPreviewContainer->addWidget(planetsPanel);
       populatePlanets(planetsTable);
     } else {
-      if(astroSession->report()) {
-	sessionPreviewContainer->addWidget(WW<WContainerWidget>().add(new WText{WString::tr("report_label")}).add(new WText{Utils::htmlEncode(WString::fromUTF8(*astroSession->report()), Utils::EncodeNewLines)}));
-      }
-      toolbar->addButton(WW<WPushButton>(WString::tr("astrosessiontab_report")).css("btn-primary btn-sm hidden-pront").onClick([=](WMouseEvent){
-	setDescriptionDialog(SetDescription::report(astroSession));
+      WContainerWidget *reportContainer = WW<WContainerWidget>();
+      sessionPreviewContainer->addWidget(reportContainer);
+      auto displayReport = [=] {
+	reportContainer->clear();
+	if(astroSession->report()) {
+	  WTemplate *report = WW<WTemplate>(R"(
+	    <dl class="dl-horizontal">
+	      <dt>${report-label}</dt>
+	      <dd>${report}</dd>
+	    </dl>
+	  )").css("well");
+	  report->bindString("report-label", WString::tr("report-label"));
+	  report->bindString("report", Utils::htmlEncode(WString::fromUTF8(*astroSession->report()), Utils::EncodeNewLines));
+	  reportContainer->addWidget(report);
+	}
+      };
+      displayReport();
+      toolbar->addButton(WW<WPushButton>(WString::tr("astrosessiontab_set_report")).css("btn-primary btn-sm hidden-pront").onClick([=](WMouseEvent){
+	setDescriptionDialog(SetDescription::report(astroSession, displayReport));
       }));
     }
     sessionPreviewContainer->addWidget(WW<WText>(WString::tr("dss-embed-menu-info-message")).css("hidden-print"));
@@ -286,7 +300,7 @@ void AstroSessionTab::Private::reload()
   auto previewVersionButton = WW<WPushButton>(WString::tr("astrosessiontab_preview_version")).css("btn-primary btn-xs").onClick([=](WMouseEvent){
     previewVersion();
   });
-  auto reportButton = WW<WPushButton>(WString::tr("astrosessiontab_report")).css("btn-primary btn-xs").onClick([=](WMouseEvent){
+  auto reportButton = WW<WPushButton>(WString::tr("report")).css("btn-primary btn-xs").onClick([=](WMouseEvent){
     previewVersion(true);
   });
 

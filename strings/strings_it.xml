@@ -308,5 +308,6 @@ Dopo aver aggiunto una nuova sessione, clicca sul suo nome per aggiungere oggett
 <message id="observed_any">non filtrare</message>
 <message id="observed_yes">già osservati</message>
 <message id="observed_no">mai osservati</message>
-
+<message id="astrosessiontab_set_report">Scrivi Report</message>
+<message id="report-label">Report Osservativo</message>
 </messages>

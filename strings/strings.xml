@@ -79,7 +79,7 @@
 <message id="astrosessiontab_object_observed">✓ not observed</message>
 <message id="astrosessiontab_object_not_observed">✗ observed</message>
 <message id="astrosessiontab_object_report">report</message>
-<message id="astrosessiontab_report">Report</message>
+<message id="astrosessiontab_set_report">Write Report</message>
 
 <message id="astrosessiontab_preview_version">Preview with images</message>
 <message id="preview_back_to_astrosessiontab">Back to list version</message>
@@ -294,5 +294,8 @@ After you added a session, click it to add new objects.
 <message id="observed_any">don't filter</message>
 <message id="observed_yes">already observed</message>
 <message id="observed_no">never observed</message>
+
+<message id="report">report</message>
+<message id="report-label">Observation Report</message>
 
 </messages>
