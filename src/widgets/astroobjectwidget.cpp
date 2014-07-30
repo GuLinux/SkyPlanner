@@ -43,6 +43,8 @@ void AstroObjectWidget::reload()
 
 void AstroObjectWidget::Private::init()
 {
+  auto ngcObject = astroGroup.object();
+  auto astroSession = astroGroup.astroSession();
   content->clear();
   content->addStyleClass("container-fluid astroobjectwidget");
   WContainerWidget *row = WW<WContainerWidget>().css("row print-no-break");
@@ -68,7 +70,7 @@ void AstroObjectWidget::Private::init()
 
   info->setCondition("have-ephemeris", astroSession);
   if(astroSession) {
-    Ephemeris ephemeris(astroSession->position(), timezone);
+    Ephemeris ephemeris(astroSession->position(), astroGroup.timezone);
     auto bestAltitude =  AstroSessionObject::bestAltitude(astroSession, ngcObject, ephemeris);
 
     info->bindString("best_altitude_when", bestAltitude.when.str() );
@@ -82,12 +84,14 @@ void AstroObjectWidget::Private::init()
       .arg(riseSet(bestAltitude.rst, bestAltitude.rst.rise))
       .arg(bestAltitude.rst.transit.str(DateTime::HoursAndMinutes))
       .arg(riseSet(bestAltitude.rst, bestAltitude.rst.set)) ) );
-    info->bindWidget("difficulty", new ObjectDifficultyWidget{ngcObject, telescope, bestAltitude.coordinates.altitude.degrees() } );
+    info->bindWidget("difficulty", new ObjectDifficultyWidget{ngcObject, astroGroup.telescope, bestAltitude.coordinates.altitude.degrees() } );
   }
   info->setCondition("has-catalogues-descriptions", ngcObject->descriptions().size() > 0);
   if(info->conditionValue("has-catalogues-descriptions")) {
     info->bindWidget("catalogues-description", new CataloguesDescriptionWidget{ngcObject->descriptions()});
   }
+  
+  auto astroSessionObject = astroGroup.astroSessionObject;
   if(!astroSessionObject)
     astroSessionObject = session.find<AstroSessionObject>().where("objects_id = ?").bind(ngcObject.id()).where("astro_session_id = ?").bind(astroSession.id());
 

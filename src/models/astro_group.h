@@ -1,6 +1,6 @@
 #ifndef ASTRO_GROUP_H
 #define ASTRO_GROUP_H
-#include "ptr_defs.h"
+#include "Models"
 
 #include "types.h"
 

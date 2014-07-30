@@ -51,9 +51,11 @@ ObjectPopupMenu::~ObjectPopupMenu()
 }
 
 
-ObjectPopupMenu::ObjectPopupMenu(const NgcObjectPtr &object,  const AstroSessionPtr &astroSession, const TelescopePtr &telescope, const Timezone &timezone, Session &session)
+ObjectPopupMenu::ObjectPopupMenu(const AstroGroup &astroGroup, Session &session)
   : WPopupMenu(nullptr), d(this)
 {
+  auto astroSession = astroGroup.astroSession();
+  auto object = astroGroup.object();
     Dbo::Transaction t( session );
     auto addLink = [=]( const WString & label, const WLink & url, WMenu *menu = 0 )
     {
@@ -107,7 +109,7 @@ ObjectPopupMenu::ObjectPopupMenu(const NgcObjectPtr &object,  const AstroSession
 		});
 		actions.insert(actions.begin(), addToSessionButton);
 	      }
-	      preview->addWidget(new AstroObjectWidget{objectDbo, astroSession, session, timezone, telescope, {}, actions});
+	      preview->addWidget(new AstroObjectWidget{astroGroup, session, {}, actions});
 	    });
 	  }
 	};

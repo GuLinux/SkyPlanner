@@ -303,7 +303,7 @@ void AstroObjectsTable::populate(const vector<AstroObject> &objects, const Teles
 	}
 	astroObjectCell->setHidden(false);
 	astroObjectCell->clear();
-	astroObjectCell->addWidget(new AstroObjectWidget(astroObject.object, astroObject.astroSession, d->session, timezone, telescope, {}, {WW<WPushButton>(WString::tr("buttons_close")).css("btn-xs").onClick([=](WMouseEvent){
+	astroObjectCell->addWidget(new AstroObjectWidget({astroObject.astroSession, astroObject.object, telescope, timezone}, d->session, {}, {WW<WPushButton>(WString::tr("buttons_close")).css("btn-xs").onClick([=](WMouseEvent){
 	  astroObjectCell->clear();
 	  astroObjectCell->setHidden(true);
 	  toggleMoreInfo->removeStyleClass("active");
@@ -325,7 +325,7 @@ void AstroObjectsTable::populate(const vector<AstroObject> &objects, const Teles
       return WW<WTableCell>(row->elementAt(distance(begin(d->columns), hasColumn))).add(createWidget() ).get();
     };
     addColumn(Names, [=] {
-      auto popup = new ObjectPopupMenu{astroObject.object, astroObject.astroSession, telescope, timezone, d->session};
+      auto popup = new ObjectPopupMenu{{astroObject.astroSession, astroObject.object, telescope, timezone}, d->session};
       popup->objectsListChanged().connect([=](const AstroSessionObjectPtr &o, _n5) { d->objectsListChanged.emit(o); } );
       return astroObject.names(d->session, popup, [=](WMouseEvent){
 	if(d->selectedRow)
