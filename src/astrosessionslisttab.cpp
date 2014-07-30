@@ -118,10 +118,10 @@ AstroSessionsListTab::AstroSessionsListTab(Session &session, Wt::WContainerWidge
   d->session.login().changed().connect([=](_n6){ d->populateSessions(); });
 }
 
-Dbo::ptr<AstroSession> AstroSessionsListTab::Private::addNew(const Wt::WString &name, const Wt::WDate &date)
+AstroSessionPtr AstroSessionsListTab::Private::addNew(const Wt::WString &name, const Wt::WDate &date)
 {
   Dbo::Transaction t(session);
-  Dbo::ptr<AstroSession> astroSession = session.add(new AstroSession( name.toUTF8(), WDateTime{date}, session.user() ));
+  AstroSessionPtr astroSession = session.add(new AstroSession( name.toUTF8(), WDateTime{date}, session.user() ));
   return astroSession;
 }
 
@@ -160,7 +160,7 @@ void AstroSessionsListTab::Private::populateSessions()
            }
             session.execute("delete from ephemeris_cache where astro_session_id = ?").bind(astroSession.id());
             session.user().modify()->astroSessions().erase(astroSession);
-            Dbo::ptr<AstroSession> s = astroSession;
+            AstroSessionPtr s = astroSession;
             s.remove();
             t.commit();
             populateSessions();
@@ -169,11 +169,11 @@ void AstroSessionsListTab::Private::populateSessions()
      }
 }
 
-Signal< Dbo::ptr< AstroSession > >& AstroSessionsListTab::deletingSession() const
+Signal<AstroSessionPtr >& AstroSessionsListTab::deletingSession() const
 {
   return d->deletingSession;
 }
-Signal< Dbo::ptr< AstroSession > >& AstroSessionsListTab::sessionClicked() const
+Signal<AstroSessionPtr>& AstroSessionsListTab::sessionClicked() const
 {
   return d->sessionClicked;
 }

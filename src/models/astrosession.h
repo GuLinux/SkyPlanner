@@ -43,7 +43,7 @@ public:
   boost::posix_time::ptime when() const;
   boost::gregorian::date date() const;
   Wt::WDateTime wDateWhen() const;
-  dbo::collection<dbo::ptr<AstroSessionObject>> astroSessionObjects() const;
+  dbo::collection<AstroSessionObjectPtr> astroSessionObjects() const;
   Coordinates::LatLng position() const;
   dbo::ptr<User> user() const;
   void setPosition(const Coordinates::LatLng &position);
@@ -62,10 +62,9 @@ private:
   std::string _name;
   boost::posix_time::ptime _when;
   dbo::ptr<User> _user;
-  dbo::collection<dbo::ptr<AstroSessionObject>> _astroSessionObjects;
+  dbo::collection<AstroSessionObjectPtr> _astroSessionObjects;
   boost::optional<double> _latitude;
   boost::optional<double> _longitude;
 };
 
-typedef dbo::ptr<AstroSession> AstroSessionPtr;
 #endif // ASTROSESSION_H

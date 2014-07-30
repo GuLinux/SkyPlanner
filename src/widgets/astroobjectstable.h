@@ -107,7 +107,7 @@ public:
   Wt::WContainerWidget *tableFooter() const;
   void setTableAttribute(const std::string &attributeName, const std::string &attributeValue);
   void setResponsive(bool responsive);
-  Wt::Signal<Wt::Dbo::ptr<AstroSessionObject>> &objectsListChanged() const;
+  Wt::Signal<AstroSessionObjectPtr> &objectsListChanged() const;
   void forceActionsAsToolBar(bool force);
 private:
   D_PTR;

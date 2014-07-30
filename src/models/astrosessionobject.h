@@ -33,7 +33,7 @@ public:
   AstroSessionObject();
   AstroSessionObject(const dbo::ptr<NgcObject> &ngcObject);
   dbo::ptr<NgcObject> ngcObject() const;
-  dbo::ptr<AstroSession> astroSession() const;
+  AstroSessionPtr astroSession() const;
   std::string description() const;
   boost::optional<std::string> report() const;
   void setDescription(const std::string &description);
@@ -55,7 +55,7 @@ public:
   }
   Coordinates::Equatorial coordinates() const;
   Ephemeris::BestAltitude bestAltitude(const Ephemeris &ephemeris, const Timezone &timezone) const;
-  static Ephemeris::BestAltitude bestAltitude(const dbo::ptr<AstroSession> &astroSession, const dbo::ptr<NgcObject> &ngcObject, const Ephemeris &ephemeris);
+  static Ephemeris::BestAltitude bestAltitude(const AstroSessionPtr &astroSession, const dbo::ptr<NgcObject> &ngcObject, const Ephemeris &ephemeris);
   /** It's a simil-percentage evaluation:
     if we have a valid telescope here, and this object magnitude doesn't exceed its magnitude
     limit, we return the difficulty percentage (0-100).
@@ -63,9 +63,9 @@ public:
     If we don't have a telescope, we simply return -1.
   **/
   int32_t difficulty(const dbo::ptr<Telescope> &telescope) const;
-  static void generateEphemeris(const Ephemeris &ephemeris, const dbo::ptr<AstroSession> &astroSession, const Timezone &timezone, dbo::Transaction &transaction);
+  static void generateEphemeris(const Ephemeris &ephemeris, const AstroSessionPtr &astroSession, const Timezone &timezone, dbo::Transaction &transaction);
 private:
-  dbo::ptr<AstroSession> _astroSession;
+  AstroSessionPtr _astroSession;
   dbo::ptr<NgcObject> _ngcObject;
   std::string _description;
   bool _observed = false;
@@ -75,5 +75,5 @@ private:
   boost::optional<std::string> _report;
 };
 
-typedef dbo::ptr<AstroSessionObject> AstroSessionObjectPtr;
+typedef AstroSessionObjectPtr AstroSessionObjectPtr;
 #endif // ASTROSESSIONOBJECT_H

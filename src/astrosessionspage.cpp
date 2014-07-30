@@ -50,7 +50,7 @@ AstroSessionsPage::AstroSessionsPage(Session &session, WContainerWidget* parent)
   d->tabWidget = new WTabWidget(this);
 //  d->tabWidget->setInternalPathEnabled("sessions/");
   d->astroSessionsListTab = new AstroSessionsListTab(session);
-  d->astroSessionsListTab->deletingSession().connect([=](const Dbo::ptr<AstroSession> &astroSession, _n5){
+  d->astroSessionsListTab->deletingSession().connect([=](const AstroSessionPtr &astroSession, _n5){
     d->removeTab(astroSession);
   });
 
@@ -71,7 +71,7 @@ AstroSessionsPage::AstroSessionsPage(Session &session, WContainerWidget* parent)
   });
 }
 
-void AstroSessionsPage::Private::removeTab(const Wt::Dbo::ptr<AstroSession> &astroSession)
+void AstroSessionsPage::Private::removeTab(const AstroSessionPtr &astroSession)
 {
   for(auto tab: tabs) {
     if(tab.second.astroSession != astroSession)

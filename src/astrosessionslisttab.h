@@ -22,6 +22,7 @@
 
 #include <Wt/WContainerWidget>
 #include "utils/d_ptr.h"
+#include "ptr_defs.h"
 
 class AstroSession;
 class Session;
@@ -30,8 +31,8 @@ class AstroSessionsListTab : public Wt::WContainerWidget
 public:
     ~AstroSessionsListTab();
     AstroSessionsListTab(Session &session, Wt::WContainerWidget* parent = 0);
-    Wt::Signal<Wt::Dbo::ptr<AstroSession>> &deletingSession() const;
-    Wt::Signal<Wt::Dbo::ptr<AstroSession>> &sessionClicked() const;
+    Wt::Signal<AstroSessionPtr> &deletingSession() const;
+    Wt::Signal<AstroSessionPtr> &sessionClicked() const;
     void reload();
 private:
     D_PTR;

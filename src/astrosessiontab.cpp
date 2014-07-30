@@ -85,7 +85,7 @@ using namespace Wt;
 using namespace WtCommons;
 using namespace std;
 
-AstroSessionTab::Private::Private(const Dbo::ptr<AstroSession>& astroSession, Session &session, AstroSessionTab* q)
+AstroSessionTab::Private::Private(const AstroSessionPtr& astroSession, Session &session, AstroSessionTab* q)
   : astroSession(astroSession), session(session), client(new Http::Client()), q(q)
 {
   client->setTimeout(15);
@@ -103,7 +103,7 @@ AstroSessionTab::~AstroSessionTab()
 {
 }
 
-AstroSessionTab::AstroSessionTab(const Dbo::ptr<AstroSession>& astroSession, Session& session, WContainerWidget* parent)
+AstroSessionTab::AstroSessionTab(const AstroSessionPtr& astroSession, Session& session, WContainerWidget* parent)
     : WContainerWidget(parent), d(astroSession, session, this)
 {
   spLog("notice") << "astroSession: " << astroSession.id() << ", id=" << id();
@@ -137,7 +137,7 @@ template AstroSessionObjectPtr AstroSessionTab::add(const NgcObjectPtr &ngcObjec
 template AstroSessionObjectPtr AstroSessionTab::add(const NgcObjectPtr &ngcObject, const AstroSessionPtr &astroSession, Session &session, WWidget *objectWidget);
 template AstroSessionObjectPtr AstroSessionTab::add(const NgcObjectPtr &ngcObject, const AstroSessionPtr &astroSession, Session &session, WMenuItem *objectWidget);
 
-void AstroSessionTab::Private::previewVersion(bool showPlanets, bool onlyObserved)
+void AstroSessionTab::Private::previewVersion(bool isReport)
 {
     spLog("notice") << "Switching to preview version..";
     sessionPreviewContainer->clear();
@@ -163,7 +163,7 @@ void AstroSessionTab::Private::previewVersion(bool showPlanets, bool onlyObserve
     updatePositionDetails(infoWidget, false);
     sessionPreviewContainer->addWidget(infoWidget);
 
-    if(showPlanets) {
+    if(!isReport) {
       AstroObjectsTable *planetsTable = new AstroObjectsTable(session, {}, false, {}, {AstroObjectsTable::Names, AstroObjectsTable::AR, AstroObjectsTable::DEC, AstroObjectsTable::Constellation, AstroObjectsTable::Magnitude, AstroObjectsTable::AngularSize, AstroObjectsTable::TransitTime, AstroObjectsTable::MaxAltitude});
       planetsTable->addStyleClass("planets-table");
       planetsTable->setResponsive(false);
@@ -180,7 +180,7 @@ void AstroSessionTab::Private::previewVersion(bool showPlanets, bool onlyObserve
     shared_ptr<mutex> downloadImagesMutex(new mutex);
     Dbo::Transaction t(session);
 
-    typedef pair<dbo::ptr<AstroSessionObject>, Ephemeris::BestAltitude> AstroSessionObjectElement;
+    typedef pair<AstroSessionObjectPtr, Ephemeris::BestAltitude> AstroSessionObjectElement;
     vector<AstroSessionObjectElement> sessionObjects;
     // TODO: filter this section too?
     {
@@ -188,13 +188,13 @@ void AstroSessionTab::Private::previewVersion(bool showPlanets, bool onlyObserve
       AstroSessionObject::generateEphemeris(ephemeris, astroSession, timezone, t);
       auto query = session.query<AstroSessionObjectPtr>("select a from astro_session_object a inner join objects on a.objects_id = objects.id")
         .where("astro_session_id = ?").bind(astroSession.id());
-      if(onlyObserved)
+      if(isReport)
         query.where("observed = ?").bind(true);
       query.orderBy("transit_time ASC, ra asc, dec asc, constellation_abbrev asc");
 
 
       auto sessionObjectsDbCollection = query.resultList();
-      transform(begin(sessionObjectsDbCollection), end(sessionObjectsDbCollection), back_inserter(sessionObjects), [=,&ephemeris,&t](const dbo::ptr<AstroSessionObject> &o){
+      transform(begin(sessionObjectsDbCollection), end(sessionObjectsDbCollection), back_inserter(sessionObjects), [=,&ephemeris,&t](const AstroSessionObjectPtr &o){
         return AstroSessionObjectElement{o, o->bestAltitude(ephemeris, timezone)};
       });
     }
@@ -206,7 +206,7 @@ void AstroSessionTab::Private::previewVersion(bool showPlanets, bool onlyObserve
       WPushButton *hideDSSButton = WW<WPushButton>(WString::tr("buttons_hide_dss")).css("btn-xs");
       WPushButton *deleteButton = WW<WPushButton>(WString::tr("astroobject_remove_from_session")).css("btn-xs btn-danger");
       WPushButton *editDescriptionButton = WW<WPushButton>(WString::tr("astroobject_actions_edit_description")).css("btn-xs");
-      astroObjectWidget = new AstroObjectWidget(objectelement.first, session, timezone, selectedTelescope, downloadImagesMutex, { editDescriptionButton, collapseButton, hideDSSButton, hideButton, deleteButton });
+      astroObjectWidget = new AstroObjectWidget({objectelement.first, selectedTelescope, timezone}, session, downloadImagesMutex, { editDescriptionButton, collapseButton, hideDSSButton, hideButton, deleteButton });
       astroObjectWidget->addStyleClass("astroobject-list-item");
       hideButton->clicked().connect([=](WMouseEvent){astroObjectWidgets->erase(astroObjectWidget); delete astroObjectWidget; });
       deleteButton->clicked().connect([=](WMouseEvent){ astroObjectWidgets->erase(astroObjectWidget); remove(objectelement.first, [=] { delete astroObjectWidget; }); } );
@@ -279,7 +279,7 @@ void AstroSessionTab::Private::reload()
     previewVersion();
   });
   auto reportButton = WW<WPushButton>(WString::tr("astrosessiontab_report")).css("btn-primary btn-xs").onClick([=](WMouseEvent){
-    previewVersion(false, true);
+    previewVersion(true);
   });
 
   auto printableVersionButton = WW<WPushButton>(WString::tr("astrosessiontab_printable_version")).css("btn btn-info btn-xs").onClick( [=](WMouseEvent){ printableVersion(); } );
@@ -749,7 +749,7 @@ void AstroSessionTab::Private::remove(const AstroSessionObjectPtr &sessionObject
         confirmation->accept();
         Dbo::Transaction t(session);
         astroSession.modify()->astroSessionObjects().erase(sessionObject);
-        Dbo::ptr<AstroSessionObject> o = sessionObject;
+        AstroSessionObjectPtr o = sessionObject;
         o.remove();
         t.commit();
         runAfterRemove();
@@ -794,7 +794,7 @@ void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject
   auto sessionObjectsDbCollection = query.resultList();
   
   vector<AstroObjectsTable::AstroObject> astroObjects;
-  transform(begin(sessionObjectsDbCollection), end(sessionObjectsDbCollection), back_inserter(astroObjects), [=,&ephemeris, &t](const dbo::ptr<AstroSessionObject> &o){
+  transform(begin(sessionObjectsDbCollection), end(sessionObjectsDbCollection), back_inserter(astroObjects), [=,&ephemeris, &t](const AstroSessionObjectPtr &o){
     return AstroObjectsTable::AstroObject{o->astroSession(), o->ngcObject(), o->bestAltitude(ephemeris, timezone)};
   });
   

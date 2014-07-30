@@ -20,20 +20,13 @@
 using namespace std;
 using namespace Wt;
 using namespace WtCommons;
-AstroObjectWidget::Private::Private(const AstroSessionObjectPtr &astroSessionObject, const AstroSessionPtr &astroSession, const NgcObjectPtr &ngcObject, Session &session, const Timezone &timezone, const TelescopePtr &telescope, const shared_ptr<mutex> &downloadMutex, const std::vector<WPushButton*> &actionButtons, AstroObjectWidget *q)
-  : astroSessionObject(astroSessionObject), astroSession(astroSession), ngcObject(ngcObject), session(session), timezone(timezone), telescope(telescope), downloadMutex(downloadMutex), actionButtons(actionButtons), q(q)
+AstroObjectWidget::Private::Private(const AstroGroup &astroGroup, Session &session, const shared_ptr<mutex> &downloadMutex, const std::vector<WPushButton*> &actionButtons, AstroObjectWidget *q)
+  : astroGroup(astroGroup), session(session), downloadMutex(downloadMutex), actionButtons(actionButtons), q(q)
 {
 }
 
-AstroObjectWidget::AstroObjectWidget(const AstroSessionObjectPtr &object, Session &session, const Timezone &timezone, const TelescopePtr &telescope, const shared_ptr<mutex> &downloadMutex, const vector<Wt::WPushButton*> &actionButtons, WContainerWidget *parent)
-  : WCompositeWidget(parent), d(object, object->astroSession(), object->ngcObject(), session, timezone, telescope, downloadMutex, actionButtons, this)
-{
-  setImplementation(d->content = WW<WContainerWidget>());
-  d->init();
-}
-
-AstroObjectWidget::AstroObjectWidget(const NgcObjectPtr &ngcObject, const AstroSessionPtr &astroSession, Session &session, const Timezone &timezone, const TelescopePtr &telescope, const shared_ptr<mutex> &downloadMutex, const vector<Wt::WPushButton*> &actionButtons, WContainerWidget *parent)
-  : WCompositeWidget(parent), d(AstroSessionObjectPtr{}, astroSession, ngcObject, session, timezone, telescope, downloadMutex, actionButtons, this)
+AstroObjectWidget::AstroObjectWidget(const AstroGroup &astroGroup, Session &session, const shared_ptr<mutex> &downloadMutex, const vector<Wt::WPushButton*> &actionButtons, WContainerWidget *parent)
+  : WCompositeWidget(parent), d(astroGroup, session, downloadMutex, actionButtons, this)
 {
   setImplementation(d->content = WW<WContainerWidget>());
   d->init();
@@ -101,6 +94,11 @@ void AstroObjectWidget::Private::init()
   info->setCondition("has-custom-description", astroSessionObject && astroSessionObject->description().size() > 0);
   if(info->conditionValue("has-custom-description")) {
     info->bindString("custom-description", WString::fromUTF8(astroSessionObject->description()));
+  }
+
+  info->setCondition("has-report", astroSessionObject && astroSessionObject->observed() && astroSessionObject->report());
+  if(info->conditionValue("has-report")) {
+    info->bindString("report", WString::fromUTF8(*astroSessionObject->report()));
   }
 
   auto actionButtons = this->actionButtons;

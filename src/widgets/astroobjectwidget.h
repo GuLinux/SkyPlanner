@@ -4,16 +4,13 @@
 #include <utils/d_ptr.h>
 #include <Wt/WCompositeWidget>
 #include <mutex>
-class AstroSessionObject;
+#include "astro_group.h"
+
 class Session;
 class Timezone;
-class Telescope;
-class AstroSession;
-class NgcObject;
 class AstroObjectWidget : public Wt::WCompositeWidget {
 public:
-  explicit AstroObjectWidget(const Wt::Dbo::ptr<AstroSessionObject> &astroSession, Session &session, const Timezone &timezone, const Wt::Dbo::ptr<Telescope> &telescope, const std::shared_ptr<std::mutex> &downloadMutex = {}, const std::vector<Wt::WPushButton*> &actionButtons = {}, Wt::WContainerWidget *parent = 0);
-  explicit AstroObjectWidget(const Wt::Dbo::ptr<NgcObject> &object, const Wt::Dbo::ptr<AstroSession> &astroSession, Session &session, const Timezone &timezone, const Wt::Dbo::ptr<Telescope> &telescope, const std::shared_ptr<std::mutex> &downloadMutex = {}, const std::vector<Wt::WPushButton*> &actionButtons = {}, Wt::WContainerWidget *parent = 0);
+  explicit AstroObjectWidget(const AstroGroup &astroGroup, Session &session, const std::shared_ptr<std::mutex> &downloadMutex = {}, const std::vector<Wt::WPushButton*> &actionButtons = {}, Wt::WContainerWidget *parent = 0);
   ~AstroObjectWidget();
   void toggleInvert();
   void setDSSVisible(bool visible);

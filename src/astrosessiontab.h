@@ -22,21 +22,18 @@
 
 #include <Wt/WContainerWidget>
 #include "utils/d_ptr.h"
-
+#include "models/ptr_defs.h"
 class Session;
-class AstroSession;
-class NgcObject;
-class AstroSessionObject;
 class AstroSessionTab : public Wt::WContainerWidget
 {
 public:
     ~AstroSessionTab();
-    AstroSessionTab(const Wt::Dbo::ptr<AstroSession>& astroSession, Session& session, Wt::WContainerWidget* parent = 0);
+    AstroSessionTab(const AstroSessionPtr& astroSession, Session& session, Wt::WContainerWidget* parent = 0);
     Wt::Signal<std::string> &nameChanged() const;
-    static std::string pathComponent(const Wt::Dbo::ptr<AstroSession>& astroSession, Wt::Dbo::Transaction &transaction );
+    static std::string pathComponent(const AstroSessionPtr& astroSession, Wt::Dbo::Transaction &transaction );
     Wt::Signal<> &close() const;
     template<typename ObjectWidget>
-    static Wt::Dbo::ptr<AstroSessionObject> add(const Wt::Dbo::ptr<NgcObject> &object, const Wt::Dbo::ptr<AstroSession> &astroSession, Session &session, ObjectWidget *objectWidget = nullptr);
+    static AstroSessionObjectPtr add(const NgcObjectPtr &object, const AstroSessionPtr &astroSession, Session &session, ObjectWidget *objectWidget = nullptr);
 private:
     D_PTR;
 };

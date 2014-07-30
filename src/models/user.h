@@ -25,12 +25,10 @@
 #include <Wt/Dbo/Types>
 #include <Wt/Dbo/ptr>
 #include <string>
+#include "ptr_defs.h"
 
 namespace dbo = Wt::Dbo;
 
-class User;
-class Telescope;
-class AstroSession;
 typedef Wt::Auth::Dbo::AuthInfo<User> AuthInfo;
 class User {
 public:
@@ -44,7 +42,7 @@ public:
     dbo::hasOne(a, _authInfo);
   }
   dbo::collection<dbo::ptr<Telescope>> telescopes() const;
-  dbo::collection<dbo::ptr<AstroSession>> astroSessions() const;
+  dbo::collection<AstroSessionPtr> astroSessions() const;
   dbo::weak_ptr<AuthInfo> authInfo() const;
   Wt::WString loginName() const;
   bool isAdmin() const;
@@ -52,7 +50,7 @@ public:
   typedef dbo::ptr<Setting> SettingPtr;
 private:
   dbo::collection<dbo::ptr<Telescope>> _telescopes;
-  dbo::collection<dbo::ptr<AstroSession>> _astroSessions;
+  dbo::collection<AstroSessionPtr> _astroSessions;
   bool _isAdmin = false;
 
   friend class Setting;

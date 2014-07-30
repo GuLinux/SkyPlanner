@@ -88,7 +88,7 @@ public:
     };
     void setDescriptionDialog(const AstroSessionObjectPtr& astroSessionObject, const SetDescription &setDescription);
     GeoCoder::Place geoCoderPlace;
-    void previewVersion(bool showPlanets = true, bool onlyObserved = false);
+    void previewVersion(bool isReport = false);
     Wt::WStackedWidget *sessionStacked ;
     Wt::WContainerWidget *sessionContainer ;
     Wt::WContainerWidget *sessionPreviewContainer;

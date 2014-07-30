@@ -33,9 +33,9 @@ class SelectObjectsWidget : public Wt::WTabWidget
 {
 public:
     ~SelectObjectsWidget();
-    SelectObjectsWidget(const Wt::Dbo::ptr<AstroSession>& astroSession, Session &session, Wt::WContainerWidget* parent = 0);
+    SelectObjectsWidget(const AstroSessionPtr& astroSession, Session &session, Wt::WContainerWidget* parent = 0);
     void populateFor(const Wt::Dbo::ptr<Telescope> &telescope, Timezone timezone);
-    Wt::Signal<Wt::Dbo::ptr<AstroSessionObject>> &objectsListChanged() const;
+    Wt::Signal<AstroSessionObjectPtr> &objectsListChanged() const;
 private:
     D_PTR;
 };

@@ -56,12 +56,12 @@
 using namespace Wt;
 using namespace std;
 
-ExportAstroSessionResource::Private::Private(const Dbo::ptr< AstroSession >& astroSession, Session& session, Timezone timezone, ExportAstroSessionResource* q)
+ExportAstroSessionResource::Private::Private(const AstroSessionPtr &astroSession, Session& session, Timezone timezone, ExportAstroSessionResource* q)
   : astroSession(astroSession), session(session), rowsSpacing(0), timezone(timezone), q(q)
 {
 }
 
-ExportAstroSessionResource::ExportAstroSessionResource(const Dbo::ptr<AstroSession> &astroSession, Session &session, Timezone timezone, WObject* parent)
+ExportAstroSessionResource::ExportAstroSessionResource(const AstroSessionPtr &astroSession, Session &session, Timezone timezone, WObject* parent)
   : WResource(parent), d(astroSession, session, timezone, this)
 {
 }
@@ -70,7 +70,7 @@ ExportAstroSessionResource::~ExportAstroSessionResource()
 {
 }
 
-void ExportAstroSessionResource::setTelescope(const Dbo::ptr<Telescope> &telescope)
+void ExportAstroSessionResource::setTelescope(const TelescopePtr &telescope)
 {
   d->telescope = telescope;
 }
@@ -116,7 +116,7 @@ void ExportAstroSessionResource::handleRequest(const Wt::Http::Request &request,
   Ephemeris ephemeris(d->astroSession->position(), d->timezone);
   auto sessionObjectsDbCollection = d->astroSession->astroSessionObjects();
   vector<AstroSessionObjectPtr> sessionObjects(sessionObjectsDbCollection.begin(), sessionObjectsDbCollection.end());
-  sort(begin(sessionObjects), end(sessionObjects), [&](const dbo::ptr<AstroSessionObject> &a, const dbo::ptr<AstroSessionObject> &b){
+  sort(begin(sessionObjects), end(sessionObjects), [&](const AstroSessionObjectPtr &a, const AstroSessionObjectPtr &b){
     return a->bestAltitude(ephemeris, d->timezone).when < b->bestAltitude(ephemeris, d->timezone).when;
   });
 

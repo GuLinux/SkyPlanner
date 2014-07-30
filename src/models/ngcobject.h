@@ -27,12 +27,12 @@
 #include <string>
 #include "constellationfinder.h"
 #include "types.h"
+#include "ptr_defs.h"
 
 class Telescope;
 class AstroSessionObject;
 class NebulaDenomination;
 namespace dbo = Wt::Dbo;
-class NgcObject;
 namespace Wt {
     namespace Dbo {
         template<>
@@ -44,12 +44,6 @@ namespace Wt {
 
     }
 }
-class NgcObject;
-class Catalogue;
-typedef dbo::ptr<NgcObject> NgcObjectPtr;
-typedef dbo::ptr<NebulaDenomination> NebulaDenominationPtr;
-typedef dbo::ptr<Catalogue> CataloguePtr;
-
 class NgcObject
 {
 public:

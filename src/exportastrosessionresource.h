@@ -24,19 +24,18 @@
 #include "utils/d_ptr.h"
 #include "types.h"
 #include "geocoder.h"
+#include "ptr_defs.h"
 
 class Session;
-class Telescope;
-class AstroSession;
 class ExportAstroSessionResource : public Wt::WResource
 {
 public:
   enum ReportType { HTML, PDF, CSV, KStars, CartesDuCiel };
-  ExportAstroSessionResource(const Wt::Dbo::ptr<AstroSession> &astroSession, Session &session, Timezone timezone, Wt::WObject *parent = 0);
+  ExportAstroSessionResource(const AstroSessionPtr &astroSession, Session &session, Timezone timezone, Wt::WObject *parent = 0);
   virtual ~ExportAstroSessionResource();
   virtual void handleRequest(const Wt::Http::Request &request, Wt::Http::Response &response);
   void setRowsSpacing(int spacing);
-  void setTelescope(const Wt::Dbo::ptr<Telescope> &telescope);
+  void setTelescope(const TelescopePtr &telescope);
   void setReportType(ReportType type);
   void setFontScale(double fontScale);
   void setTimezone(const Timezone &timezone);

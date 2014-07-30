@@ -72,7 +72,7 @@ Dbo::ptr<User> AstroSession::user() const
   return _user;
 }
 
-Dbo::collection< Dbo::ptr< AstroSessionObject > > AstroSession::astroSessionObjects() const
+Dbo::collection< AstroSessionObjectPtr > AstroSession::astroSessionObjects() const
 {
   return _astroSessionObjects;
 }
