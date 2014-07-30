@@ -488,13 +488,16 @@ void AstroSessionTab::Private::reload()
     Dbo::Transaction t(session);
     updateTelescopes(t);
     populate();
-    WTimer::singleShot(200, [=](WMouseEvent) {
+    WTimer::singleShot(500, [=](WMouseEvent) {
       addObjectsTabWidget->populateFor(selectedTelescope, timezone);
     });
   });
   populate();
   updatePositionDetails(positionDetails);
-  WTimer::singleShot(200, [=](WMouseEvent) {
+  
+  // TODO: something seems to be wrong here...
+  // TODO: wait for ready signal?
+  WTimer::singleShot(500, [=](WMouseEvent) {
     addObjectsTabWidget->populateFor(selectedTelescope, timezone);
   });
 }
