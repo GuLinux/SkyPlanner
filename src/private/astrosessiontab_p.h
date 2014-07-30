@@ -59,7 +59,6 @@ public:
     Wt::Signal<std::string> nameChanged;
     void printableVersion();
     bool pastObservation;
-    std::shared_ptr<Wt::Http::Client> client;
     Timezone timezone;
     void updateTimezone();
     Wt::Signal<> close;

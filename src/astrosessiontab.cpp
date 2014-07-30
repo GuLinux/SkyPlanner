@@ -86,17 +86,8 @@ using namespace WtCommons;
 using namespace std;
 
 AstroSessionTab::Private::Private(const AstroSessionPtr& astroSession, Session &session, AstroSessionTab* q)
-  : astroSession(astroSession), session(session), client(new Http::Client()), q(q)
+  : astroSession(astroSession), session(session), q(q)
 {
-  client->setTimeout(15);
-  client->setMaximumResponseSize(10 * 1024);
-  client->done().connect([=](const boost::system::error_code &err, const Http::Message &m, _n4){
-    spLog("notice") << "got google response: err=" << err.value() << " [" << err.message() << "]";
-    for(auto header: m.headers())
-      spLog("notice") << "header: " << header.name() << "=" << header.value();
-    spLog("notice") << "status: " << m.status() << ", body: " << m.body();
-  });
-
 }
 
 AstroSessionTab::~AstroSessionTab()
