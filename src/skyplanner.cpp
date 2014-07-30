@@ -160,7 +160,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
   string styleCssPath = "/skyplanner_style.css";
   readConfigurationProperty("style-css-path", styleCssPath);
   useStyleSheet( styleCssPath );
-  root()->addWidget(d->notifications = WW<WContainerWidget>().addCss("skyplanner-notifications"));
+  root()->addWidget(d->notifications = WW<WContainerWidget>().addCss("skyplanner-notifications hidden-print"));
   d->widgets = WW<WStackedWidget>( root() ).addCss("contents");
   d->widgets->setTransitionAnimation({WAnimation::AnimationEffect::Fade});
   d->widgets->setMargin(10);

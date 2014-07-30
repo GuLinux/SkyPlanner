@@ -77,8 +77,8 @@ public:
         [=](Wt::Dbo::Transaction &t, const Wt::WString &txt){ o.modify()->setDescription(txt.toUTF8());}, onUpdate};
       }
       template<typename T>
-      static SetDescription report(const T &o, std::function< void() > onUpdate = []{}) {
-        return {"astrosessiontab_object_report", "notification_report_saved", [=](Wt::Dbo::Transaction &t){ return o->report() ? *o->report() : std::string{}; },
+      static SetDescription report(const T &o, std::function< void() > onUpdate = []{}, std::string title = "report") {
+        return {title, "notification_report_saved", [=](Wt::Dbo::Transaction &t){ return o->report() ? *o->report() : std::string{}; },
         [=](Wt::Dbo::Transaction &t, const Wt::WString &txt){ o.modify()->setReport(txt.toUTF8());}, onUpdate};
       }
       std::string title;

@@ -194,7 +194,7 @@ void AstroSessionTab::Private::previewVersion(bool isReport)
       };
       displayReport();
       toolbar->addButton(WW<WPushButton>(WString::tr("astrosessiontab_set_report")).css("btn-primary btn-sm hidden-pront").onClick([=](WMouseEvent){
-	setDescriptionDialog(SetDescription::report(astroSession, displayReport));
+	setDescriptionDialog(SetDescription::report(astroSession, displayReport, "astrosessiontab_set_report"));
       }));
     }
     sessionPreviewContainer->addWidget(WW<WText>(WString::tr("dss-embed-menu-info-message")).css("hidden-print"));
@@ -300,7 +300,7 @@ void AstroSessionTab::Private::reload()
   auto previewVersionButton = WW<WPushButton>(WString::tr("astrosessiontab_preview_version")).css("btn-primary btn-xs").onClick([=](WMouseEvent){
     previewVersion();
   });
-  auto reportButton = WW<WPushButton>(WString::tr("report")).css("btn-primary btn-xs").onClick([=](WMouseEvent){
+  auto reportButton = WW<WPushButton>(WString::tr("Report")).css("btn-primary btn-xs").onClick([=](WMouseEvent){
     previewVersion(true);
   });
 
@@ -417,9 +417,9 @@ void AstroSessionTab::Private::reload()
       b->setText(observed ? WString::tr("astrosessiontab_object_observed") : WString::tr("astrosessiontab_object_not_observed"));
       b->toggleStyleClass("btn-success", observed);
       r.actions.at("buttons_remove")->setHidden(observed);
-      r.actions.at("astrosessiontab_object_report")->setHidden(!observed);
+      r.actions.at("report")->setHidden(!observed);
     };
-    AstroObjectsTable::Action objectReport = AstroObjectsTable::Action{"astrosessiontab_object_report", [=](const AstroObjectsTable::Row &r, WWidget *w) {
+    AstroObjectsTable::Action objectReport = AstroObjectsTable::Action{"report", [=](const AstroObjectsTable::Row &r, WWidget *w) {
       Dbo::Transaction t(session);
       auto o = session.find<AstroSessionObject>().where("objects_id = ?").bind(r.astroObject.object.id()).where("astro_session_id = ?").bind(r.astroObject.astroSession.id()).resultValue();
       setDescriptionDialog(SetDescription::report(o));
