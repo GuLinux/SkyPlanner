@@ -29,6 +29,7 @@ set(SkyPlanner_SRCS
   homepage.cpp
   dss.cpp
   geocoder.cpp
+  astrosessionpreview.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/style.css.cpp
 )
 include(models/source_files.cmake)
