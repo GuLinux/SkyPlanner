@@ -102,7 +102,7 @@ void AstroObjectWidget::Private::init()
 
   info->setCondition("has-report", astroSessionObject && astroSessionObject->observed() && astroSessionObject->report());
   if(info->conditionValue("has-report")) {
-    info->bindString("report", WString::fromUTF8(*astroSessionObject->report()));
+    info->bindString("report", Utils::htmlEncode(WString::fromUTF8(*astroSessionObject->report()), Utils::EncodeNewLines));
   }
 
   auto actionButtons = this->actionButtons;
