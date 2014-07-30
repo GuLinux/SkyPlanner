@@ -29,6 +29,7 @@ class AstroSessionPreview : public Wt::WCompositeWidget {
 public:
   ~AstroSessionPreview();
   AstroSessionPreview(const AstroGroup& astroGroup, Session& session, Wt::WContainerWidget* parent = 0);
+  Wt::Signal<> &backClicked() const; // TODO: connect on the caller
 private:
   D_PTR;
 };

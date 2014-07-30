@@ -62,12 +62,7 @@ WContainerWidget *sessionContainer; // TODO
       printButton->enable();
     });
   });
-  WPushButton *backButton = WW<WPushButton>(WString::tr("preview_back_to_astrosessiontab")).css("btn-warning btn-sm").onClick([=](WMouseEvent){
-    sessionStacked->setCurrentWidget(sessionContainer);
-    // populate();
-    // TODO
-    sessionPreviewContainer->clear();
-  });
+  WPushButton *backButton = WW<WPushButton>(WString::tr("preview_back_to_astrosessiontab")).css("btn-warning btn-sm").onClick([=](WMouseEvent){ d->backClicked.emit(); });
   WPushButton *invertAllButton = WW<WPushButton>(WString::tr("buttons_invert_all")).css("btn-sm");
   WToolBar *toolbar = WW<WToolBar>().addCss("hidden-print pull-right").addButton(backButton).addButton(invertAllButton).addButton(printButton);
   sessionPreviewContainer->addWidget(toolbar);

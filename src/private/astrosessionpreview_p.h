@@ -30,6 +30,7 @@ public:
     Private(const AstroGroup& astroGroup, Session& session, AstroSessionPreview* q);
     AstroGroup astroGroup;
     Session &session;
+    Wt::Signal<> backClicked;
 private:
     class AstroSessionPreview* const q;
 };
