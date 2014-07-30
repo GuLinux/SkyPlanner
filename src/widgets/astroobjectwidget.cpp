@@ -66,7 +66,8 @@ void AstroObjectWidget::Private::init()
   info->bindString("constellation", WString::fromUTF8(ngcObject->constellation().name));
   info->bindString("constellation_abbrev", WString::fromUTF8(ngcObject->constellation().abbrev));
   info->bindString("angular_size", Utils::htmlEncode( WString::fromUTF8( Angle::degrees(ngcObject->angularSize()).printable() )) );
-  info->bindString("magnitude", Utils::htmlEncode( ngcObject->magnitude() > 90. ? "N/A" : (format("%.1f") % ngcObject->magnitude()).str() ));
+  info->setCondition("have-magnitude", ngcObject->magnitude() <= 90.);
+  info->bindString("magnitude", Utils::htmlEncode( (format("%.1f") % ngcObject->magnitude()).str() ));
 
   info->setCondition("have-ephemeris", astroSession);
   if(astroSession) {
@@ -84,7 +85,9 @@ void AstroObjectWidget::Private::init()
       .arg(riseSet(bestAltitude.rst, bestAltitude.rst.rise))
       .arg(bestAltitude.rst.transit.str(DateTime::HoursAndMinutes))
       .arg(riseSet(bestAltitude.rst, bestAltitude.rst.set)) ) );
-    info->bindWidget("difficulty", new ObjectDifficultyWidget{ngcObject, astroGroup.telescope, bestAltitude.coordinates.altitude.degrees() } );
+    auto difficultyWidget = new ObjectDifficultyWidget{ngcObject, astroGroup.telescope, bestAltitude.coordinates.altitude.degrees() };
+    info->setCondition("have-difficulty", difficultyWidget->hasDifficulty() );
+    info->bindWidget("difficulty", difficultyWidget );
   }
   info->setCondition("has-catalogues-descriptions", ngcObject->descriptions().size() > 0);
   if(info->conditionValue("has-catalogues-descriptions")) {

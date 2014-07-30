@@ -32,6 +32,7 @@ using namespace std;
 class ObjectDifficultyWidget::Private {
 public:
   Private(ObjectDifficultyWidget *q) : q(q) {}
+  bool hasDifficulty{true};
 private:
   ObjectDifficultyWidget * const q;
 };
@@ -55,6 +56,7 @@ ObjectDifficultyWidget::ObjectDifficultyWidget( const Wt::Dbo::ptr< NgcObject > 
   switch(difficulty) {
     case -1:
       difficultyText = WString::tr("objectdifficulty_n_a");
+      d->hasDifficulty = false;
       break;
     case 0:
       difficultyText = WString::tr("objectdifficulty_very_easy");
@@ -76,4 +78,9 @@ ObjectDifficultyWidget::ObjectDifficultyWidget( const Wt::Dbo::ptr< NgcObject > 
       break;
   } 
   addWidget(new WText{difficultyText});
+}
+
+bool ObjectDifficultyWidget::hasDifficulty() const
+{
+  return d->hasDifficulty;
 }

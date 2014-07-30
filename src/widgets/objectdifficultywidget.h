@@ -30,6 +30,7 @@ class ObjectDifficultyWidget : public Wt::WContainerWidget
   public:
     ~ObjectDifficultyWidget();
     ObjectDifficultyWidget( const Wt::Dbo::ptr< NgcObject > &object, const Wt::Dbo::ptr< Telescope > &telescope, double maxAltitudeInDegrees, Wt::WContainerWidget *parent = 0 );
+    bool hasDifficulty() const;
 private:
     D_PTR;
 };
