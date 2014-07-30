@@ -91,3 +91,14 @@ void AstroSession::setPosition(const Coordinates::LatLng& position)
   _longitude.reset(position.longitude.degrees());
 }
 
+void AstroSession::setReport(const std::string &report)
+{
+  if(report.empty())
+    _report.reset();
+  _report.reset(report);
+}
+
+boost::optional<std::string> AstroSession::report() const
+{
+  return _report;
+}

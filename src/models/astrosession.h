@@ -49,12 +49,15 @@ public:
   void setPosition(const Coordinates::LatLng &position);
   void setName(const std::string &name);
   void setDateTime(const Wt::WDateTime &when);
+  void setReport(const std::string &report);
+  boost::optional<std::string> report() const;
   template<typename Action>
   void persist(Action& a) {
     dbo::field(a, _name, "name");
     dbo::field(a, _when, "when");
     dbo::field(a, _latitude, "latitude");
     dbo::field(a, _longitude, "longitude");
+    dbo::field(a, _report, "report");
     dbo::hasMany(a, _astroSessionObjects, dbo::ManyToOne);
     dbo::belongsTo(a, _user);
   }
@@ -65,6 +68,7 @@ private:
   dbo::collection<AstroSessionObjectPtr> _astroSessionObjects;
   boost::optional<double> _latitude;
   boost::optional<double> _longitude;
+  boost::optional<std::string> _report;
 };
 
 #endif // ASTROSESSION_H
