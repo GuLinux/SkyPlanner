@@ -14,5 +14,7 @@ ${CMAKE_SOURCE_DIR}/src/widgets/astroobjectwidget.cpp
 ${CMAKE_SOURCE_DIR}/src/widgets/filterbycatalogue.cpp
 ${CMAKE_SOURCE_DIR}/src/widgets/astroobjectstable.cpp
 ${CMAKE_SOURCE_DIR}/src/widgets/objectpopupmenu.cpp
+${CMAKE_SOURCE_DIR}/src/widgets/positiondetailswidget.cpp
+${CMAKE_SOURCE_DIR}/src/widgets/texteditordialog.cpp
 )
 

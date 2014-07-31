@@ -32,6 +32,8 @@
 #include "widgets/astroobjectstable.h"
 #include <mutex>
 #include "widgets/astroobjectwidget.h"
+#include "widgets/positiondetailswidget.h"
+#include "widgets/texteditordialog.h"
 
 using namespace Wt;
 using namespace WtCommons;
@@ -42,11 +44,9 @@ AstroSessionPreview::Private::Private(const AstroGroup& astroGroup, Session& ses
 {
 }
 
-AstroSessionPreview::AstroSessionPreview(const AstroGroup& astroGroup, Session& session, Wt::WContainerWidget* parent)
+AstroSessionPreview::AstroSessionPreview(const AstroGroup& astroGroup, const GeoCoder::Place &geoCoderPlace, Session& session, list<ObjectAction> actions, Type type, Wt::WContainerWidget* parent)
   : WCompositeWidget(parent), d(astroGroup, session, this)
 {
-bool isReport = false; // TODO
-
   spLog("notice") << "Switching to preview version..";
   WContainerWidget *sessionPreviewContainer = WW<WContainerWidget>().css("astroobjects-list");
   setImplementation(sessionPreviewContainer);
@@ -66,11 +66,9 @@ bool isReport = false; // TODO
   sessionPreviewContainer->addWidget(toolbar);
 
   WContainerWidget *infoWidget = WW<WContainerWidget>().css("astroobjects-info-widget");
-  // TODO
-  // updatePositionDetails(infoWidget, false);
-  sessionPreviewContainer->addWidget(infoWidget);
+  sessionPreviewContainer->addWidget(new PositionDetailsWidget{astroGroup, geoCoderPlace, session, false});
 
-  if(!isReport) {
+  if(type != Report) {
     AstroObjectsTable *planetsTable = new AstroObjectsTable(session, {}, false, {}, {AstroObjectsTable::Names, AstroObjectsTable::AR, AstroObjectsTable::DEC, AstroObjectsTable::Constellation, AstroObjectsTable::Magnitude, AstroObjectsTable::AngularSize, AstroObjectsTable::TransitTime, AstroObjectsTable::MaxAltitude});
     planetsTable->addStyleClass("planets-table");
     planetsTable->setResponsive(false);
@@ -84,7 +82,7 @@ bool isReport = false; // TODO
   } else {
     WContainerWidget *reportContainer = WW<WContainerWidget>();
     sessionPreviewContainer->addWidget(reportContainer);
-    auto displayReport = [=] {
+    auto displayReport = [=,&session] {
       reportContainer->clear();
       if(d->astroGroup.astroSession()->report()) {
 	WTemplate *report = WW<WTemplate>(R"(
@@ -99,9 +97,8 @@ bool isReport = false; // TODO
       }
     };
     displayReport();
-    toolbar->addButton(WW<WPushButton>(WString::tr("astrosessiontab_set_report")).css("btn-primary btn-sm hidden-pront").onClick([=](WMouseEvent){
-      // TODO
-      // setDescriptionDialog(SetDescription::report(d->astroGroup.astroSession(), displayReport, "astrosessiontab_set_report"));
+    toolbar->addButton(WW<WPushButton>(WString::tr("astrosessiontab_set_report")).css("btn-primary btn-sm hidden-pront").onClick([=,&session](WMouseEvent){
+      TextEditorDialog::report(session, astroGroup.astroSession(), displayReport, "astrosessiontab_set_report")->show();
     }));
   }
   sessionPreviewContainer->addWidget(WW<WText>(WString::tr("dss-embed-menu-info-message")).css("hidden-print"));
@@ -117,7 +114,7 @@ bool isReport = false; // TODO
     AstroSessionObject::generateEphemeris(ephemeris, d->astroGroup.astroSession(), d->astroGroup.timezone, t);
     auto query = session.query<AstroSessionObjectPtr>("select a from astro_session_object a inner join objects on a.objects_id = objects.id")
       .where("astro_session_id = ?").bind(d->astroGroup.astroSession().id());
-    if(isReport)
+    if(type == Report)
       query.where("observed = ?").bind(true);
     query.orderBy("transit_time ASC, ra asc, dec asc, constellation_abbrev asc");
 
@@ -135,17 +132,24 @@ bool isReport = false; // TODO
     WPushButton *hideDSSButton = WW<WPushButton>(WString::tr("buttons_hide_dss")).css("btn-xs");
     WPushButton *deleteButton = WW<WPushButton>(WString::tr("astroobject_remove_from_session")).css("btn-xs btn-danger");
     WPushButton *editDescriptionButton = WW<WPushButton>(WString::tr("astroobject_actions_edit_description")).css("btn-xs");
-    astroObjectWidget = new AstroObjectWidget({objectelement.first, d->astroGroup.telescope, d->astroGroup.timezone}, session, downloadImagesMutex, { editDescriptionButton, collapseButton, hideDSSButton, hideButton, deleteButton });
+    vector<WPushButton*> actionButtons = { editDescriptionButton, collapseButton, hideDSSButton, hideButton };
+    vector<pair<ObjectAction, WPushButton*>> objectActionButtons;
+    for(auto action: actions) {
+      WPushButton *button = WW<WPushButton>(WString::tr(action.buttonName)).addCss("btn-xs").addCss(action.buttonStyle);
+      actionButtons.push_back(button);
+      objectActionButtons.push_back({action, button});
+    }
+    astroObjectWidget = new AstroObjectWidget({objectelement.first, d->astroGroup.telescope, d->astroGroup.timezone}, session, downloadImagesMutex, actionButtons);
     astroObjectWidget->addStyleClass("astroobject-list-item");
+    for(auto o: objectActionButtons) {
+      o.second->clicked().connect([=](WMouseEvent){ o.first.clicked(objectelement.first, astroObjectWidget); });
+    }
     hideButton->clicked().connect([=](WMouseEvent){astroObjectWidgets->erase(astroObjectWidget); delete astroObjectWidget; });
-    // TODO
-//    deleteButton->clicked().connect([=](WMouseEvent){ astroObjectWidgets->erase(astroObjectWidget); remove(objectelement.first, [=] { delete astroObjectWidget; }); } );
     hideDSSButton->clicked().connect([=](WMouseEvent){ astroObjectWidget->setDSSVisible(!astroObjectWidget->isDSSVisible()); hideDSSButton->setText(WString::tr( astroObjectWidget->isDSSVisible() ? "buttons_hide_dss" : "buttons_show_dss" ));  });
     collapseButton->clicked().connect([=](WMouseEvent) { astroObjectWidget->setCollapsed(!astroObjectWidget->isCollapsed()); });
-    editDescriptionButton->clicked().connect([=](WMouseEvent) {
+    editDescriptionButton->clicked().connect([=,&session](WMouseEvent) {
       Dbo::Transaction t(d->session);
-      // TODO
-      //setDescriptionDialog(SetDescription::description( objectelement.first, [=] { astroObjectWidget->reload(); }));
+      TextEditorDialog::description(session, objectelement.first, [=] { astroObjectWidget->reload(); } )->show();
     });
     astroObjectWidgets->insert(astroObjectWidget);
     sessionPreviewContainer->addWidget(astroObjectWidget);
@@ -153,6 +157,11 @@ bool isReport = false; // TODO
   if(astroObjectWidget)
     astroObjectWidget->addStyleClass("astroobject-last-list-item");
   invertAllButton->clicked().connect([=](WMouseEvent){ for(auto a: *astroObjectWidgets) a->toggleInvert(); } );
+}
+
+Signal<> &AstroSessionPreview::backClicked() const
+{
+  return d->backClicked;
 }
 
 AstroSessionPreview::~AstroSessionPreview()

@@ -17,28 +17,20 @@
  *
  */
 
-#ifndef ASTROSESSIONPREVIEW_H
-#define ASTROSESSIONPREVIEW_H
+#ifndef POSITIONDETAILSWIDGET_H
+#define POSITIONDETAILSWIDGET_H
 
 #include <Wt/WCompositeWidget>
-#include "utils/d_ptr.h"
 #include "models/ptr_defs.h"
 #include "geocoder.h"
 
 class Session;
-class AstroObjectWidget;
-class AstroSessionPreview : public Wt::WCompositeWidget {
+
+class PositionDetailsWidget : public Wt::WCompositeWidget {
 public:
-  enum Type{ Preview, Report };
-  struct ObjectAction {
-    std::string buttonName;
-    std::string buttonStyle;
-    std::function<void(const AstroSessionObjectPtr &,AstroObjectWidget *)> clicked;
-  };
-  ~AstroSessionPreview();
-  AstroSessionPreview(const AstroGroup& astroGroup, const GeoCoder::Place &geoCoderPlace, Session& session, std::list<ObjectAction> actions = {}, Type type = Preview, Wt::WContainerWidget* parent = 0);
-  Wt::Signal<> &backClicked() const;
+  ~PositionDetailsWidget();
+  PositionDetailsWidget(const AstroGroup& astroGroup, const GeoCoder::Place &geoCoderPlace, Session& session, bool showMeteo = true, Wt::WContainerWidget* parent = 0);
 private:
-  D_PTR;
 };
 #endif
+ 

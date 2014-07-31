@@ -80,6 +80,9 @@
 #include "geocoder.h"
 #include "dbohelper.h"
 #include "utils/utils.h"
+#include "widgets/positiondetailswidget.h"
+#include "widgets/texteditordialog.h"
+#include "astrosessionpreview.h"
 
 using namespace Wt;
 using namespace WtCommons;
@@ -128,116 +131,6 @@ template AstroSessionObjectPtr AstroSessionTab::add(const NgcObjectPtr &ngcObjec
 template AstroSessionObjectPtr AstroSessionTab::add(const NgcObjectPtr &ngcObject, const AstroSessionPtr &astroSession, Session &session, WWidget *objectWidget);
 template AstroSessionObjectPtr AstroSessionTab::add(const NgcObjectPtr &ngcObject, const AstroSessionPtr &astroSession, Session &session, WMenuItem *objectWidget);
 
-void AstroSessionTab::Private::previewVersion(bool isReport)
-{
-    spLog("notice") << "Switching to preview version..";
-    sessionPreviewContainer->clear();
-    sessionPreviewContainer->setStyleClass("astroobjects-list");
-    sessionPreviewContainer->addWidget(WW<WText>(WString("<h3>{1}, {2}</h3>").arg(Utils::htmlEncode(WString::fromUTF8(astroSession->name()))).arg(astroSession->wDateWhen().toString("dddd d MMMM yyyy") )).css("text-center") );
-    WPushButton *printButton = WW<WPushButton>(WString::tr("buttons_print")).css("btn-info btn-sm");
-    printButton->clicked().connect([=](WMouseEvent){
-      wApp->doJavaScript("window.print();", false);
-      printButton->disable();
-      WTimer::singleShot(500, [=](WMouseEvent) {
-        printButton->enable();
-      });
-    });
-    WPushButton *backButton = WW<WPushButton>(WString::tr("preview_back_to_astrosessiontab")).css("btn-warning btn-sm").onClick([=](WMouseEvent){
-      sessionStacked->setCurrentWidget(sessionContainer);
-      populate();
-      sessionPreviewContainer->clear();
-    });
-    WPushButton *invertAllButton = WW<WPushButton>(WString::tr("buttons_invert_all")).css("btn-sm");
-    WToolBar *toolbar = WW<WToolBar>().addCss("hidden-print pull-right").addButton(backButton).addButton(invertAllButton).addButton(printButton);
-    sessionPreviewContainer->addWidget(toolbar);
-
-    WContainerWidget *infoWidget = WW<WContainerWidget>().css("astroobjects-info-widget");
-    updatePositionDetails(infoWidget, false);
-    sessionPreviewContainer->addWidget(infoWidget);
-
-    if(!isReport) {
-      AstroObjectsTable *planetsTable = new AstroObjectsTable(session, {}, false, {}, {AstroObjectsTable::Names, AstroObjectsTable::AR, AstroObjectsTable::DEC, AstroObjectsTable::Constellation, AstroObjectsTable::Magnitude, AstroObjectsTable::AngularSize, AstroObjectsTable::TransitTime, AstroObjectsTable::MaxAltitude});
-      planetsTable->addStyleClass("planets-table");
-      planetsTable->setResponsive(false);
-      WPanel *planetsPanel = new WPanel;
-      planetsPanel->setTitle(WString::tr("astrosessiontab_planets_panel"));
-      planetsPanel->setCollapsible(true);
-      planetsPanel->titleBarWidget()->addStyleClass("hidden-print");
-      planetsPanel->setCentralWidget(WW<WContainerWidget>().add(WW<WText>(WString("<h5>{1}</h5>").arg(WString::tr("astrosessiontab_planets_panel"))).css("visible-print") ).add(planetsTable));
-      sessionPreviewContainer->addWidget(planetsPanel);
-      planetsTable->planets(astroSession, timezone);
-    } else {
-      WContainerWidget *reportContainer = WW<WContainerWidget>();
-      sessionPreviewContainer->addWidget(reportContainer);
-      auto displayReport = [=] {
-	reportContainer->clear();
-	if(astroSession->report()) {
-	  WTemplate *report = WW<WTemplate>(R"(
-	    <dl class="dl-horizontal">
-	      <dt>${report-label}</dt>
-	      <dd>${report}</dd>
-	    </dl>
-	  )").css("well");
-	  report->bindString("report-label", WString::tr("report-label"));
-	  report->bindString("report", Utils::htmlEncode(WString::fromUTF8(*astroSession->report()), Utils::EncodeNewLines));
-	  reportContainer->addWidget(report);
-	}
-      };
-      displayReport();
-      toolbar->addButton(WW<WPushButton>(WString::tr("astrosessiontab_set_report")).css("btn-primary btn-sm hidden-pront").onClick([=](WMouseEvent){
-	setDescriptionDialog(SetDescription::report(astroSession, displayReport, "astrosessiontab_set_report"));
-      }));
-    }
-    sessionPreviewContainer->addWidget(WW<WText>(WString::tr("dss-embed-menu-info-message")).css("hidden-print"));
-
-    shared_ptr<mutex> downloadImagesMutex(new mutex);
-    Dbo::Transaction t(session);
-
-    typedef pair<AstroSessionObjectPtr, Ephemeris::BestAltitude> AstroSessionObjectElement;
-    vector<AstroSessionObjectElement> sessionObjects;
-    // TODO: filter this section too?
-    {
-      Ephemeris ephemeris({astroSession->position().latitude, astroSession->position().longitude}, timezone);
-      AstroSessionObject::generateEphemeris(ephemeris, astroSession, timezone, t);
-      auto query = session.query<AstroSessionObjectPtr>("select a from astro_session_object a inner join objects on a.objects_id = objects.id")
-        .where("astro_session_id = ?").bind(astroSession.id());
-      if(isReport)
-        query.where("observed = ?").bind(true);
-      query.orderBy("transit_time ASC, ra asc, dec asc, constellation_abbrev asc");
-
-
-      auto sessionObjectsDbCollection = query.resultList();
-      transform(begin(sessionObjectsDbCollection), end(sessionObjectsDbCollection), back_inserter(sessionObjects), [=,&ephemeris,&t](const AstroSessionObjectPtr &o){
-        return AstroSessionObjectElement{o, o->bestAltitude(ephemeris, timezone)};
-      });
-    }
-    shared_ptr<set<AstroObjectWidget*>> astroObjectWidgets(new set<AstroObjectWidget*>());
-    AstroObjectWidget *astroObjectWidget = nullptr;
-    for(auto objectelement: sessionObjects) {
-      WPushButton *hideButton = WW<WPushButton>(WString::tr("buttons_hide")).css("btn-xs btn-warning");
-      WPushButton *collapseButton = WW<WPushButton>(WString::tr("buttons_collapse")).css("btn-xs");
-      WPushButton *hideDSSButton = WW<WPushButton>(WString::tr("buttons_hide_dss")).css("btn-xs");
-      WPushButton *deleteButton = WW<WPushButton>(WString::tr("astroobject_remove_from_session")).css("btn-xs btn-danger");
-      WPushButton *editDescriptionButton = WW<WPushButton>(WString::tr("astroobject_actions_edit_description")).css("btn-xs");
-      astroObjectWidget = new AstroObjectWidget({objectelement.first, selectedTelescope, timezone}, session, downloadImagesMutex, { editDescriptionButton, collapseButton, hideDSSButton, hideButton, deleteButton });
-      astroObjectWidget->addStyleClass("astroobject-list-item");
-      hideButton->clicked().connect([=](WMouseEvent){astroObjectWidgets->erase(astroObjectWidget); delete astroObjectWidget; });
-      deleteButton->clicked().connect([=](WMouseEvent){ astroObjectWidgets->erase(astroObjectWidget); remove(objectelement.first, [=] { delete astroObjectWidget; }); } );
-      hideDSSButton->clicked().connect([=](WMouseEvent){ astroObjectWidget->setDSSVisible(!astroObjectWidget->isDSSVisible()); hideDSSButton->setText(WString::tr( astroObjectWidget->isDSSVisible() ? "buttons_hide_dss" : "buttons_show_dss" ));  });
-      collapseButton->clicked().connect([=](WMouseEvent) { astroObjectWidget->setCollapsed(!astroObjectWidget->isCollapsed()); });
-      editDescriptionButton->clicked().connect([=](WMouseEvent) {
-        Dbo::Transaction t(session);
-        setDescriptionDialog(SetDescription::description( objectelement.first, [=] { astroObjectWidget->reload(); }));
-      });
-      astroObjectWidgets->insert(astroObjectWidget);
-      sessionPreviewContainer->addWidget(astroObjectWidget);
-    }
-    if(astroObjectWidget)
-      astroObjectWidget->addStyleClass("astroobject-last-list-item");
-    invertAllButton->clicked().connect([=](WMouseEvent){ for(auto a: *astroObjectWidgets) a->toggleInvert(); } );
-    sessionStacked->setCurrentWidget(sessionPreviewContainer);
-}
-
 void AstroSessionTab::Private::reload()
 {
   q->clear();
@@ -276,10 +169,26 @@ void AstroSessionTab::Private::reload()
   });
 
   auto previewVersionButton = WW<WPushButton>(WString::tr("astrosessiontab_preview_version")).css("btn-primary btn-xs").onClick([=](WMouseEvent){
-    previewVersion();
+    sessionPreviewContainer->clear();
+    auto preview = new AstroSessionPreview{{astroSession, selectedTelescope, timezone}, geoCoderPlace, session, {{"astroobject_remove_from_session", "btn-danger", [=](const AstroSessionObjectPtr &o, AstroObjectWidget* w){
+      remove(o, [=] { delete w; });
+    } }}};
+    sessionPreviewContainer->addWidget(preview);
+    sessionStacked->setCurrentWidget(sessionPreviewContainer);
+    preview->backClicked().connect([=](_n6){
+      sessionPreviewContainer->clear();
+      sessionStacked->setCurrentWidget(sessionContainer);
+    });
   });
   auto reportButton = WW<WPushButton>(WString::tr("Report")).css("btn-primary btn-xs").onClick([=](WMouseEvent){
-    previewVersion(true);
+    sessionPreviewContainer->clear();
+    auto preview = new AstroSessionPreview{{astroSession, selectedTelescope, timezone}, geoCoderPlace, session, {}, AstroSessionPreview::Report};
+    sessionPreviewContainer->addWidget(preview);
+    sessionStacked->setCurrentWidget(sessionPreviewContainer);
+    preview->backClicked().connect([=](_n6){
+      sessionPreviewContainer->clear();
+      sessionStacked->setCurrentWidget(sessionContainer);
+    });
   });
 
   auto printableVersionButton = WW<WPushButton>(WString::tr("astrosessiontab_printable_version")).css("btn btn-info btn-xs").onClick( [=](WMouseEvent){ printableVersion(); } );
@@ -361,7 +270,8 @@ void AstroSessionTab::Private::reload()
     SkyPlanner::instance()->notification(WString::tr("notification_success_title"), WString::tr("placewidget_place_set_notification"), SkyPlanner::Notification::Success, 5);
     populate();
     addObjectsTabWidget->populateFor(selectedTelescope, timezone);
-    updatePositionDetails(positionDetails);
+    positionDetails->clear();
+    positionDetails->addWidget(new PositionDetailsWidget{{astroSession, selectedTelescope, timezone}, geoCoderPlace, session});
     planetsTable->planets(astroSession, timezone);
   });
   addPanel(WString::tr("astrosessiontab_add_observable_object"), addObjectsTabWidget, true, true, sessionContainer);
@@ -380,7 +290,7 @@ void AstroSessionTab::Private::reload()
     {"description", [=](const AstroObjectsTable::Row &r, WWidget*) {
       Dbo::Transaction t(session);
       auto sessionObject = session.find<AstroSessionObject>().where("objects_id = ?").bind(r.astroObject.object.id()).where("astro_session_id = ?").bind(r.astroObject.astroSession.id()).resultValue();
-      setDescriptionDialog(SetDescription::description(sessionObject));
+      TextEditorDialog::description( session, sessionObject)->show();
     } },
     {"buttons_remove", [=](const AstroObjectsTable::Row &r, WWidget*) {
       Dbo::Transaction t(session);
@@ -400,7 +310,7 @@ void AstroSessionTab::Private::reload()
     AstroObjectsTable::Action objectReport = AstroObjectsTable::Action{"report", [=](const AstroObjectsTable::Row &r, WWidget *w) {
       Dbo::Transaction t(session);
       auto o = session.find<AstroSessionObject>().where("objects_id = ?").bind(r.astroObject.object.id()).where("astro_session_id = ?").bind(r.astroObject.astroSession.id()).resultValue();
-      setDescriptionDialog(SetDescription::report(o));
+      TextEditorDialog::report(session, o)->show();
     }};
     AstroObjectsTable::Action toggleObserved = AstroObjectsTable::Action{"astrosessiontab_object_observed_menu", [=](const AstroObjectsTable::Row &r, WWidget *w) {
       Dbo::Transaction t(session);
@@ -480,33 +390,13 @@ void AstroSessionTab::Private::reload()
     });
   });
   populate();
-  updatePositionDetails(positionDetails);
-  
+  positionDetails->clear();
+  positionDetails->addWidget(new PositionDetailsWidget{{astroSession, selectedTelescope, timezone}, geoCoderPlace, session});  
   // TODO: something seems to be wrong here...
   // TODO: wait for ready signal?
   WTimer::singleShot(500, [=](WMouseEvent) {
     addObjectsTabWidget->populateFor(selectedTelescope, timezone);
   });
-}
-
-
-void AstroSessionTab::Private::setDescriptionDialog( const AstroSessionTab::Private::SetDescription& setDescription )
-{
-  Dbo::Transaction t(session);
-  WDialog *editDescriptionDialog = WW<WDialog>(WString::tr(setDescription.title));
-  editDescriptionDialog->resize({60, WLength::Percentage}, {50, WLength::Percentage});
-  WTextArea *descriptionTextArea = WW<WTextArea>(WString::fromUTF8(setDescription.getDescription(t))).css("input-block-level resize-none");
-  descriptionTextArea->setHeight({100, WLength::Percentage});
-  editDescriptionDialog->contents()->addWidget(descriptionTextArea);
-  editDescriptionDialog->footer()->addWidget(WW<WPushButton>(WString::tr("buttons_close")).css("btn-sm").onClick([=](WMouseEvent){ editDescriptionDialog->reject(); }));
-  editDescriptionDialog->footer()->addWidget( WW<WPushButton>(WString::tr("buttons_save")).css("btn-sm btn-primary").onClick([=](WMouseEvent){
-    editDescriptionDialog->accept();
-    Dbo::Transaction t(session);
-    setDescription.editTextField(t, descriptionTextArea->text());
-    SkyPlanner::instance()->notification(WString::tr("notification_success_title"), WString::tr(setDescription.notification), SkyPlanner::Notification::Success, 5);
-    setDescription.onUpdate();
-  }));
-  editDescriptionDialog->show();
 }
 
 
@@ -663,83 +553,6 @@ void AstroSessionTab::Private::printableVersion()
   printableDialog->show();
 }
 
-
-
-
-void AstroSessionTab::Private::updatePositionDetails( WContainerWidget *positionDetails, bool showMeteo )
-{
-  Dbo::Transaction t(session);
-  astroSession.reread();
-  positionDetails->clear();
-  auto addMoonPhaseDetails = [=](const Ephemeris::LunarPhase &lunarPhase) {
-    positionDetails->addWidget(new WText(WString::tr("astrosessiontab_moon_phase").arg(static_cast<int>(lunarPhase.illuminated_fraction * 100 ))));
-    positionDetails->addWidget(new WBreak);
-  };
-  if(!astroSession->position()) {
-    addMoonPhaseDetails(Ephemeris({}, {}).moonPhase(astroSession->date()));
-    return;
-  }
-//   forecast.fetch(astroSession->position().longitude, astroSession->position().latitude);
-  const Ephemeris ephemeris(astroSession->position(), timezone);
-  Ephemeris::RiseTransitSet sun = ephemeris.sun(astroSession->date());
-  Ephemeris::RiseTransitSet astroTwilight = ephemeris.astronomicalTwilight(astroSession->date());
-  Ephemeris::RiseTransitSet moon = ephemeris.moon(astroSession->date());
-  Ephemeris::LunarPhase lunarPhase = ephemeris.moonPhase(astroSession->date());
-  Ephemeris::Darkness darkness = ephemeris.darknessHours(astroSession->date() );
-  if(!geoCoderPlace.formattedAddress.empty()) {
-    positionDetails->addWidget(new WText{geoCoderPlace.formattedAddress});
-    positionDetails->addWidget(new WBreak);
-  }
-  positionDetails->addWidget(new WText{WString::tr("astrosession_coordinates")
-    .arg(WString::fromUTF8(astroSession->position().latitude.printable()) )
-    .arg(WString::fromUTF8(astroSession->position().longitude.printable() ) )});
-  positionDetails->addWidget(new WBreak);   
-  
-  positionDetails->addWidget(new WText{WString::tr("printable_timezone_info").arg(WString::fromUTF8(timezone.timeZoneName))});
-  positionDetails->addWidget(new WBreak);
-  positionDetails->addWidget(new WText(WString(WString::tr("astrosessiontab_sun_info"))
-    .arg(sun.rise.str(DateTime::DateShort) )
-    .arg(sun.set.str(DateTime::DateShort) )
-  ));
-  positionDetails->addWidget(new WBreak);
-  positionDetails->addWidget(new WText(WString(WString::tr("astrosessiontab_astro_twilight_info"))
-    .arg(astroTwilight.rise.str(DateTime::DateShort))
-    .arg(astroTwilight.set.str(DateTime::DateShort))
-  ));
-  positionDetails->addWidget(new WBreak);
-  positionDetails->addWidget(new WText(WString(WString::tr("astrosessiontab_moon_info"))
-    .arg(moon.rise.str(DateTime::DateShort))
-    .arg(moon.set.str(DateTime::DateShort))
-  ));
-  positionDetails->addWidget(new WBreak);
-
-
-  addMoonPhaseDetails(lunarPhase);
-  if(lunarPhase.illuminated_fraction <= 0.5) {
-
-    positionDetails->addWidget(new WText{
-      WString::tr("astrosessiontab_darkness_hours")
-        .arg(darkness.begin.str(DateTime::DateShort))
-        .arg(darkness.end.str(DateTime::DateShort))
-        .arg(boost::posix_time::to_simple_string(darkness.duration))
-    });
-  }
-
-  auto now = boost::posix_time::second_clock::local_time();
-  if(showMeteo && astroSession->when() > now && astroSession->when() - now < boost::posix_time::hours(72)) {
-    positionDetails->addWidget(new WBreak);
-    WAnchor *_7timerLink = new WAnchor{(format("http://7timer.y234.cn/index.php?product=astro&lon=%f&lat=%f&lang=%s&tzshift=0")
-      % astroSession->position().longitude.degrees()
-      % astroSession->position().latitude.degrees()
-      % wApp->locale().name()).str()
-      , new WImage(WLink{format("http://www.7timer.com/v4/bin/astro.php?lon=%f&lat=%f&lang=%s&ac=0&unit=metric&tzshift=0")
-      % astroSession->position().longitude.degrees() % astroSession->position().latitude.degrees() % wApp->locale().name()
-    } )
-    };
-    _7timerLink->setTarget(TargetNewWindow);
-    positionDetails->addWidget(_7timerLink);
-  }
-}
 
 void AstroSessionTab::Private::remove(const AstroSessionObjectPtr &sessionObject, function<void()> runAfterRemove)
 {
