@@ -82,6 +82,31 @@ AstroSessionPreview::AstroSessionPreview(const AstroGroup& astroGroup, const Geo
     
     dialog->contents()->addWidget(shareText);
     
+#ifndef PRODUCTION_MODE
+    WTemplate *socialShares = new WTemplate{};
+    socialShares->setTemplateText(R"(
+<!-- Inserisci questo tag nel punto in cui vuoi che sia visualizzato l'elemento pulsante Condividi. -->
+<div class="g-plus" data-action="share" data-height="24" href="${full-link}"></div>
+
+<!-- Inserisci questo tag dopo l'ultimo tag di condividi. -->
+<script type="text/javascript">
+  window.___gcfg = {lang: '${lang}'};
+
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/platform.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+
+<a href="https://twitter.com/share" class="twitter-share-button" data-url="${full-link}" data-via="GuLinux" data-size="large" data-lang="${lang}">Tweet</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+    )", XHTMLUnsafeText);
+    socialShares->bindString("full-link", wApp->makeAbsoluteUrl(internalUrl));
+    socialShares->bindString("lang", wApp->locale().name());
+    dialog->contents()->addWidget(socialShares);
+#endif
     shareCheckBox->changed().connect([=](_n1){
       Dbo::Transaction t(d->session);
       astroGroup.astroSession().modify()->setReportShared(shareCheckBox->isChecked());
