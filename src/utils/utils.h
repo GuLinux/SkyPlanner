@@ -24,6 +24,9 @@
 #include <ios>
 #include <sstream>
 #include <algorithm>
+#include "types.h"
+#include "geocoder.h"
+
 class Utils
 {
 public:

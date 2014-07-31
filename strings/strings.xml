@@ -35,6 +35,8 @@
 <message id="buttons_extended_info">Extended Information</message>
 <message id="buttons_actions">Actions</message>
 <message id="buttons_set">set</message>
+<message id="buttons_back">Back</message>
+<message id="buttons_share">Share</message>
 
 <message id="astrosessionspage_sessions_list">Sessions List</message>
 <message id="astrosessionslisttab_name">Name</message>
@@ -297,5 +299,11 @@ After you added a session, click it to add new objects.
 <message id="Report">Report</message>
 <message id="report-label">Observation Report</message>
 <message id="astrosessiontab_set_report">Write Report</message>
+
+
+<message id="share-report-enable">Enable sharing for this report</message>
+<message id="share-report-message">URL for sharing this report: <b>{1}</b></message>
+
+<message id="share-report-username">Observation report from <b>{1}</b></message>
 
 </messages>

@@ -39,9 +39,11 @@ public:
     Wt::WContainerWidget *notifications;
     Wt::WStackedWidget *widgets;
     void loadDSSPage(const std::string &hexId);
+    void loadReport(const std::string &hexId);
     bool searchByName(const std::string &name, AstroObjectsTable *table, int page = 0);
     std::string previousInternalPath = "/";
     Wt::WContainerWidget *dssContainer;
+    Wt::WContainerWidget *reportsContainer;
     Wt::WString loginname;
     Wt::Signal<> telescopesListChanged;
     std::set<std::shared_ptr<Notification>> shownNotifications;

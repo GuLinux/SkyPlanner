@@ -37,6 +37,11 @@ public:
   GeoCoder(const std::string &apiKey);
   ~GeoCoder();
   Place reverse(const Coordinates::LatLng &latlng) const;
+  struct PlaceInformation {
+    Timezone timezone;
+    GeoCoder::Place geocoderPlace;
+  };
+  static PlaceInformation placeInformation(const Coordinates::LatLng &coordinates, const boost::posix_time::ptime &when);
   private:
     D_PTR;
 };

@@ -29,7 +29,7 @@ class Session;
 class AstroObjectWidget;
 class AstroSessionPreview : public Wt::WCompositeWidget {
 public:
-  enum Type{ Preview, Report };
+  enum Type{ Preview, Report, PublicReport };
   struct ObjectAction {
     std::string buttonName;
     std::string buttonStyle;

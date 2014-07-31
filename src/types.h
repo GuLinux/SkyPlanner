@@ -70,20 +70,20 @@ namespace Coordinates {
   struct Equatorial {
     Angle rightAscension;
     Angle declination;
-    operator bool() { return rightAscension.valid() && declination.valid(); }
+    operator bool() const { return rightAscension.valid() && declination.valid(); }
     std::string toString() const;
   };
 
   struct AltAzimuth {
     Angle altitude;
     Angle azimuth;
-    operator bool() { return altitude.valid() && azimuth.valid(); }
+    operator bool() const { return altitude.valid() && azimuth.valid(); }
   };
 
   struct LatLng {
     Angle latitude;
     Angle longitude;
-    operator bool() { return latitude.valid() && longitude.valid(); }
+    operator bool() const { return latitude.valid() && longitude.valid(); }
   };
 }
 

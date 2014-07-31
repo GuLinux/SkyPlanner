@@ -102,3 +102,14 @@ boost::optional<std::string> AstroSession::report() const
 {
   return _report;
 }
+
+bool AstroSession::reportShared() const
+{
+  return _reportShared;
+}
+
+void AstroSession::setReportShared(bool shared)
+{
+  _reportShared = shared;
+}
+

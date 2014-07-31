@@ -60,6 +60,7 @@
 #include "astrosessiontab.h"
 #include <boost/algorithm/string.hpp>
 #include <Wt/WMemoryResource>
+#include "astrosessionpreview.h"
 
 using namespace std;
 using namespace Wt;
@@ -275,6 +276,9 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
     if(internalPathMatches("/dss")) {
       d->loadDSSPage(internalPathNextPart("/dss/"));
     }
+    if(internalPathMatches("/report")) {
+      d->loadReport(internalPathNextPart("/report/"));
+    }
     if(internalPathMatches("/sessions")) {
       astrosessionspage->open(internalPathNextPart("/sessions/"));
     }
@@ -282,6 +286,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
   };
   internalPathChanged().connect([=](string p, ...) {handlePath(p); });
   d->widgets->addWidget(d->dssContainer = new WContainerWidget);
+  d->widgets->addWidget(d->reportsContainer = new WContainerWidget);
   WContainerWidget *searchByNameWidget = WW<WContainerWidget>();
   d->widgets->addWidget(searchByNameWidget);
   WLineEdit *searchByNameEdit = new WLineEdit;
@@ -343,7 +348,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
 
  // searchByNameEdit->changed().connect([=](_n1){ startSearch(); });
   searchByNameEdit->keyWentUp().connect([=](WKeyEvent e) { if(e.key() == Key_Enter ) startSearch(); });
-  if(!d->session.login().loggedIn() && ! internalPathMatches("/dss") ) {
+  if(!d->session.login().loggedIn() && ! (internalPathMatches("/dss") || internalPathMatches("/report")) ) {
     setInternalPath(HOME_PATH, true);
   }
   handlePath(internalPath());
@@ -374,6 +379,30 @@ bool SkyPlanner::Private::searchByName(const string &name, AstroObjectsTable *ta
   } );
   table->populate(objects, TelescopePtr(), {}, tablePage);
   return true;
+}
+
+void SkyPlanner::Private::loadReport( const std::string &hexId )
+{
+  WWidget *currentWidget = widgets->currentWidget();
+  reportsContainer->clear();
+  auto objectId = Utils::fromHexString<Dbo::dbo_traits<NgcObject>::IdType>(hexId);
+  Dbo::Transaction t(session);
+  AstroSessionPtr astroSession = session.find<AstroSession>().where("id = ?").where("report_shared = ?").bind(objectId).bind(true);
+  if(!astroSession) {
+    wApp->setInternalPath(HOME_PATH, true);
+    return;
+  }
+  auto placeInfo = ::GeoCoder::placeInformation(astroSession->position(), astroSession->when());
+
+  // TODO: fetch telescope from user?
+  auto report = new AstroSessionPreview{{astroSession, TelescopePtr{}, placeInfo.timezone}, placeInfo.geocoderPlace, session, {}, AstroSessionPreview::PublicReport};
+  report->backClicked().connect([=](_n6){
+    reportsContainer->clear();
+    widgets->setCurrentWidget( currentWidget );
+  });
+
+  reportsContainer->addWidget(report);
+  widgets->setCurrentWidget( reportsContainer );
 }
 
 void SkyPlanner::Private::loadDSSPage( const std::string &hexId )

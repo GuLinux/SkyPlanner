@@ -51,6 +51,8 @@ public:
   void setDateTime(const Wt::WDateTime &when);
   void setReport(const std::string &report);
   boost::optional<std::string> report() const;
+  bool reportShared() const;
+  void setReportShared(bool shared);
   template<typename Action>
   void persist(Action& a) {
     dbo::field(a, _name, "name");
@@ -58,6 +60,7 @@ public:
     dbo::field(a, _latitude, "latitude");
     dbo::field(a, _longitude, "longitude");
     dbo::field(a, _report, "report");
+    dbo::field(a, _reportShared, "report_shared");
     dbo::hasMany(a, _astroSessionObjects, dbo::ManyToOne);
     dbo::belongsTo(a, _user);
   }
@@ -69,6 +72,7 @@ private:
   boost::optional<double> _latitude;
   boost::optional<double> _longitude;
   boost::optional<std::string> _report;
+  bool _reportShared = false;
 };
 
 #endif // ASTROSESSION_H

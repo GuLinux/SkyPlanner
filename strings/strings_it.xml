@@ -73,6 +73,8 @@
 <message id="buttons_extended_info">Informazioni Estese</message>
 <message id="buttons_actions">Azioni</message>
 <message id="buttons_set">imposta</message>
+<message id="buttons_back">Indietro</message>
+<message id="buttons_share">Condivisione</message>
 
 <message id="astrosessionspage_sessions_list">Elenco Osservazioni</message>
 <message id="astrosessionslisttab_name">Nome</message>
@@ -310,4 +312,9 @@ Dopo aver aggiunto una nuova sessione, clicca sul suo nome per aggiungere oggett
 <message id="observed_no">mai osservati</message>
 <message id="astrosessiontab_set_report">Scrivi Report</message>
 <message id="report-label">Report Osservativo</message>
+
+
+<message id="share-report-enable">Abilita condivisione di questo report</message>
+<message id="share-report-message">URL per condividere il report: <b>{1}</b></message>
+<message id="share-report-username">Report osservativo di <b>{1}</b></message>
 </messages>

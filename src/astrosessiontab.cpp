@@ -414,51 +414,13 @@ Wt::Signal<std::string> &AstroSessionTab::nameChanged() const
 
 void AstroSessionTab::Private::updateTimezone()
 {
-  static string googleApiKey;
-  if(googleApiKey.empty())
-    wApp->readConfigurationProperty("google_api_server_key", googleApiKey);
-
-  timezone = Timezone{};
-  static map<string,Timezone> timezonesCache;
-  if(astroSession->position()){
-    string key = Timezone::key(astroSession->position().latitude.degrees(), astroSession->position().longitude.degrees(), astroSession->when(), wApp->locale().name());
-    spLog("notice") << "Timezone identifier: " << key;
-    if(timezonesCache.count(key)) {
-      timezone = timezonesCache[key];
-      spLog("notice") << "Timezone " << timezone << " found in cache, skipping webservice request";
-    } else {
-      string url = format("https://maps.googleapis.com/maps/api/timezone/json?location=%f,%f&timestamp=%d&sensor=false&key=%s&language=%s")
-        % astroSession->position().latitude.degrees()
-        % astroSession->position().longitude.degrees()
-        % astroSession->wDateWhen().toTime_t()
-        % googleApiKey
-        % wApp->locale().name();
-      ;
-      spLog("notice") << "URL: " << url;
-      stringstream data;
-      Curl curl(data);
-      bool getRequest = ! googleApiKey.empty() && curl.get(url).requestOk();
-      GeoCoder geocoder(googleApiKey);
-      geoCoderPlace = geocoder.reverse(astroSession->position());
-      spLog("notice") << "reverse geocoder lookup: " << geoCoderPlace;
-
-      spLog("notice") << "get request: " << boolalpha << getRequest << ", http code: " << curl.httpResponseCode() << ", out: " << data.str();
-      if(getRequest) {
-        try {
-          timezone = Timezone::from(data.str(), astroSession->position().latitude.degrees(), astroSession->position().longitude.degrees());
-          timezonesCache[key] = timezone;
-	  for(auto resource: exportResources) {
-	    resource.second->setTimezone(timezone);
-	    resource.second->setPlace(geoCoderPlace);
-	  }
-          spLog("notice") << "got timezone info: " << timezone;
-        } catch(std::exception &e) {
-          spLog("notice") << "Unable to parse json response into a timezone object: " << e.what();
-        }
-      }
-    }
+  auto placeInfo = ::GeoCoder::placeInformation(astroSession->position(), astroSession->when());
+  timezone = placeInfo.timezone;
+  geoCoderPlace = placeInfo.geocoderPlace;
+  for(auto resource: exportResources) {
+    resource.second->setTimezone(timezone);
+    resource.second->setPlace(geoCoderPlace);
   }
-
 }
 
 void AstroSessionTab::Private::printableVersion()

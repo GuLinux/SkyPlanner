@@ -7,6 +7,8 @@
 #include <Wt/Json/Object>
 #include <Wt/Json/Parser>
 #include <Wt/Json/Value>
+#include "skyplanner.h"
+#include "utils/curl.h"
 
 using namespace Wt;
 using namespace std;
@@ -76,6 +78,53 @@ GeoCoder::Place GeoCoder::reverse(const Coordinates::LatLng &latlng) const
     return place;
   }
   return {};
+}
+
+
+GeoCoder::PlaceInformation GeoCoder::placeInformation(const Coordinates::LatLng &coordinates, const boost::posix_time::ptime &when)
+{
+  static string googleApiKey;
+  if(googleApiKey.empty())
+    wApp->readConfigurationProperty("google_api_server_key", googleApiKey);
+  PlaceInformation placeInformation;
+  static map<string,Timezone> timezonesCache;
+  if(coordinates){
+    string key = Timezone::key(coordinates.latitude.degrees(), coordinates.longitude.degrees(), when, wApp->locale().name());
+    spLog("notice") << "Timezone identifier: " << key;
+    if(timezonesCache.count(key)) {
+      placeInformation.timezone = timezonesCache[key];
+      spLog("notice") << "Timezone " << placeInformation.timezone << " found in cache, skipping webservice request";
+    } else {
+      tm td_tm = to_tm(when);
+      time_t tt = mktime(&td_tm);
+      string url = format("https://maps.googleapis.com/maps/api/timezone/json?location=%f,%f&timestamp=%d&sensor=false&key=%s&language=%s")
+        % coordinates.latitude.degrees()
+        % coordinates.longitude.degrees()
+        % tt
+        % googleApiKey
+        % wApp->locale().name();
+      ;
+      spLog("notice") << "URL: " << url;
+      stringstream data;
+      Curl curl(data);
+      bool getRequest = ! googleApiKey.empty() && curl.get(url).requestOk();
+      GeoCoder geocoder(googleApiKey);
+      placeInformation.geocoderPlace = geocoder.reverse(coordinates);
+      spLog("notice") << "reverse geocoder lookup: " << placeInformation.geocoderPlace;
+
+      spLog("notice") << "get request: " << boolalpha << getRequest << ", http code: " << curl.httpResponseCode() << ", out: " << data.str();
+      if(getRequest) {
+        try {
+          placeInformation.timezone = Timezone::from(data.str(), coordinates.latitude.degrees(), coordinates.longitude.degrees());
+          timezonesCache[key] = placeInformation.timezone;
+          spLog("notice") << "got timezone info: " << placeInformation.timezone;
+        } catch(std::exception &e) {
+          spLog("notice") << "Unable to parse json response into a timezone object: " << e.what();
+        }
+      }
+    }
+  }
+  return placeInformation;
 }
 
 ostream &operator<<(ostream &o, const GeoCoder::Place & p)
