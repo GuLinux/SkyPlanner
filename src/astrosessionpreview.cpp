@@ -1,4 +1,4 @@
-/*
+ /*
  * <one line to give the program's name and a brief idea of what it does.>
  * Copyright (C) 2013  <copyright holder> <email>
  *
@@ -46,8 +46,6 @@ AstroSessionPreview::AstroSessionPreview(const AstroGroup& astroGroup, Session& 
   : WCompositeWidget(parent), d(astroGroup, session, this)
 {
 bool isReport = false; // TODO
-WStackedWidget *sessionStacked; // TODO
-WContainerWidget *sessionContainer; // TODO
 
   spLog("notice") << "Switching to preview version..";
   WContainerWidget *sessionPreviewContainer = WW<WContainerWidget>().css("astroobjects-list");
@@ -156,7 +154,6 @@ WContainerWidget *sessionContainer; // TODO
   if(astroObjectWidget)
     astroObjectWidget->addStyleClass("astroobject-last-list-item");
   invertAllButton->clicked().connect([=](WMouseEvent){ for(auto a: *astroObjectWidgets) a->toggleInvert(); } );
-  sessionStacked->setCurrentWidget(sessionPreviewContainer);
 }
 
 AstroSessionPreview::~AstroSessionPreview()
