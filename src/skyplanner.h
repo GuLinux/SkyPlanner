@@ -50,6 +50,8 @@ public:
 
     Wt::Signal<> &telescopesListChanged() const;
 private:
+  static std::map<std::string,std::string> globalProperties;
+  friend int main(int, char**);
     D_PTR;
 };
 

@@ -1,6 +1,7 @@
 #include <iostream>
 #include <Wt/WServer>
 #include <Wt/WMemoryResource>
+#include <Wt/WFileResource>
 #include <signal.h>
 #include "ngcresource.h"
 #include "skyplanner.h"
@@ -8,6 +9,7 @@
 #include "session.h"
 #include "utils/utils.h"
 #include "curl/curl.h"
+#include <boost/filesystem.hpp>
 #include <GraphicsMagick/Magick++.h>
 using namespace std;
 using namespace Wt;
@@ -28,7 +30,8 @@ int main(int argc, char **argv) {
         server.addResource(new NgcResource, "/ngc");
 	string noop;
 	if(! server.readConfigurationProperty("style-css-path", noop))
-	  server.addResource(new WMemoryResource("text/css", SkyPlannerStyle::css()), "/skyplanner_style.css");
+          server.addResource(new WMemoryResource("text/css", SkyPlannerStyle::css()), "/skyplanner_style.css");
+        server.addResource(new WFileResource((boost::filesystem::path(RESOURCES_DIRECTORY) / "logo_350.png") .string()), "/skyplanner_logo.png");
         server.addEntryPoint(Wt::Application, createAstroPlanner);
         Session::configureAuth();
         if (server.start()) {

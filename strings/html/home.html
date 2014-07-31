@@ -1,19 +1,31 @@
 ${<logged-in>}
 <h5 style="padding-left: 20px;"><i>Hello, ${login-name}</i></h5>
 ${</logged-in>}
-<p>Welcome to <b>${tr:application_title}</b>.</p>
-<p>This software can help you organize
-${<logged-in>}<a class="link" onclick="${sessions-menu-path}">your star gazing sessions</a>${</logged-in>}
-${<not-logged-in>}your star gazing sessions${</not-logged-in>}
-.</p>
-<p>You can browse various catalogues, like the famous<i>Messier</i>, <i>NGC</i>/<i>IC</i>, and also <i>Arp</i>, <i>Abell</i>, red stars,  asterisms; create your own printable session plan, add your notes,
-get a preview of the selected celestial objects, suggestions customized on your instruments,  and many other features.</p>
-${<not-logged-in>}
-<p>You can register immediatly,  without needing to fill an email address, creating a personal profile with your data and star gazing sessions.</p>
-<p>To enter or register the web site, click the <a class="link" onclick="${login-menu-path};">login</a> menu item</p>
-${</not-logged-in>}
-<p style="padding-left: 30%;"><i>Happy star gazing!</i></p>
-${<have-features-list>}
+
+<div class="media">
+  <div class="pull-left" href="#">
+    <img class="media-object img-rounded" src="/skyplanner_logo.png">
+  </div>
+  <div class="media-body">
+    <p>Welcome to <b>${tr:application_title}</b>.</p>
+    <p>This software can help you organize
+    ${<logged-in>}<a class="link" onclick="${sessions-menu-path}">your star gazing sessions</a>${</logged-in>}
+    ${<not-logged-in>}your star gazing sessions${</not-logged-in>}
+    .</p>
+    <p>You can browse various catalogues, like the famous<i>Messier</i>, <i>NGC</i>/<i>IC</i>, and also <i>Arp</i>, <i>Abell</i>, red stars,  asterisms; create your own printable session plan, add your notes,
+    get a preview of the selected celestial objects, suggestions customized on your instruments,  and many other features.</p>
+    ${<not-logged-in>}
+    <p>You can register immediatly,  without needing to fill an email address, creating a personal profile with your data and star gazing sessions.</p>
+    <p>To enter or register the web site, click the <a class="link" onclick="${login-menu-path};">login</a> menu item</p>
+    ${</not-logged-in>}
+    <p style="padding-left: 30%;"><i>Happy star gazing!</i></p>
+  </div>
+</div>
+<div class="container">
+  <div class="col-xs-4"><a href="http://blog.gulinux.net/skyplanner" target="_BLANK">SkyPlanner Homepage@GuLinux.net</a></div>
+  <div class="col-xs-4"><a href="https://www.facebook.com/SkyPlanner.Stargazing" target="_BLANK">Facebook Homepage</a></div>
+  <div class="col-xs-4"><a href="http://blog.gulinux.net" target="_BLANK">GuLinux.net Blog</a></div>
+</div>
 <hr />
 <dl class="dl-horizontal">
   <dt>Updates</dt>
@@ -29,6 +41,7 @@ ${<have-features-list>}
     </ul>
   </dd>
 </dl>
+${<have-features-list>}
 <hr />
 <dl class="dl-horizontal">
   <dt>Included catalogues</dt>

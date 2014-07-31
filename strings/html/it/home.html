@@ -1,20 +1,33 @@
 ${<logged-in>}
 <h5 style="padding-left: 20px;"><i>Ciao, ${login-name}</i></h5>
 ${</logged-in>}
-<p>Benvenuto su <b>${tr:application_title}</b>.</p>
-<p>Questo software ti permette di organizzare
-${<logged-in>}<a class="link" onclick="${sessions-menu-path}">le tue uscite astronomiche</a>${</logged-in>}
-${<not-logged-in>}le tue uscite astronomiche${</not-logged-in>}
-.</p>
-<p>Puoi cercare tra svariati cataloghi, tra i quali i classici <i>Messier</i>, <i>NGC</i> e <i>IC</i>, ma anche <i>Arp</i>, <i>Abell</i>, e cataloghi di asterismi e stelle rosse; creare la tua scaletta stampabile, aggiungere le tue note,
-avere un'anteprima degli oggetti celesti, suggerimenti personalizzati per la tua strumentazione
-e utilizzare altre diverse funzionalità.</p>
-${<not-logged-in>}
-<p>Puoi iscriverti e loggarti con nome e password anche senza fornire l'indirizzo e-mail. Verrà creato
-un tuo profilo personale con i tuoi dati e le tue sessioni osservative.</p>
-<p>Per entrare nel tuo profilo, o per registrarti, usa il menù <a class="link" onclick="${login-menu-path};">login</a></p>
-${</not-logged-in>}
-<p style="padding-left: 30%;"><i>Cieli sereni!</i></p>
+
+<div class="media">
+  <div class="pull-left" href="#">
+    <img class="media-object img-rounded" src="/skyplanner_logo.png">
+  </div>
+  <div class="media-body">
+    <p>Benvenuto su <b>${tr:application_title}</b>.</p>
+    <p>Questo software ti permette di organizzare
+    ${<logged-in>}<a class="link" onclick="${sessions-menu-path}">le tue uscite astronomiche</a>${</logged-in>}
+    ${<not-logged-in>}le tue uscite astronomiche${</not-logged-in>}
+    .</p>
+    <p>Puoi cercare tra svariati cataloghi, tra i quali i classici <i>Messier</i>, <i>NGC</i> e <i>IC</i>, ma anche <i>Arp</i>, <i>Abell</i>, e cataloghi di asterismi e stelle rosse; creare la tua scaletta stampabile, aggiungere le tue note,
+    avere un'anteprima degli oggetti celesti, suggerimenti personalizzati per la tua strumentazione
+    e utilizzare altre diverse funzionalità.</p>
+    ${<not-logged-in>}
+    <p>Puoi iscriverti e loggarti con nome e password anche senza fornire l'indirizzo e-mail. Verrà creato
+    un tuo profilo personale con i tuoi dati e le tue sessioni osservative.</p>
+    <p>Per entrare nel tuo profilo, o per registrarti, usa il menù <a class="link" onclick="${login-menu-path};">login</a></p>
+    ${</not-logged-in>}
+    <p style="padding-left: 30%;"><i>Cieli sereni!</i></p>
+  </div>
+</div>
+<div class="container">
+  <div class="col-xs-4"><a href="http://blog.gulinux.net/skyplanner" target="_BLANK">SkyPlanner Homepage@GuLinux.net</a></div>
+  <div class="col-xs-4"><a href="https://www.facebook.com/SkyPlanner.Stargazing" target="_BLANK">Facebook Homepage</a></div>
+  <div class="col-xs-4"><a href="http://blog.gulinux.net" target="_BLANK">GuLinux.net Blog</a></div>
+</div>
 <hr />
 <dl class="dl-horizontal">
   <dt>Aggiornamenti</dt>
