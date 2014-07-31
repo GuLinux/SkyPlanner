@@ -65,9 +65,9 @@ void HomePage::Private::populate() {
 
   auto catalogues = session.find<Catalogue>().where("hidden < ?").bind(0xFF).orderBy("priority ASC").resultList();
   content->setCondition("have-features-list", catalogues.size() > 0);
-  WContainerWidget *cataloguesWidget = WW<WContainerWidget>();
+  WContainerWidget *cataloguesWidget = WW<WContainerWidget>().css("container-fluid");
   cataloguesWidget->setList(true);
   content->bindWidget("included-catalogues", cataloguesWidget);
   for(auto catalogue: catalogues) 
-    cataloguesWidget->addWidget(WW<WContainerWidget>().add(WW<WText>(WString::fromUTF8(catalogue->name() ))));
+    cataloguesWidget->addWidget(WW<WContainerWidget>().css("col-xs-3").add(WW<WText>(WString::fromUTF8(catalogue->name() ))));
 }
