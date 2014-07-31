@@ -109,6 +109,7 @@ public:
   void setResponsive(bool responsive);
   Wt::Signal<AstroSessionObjectPtr> &objectsListChanged() const;
   void forceActionsAsToolBar(bool force);
+  void planets(const AstroSessionPtr &astroSession, const Timezone &timezone);
 private:
   D_PTR;
 };

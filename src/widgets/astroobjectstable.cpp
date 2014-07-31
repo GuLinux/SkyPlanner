@@ -273,6 +273,17 @@ void AstroObjectsTable::setResponsive(bool responsive)
   d->tableContainer->toggleStyleClass("table-responsive", responsive);
 }
 
+void AstroObjectsTable::planets(const AstroSessionPtr &astroSession, const Timezone &timezone)
+{
+  Ephemeris ephemeris({astroSession->position().latitude, astroSession->position().longitude}, timezone);
+  vector<AstroObjectsTable::AstroObject> _planets;
+  for(auto planet: Ephemeris::allPlanets) {
+    AstroObjectsTable::AstroObject astroObject;
+    astroObject.planet = ephemeris.planet(planet, DateTime::fromLocal(astroSession->when(), timezone));
+    _planets.push_back(astroObject);
+  }
+  populate(_planets, {}, timezone);
+}
 
 void AstroObjectsTable::populate(const vector<AstroObject> &objects, const TelescopePtr &telescope, const Timezone &timezone, const Page &page, const Selection &selection)
 {

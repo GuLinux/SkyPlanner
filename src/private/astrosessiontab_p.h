@@ -92,7 +92,6 @@ public:
     Wt::WStackedWidget *sessionStacked ;
     Wt::WContainerWidget *sessionContainer ;
     Wt::WContainerWidget *sessionPreviewContainer;
-    void populatePlanets(AstroObjectsTable *planetsTable);
 private:
     class AstroSessionTab* const q;
 };

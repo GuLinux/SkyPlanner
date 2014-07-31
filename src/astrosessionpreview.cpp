@@ -80,8 +80,7 @@ bool isReport = false; // TODO
     planetsPanel->titleBarWidget()->addStyleClass("hidden-print");
     planetsPanel->setCentralWidget(WW<WContainerWidget>().add(WW<WText>(WString("<h5>{1}</h5>").arg(WString::tr("astrosessiontab_planets_panel"))).css("visible-print") ).add(planetsTable));
     sessionPreviewContainer->addWidget(planetsPanel);
-    // TODO
-    // populatePlanets(planetsTable);
+    planetsTable->planets(astroGroup.astroSession(), astroGroup.timezone);
   } else {
     WContainerWidget *reportContainer = WW<WContainerWidget>();
     sessionPreviewContainer->addWidget(reportContainer);
