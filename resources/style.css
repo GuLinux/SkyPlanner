@@ -46,6 +46,10 @@
       max-height: 28px;
     }
     
+    .nowrap {
+      white-space: nowrap;
+    }
+    
     @media (min-width: 768px) {
       .navbar .navbar-collapsed {
         display: block!important;
