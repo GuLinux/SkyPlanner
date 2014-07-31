@@ -73,7 +73,7 @@ AstroSessionPreview::AstroSessionPreview(const AstroGroup& astroGroup, const Geo
   WPushButton *invertAllButton = WW<WPushButton>(WString::tr("buttons_invert_all")).css("btn-sm");
   WPushButton *shareButton = WW<WPushButton>(WString::tr("buttons_share")).css("btn-success btn-sm").onClick([=](WMouseEvent){
     WDialog *dialog = new WDialog{WString::tr("buttons_share")};
-    dialog->contents()->addStyleClass("container");
+    dialog->setMinimumSize(700, WLength::Auto);
     WCheckBox *shareCheckBox = WW<WCheckBox>(WString::tr("share-report-enable"));
     dialog->contents()->addWidget(WW<WContainerWidget>().add(shareCheckBox));
     
