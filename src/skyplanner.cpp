@@ -131,7 +131,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
   auto theme = new WBootstrapTheme(this);
   theme->setVersion(WBootstrapTheme::Version3);
   setTheme( theme );
-  requireJQuery("http://codeorigin.jquery.com/jquery-1.8.3.min.js");
+  requireJQuery("https://code.jquery.com/jquery-1.11.1.min.js");
   {
     Dbo::Transaction t(d->session);
     long objectsWithoutConstellationSize = d->session.query<long>("select count(*) from objects where constellation_abbrev is null").resultValue();
