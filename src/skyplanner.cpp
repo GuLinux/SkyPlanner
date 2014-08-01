@@ -96,6 +96,15 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
     addMetaHeader("google-site-verification", googleVerificationCode);
   }
 
+  static string facebookAppId;
+  if(facebookAppId.empty()) {
+    wApp->readConfigurationProperty("facebook-oauth2-app-id", facebookAppId);
+  }
+  if(!facebookAppId.empty()) {
+    addMetaHeader("fb:app_id", facebookAppId);
+    addMetaHeader("og:title", "SkyPlanner");
+  }
+
   string googleAnalytics_ua, googleAnalytics_domain;
   if(readConfigurationProperty("google-analytics-ua", googleAnalytics_ua) && readConfigurationProperty("google-analytics-domain", googleAnalytics_domain)) {
     vector<uint8_t> data;
@@ -359,7 +368,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
   footer->setTemplateText(R"(
     <nav class="navbar navbar-default navbar-fixed-bottom" role="navigation">
       <div class="container-fluid">
-	<div class="navbar-text addthis_native_toolbox"  data-url="${share-url}"></div>
+      <div class="navbar-text addthis_native_toolbox"  data-url="${share-url}"></div>
 	<ul class="nav navbar-nav navbar-right">
 	  <li><a href="http://blog.gulinux.net/" target="_BLANK">GuLinux Blog</a></li>
 	  <li><a href="http://blog.gulinux.net/skyplanner" target="_BLANK">SkyPlanner Homepage</a></li>
@@ -372,37 +381,6 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
   footer->bindString("share-url", wApp->makeAbsoluteUrl(wApp->bookmarkUrl(HOME_PATH)));
 
   root()->addWidget(footer);
-  
-  static string facebookAppId;
-  if(facebookAppId.empty()) {
-    wApp->readConfigurationProperty("facebook-oauth2-app-id", facebookAppId);
-  }
-  
-  if(!facebookAppId.empty()) {
-    WTemplate *facebookScripts = new WTemplate;
-    facebookScripts->setTemplateText(R"(
-      <script>
-	window.fbAsyncInit = function() {
-	  FB.init({
-	    appId      : '${facebookAppId}',
-	    xfbml      : true,
-	    version    : 'v2.0'
-	  });
-	};
-
-	(function(d, s, id){
-	  var js, fjs = d.getElementsByTagName(s)[0];
-	  if (d.getElementById(id)) {return;}
-	  js = d.createElement(s); js.id = id;
-	  js.src = "//connect.facebook.net/en_US/sdk.js";
-	  fjs.parentNode.insertBefore(js, fjs);
-	}(document, 'script', 'facebook-jssdk'));
-      </script>
-      
-    )", XHTMLUnsafeText);
-    facebookScripts->bindString("facebookAppId", facebookAppId);
-    root()->addWidget(facebookScripts);
-  }
 }
 
 bool SkyPlanner::Private::searchByName(const string &name, AstroObjectsTable *table, int page)
