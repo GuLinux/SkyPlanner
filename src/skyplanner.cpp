@@ -103,6 +103,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
   if(!facebookAppId.empty()) {
     addMetaHeader("fb:app_id", facebookAppId);
     addMetaHeader("og:title", "SkyPlanner");
+    addMetaHeader("og:image", wApp->makeAbsoluteUrl("/skyplanner_logo.png"));
   }
 
   string googleAnalytics_ua, googleAnalytics_domain;
