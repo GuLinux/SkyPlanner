@@ -78,35 +78,32 @@ AstroSessionPreview::AstroSessionPreview(const AstroGroup& astroGroup, const Geo
     dialog->contents()->addWidget(WW<WContainerWidget>().add(shareCheckBox));
     
     auto internalUrl = wApp->bookmarkUrl(format("/report/%x/%s") % astroGroup.astroSession().id() % ::Utils::sanitizeForURL(astroGroup.astroSession()->name()) );
-    WContainerWidget *shareText = WW<WContainerWidget>().add(new WText{WString::tr("share-report-message").arg(wApp->makeAbsoluteUrl(internalUrl))});
     
-    dialog->contents()->addWidget(shareText);
     
-#ifndef PRODUCTION_MODE
-    WTemplate *socialShares = new WTemplate{};
-    socialShares->setTemplateText(R"(
-<!-- Inserisci questo tag nel punto in cui vuoi che sia visualizzato l'elemento pulsante Condividi. -->
-<div class="g-plus" data-action="share" data-height="24" href="${full-link}"></div>
-
-<!-- Inserisci questo tag dopo l'ultimo tag di condividi. -->
-<script type="text/javascript">
-  window.___gcfg = {lang: '${lang}'};
-
-  (function() {
-    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-    po.src = 'https://apis.google.com/js/platform.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-  })();
-</script>
-
-<a href="https://twitter.com/share" class="twitter-share-button" data-url="${full-link}" data-via="GuLinux" data-size="large" data-lang="${lang}">Tweet</a>
-<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-
+    WTemplate *shareToolbox = WW<WTemplate>();
+    shareToolbox->setTemplateText(R"(
+<!-- I got these buttons from simplesharebuttons.com -->
+<div id="share-buttons">
+<!-- Facebook -->
+<a href="http://www.facebook.com/sharer.php?u=${page-url}" target="_blank"><img src="http://www.simplesharebuttons.com/images/somacro/facebook.png" alt="Facebook" /></a>
+ 
+<!-- Twitter -->
+<a href="http://twitter.com/share?url=${page-url}&text=${page-title}&hashtags=skyplanner" target="_blank"><img src="http://www.simplesharebuttons.com/images/somacro/twitter.png" alt="Twitter" /></a>
+ 
+<!-- Google+ -->
+<a href="https://plus.google.com/share?url=${page-url}" target="_blank"><img src="http://www.simplesharebuttons.com/images/somacro/google.png" alt="Google" /></a>
+ 
+<!-- Pinterest -->
+<a href="javascript:void((function()%7Bvar%20e=document.createElement('script');e.setAttribute('type','text/javascript');e.setAttribute('charset','UTF-8');e.setAttribute('src','http://assets.pinterest.com/js/pinmarklet.js?r='+Math.random()*99999999);document.body.appendChild(e)%7D)());"><img src="http://www.simplesharebuttons.com/images/somacro/pinterest.png" alt="Pinterest" /></a>
+</div>
     )", XHTMLUnsafeText);
-    socialShares->bindString("full-link", wApp->makeAbsoluteUrl(internalUrl));
-    socialShares->bindString("lang", wApp->locale().name());
-    dialog->contents()->addWidget(socialShares);
-#endif
+    shareToolbox->bindString("page-url", wApp->makeAbsoluteUrl(internalUrl));
+    shareToolbox->bindString("page-title", astroGroup.astroSession()->name() );
+    
+    WContainerWidget *shareText = WW<WContainerWidget>().add(new WText{WString::tr("share-report-message").arg(wApp->makeAbsoluteUrl(internalUrl))}).add(shareToolbox);
+
+    dialog->contents()->addWidget(shareText);
+
     shareCheckBox->changed().connect([=](_n1){
       Dbo::Transaction t(d->session);
       astroGroup.astroSession().modify()->setReportShared(shareCheckBox->isChecked());

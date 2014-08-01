@@ -131,7 +131,9 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
   auto theme = new WBootstrapTheme(this);
   theme->setVersion(WBootstrapTheme::Version3);
   setTheme( theme );
-  requireJQuery("https://code.jquery.com/jquery-1.11.1.min.js");
+  //requireJQuery("https://code.jquery.com/jquery-1.11.1.min.js");
+  requireJQuery("https://code.jquery.com/jquery-2.1.1.min.js");
+  require("http://s7.addthis.com/js/300/addthis_widget.js#pubid=ra-53db62c0246c3a25");
   {
     Dbo::Transaction t(d->session);
     long objectsWithoutConstellationSize = d->session.query<long>("select count(*) from objects where constellation_abbrev is null").resultValue();
@@ -220,18 +222,18 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
   auto rightMenu = new Wt::WMenu();
   navBar->addMenu(rightMenu, Wt::AlignRight);
 
-
+/*
   WMenuItem *gulinuxMenuItem = WW<WMenuItem>(rightMenu->addItem("GuLinux")).addCss("bold").addCss("menu-item-highlight");
   gulinuxMenuItem->setInternalPathEnabled(false);
   WPopupMenu *gulinuxPopup = new WPopupMenu;
   gulinuxMenuItem->setMenu(gulinuxPopup);
-
   auto blogMenuItem = gulinuxPopup->addItem("Blog");
   blogMenuItem->setLink("http://blog.gulinux.net");
   blogMenuItem->setLinkTarget(Wt::TargetNewWindow);
   auto skyPlannerMenuItem = gulinuxPopup->addItem("SkyPlanner Homepage");
   skyPlannerMenuItem->setLink((format("http://blog.gulinux.net/skyplanner?lang=%s") % locale().name()).str() );
   skyPlannerMenuItem->setLinkTarget(Wt::TargetNewWindow);
+*/
   
   auto setMenuItemsVisibility = [=] {
     bool loggedIn = d->session.login().loggedIn();
@@ -353,6 +355,23 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
   }
   handlePath(internalPath());
 
+  WTemplate *footer = WW<WTemplate>();
+  footer->setTemplateText(R"(
+    <nav class="navbar navbar-default navbar-fixed-bottom" role="navigation">
+      <div class="container-fluid">
+	<div class="navbar-text addthis_native_toolbox"  data-url="${share-url}"></div>
+	<ul class="nav navbar-nav navbar-right">
+	  <li><a href="http://blog.gulinux.net/" target="_BLANK">GuLinux Blog</a></li>
+	  <li><a href="http://blog.gulinux.net/skyplanner" target="_BLANK">SkyPlanner Homepage</a></li>
+	  <p class="navbar-text">Copyright <a href="http://gulinux.net" target="_BLANK">Gulinux.net</a></p>
+        </ul>
+      </div>
+    </nav>
+    
+  )", XHTMLUnsafeText);
+  footer->bindString("share-url", wApp->makeAbsoluteUrl(wApp->bookmarkUrl(HOME_PATH)));
+
+  root()->addWidget(footer);
 
 }
 

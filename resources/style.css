@@ -1,4 +1,15 @@
+  body { padding-bottom: 70px; }
 
+  .navbar .addthis_native_toolbox {
+    margin-bottom: 0px;
+  }
+  #share-buttons img {
+width: 35px;
+padding: 5px;
+border: 0;
+box-shadow: 0;
+display: inline;
+}
     .skyplanner-notifications {
       position: fixed;
       width: 100%;
