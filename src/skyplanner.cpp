@@ -372,7 +372,37 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
   footer->bindString("share-url", wApp->makeAbsoluteUrl(wApp->bookmarkUrl(HOME_PATH)));
 
   root()->addWidget(footer);
+  
+  static string facebookAppId;
+  if(facebookAppId.empty()) {
+    wApp->readConfigurationProperty("facebook-oauth2-app-id", facebookAppId);
+  }
+  
+  if(!facebookAppId.empty()) {
+    WTemplate *facebookScripts = new WTemplate;
+    facebookScripts->setTemplateText(R"(
+      <script>
+	window.fbAsyncInit = function() {
+	  FB.init({
+	    appId      : '${facebookAppId}',
+	    xfbml      : true,
+	    version    : 'v2.0'
+	  });
+	};
 
+	(function(d, s, id){
+	  var js, fjs = d.getElementsByTagName(s)[0];
+	  if (d.getElementById(id)) {return;}
+	  js = d.createElement(s); js.id = id;
+	  js.src = "//connect.facebook.net/en_US/sdk.js";
+	  fjs.parentNode.insertBefore(js, fjs);
+	}(document, 'script', 'facebook-jssdk'));
+      </script>
+      
+    )", XHTMLUnsafeText);
+    facebookScripts->bindString("facebookAppId", facebookAppId);
+    root()->addWidget(facebookScripts);
+  }
 }
 
 bool SkyPlanner::Private::searchByName(const string &name, AstroObjectsTable *table, int page)
