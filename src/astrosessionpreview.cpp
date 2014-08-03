@@ -39,6 +39,7 @@
 #include <Wt/WTemplate>
 #include "utils/format.h"
 #include "utils/utils.h"
+#include <Wt/WLocalDateTime>
 using namespace Wt;
 using namespace WtCommons;
 using namespace std;
@@ -55,7 +56,10 @@ AstroSessionPreview::AstroSessionPreview(const AstroGroup& astroGroup, const Geo
   WContainerWidget *sessionPreviewContainer = WW<WContainerWidget>().css("astroobjects-list");
   setImplementation(sessionPreviewContainer);
   sessionPreviewContainer->setStyleClass("astroobjects-list");
-  sessionPreviewContainer->addWidget(WW<WText>(WString("<h3>{1}</h3><h4>{2}</h4>").arg(Utils::htmlEncode(WString::fromUTF8(d->astroGroup.astroSession()->name()))).arg(d->astroGroup.astroSession()->wDateWhen().toString("dddd d MMMM yyyy") )).css("text-center") );
+  sessionPreviewContainer->addWidget(WW<WText>(WString("<h3>{1}</h3><h4>{2}</h4>")
+    .arg(Utils::htmlEncode(WString::fromUTF8(d->astroGroup.astroSession()->name())))
+    .arg(WLocalDateTime(astroGroup.astroSession()->wDateWhen().date(), astroGroup.astroSession()->wDateWhen().time())
+    .toString("dddd dd MMMM yyyy")) ).css("text-center") );
   if(type == PublicReport) {
     Dbo::Transaction t(session);
     auto user = astroGroup.astroSession()->user()->loginName();

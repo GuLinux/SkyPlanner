@@ -57,7 +57,7 @@ PositionDetailsWidget::PositionDetailsWidget(const AstroGroup& astroGroup, const
   Ephemeris::LunarPhase lunarPhase = ephemeris.moonPhase(astroSession->date());
   Ephemeris::Darkness darkness = ephemeris.darknessHours(astroSession->date() );
   if(!geoCoderPlace.formattedAddress.empty()) {
-    positionDetails->addWidget(new WText{geoCoderPlace.formattedAddress});
+    positionDetails->addWidget(new WText{WString::fromUTF8(geoCoderPlace.formattedAddress)});
     positionDetails->addWidget(new WBreak);
   }
   positionDetails->addWidget(new WText{WString::tr("astrosession_coordinates")

@@ -86,6 +86,8 @@ const string SkyPlanner::HOME_PATH = "/home/";
 SkyPlanner::SkyPlanner( const WEnvironment &environment )
   : WApplication( environment ), d( this )
 {
+  setLocale(WLocale{"fr"});
+  refresh();
   d->initialInternalPath = internalPath();
   d->agentIsBot = environment.agentIsSpiderBot() || environment.userAgent().find("Baiduspider") != string::npos || environment.userAgent().find("YandexBot") != string::npos;
   if(!d->agentIsBot)
