@@ -102,7 +102,7 @@ void SelectObjectsWidget::Private::suggestedObjects(Dbo::Transaction& transactio
 {
   WContainerWidget *suggestedObjectsContainer = WW<WContainerWidget>();
 
-  suggestedObjectsTable = new AstroObjectsTable(session, {addToSessionAction}, true, NgcObject::allNebulaTypesButStars(), columns);
+  suggestedObjectsTable = new AstroObjectsTable(session, {addToSessionAction}, AstroObjectsTable::FiltersButtonIntegrated, NgcObject::allNebulaTypesButStars(), columns);
   suggestedObjectsTable->objectsListChanged().connect([=](const AstroSessionObjectPtr &o, _n5) { objectsListChanged.emit(o); });
   suggestedObjectsTable->filtersChanged().connect([=](AstroObjectsTable::Filters, _n5) { populateSuggestedObjectsTable(); });
   suggestedObjectsContainer->setPadding(10);
@@ -191,7 +191,7 @@ void SelectObjectsWidget::Private::searchByNameTab(Dbo::Transaction& transaction
   WLineEdit *name = WW<WLineEdit>();
   name->setTextSize(0);
   name->setEmptyText(WString::tr("select_objects_widget_add_by_name"));
-  AstroObjectsTable *resultsTable = new AstroObjectsTable(session, {addToSessionAction}, false, NgcObject::allNebulaTypes(), columns);
+  AstroObjectsTable *resultsTable = new AstroObjectsTable(session, {addToSessionAction}, AstroObjectsTable::NoFiltersButton, NgcObject::allNebulaTypes(), columns);
   resultsTable->objectsListChanged().connect([=](const AstroSessionObjectPtr &o, _n5) { objectsListChanged.emit(o); });
 
   auto searchByNameTrigger = [=] {
@@ -269,7 +269,7 @@ void SelectObjectsWidget::Private::searchByCatalogueTab(Dbo::Transaction& transa
   catalogueNumber->setTextSize(0);
   catalogueNumber->setEmptyText(WString::tr("catalogue_number"));
   
-  AstroObjectsTable *resultsTable = new AstroObjectsTable(session, {addToSessionAction}, false, NgcObject::allNebulaTypes(), columns);
+  AstroObjectsTable *resultsTable = new AstroObjectsTable(session, {addToSessionAction}, AstroObjectsTable::NoFiltersButton, NgcObject::allNebulaTypes(), columns);
   resultsTable->objectsListChanged().connect([=](const AstroSessionObjectPtr &o, _n5) { objectsListChanged.emit(o); });
 
   cataloguesCombo->setModel(cataloguesModel);

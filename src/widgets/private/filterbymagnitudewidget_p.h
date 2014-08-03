@@ -9,7 +9,7 @@ class FilterByMagnitudeWidget::Private
 {
 public:
   Private(double initialValue, FilterByMagnitudeWidget *q);
-  Wt::Signal<double> changed;
+  Wt::Signal<> changed;
   Wt::WString minimumValueText;
   Wt::WString maximumValueText;
   Wt::WSlider *magnitudeSlider;

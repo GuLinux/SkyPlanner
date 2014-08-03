@@ -41,14 +41,7 @@ class AstroObjectsTable::Private
     std::list<AstroObjectsTable::Column> columns;
     Wt::WTable *objectsTable;
     Wt::WTableRow *selectedRow = nullptr;
-    FilterByTypeWidget *filterByType;
-    FilterByMagnitudeWidget *filterByMinimumMagnitude;
-    FilterByMagnitudeWidget *filterByMaximumMagnitude;
-    FilterByConstellation *filterByConstellation;
-    FilterByCatalogue *filterByCatalogue;
-    FilterByAltitudeWidget *filterByMinimumAltitude;
-    FilterByAltitudeWidget *filterByMaximumAltitude;
-    FilterByObservedWidget *filterByObserved;
+
     Wt::Signal<Filters> filtersChanged;
     Filters filters() const;
     void header();
@@ -57,12 +50,25 @@ class AstroObjectsTable::Private
     Wt::Signal<AstroSessionObjectPtr> objectsListChanged;
     Wt::WPopupMenu *availableFilters;
     Wt::WContainerWidget *filtersBar;
-    template<typename T> void addFilterItem(const Wt::WString &text, T *filterWidget);
+    Wt::WPushButton *filtersButton = nullptr;
+    template<typename T> void addFilterItem(const std::string &text, T *filterWidget);
 
     bool forceActionsAsToolBar = false;
+    
+    struct FilterView {
+      std::string menuItemName;
+      Wt::WMenuItem *menuItem;
+      Wt::WWidget* filter;
+      Wt::WContainerWidget *container = nullptr;
+      std::function<void()> remove;
+      FilterView(const std::string &itemName, Wt::WMenuItem *menuItem, Wt::WWidget *filter, std::function<void()> remove)
+	: menuItemName(itemName), menuItem(menuItem), filter(filter), remove(remove) {}
+      FilterView() = default;
+    };
+    std::map<std::string,FilterView> filterViews;
+    template<typename T> T* filter(const std::string &name) const;
   private:
     class AstroObjectsTable *const q; 
 };
 
 #endif
-

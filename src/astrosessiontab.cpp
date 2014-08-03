@@ -256,7 +256,7 @@ void AstroSessionTab::Private::reload()
   }
   updateTimezone();
 
-  AstroObjectsTable *planetsTable = new AstroObjectsTable(session, {}, false, {}, {AstroObjectsTable::Names, AstroObjectsTable::AR, AstroObjectsTable::DEC, AstroObjectsTable::Constellation, AstroObjectsTable::Magnitude, AstroObjectsTable::AngularSize, AstroObjectsTable::TransitTime, AstroObjectsTable::MaxAltitude});
+  AstroObjectsTable *planetsTable = new AstroObjectsTable(session, {}, AstroObjectsTable::NoFiltersButton, {}, {AstroObjectsTable::Names, AstroObjectsTable::AR, AstroObjectsTable::DEC, AstroObjectsTable::Constellation, AstroObjectsTable::Magnitude, AstroObjectsTable::AngularSize, AstroObjectsTable::TransitTime, AstroObjectsTable::MaxAltitude});
 
 
   planetsTable->planets(astroSession, timezone);
@@ -277,7 +277,7 @@ void AstroSessionTab::Private::reload()
   addPanel(WString::tr("astrosessiontab_add_observable_object"), addObjectsTabWidget, true, true, sessionContainer);
   addPanel(WString::tr("astrosessiontab_planets_panel"), planetsTable, true, true, sessionContainer);
   addObjectsTabWidget->objectsListChanged().connect( [=](const AstroSessionObjectPtr &o, _n5) { populate(o); } );
-  WTemplate *title = new WTemplate("<h3>${tr:astrosessiontab_objects_title} ${counter}</h3>", sessionContainer);
+  WTemplate *title = new WTemplate("<h3 style='display: block'>${tr:astrosessiontab_objects_title} ${counter}${filters-button}</h3>", sessionContainer);
   title->addFunction("tr", &WTemplate::Functions::tr);
   title->bindWidget("counter", objectsCounter = WW<WText>("0").css("badge"));
 
@@ -332,7 +332,8 @@ void AstroSessionTab::Private::reload()
   if(isPastSession)
     columns.remove_if([](AstroObjectsTable::Column c){ return c == AstroObjectsTable::Difficulty || c == AstroObjectsTable::TransitTime || c == AstroObjectsTable::MaxAltitude; });
 
-  sessionContainer->addWidget(astroObjectsTable = new AstroObjectsTable(session, actions, true, NgcObject::allNebulaTypes(), columns ));
+  sessionContainer->addWidget(astroObjectsTable = new AstroObjectsTable(session, actions, AstroObjectsTable::FiltersButtonExternal, NgcObject::allNebulaTypes(), columns ));
+  title->bindWidget("filters-button", WW<WPushButton>(astroObjectsTable->filtersButton()).addCss("btn-primary pull-right"));
   astroObjectsTable->forceActionsAsToolBar(isPastSession); 
   astroObjectsTable->objectsListChanged().connect([=](const AstroSessionObjectPtr &o, _n5) { populate(o); });
   astroObjectsTable->filtersChanged().connect([=](AstroObjectsTable::Filters, _n5){ populate(); });

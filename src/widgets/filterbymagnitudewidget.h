@@ -25,7 +25,7 @@ public:
   double magnitude() const;
   bool isMinimum() const;
   bool isMaximum() const;
-  Wt::Signal<double> &changed() const;
+  Wt::Signal<> &changed() const;
   void resetDefaultValue();
 private:
   D_PTR;

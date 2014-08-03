@@ -94,8 +94,9 @@ public:
     long offset() const;
   };
   enum Column { Names, Type, AR, DEC, Constellation, AngularSize, Magnitude, TransitTime, MaxAltitude, Difficulty };
+  enum FiltersButtonDisplay { NoFiltersButton, FiltersButtonIntegrated, FiltersButtonExternal };
   static const std::list<Column> allColumns;
-  AstroObjectsTable(Session &session, const std::vector<Action> &actions = {}, bool showFilters = true,
+  AstroObjectsTable(Session &session, const std::vector<Action> &actions = {}, FiltersButtonDisplay showFilters = FiltersButtonIntegrated,
                     const std::set<NgcObject::NebulaType> &initialTypes = NgcObject::allNebulaTypes(),
                     const std::list<AstroObjectsTable::Column> &columns = allColumns,
                     Wt::WContainerWidget *parent = 0);
@@ -110,6 +111,7 @@ public:
   Wt::Signal<AstroSessionObjectPtr> &objectsListChanged() const;
   void forceActionsAsToolBar(bool force);
   void planets(const AstroSessionPtr &astroSession, const Timezone &timezone);
+  Wt::WPushButton *filtersButton() const;
 private:
   D_PTR;
 };

@@ -349,7 +349,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment )
         AstroSessionTab::add(r.astroObject.object, astroSession,  d->session, r.tableRow); 
       }));
       addToSessionDialog->show();
-    }}}, false, NgcObject::allNebulaTypes(),
+    }}}, AstroObjectsTable::NoFiltersButton, NgcObject::allNebulaTypes(),
       {AstroObjectsTable::Names, AstroObjectsTable::Type, AstroObjectsTable::AR, AstroObjectsTable::DEC, AstroObjectsTable::Constellation, AstroObjectsTable::AngularSize, AstroObjectsTable::Magnitude}
     );
     searchByNameWidget->addWidget(resultsTable);

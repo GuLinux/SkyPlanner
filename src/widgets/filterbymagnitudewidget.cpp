@@ -37,7 +37,7 @@ FilterByMagnitudeWidget::FilterByMagnitudeWidget(const Options &options, const R
 
   d->magnitudeSlider->valueChanged().connect([=](int value, _n5){
     d->checkValue();
-    d->changed.emit(magnitude());
+    d->changed.emit();
   });
 #ifndef PRODUCTION_MODE
 #warning Logging magnitudeSlider sliderMoved
@@ -61,7 +61,7 @@ FilterByMagnitudeWidget::~FilterByMagnitudeWidget()
 {
 }
 
-Signal<double> &FilterByMagnitudeWidget::changed() const
+Signal<> &FilterByMagnitudeWidget::changed() const
 {
   return d->changed;
 }
@@ -102,5 +102,5 @@ void FilterByMagnitudeWidget::resetDefaultValue()
 {
   d->magnitudeSlider->setValue(d->initialValue*10.);
   d->checkValue();
-  d->changed.emit(magnitude());
+  d->changed.emit();
 }

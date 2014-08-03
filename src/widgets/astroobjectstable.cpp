@@ -45,97 +45,102 @@ AstroObjectsTable::Private::Private( Session &session, const vector< AstroObject
 {
 }
 
-AstroObjectsTable::AstroObjectsTable(Session &session, const vector<Action> &actions, bool showFilters, const set<NgcObject::NebulaType> &initialTypes, const std::list<Column> &columns, WContainerWidget *parent)
+#define BY_TYPE "filter_by_type_menu"
+#define BY_MINIMUM_MAGNITUDE "filter_by_minimum_magnitude_menu"
+#define BY_MAXIMUM_MAGNITUDE "filter_by_maximum_magnitude_menu"
+#define BY_CONSTELLATION "filter_by_constellation_menu"
+#define BY_CATALOGUE "filter_by_catalogue_menu"
+#define BY_MINIMUM_ALTITUDE "filter_by_minimum_altitude_menu"
+#define BY_MAXIMUM_ALTITUDE "filter_by_maximum_altitude_menu"
+#define BY_OBSERVED "filter_by_observed_in_any_session"
+
+AstroObjectsTable::AstroObjectsTable(Session &session, const vector<Action> &actions, FiltersButtonDisplay showFilters, const set<NgcObject::NebulaType> &initialTypes, const std::list<Column> &columns, WContainerWidget *parent)
   : WCompositeWidget(parent), d(session, actions, columns, this)
 {
   d->objectsTable = WW<WTable>().addCss("table table-hover astroobjects-table");
   d->objectsTable->setHeaderCount(1);
   WContainerWidget *container = WW<WContainerWidget>();
-  if(showFilters) {
-    d->filtersBar = WW<WContainerWidget>().css("hidden-print").setInline(true);
+  if(showFilters != NoFiltersButton) {
+    d->filtersBar = WW<WContainerWidget>().css("hidden-print form-inline").setInline(false);
     d->availableFilters = WW<WPopupMenu>();
-    WPushButton *filtersButton = WW<WPushButton>(WString::tr("filters")).css("btn-sm hidden-print").onClick([=](const WMouseEvent &e) { d->availableFilters->popup(e); });
-    d->filterByType = new FilterByTypeWidget(initialTypes);
-    d->filterByType->changed().connect([=](_n6){ d->filtersChanged.emit(d->filters()); });
+    d->filtersButton = WW<WPushButton>(WString::tr("filters")).css("btn-sm hidden-print").onClick([=](const WMouseEvent &e) { d->availableFilters->popup(e); });
+    if(showFilters == FiltersButtonIntegrated)
+      d->filtersBar->addWidget(d->filtersButton);
+    
+    d->addFilterItem(BY_TYPE, new FilterByTypeWidget(initialTypes));
+    d->addFilterItem(BY_MINIMUM_MAGNITUDE, new FilterByMagnitudeWidget({WString::tr("not_set"), {}, WString::tr("minimum_magnitude_label")}, {-2, 20}));
+    d->addFilterItem(BY_MAXIMUM_MAGNITUDE, new FilterByMagnitudeWidget({{}, WString::tr("not_set"), WString::tr("maximum_magnitude_label")}, {-2, 20}, 20));
+    d->addFilterItem(BY_CONSTELLATION, new FilterByConstellation);
+    d->addFilterItem(BY_CATALOGUE, new FilterByCatalogue(session));
+    d->addFilterItem(BY_MINIMUM_ALTITUDE, new FilterByAltitudeWidget{WString::tr("minimum-altitude"), {Angle::degrees(0), Angle::degrees(0), Angle::degrees(80)} });
+    d->addFilterItem(BY_MAXIMUM_ALTITUDE, new FilterByAltitudeWidget{WString::tr("maximum-altitude"), {Angle::degrees(90), Angle::degrees(10), Angle::degrees(90)} });
+    d->addFilterItem(BY_OBSERVED, new FilterByObservedWidget{WString::tr("observed-in-any-session")});
 
-    d->filterByMinimumMagnitude = new FilterByMagnitudeWidget({WString::tr("not_set"), {}, WString::tr("minimum_magnitude_label")}, {-2, 20});
-    d->filterByMinimumMagnitude->changed().connect([=](double, _n5){ d->filtersChanged.emit(d->filters()); });
-
-    d->filterByMaximumMagnitude = new FilterByMagnitudeWidget({{}, WString::tr("not_set"), WString::tr("maximum_magnitude_label")}, {-2, 20}, 20);
-    d->filterByMaximumMagnitude->changed().connect([=](double, _n5){ d->filtersChanged.emit(d->filters()); });
-
-    d->filterByConstellation = new FilterByConstellation;
-    d->filterByConstellation->changed().connect([=](_n6){ d->filtersChanged.emit(d->filters()); });
-
-    d->filterByCatalogue = new FilterByCatalogue(session);
-    d->filterByCatalogue->changed().connect([=](_n6){ d->filtersChanged.emit(d->filters()); });
-
-    d->filterByMinimumAltitude = new FilterByAltitudeWidget{WString::tr("minimum-altitude"), {Angle::degrees(0), Angle::degrees(0), Angle::degrees(80)} };
-    d->filterByMinimumAltitude->changed().connect([=](_n6){ d->filtersChanged.emit(d->filters()); });
-
-    d->filterByMaximumAltitude = new FilterByAltitudeWidget{WString::tr("maximum-altitude"), {Angle::degrees(90), Angle::degrees(10), Angle::degrees(90)} };
-    d->filterByMaximumAltitude->changed().connect([=](_n6){ d->filtersChanged.emit(d->filters()); });
-
-    d->filterByObserved = new FilterByObservedWidget{WString::tr("observed-in-any-session")};
-    d->filterByObserved->changed().connect([=](_n6){ d->filtersChanged.emit(d->filters()); });
-
-    d->addFilterItem(WString::tr("filter_by_type_menu"), d->filterByType);
-    d->addFilterItem(WString::tr("filter_by_minimum_magnitude_menu"), d->filterByMinimumMagnitude);
-    d->addFilterItem(WString::tr("filter_by_maximum_magnitude_menu"), d->filterByMaximumMagnitude);
-    d->addFilterItem(WString::tr("filter_by_constellation_menu"), d->filterByConstellation);
-    d->addFilterItem(WString::tr("filter_by_catalogue_menu"), d->filterByCatalogue);
-    d->addFilterItem(WString::tr("filter_by_minimum_altitude_menu"), d->filterByMinimumAltitude);
-    d->addFilterItem(WString::tr("filter_by_maximum_altitude_menu"), d->filterByMaximumAltitude);
-    d->addFilterItem(WString::tr("filter_by_observed_in_any_session"), d->filterByObserved);
-
-    container->addWidget(WW<WContainerWidget>().addCss("form-inline hidden-print").add(filtersButton).add(d->filtersBar) );
+    d->availableFilters->addSeparator();
+    d->availableFilters->addItem(WString::tr("reset-filters"))->triggered().connect([=](WMenuItem*, _n5) {
+      for(auto item: d->filterViews)
+	item.second.remove();
+    });
+    container->addWidget(d->filtersBar);
   }
   d->tableContainer = WW<WContainerWidget>().addCss("table-responsive").add(d->objectsTable).add(d->tableFooter = WW<WContainerWidget>() );
   container->addWidget( d->tableContainer );
   setImplementation(container);
 }
 
-template<typename T> void AstroObjectsTable::Private::addFilterItem(const Wt::WString &text, T *filterWidget)
+WPushButton *AstroObjectsTable::filtersButton() const
 {
-  WMenuItem *item = availableFilters->addItem(text);
+  return d->filtersButton;
+}
+
+template<typename T> void AstroObjectsTable::Private::addFilterItem(const string &text, T *filterWidget)
+{
+  WMenuItem *item = availableFilters->addItem(WString::tr(text));
+  filterWidget->changed().connect([=](_n6){ filtersChanged.emit(filters()); });
+  filterViews[text] = {text, item, filterWidget, [=] {
+    if(!filterViews[text].container)
+      return;
+    filterViews[text].container->removeWidget(filterWidget);
+    delete filterViews[text].container;
+    filterViews[text].container = nullptr;
+    availableFilters->setItemHidden(item, false);
+    filterWidget->resetDefaultValue();
+  }};
   item->triggered().connect([=](WMenuItem *i, _n5) {
     availableFilters->setItemHidden(item, true);
-    WContainerWidget *container = WW<WContainerWidget>().add(filterWidget).setInline(true).css("filter-container badge hidden-print");
-    WPushButton *closeButton = WW<WPushButton>().css("close close-inline").onClick([=](WMouseEvent){
-      container->removeWidget(filterWidget);
-      delete container;
-      availableFilters->setItemHidden(item, false);
-      filterWidget->resetDefaultValue();
-    }) ;
-    closeButton->setTextFormat(XHTMLUnsafeText);
-    closeButton->setText("&times;");
-    container->addWidget(WW<WContainerWidget>().setInline(true).add(closeButton));
-    filtersBar->addWidget(container);
+    filterViews[text].container = WW<WContainerWidget>().add(filterWidget).setInline(true).css("filter-container badge hidden-print");
+    WPushButton *closeButton = WW<WPushButton>().setTextAndFormat("&times;", XHTMLUnsafeText).css("close close-inline").onClick([=](WMouseEvent){ filterViews[text].remove(); });
+    filterViews[text].container->addWidget(WW<WContainerWidget>().setInline(true).add(closeButton));
+    filtersBar->addWidget(filterViews[text].container);
   });
 }
 
 AstroObjectsTable::Filters AstroObjectsTable::Private::filters() const
 {
   Filters _filters;
-  if(!filterByMinimumMagnitude->isMinimum())
-    _filters.minimumMagnitude = filterByMinimumMagnitude->magnitude();
-  if(!filterByMaximumMagnitude->isMaximum())
-    _filters.maximumMagnitude = filterByMaximumMagnitude->magnitude();
+  if(!filter<FilterByMagnitudeWidget>(BY_MINIMUM_MAGNITUDE)->isMinimum())
+    _filters.minimumMagnitude = filter<FilterByMagnitudeWidget>(BY_MINIMUM_MAGNITUDE)->magnitude();
+  if(!filter<FilterByMagnitudeWidget>(BY_MAXIMUM_MAGNITUDE)->isMaximum())
+    _filters.maximumMagnitude = filter<FilterByMagnitudeWidget>(BY_MAXIMUM_MAGNITUDE)->magnitude();
 
-  _filters.catalogue = filterByCatalogue->selectedCatalogue();
-  _filters.constellation = filterByConstellation->selectedConstellation();
-  _filters.types = filterByType->selected();
-  _filters.minimumAltitude = filterByMinimumAltitude->currentValue();
-  _filters.maximumAltitude = filterByMaximumAltitude->currentValue();
-  _filters.observed = filterByObserved->value();
+  _filters.catalogue = filter<FilterByCatalogue>(BY_CATALOGUE)->selectedCatalogue();
+  _filters.constellation = filter<FilterByConstellation>(BY_CONSTELLATION)->selectedConstellation();
+  _filters.types = filter<FilterByTypeWidget>(BY_TYPE)->selected();
+  _filters.minimumAltitude = filter<FilterByAltitudeWidget>(BY_MINIMUM_ALTITUDE)->currentValue();
+  _filters.maximumAltitude = filter<FilterByAltitudeWidget>(BY_MAXIMUM_ALTITUDE)->currentValue();
+  _filters.observed = filter<FilterByObservedWidget>(BY_OBSERVED)->value();
   return _filters;
 }
 
 void AstroObjectsTable::setMaximumMagnitude( double magnitudeLimit )
 {
-  d->filterByMinimumMagnitude->setMaximum(magnitudeLimit);
+  d->filter<FilterByMagnitudeWidget>(BY_MINIMUM_MAGNITUDE)->setMaximum(magnitudeLimit);
 }
 
+template<typename T> T* AstroObjectsTable::Private::filter(const string &name) const
+{
+  return reinterpret_cast<T*>(filterViews.at(name).filter);
+}
 
 AstroObjectsTable::Filters AstroObjectsTable::currentFilters() const
 {

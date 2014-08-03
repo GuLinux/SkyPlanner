@@ -288,7 +288,7 @@ void ExportAstroSessionResource::handleRequest(const Wt::Http::Request &request,
   }
 
   printable.setCondition("have-planets", true);
-  AstroObjectsTable *planetsTable = new AstroObjectsTable(d->session, {}, false, {}, {AstroObjectsTable::Names, AstroObjectsTable::AR, AstroObjectsTable::DEC, AstroObjectsTable::Constellation, AstroObjectsTable::Magnitude, AstroObjectsTable::AngularSize, AstroObjectsTable::TransitTime, AstroObjectsTable::MaxAltitude});
+  AstroObjectsTable *planetsTable = new AstroObjectsTable(d->session, {}, AstroObjectsTable::NoFiltersButton, {}, {AstroObjectsTable::Names, AstroObjectsTable::AR, AstroObjectsTable::DEC, AstroObjectsTable::Constellation, AstroObjectsTable::Magnitude, AstroObjectsTable::AngularSize, AstroObjectsTable::TransitTime, AstroObjectsTable::MaxAltitude});
   planetsTable->setTableAttribute("border", "1");
   vector<AstroObjectsTable::AstroObject> planets;
   for(auto planet: Ephemeris::allPlanets) {
