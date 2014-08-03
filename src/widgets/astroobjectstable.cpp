@@ -338,7 +338,7 @@ void AstroObjectsTable::populate(const vector<AstroObject> &objects, const Teles
       auto hasColumn = std::find(begin(d->columns), end(d->columns), column);
       if(hasColumn == end(d->columns))
         return nullptr;
-      return WW<WTableCell>(row->elementAt(distance(begin(d->columns), hasColumn))).add(createWidget() ).get();
+      return WW<WTableCell>(row->elementAt(distance(begin(d->columns), hasColumn))).add( WW<WWidget>(createWidget()).addCss("hidden-print") ).add( WW<WWidget>(createWidget()).addCss("visible-print printable-small-text")).get();
     };
     addColumn(Names, [=] {
       auto popup = new ObjectPopupMenu{{astroObject.astroSession, astroObject.object, telescope, timezone}, d->session};

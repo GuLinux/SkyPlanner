@@ -60,13 +60,13 @@ display: inline;
     .nowrap {
       white-space: nowrap;
     }
-    
+    /*
     @media (min-width: 768px) {
       .navbar .navbar-collapsed {
         display: block!important;
       }
    }
-   
+   */
    .resize-none {
      resize: none;
    }
@@ -82,7 +82,14 @@ display: inline;
        margin: 0px!important;
        border: 0px;
      }
+    .printable-small-text {
+      font-size: 0.6em!important;
+    }
    }
+  tr {
+    page-break-inside:avoid;
+    page-break-after:auto;
+  }
 
    .astroobject-list-item {
 //     margin-top: 5px;

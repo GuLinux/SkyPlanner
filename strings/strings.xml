@@ -55,6 +55,8 @@
 <message id="astrosessiontab_add_observable_object">Add Observable Object</message>
 <message id="astrosessiontab_list_no_pagination">Show all objects without pagination</message>
 <message id="astrosessiontab_list_pagination">Show objects with pagination</message>
+<message id="printable-version-pagination-warning"><b>Warning!</b> You're using pagination in the printable version, so not all objects will be shown. Try clicking the "Show all objects without pagination" and print this page again.</message>
+
 <message id="astrosessiontab_objects_title">Objects</message>
 <message id="astrosessiontab_change_name_or_date">Change name and date</message>
 <message id="astrosessiontab_printable_version">Printable Version</message>
@@ -306,5 +308,4 @@ After you added a session, click it to add new objects.
 
 <message id="share-report-username">Observation report from <b>{1}</b></message>
 <message id="reset-filters">Remove filters</message>
-
 </messages>

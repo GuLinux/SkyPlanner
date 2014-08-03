@@ -87,6 +87,8 @@
 <message id="astrosessiontab_add_observable_object">Aggiungi Oggetto da Osservare</message>
 <message id="astrosessiontab_list_no_pagination">Mostra tutti gli oggetti senza paginazione</message>
 <message id="astrosessiontab_list_pagination">Mostra gli oggetti con paginazione</message>
+<message id="printable-version-pagination-warning"><b>Attenzione!</b> Stai usando la paginazione nella versione stampabile, quindi non tutti gli oggetti verranno mostrati. Prova cliccando il link "Mostra tutti gli oggetti senza paginazione" e riprova a stampare.</message>
+
 <message id="astrosessiontab_objects_title">Oggetti</message>
 <message id="astrosessiontab_change_name_or_date">Cambia nome e data</message>
 <message id="astrosessiontab_printable_version">Versione Stampabile</message>

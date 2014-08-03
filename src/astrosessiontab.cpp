@@ -584,11 +584,13 @@ void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject
       SkyPlanner::instance()->notification(WString::tr("notification_success_title"), WString::tr("notification_object_added").arg(r.tableRow->id()), SkyPlanner::Notification::Information, 5);
     }} : AstroObjectsTable::Selection{} );
   if(page.total > 1) {
-    if(page)
-      astroObjectsTable->tableFooter()->addWidget(WW<WPushButton>(WString::tr("astrosessiontab_list_no_pagination")).addCss("btn-link").onClick([=](WMouseEvent){ populate({}, -1); }));
+    if(page) {
+      astroObjectsTable->tableFooter()->addWidget(WW<WPushButton>(WString::tr("astrosessiontab_list_no_pagination")).addCss("btn-link hidden-print").onClick([=](WMouseEvent){ populate({}, -1); }));
+      astroObjectsTable->tableFooter()->addWidget(WW<WText>(WString::tr("printable-version-pagination-warning")).addCss("visible-print"));
+    }
   }
   if(pageNumber == -1 && astroObjects.size() > page.pageSize)
-    astroObjectsTable->tableFooter()->addWidget(WW<WPushButton>(WString::tr("astrosessiontab_list_pagination")).addCss("btn-link").onClick([=](WMouseEvent){ populate({}); }));
+    astroObjectsTable->tableFooter()->addWidget(WW<WPushButton>(WString::tr("astrosessiontab_list_pagination")).addCss("btn-link hidden-print").onClick([=](WMouseEvent){ populate({}); }));
 }
 
 
