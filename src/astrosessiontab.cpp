@@ -221,8 +221,8 @@ void AstroSessionTab::Private::reload()
 
   auto closeButton = WW<WPushButton>(WString::tr("buttons_close")).css("btn btn-warning btn-xs").onClick( [=](WMouseEvent){ close.emit(); } );
 
-  WForm *actionsContainer = WW<WForm>(WForm::Inline).setMargin(10);
-  WToolBar *actionsToolbar = new WToolBar();
+  WForm *actionsContainer = WW<WForm>(WForm::Inline).addCss("hidden-print").setMargin(10);
+  WToolBar *actionsToolbar = WW<WToolBar>().addCss("hidden-print");
   sessionContainer->addWidget(actionsContainer);
   actionsToolbar->addButton(changeNameOrDateButton);
   actionsToolbar->addButton(previewVersionButton);
@@ -243,8 +243,8 @@ void AstroSessionTab::Private::reload()
 
   PlaceWidget *placeWidget = new PlaceWidget(astroSession, session);
 
-  auto locationPanel = addPanel(WString::tr("position_title"), placeWidget, false, true, sessionContainer );
-  addPanel(WString::tr("astrosessiontab_information_panel"), sessionInfo, true, true, sessionContainer);
+  auto locationPanel = WW<WPanel>(addPanel(WString::tr("position_title"), placeWidget, false, true, sessionContainer )).addCss("hidden-print").get();
+  addPanel(WString::tr("astrosessiontab_information_panel"), sessionInfo, true, true, sessionContainer)->addStyleClass("hidden-print");
   shared_ptr<SkyPlanner::Notification> placeWidgetInstructions;
   if(astroSession->position()) {
     placeWidget->mapReady().connect([=](_n6){ WTimer::singleShot(1500, [=](WMouseEvent){
@@ -274,8 +274,8 @@ void AstroSessionTab::Private::reload()
     positionDetails->addWidget(new PositionDetailsWidget{{astroSession, selectedTelescope, timezone}, geoCoderPlace, session});
     planetsTable->planets(astroSession, timezone);
   });
-  addPanel(WString::tr("astrosessiontab_add_observable_object"), addObjectsTabWidget, true, true, sessionContainer);
-  addPanel(WString::tr("astrosessiontab_planets_panel"), planetsTable, true, true, sessionContainer);
+  addPanel(WString::tr("astrosessiontab_add_observable_object"), addObjectsTabWidget, true, true, sessionContainer)->addStyleClass("hidden-print");
+  addPanel(WString::tr("astrosessiontab_planets_panel"), planetsTable, true, true, sessionContainer)->addStyleClass("hidden-print");
   addObjectsTabWidget->objectsListChanged().connect( [=](const AstroSessionObjectPtr &o, _n5) { populate(o); } );
   WTemplate *title = new WTemplate("<h3 style='display: block'>${tr:astrosessiontab_objects_title} ${counter}${filters-button}</h3>", sessionContainer);
   title->addFunction("tr", &WTemplate::Functions::tr);

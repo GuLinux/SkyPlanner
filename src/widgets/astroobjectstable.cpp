@@ -83,7 +83,7 @@ AstroObjectsTable::AstroObjectsTable(Session &session, const vector<Action> &act
     });
     container->addWidget(d->filtersBar);
   }
-  d->tableContainer = WW<WContainerWidget>().addCss("table-responsive").add(d->objectsTable).add(d->tableFooter = WW<WContainerWidget>() );
+  d->tableContainer = WW<WContainerWidget>()/*.addCss("table-responsive")*/.add(d->objectsTable).add(d->tableFooter = WW<WContainerWidget>() );
   container->addWidget( d->tableContainer );
   setImplementation(container);
 }
@@ -393,6 +393,7 @@ void AstroObjectsTable::populate(const vector<AstroObject> &objects, const Teles
           }
         }
       }
+      row->elementAt(d->columns.size())->addStyleClass("hidden-print");
     }
     astroObjectCell->setColumnSpan(d->columns.size() + (d->actions.size() ? 1 : 0));
   }
