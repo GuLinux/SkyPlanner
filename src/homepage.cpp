@@ -68,6 +68,7 @@ void HomePage::Private::populate() {
   WContainerWidget *cataloguesWidget = WW<WContainerWidget>().css("container-fluid");
   cataloguesWidget->setList(true);
   content->bindWidget("included-catalogues", cataloguesWidget);
+  content->bindInt("sky-objects-count", session.query<int>("select count(id) from objects").resultValue() );
   for(auto catalogue: catalogues) 
     cataloguesWidget->addWidget(WW<WContainerWidget>().css("col-xs-3").add(WW<WText>(WString::fromUTF8(catalogue->name() ))));
 }
