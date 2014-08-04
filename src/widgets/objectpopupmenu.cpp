@@ -91,7 +91,7 @@ ObjectPopupMenu::ObjectPopupMenu(const AstroGroup &astroGroup, Session &session)
 	  for(auto objectDbo: objectsDbo) {
 	    auto names = NgcObject::namesByCatalogueImportance(t, objectDbo);
 	    names.resize(min(names.size(), size_t{3}));
-	    auto item = namesList->addItem(boost::algorithm::join(names, ", "));
+	    auto item = namesList->addItem(WString::fromUTF8(boost::algorithm::join(names, ", ")));
 	    item->addStyleClass("nearby-object-names");
 	    item->clicked().connect([=,&session](WMouseEvent){
 	      preview->clear();
