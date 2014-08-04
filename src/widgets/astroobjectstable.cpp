@@ -356,7 +356,7 @@ void AstroObjectsTable::populate(const vector<AstroObject> &objects, const Teles
     addColumn(AR, [=] { return new WText{ Utils::htmlEncode( astroObject.ar().printable(Angle::Hourly)) }; });
     addColumn(DEC, [=] { return new WText{ Utils::htmlEncode( WString::fromUTF8( astroObject.dec().printable() )) }; });
     addColumn(Constellation, [=] { return new WText{ WString::fromUTF8(astroObject.constellation().name) }; });
-    addColumn(AngularSize, [=] { return new WText{ Utils::htmlEncode( WString::fromUTF8( astroObject.angularSize().printable() ) ) }; });
+    addColumn(AngularSize, [=] { return new WText{ Utils::htmlEncode( WString::fromUTF8( astroObject.angularSize() > Angle::degrees(0) ? astroObject.angularSize().printable() : "N/A" ) )}; });
     addColumn(Magnitude, [=] { return new WText{ astroObject.magnitude() > 90. ? "N/A" : (format("%.1f") % astroObject.magnitude()).str() }; });
     addColumn(TransitTime, [=] { return new WText{ astroObject.transitTime().str() }; });
     addColumn(MaxAltitude, [=] { return new WText{ Utils::htmlEncode(WString::fromUTF8( astroObject.maxAltitude().printable() )) }; });

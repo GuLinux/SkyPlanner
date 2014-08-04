@@ -65,6 +65,7 @@ void AstroObjectWidget::Private::init()
   info->bindString("type", ngcObject->typeDescription());
   info->bindString("constellation", WString::fromUTF8(ngcObject->constellation().name));
   info->bindString("constellation_abbrev", WString::fromUTF8(ngcObject->constellation().abbrev));
+  info->setCondition("have-angular-size", ngcObject->angularSize() > 0);
   info->bindString("angular_size", Utils::htmlEncode( WString::fromUTF8( Angle::degrees(ngcObject->angularSize()).printable() )) );
   info->setCondition("have-magnitude", ngcObject->magnitude() <= 90.);
   info->bindString("magnitude", Utils::htmlEncode( (format("%.1f") % ngcObject->magnitude()).str() ));

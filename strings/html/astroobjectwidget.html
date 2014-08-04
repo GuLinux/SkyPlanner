@@ -3,7 +3,9 @@
 <tr><td><small class="astroobject_text">${tr:object_column_type}:</small></td><td><small class="astroobject_text">${type}</small></td></tr>
 <tr><td><small class="astroobject_text">${tr:object_column_constellation}:</small></td><td><small class="astroobject_text">${constellation} (${constellation_abbrev})</small></td></tr>
 <tr><td><small class="astroobject_text">${tr:astroobject_coordinates_label}:</small></td><td><small class="astroobject_text">AR ${ar}, DEC ${dec}</small></td></tr>
+${<have-angular-size>}
 <tr><td><small class="astroobject_text">${tr:object_column_angular_size}:</small></td><td><small class="astroobject_text">${angular_size}</small></td></tr>
+${</have-angular-size>}
 ${<have-magnitude>}
 <tr><td><small class="astroobject_text">${tr:object_column_magnitude}:</small></td><td><small class="astroobject_text">${magnitude}</small></td></tr>
 ${</have-magnitude>}
