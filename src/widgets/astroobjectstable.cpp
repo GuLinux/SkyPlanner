@@ -194,7 +194,7 @@ void AstroObjectsTable::Private::header()
   int index = 0;
   for(auto column: columns) {
     objectsTable->elementAt(0,index)->addWidget(WW<WText>(columnKey[column].name()).addCss("hidden-print") );
-    objectsTable->elementAt(0,index++)->addWidget(WW<WText>(columnKey[column].shortName()).addCss("visible-print") );
+    objectsTable->elementAt(0,index++)->addWidget(WW<WText>(columnKey[column].shortName()).addCss("visible-print printable-small-text") );
   }
 }
 
