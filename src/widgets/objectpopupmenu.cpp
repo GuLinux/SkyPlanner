@@ -109,7 +109,7 @@ ObjectPopupMenu::ObjectPopupMenu(const AstroGroup &astroGroup, Session &session)
 		});
 		actions.insert(actions.begin(), addToSessionButton);
 	      }
-	      preview->addWidget(new AstroObjectWidget{astroGroup, session, {}, actions});
+	      preview->addWidget(new AstroObjectWidget{{astroGroup.astroSession(), objectDbo, astroGroup.telescope, astroGroup.timezone}, session, {}, actions});
 	    });
 	  }
 	};
