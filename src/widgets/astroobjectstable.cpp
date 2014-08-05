@@ -371,27 +371,23 @@ void AstroObjectsTable::populate(const vector<AstroObject> &objects, const Teles
     };
     
     if(d->actions.size() > 0) {
-      if(d->actions.size() == 1) {
-        row->elementAt(d->columns.size())->addWidget(createButton(d->actions[0]));
+      if(d->forceActionsAsToolBar || d->actions.size() == 1) {
+	WToolBar *toolbar = WW<WToolBar>();
+	row->elementAt(d->columns.size())->addWidget(toolbar);
+	for(auto action: d->actions) {
+	  toolbar->addButton(createButton(action));
+	}
       } else {
-        if(d->forceActionsAsToolBar) {
-          WToolBar *toolbar = WW<WToolBar>();
-          row->elementAt(d->columns.size())->addWidget(toolbar);
-          for(auto action: d->actions) {
-            toolbar->addButton(createButton(action));
-          }
-        } else {
-          WPopupMenu *actionsMenu = new WPopupMenu;
-          WPushButton *actionsButton = WW<WPushButton>(WString::tr("buttons_actions")).css("btn-xs").onClick([=](WMouseEvent e) {actionsMenu->popup(e); });
-          row->elementAt(d->columns.size())->addWidget(actionsButton);
-          for(auto action: d->actions) {
-            auto menuItem = actionsMenu->addItem(WString::tr(action.name));
-            objectRow.actions[action.name] = menuItem;
-            menuItem->addStyleClass(action.buttonCss);
-            menuItem->triggered().connect([=](WMenuItem*, _n5) { action.onClick(objectRow, menuItem); });
-            action.onMenuItemCreated(menuItem, objectRow);
-          }
-        }
+	WPopupMenu *actionsMenu = new WPopupMenu;
+	WPushButton *actionsButton = WW<WPushButton>(WString::tr("buttons_actions")).css("btn-xs").onClick([=](WMouseEvent e) {actionsMenu->popup(e); });
+	row->elementAt(d->columns.size())->addWidget(actionsButton);
+	for(auto action: d->actions) {
+	  auto menuItem = actionsMenu->addItem(WString::tr(action.name));
+	  objectRow.actions[action.name] = menuItem;
+	  menuItem->addStyleClass(action.buttonCss);
+	  menuItem->triggered().connect([=](WMenuItem*, _n5) { action.onClick(objectRow, menuItem); });
+	  action.onMenuItemCreated(menuItem, objectRow);
+	}
       }
       row->elementAt(d->columns.size())->addStyleClass("hidden-print");
     }
