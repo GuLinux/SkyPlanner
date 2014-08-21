@@ -399,7 +399,7 @@ bool SkyPlanner::Private::searchByName(const string &name, AstroObjectsTable *ta
     return false;
   }
 
-  auto ngcObjects = session.query<NgcObjectPtr>(R"(select o from "objects" o inner join denominations d on o.id = d.objects_id where lower(d.name) like '%' || ? || '%' group by o.id)")
+  auto ngcObjects = session.query<NgcObjectPtr>(R"(select o from "objects" o inner join denominations d on o.id = d.objects_id where lower(d.name) like '%' || ? || '%' group by o.id, d.name  ORDER BY d.name ASC)")
     .bind(name).limit(tablePage.pageSize).offset(tablePage.pageSize * page).resultList();
   vector<AstroObjectsTable::AstroObject> objects;
   transform(ngcObjects.begin(), ngcObjects.end(), back_inserter(objects), [=,&t](const NgcObjectPtr &o) {
