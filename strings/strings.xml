@@ -304,7 +304,7 @@ After you added a session, click it to add new objects.
 
 
 <message id="share-report-enable">Enable sharing for this report</message>
-<message id="share-report-message">URL for sharing this report: <b class="nowrap">{1}</b></message>
+<message id="share-report-message"><p>URL for sharing this report: </p><p><strong class="nowrap">{1}</strong></p></message>
 
 <message id="share-report-username">Observation report from <b>{1}</b></message>
 <message id="reset-filters">Remove filters</message>
