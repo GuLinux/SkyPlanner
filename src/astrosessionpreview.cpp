@@ -193,10 +193,13 @@ AstroSessionPreview::AstroSessionPreview(const AstroGroup& astroGroup, const Geo
     WPushButton *hideButton = WW<WPushButton>(WString::tr("buttons_hide")).css("btn-xs btn-warning");
     WPushButton *collapseButton = WW<WPushButton>(WString::tr("buttons_collapse")).css("btn-xs");
     WPushButton *hideDSSButton = WW<WPushButton>(WString::tr("buttons_hide_dss")).css("btn-xs");
+    WPushButton *editReportButton = WW<WPushButton>(WString::tr("Report")).css("btn-xs");
     WPushButton *editDescriptionButton = WW<WPushButton>(WString::tr("astroobject_actions_edit_description")).css("btn-xs");
     vector<WPushButton*> actionButtons = { collapseButton, hideDSSButton, hideButton };
     if(type != PublicReport)
       actionButtons.insert(actionButtons.begin(), editDescriptionButton);
+    if(type == Report)
+        actionButtons.insert(actionButtons.begin(), editReportButton);
     vector<pair<ObjectAction, WPushButton*>> objectActionButtons;
     for(auto action: actions) {
       WPushButton *button = WW<WPushButton>(WString::tr(action.buttonName)).addCss("btn-xs").addCss(action.buttonStyle);
@@ -214,6 +217,10 @@ AstroSessionPreview::AstroSessionPreview(const AstroGroup& astroGroup, const Geo
     editDescriptionButton->clicked().connect([=,&session](WMouseEvent) {
       Dbo::Transaction t(d->session);
       TextEditorDialog::description(session, objectelement.first, [=] { astroObjectWidget->reload(); } )->show();
+    });
+    editReportButton->clicked().connect([=](WMouseEvent) {
+     Dbo::Transaction t(d->session);
+     TextEditorDialog::report(d->session, objectelement.first, [=] { astroObjectWidget->reload(); })->show();
     });
     astroObjectWidgets->insert(astroObjectWidget);
     sessionPreviewContainer->addWidget(astroObjectWidget);
