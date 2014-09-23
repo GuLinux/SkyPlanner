@@ -37,7 +37,8 @@ set(SkyPlanner_CORE_SRCS
     ephemeris.cpp
     session.cpp
 )
-
+file(GLOB openweather_SRCS openweather/*cpp)
+message("OpenWeather Sources: ${openweather_SRCS}")
 add_custom_command(OUTPUT style.css.cpp COMMAND ${CMAKE_SOURCE_DIR}/scripts/create-style-css
                                               ${CMAKE_SOURCE_DIR}/src/style.css.cpp.in 
                                               ${CMAKE_SOURCE_DIR}/resources/style.css 
@@ -45,7 +46,7 @@ add_custom_command(OUTPUT style.css.cpp COMMAND ${CMAKE_SOURCE_DIR}/scripts/crea
                                               DEPENDS ${CMAKE_SOURCE_DIR}/src/style.css.cpp.in ${CMAKE_SOURCE_DIR}/resources/style.css 
                                               )
 add_library(SkyPlanner_CORE STATIC ${SkyPlanner_CORE_SRCS})
-add_executable(SkyPlanner ${SkyPlanner_SRCS} ${Widgets_SRCS} )
+add_executable(SkyPlanner ${SkyPlanner_SRCS} ${openweather_SRCS} ${Widgets_SRCS} )
 target_link_libraries(SkyPlanner SkyPlanner_CORE ${Wt_LIBRARIES} ${Boost_LIBRARIES} ${HARU_LIBRARY} ${WIN32_LIBS} curl ${GRAPHICSMAGICK_LDFLAGS} nova)
 install(TARGETS SkyPlanner RUNTIME DESTINATION bin)
 

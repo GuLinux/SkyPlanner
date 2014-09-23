@@ -56,7 +56,7 @@ void Session::Private::init(const string &connectionString, Session::Provider pr
 #else
   if(provider == Session::Postgres)
     throw runtime_error("Error! SkyPlanner was compiled without postgresql support");
-  connection = make_shared<Dbo::backend::Sqlite3>(connection);
+  connection = make_shared<Dbo::backend::Sqlite3>(connectionString);
 #endif
   q->setConnection(*connection);
   connection->setProperty("show-queries", "false");

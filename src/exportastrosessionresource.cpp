@@ -33,11 +33,11 @@
 #include "widgets/cataloguesdescriptionwidget.h"
 #include "constellationfinder.h"
 #include "widgets/objectdifficultywidget.h"
-#include <Wt/Render/WPdfRenderer>
 #include <Wt/WServer>
 #include <boost/algorithm/string.hpp>
 
 #ifndef DISABLE_LIBHARU
+#include <Wt/Render/WPdfRenderer>
 #include <hpdf.h>
 #if HPDF_MAJOR_VERSION >= 2
 #if HPDF_MINOR_VERSION >= 3
