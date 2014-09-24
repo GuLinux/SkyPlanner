@@ -27,8 +27,8 @@
 #include <Wt/WTemplate>
 #include "utils/format.h"
 #include "session.h"
-#include "openweather/openweather.h"
 
+#include "weatherwidget.h"
 
 using namespace Wt;
 using namespace WtCommons;
@@ -101,28 +101,7 @@ PositionDetailsWidget::PositionDetailsWidget(const AstroGroup& astroGroup, const
   auto now = boost::posix_time::second_clock::local_time();
   if(showMeteo && astroSession->when() > now /* && astroSession->when() - now < boost::posix_time::hours(72) */) {
     positionDetails->addWidget(new WBreak);
-    WContainerWidget *weatherWidgetRow = WW<WContainerWidget>().css("row");
-    WContainerWidget *weatherWidget = WW<WContainerWidget>().css("container").add(weatherWidgetRow);
-    OpenWeather openWeather;
-    auto forecast = openWeather.forecast(astroSession->position(), geoCoderPlace.city);
-    if(!forecast) {
-        positionDetails->addWidget(new WText{"Weather unavailable"});
-        return;
-    }
-    for(Weather weather: forecast->weathers()) {
-        WTemplate *weatherItemWidget = new WTemplate(WString::tr("weather_item"));
-        weatherItemWidget->bindString("weather-date", WDateTime::fromPosixTime(weather.dateGMT()).toString("dd/MM"));
-        weatherItemWidget->bindString("weather-name", WString::fromUTF8(weather.summaries()[0].main()));
-        weatherItemWidget->bindString("weather-description", WString::fromUTF8(weather.summaries()[0].description()));
-        weatherItemWidget->bindString("weather-icon-url", WString::fromUTF8(weather.summaries()[0].iconURL()));
-
-        weatherItemWidget->bindInt("clouds", weather.clouds());
-        weatherItemWidget->bindInt("humidity", weather.humidity());
-        weatherItemWidget->bindString("temp-min", format("%.1f") % weather.temperature().min().celsius());
-        weatherItemWidget->bindString("temp-max", format("%.1f") % weather.temperature().max().celsius());
-        weatherWidgetRow->addWidget(weatherItemWidget);
-    }
-    positionDetails->addWidget(weatherWidget);
+    positionDetails->addWidget(new WeatherWidget(astroSession->position(), geoCoderPlace.city, astroSession->when() + boost::posix_time::hours(24)));
   }
 }
 

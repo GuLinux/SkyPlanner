@@ -29,6 +29,7 @@ struct WeatherCacheEntry {
 
 shared_ptr<WeatherForecast> OpenWeather::forecast(const Coordinates::LatLng &coordinates, const std::string &cityName, int days)
 {
+    days = std::max(days, 16);
     static Cache<WeatherCacheEntry, string> weatherCache(boost::posix_time::hours(6));
     spLog("notice") << "Coordinates: " << coordinates << ", city name: " << cityName << ", days: " << days;
     string language = "en";
