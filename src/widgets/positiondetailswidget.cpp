@@ -101,7 +101,7 @@ PositionDetailsWidget::PositionDetailsWidget(const AstroGroup& astroGroup, const
   auto now = boost::posix_time::second_clock::local_time();
   if(showMeteo && astroSession->when() > now /* && astroSession->when() - now < boost::posix_time::hours(72) */) {
     positionDetails->addWidget(new WBreak);
-    positionDetails->addWidget(new WeatherWidget(astroSession->position(), geoCoderPlace.city, astroSession->when() + boost::posix_time::hours(24)));
+    positionDetails->addWidget(new WeatherWidget(astroSession->position(), geoCoderPlace, astroSession->when() + boost::posix_time::hours(24)));
   }
 }
 

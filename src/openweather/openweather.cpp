@@ -5,6 +5,7 @@
 #include "skyplanner.h"
 #include <sstream>
 #include <utils/format.h>
+#include <Wt/Utils>
 #include <boost/date_time.hpp>
 
 using namespace Wt;
@@ -33,7 +34,7 @@ shared_ptr<WeatherForecast> OpenWeather::forecast(const Coordinates::LatLng &coo
     static Cache<WeatherCacheEntry, string> weatherCache(boost::posix_time::hours(6));
     spLog("notice") << "Coordinates: " << coordinates << ", city name: " << cityName << ", days: " << days;
     string language = "en";
-    string cityUrl = format("http://api.openweathermap.org/data/2.5/forecast/daily?q=%s&mode=json&units=metric&cnt=%d&type=like&lang=%s") % cityName % days % language;
+    string cityUrl = format("http://api.openweathermap.org/data/2.5/forecast/daily?q=%s&mode=json&units=metric&cnt=%d&type=like&lang=%s") % Wt::Utils::urlEncode(cityName) % days % language;
     string coordinatesUrl = format("http://api.openweathermap.org/data/2.5/forecast/daily?lat=%f&lon=%f=json&units=metric&cnt=%d&type=like&lang=%s") % coordinates.latitude.degrees() % coordinates.longitude.degrees() % days % language;
     string cityCacheKey = WeatherCacheEntry::byName(cityName, days, language);
     string coordinatesCacheKey = WeatherCacheEntry::byCoordinates(coordinates, days, language);
@@ -61,6 +62,7 @@ shared_ptr<WeatherForecast> OpenWeather::forecast(const Coordinates::LatLng &coo
         return result;
     }
 
+    spLog("notice") << "Entry not found in cache; asking web service";
     if(!cityName.empty() && curl.get(cityUrl).requestOk() && parseWeather()) {
         spLog("notice") << "Weather ok for city " << cityName;
         weatherCache.put(cityCacheKey, {out.str()});

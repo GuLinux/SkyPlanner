@@ -9,13 +9,14 @@
 using namespace std;
 using namespace Wt;
 using namespace WtCommons;
-WeatherWidget::WeatherWidget(const Coordinates::LatLng latlng, const string &cityName, const boost::posix_time::ptime &date, WContainerWidget *parent)
+WeatherWidget::WeatherWidget(const Coordinates::LatLng latlng, const GeoCoder::Place &place, const boost::posix_time::ptime &date, WContainerWidget *parent)
     : WCompositeWidget(parent)
 {
     WContainerWidget *weatherWidgetRow = WW<WContainerWidget>().css("row");
     WContainerWidget *weatherWidget = WW<WContainerWidget>().css("container").add(weatherWidgetRow);
     OpenWeather openWeather;
-    auto forecast = openWeather.forecast(latlng, cityName);
+    boost::posix_time::time_duration difference(date - boost::posix_time::second_clock().local_time());
+    auto forecast = openWeather.forecast(latlng, format("%s, %s") % place.city % place.country, difference.total_seconds() / 60 / 60 /24);
     if(!forecast) {
         setImplementation(new WText{"Weather unavailable"});
         return;
