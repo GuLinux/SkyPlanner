@@ -114,8 +114,8 @@ PositionDetailsWidget::PositionDetailsWidget(const AstroGroup& astroGroup, const
 
         weatherItemWidget->bindInt("clouds", weather.clouds());
         weatherItemWidget->bindInt("humidity", weather.humidity());
-        weatherItemWidget->bindString("temp-min", format("%.2f") % weather.temperature().min().celsius());
-        weatherItemWidget->bindString("temp-max", format("%.2f") % weather.temperature().max().celsius());
+        weatherItemWidget->bindString("temp-min", format("%.1f") % weather.temperature().min().celsius());
+        weatherItemWidget->bindString("temp-max", format("%.1f") % weather.temperature().max().celsius());
         weatherWidgetRow->addWidget(weatherItemWidget);
     }
     positionDetails->addWidget(weatherWidget);
