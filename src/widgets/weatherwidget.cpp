@@ -23,15 +23,15 @@ WeatherWidget::WeatherWidget(const Coordinates::LatLng latlng, const GeoCoder::P
     }
     for(Weather weather: forecast->weathers()) {
         WTemplate *weatherItemWidget = new WTemplate(WString::tr("weather_item"));
-        weatherItemWidget->bindString("weather-date", WDateTime::fromPosixTime(weather.dateGMT()).toString("dd/MM"));
-        weatherItemWidget->bindString("weather-name", WString::fromUTF8(weather.summaries()[0].main()));
-        weatherItemWidget->bindString("weather-description", WString::fromUTF8(weather.summaries()[0].description()));
-        weatherItemWidget->bindString("weather-icon-url", WString::fromUTF8(weather.summaries()[0].iconURL()));
+        weatherItemWidget->bindString("weather_date", WDateTime::fromPosixTime(weather.dateGMT()).toString("dd/MM"));
+        weatherItemWidget->bindString("weather_name", WString::fromUTF8(weather.summaries()[0].main()));
+        weatherItemWidget->bindString("weather_description", WString::fromUTF8(weather.summaries()[0].description()));
+        weatherItemWidget->bindString("weather_icon_url", WString::fromUTF8(weather.summaries()[0].iconURL()));
 
         weatherItemWidget->bindInt("clouds", weather.clouds());
         weatherItemWidget->bindInt("humidity", weather.humidity());
-        weatherItemWidget->bindString("temp-min", format("%.1f") % weather.temperature().min().celsius());
-        weatherItemWidget->bindString("temp-max", format("%.1f") % weather.temperature().max().celsius());
+        weatherItemWidget->bindString("temp_min", format("%.1f") % weather.temperature().min().celsius());
+        weatherItemWidget->bindString("temp_max", format("%.1f") % weather.temperature().max().celsius());
         weatherWidgetRow->addWidget(weatherItemWidget);
     }
     setImplementation(weatherWidget);

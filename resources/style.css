@@ -225,3 +225,12 @@ display: inline;
     color: white;
     font-weight: bold;
     }
+
+@import 'bootstrap.less';
+div.weather-box {
+    border-radius: 10px;
+    border-style: groove;
+    margin: 5px;
+    background-color: #E9EBFF;
+    padding: 0px;
+}
