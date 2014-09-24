@@ -107,7 +107,7 @@ PositionDetailsWidget::PositionDetailsWidget(const AstroGroup& astroGroup, const
     auto forecast = openWeather.forecast(astroSession->position(), "");
     for(auto weather: forecast.weathers()) {
         WTemplate *weatherItemWidget = new WTemplate(WString::tr("weather_item"));
-        weatherItemWidget->bindString("weather-date", WDateTime::fromPosixTime(weather->dateGMT()).toString("dd/MM"));
+        weatherItemWidget->bindString("weather-date", WDateTime::fromPosixTime(weather.dateGMT()).toString("dd/MM"));
         weatherWidgetRow->addWidget(weatherItemWidget);
     }
     positionDetails->addWidget(weatherWidget);

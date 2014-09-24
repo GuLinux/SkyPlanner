@@ -26,7 +26,7 @@ using namespace Wt;
 using namespace std;
 
 Weather::Weather(const Json::Object &json)
-    : _temperature(make_shared<WeatherTemperature>(json.get("temp")))
+    : _temperature(json.get("temp"))
 {
     _dateGMT = boost::posix_time::from_time_t(json.get("dt").orIfNull(0));
     _pressure = json.get("pressure").orIfNull(0.d);
@@ -37,7 +37,7 @@ Weather::Weather(const Json::Object &json)
     _rain = json.get("clouds").orIfNull(0.);
     Json::Array weathers = json.get("weather");
     for(auto w: weathers) {
-        _summaries.push_back(make_shared<WeatherSummary>(w));
+        _summaries.push_back({w});
     }
 }
 

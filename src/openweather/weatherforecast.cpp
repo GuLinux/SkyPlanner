@@ -17,13 +17,13 @@ using namespace Wt;
 */
 
 WeatherForecast::WeatherForecast(const Json::Object &json)
-    : _city(new WeatherCity(json.get("city")))
+    : _city(json.get("city"))
 {
     _count = json.get("cnt").toNumber().orIfNull(0);
     _cod = json.get("cod").toString().orIfNull("");
     Json::Array weathers = json.get("list");
     for(auto w: weathers) {
-        _weathers.push_back(make_shared<Weather>(w));
+        _weathers.push_back({w});
     }
 }
 
