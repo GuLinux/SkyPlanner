@@ -64,10 +64,9 @@ public:
 
     Payload value(const KeyType &key) {
         cleanup();
-        CacheEntry cacheEntry = cache[key];
-        if(!cacheEntry.valid(validity))
+        if(cache.count(key) == 0)
             return {};
-        return cacheEntry.payload;
+        return cache.at(key).payload;
     }
 
     void cleanup() {
