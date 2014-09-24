@@ -105,9 +105,17 @@ PositionDetailsWidget::PositionDetailsWidget(const AstroGroup& astroGroup, const
     WContainerWidget *weatherWidget = WW<WContainerWidget>().css("container").add(weatherWidgetRow);
     OpenWeather openWeather;
     auto forecast = openWeather.forecast(astroSession->position(), "");
-    for(auto weather: forecast.weathers()) {
+    for(Weather weather: forecast.weathers()) {
         WTemplate *weatherItemWidget = new WTemplate(WString::tr("weather_item"));
         weatherItemWidget->bindString("weather-date", WDateTime::fromPosixTime(weather.dateGMT()).toString("dd/MM"));
+        weatherItemWidget->bindString("weather-name", WString::fromUTF8(weather.summaries()[0].main()));
+        weatherItemWidget->bindString("weather-description", WString::fromUTF8(weather.summaries()[0].description()));
+        weatherItemWidget->bindString("weather-icon-url", WString::fromUTF8(weather.summaries()[0].iconURL()));
+
+        weatherItemWidget->bindInt("clouds", weather.clouds());
+        weatherItemWidget->bindInt("humidity", weather.humidity());
+        weatherItemWidget->bindString("temp-min", format("%.2f") % weather.temperature().min().celsius());
+        weatherItemWidget->bindString("temp-max", format("%.2f") % weather.temperature().max().celsius());
         weatherWidgetRow->addWidget(weatherItemWidget);
     }
     positionDetails->addWidget(weatherWidget);
