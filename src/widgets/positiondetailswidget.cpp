@@ -104,8 +104,12 @@ PositionDetailsWidget::PositionDetailsWidget(const AstroGroup& astroGroup, const
     WContainerWidget *weatherWidgetRow = WW<WContainerWidget>().css("row");
     WContainerWidget *weatherWidget = WW<WContainerWidget>().css("container").add(weatherWidgetRow);
     OpenWeather openWeather;
-    auto forecast = openWeather.forecast(astroSession->position(), "");
-    for(Weather weather: forecast.weathers()) {
+    auto forecast = openWeather.forecast(astroSession->position(), geoCoderPlace.city);
+    if(!forecast) {
+        positionDetails->addWidget(new WText{"Weather unavailable"});
+        return;
+    }
+    for(Weather weather: forecast->weathers()) {
         WTemplate *weatherItemWidget = new WTemplate(WString::tr("weather_item"));
         weatherItemWidget->bindString("weather-date", WDateTime::fromPosixTime(weather.dateGMT()).toString("dd/MM"));
         weatherItemWidget->bindString("weather-name", WString::fromUTF8(weather.summaries()[0].main()));
