@@ -1,19 +1,24 @@
 #ifndef WEATHERCITY_H
 #define WEATHERCITY_H
-#include "utils/d_ptr.h"
 #include "types.h"
+#include <Wt/Json/Object>
+
 class WeatherCity
 {
 public:
-    WeatherCity();
+    WeatherCity(const Wt::Json::Object &json);
     ~WeatherCity();
-    uint64_t id() const;
-    std::string name() const;
-    Coordinates::LatLng coordinates() const;
-    std::string country() const;
-    uint64_t population() const;
+    uint64_t id() const { return _id; }
+    std::string name() const { return _name; }
+    Coordinates::LatLng coordinates() const { return _coordinates; }
+    std::string country() const { return _country; }
+    uint64_t population() const { return _population; }
 private:
-    D_PTR;
+    u_int64_t _id;
+    std::string _name;
+    Coordinates::LatLng _coordinates;
+    std::string _country;
+    uint64_t _population;
 };
 
 #endif // WEATHERCITY_H

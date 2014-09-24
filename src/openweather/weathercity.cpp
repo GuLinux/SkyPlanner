@@ -1,6 +1,4 @@
 #include "weathercity.h"
-#include "private/weathercity_p.h"
-#include "utils/d_ptr_implementation.h"
 
 /*
    "city":{
@@ -15,36 +13,20 @@
    },
 */
 
+using namespace std;
+using namespace Wt;
 
-WeatherCity::WeatherCity()
+WeatherCity::WeatherCity(const Json::Object &json)
 {
+    _id = json.get("id").toNumber().orIfNull(0);
+    _name = json.get("name").toString().orIfNull("");
+    Json::Object latlng = json.get("coord");
+    _coordinates.latitude = Angle::degrees(latlng.get("lat").toNumber().orIfNull(0.0));
+    _coordinates.longitude = Angle::degrees(latlng.get("lon").toNumber().orIfNull(0.0));
+    _country = json.get("country").toString().orIfNull("");
+    _population = json.get("population").toNumber().orIfNull(0);
 }
 
 WeatherCity::~WeatherCity()
 {
-}
-
-uint64_t WeatherCity::id() const
-{
-    return d->id;
-}
-
-std::string WeatherCity::name() const
-{
-    return d->name;
-}
-
-Coordinates::LatLng WeatherCity::coordinates() const
-{
-    return d->coordinates;
-}
-
-std::string WeatherCity::country() const
-{
-    return d->country;
-}
-
-uint64_t WeatherCity::population() const
-{
-    return d->population;
 }

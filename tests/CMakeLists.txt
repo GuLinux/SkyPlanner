@@ -1,4 +1,5 @@
 if(Boost_UNIT_TEST_FRAMEWORK_LIBRARY)
+  message("Tests support enabled")
   add_definitions(-DBOOST_TEST_DYN_LINK)
   include_directories(${CMAKE_CURRENT_SOURCE_DIR})
   add_custom_target(compile_unit_tests)
@@ -40,16 +41,19 @@ if(Boost_UNIT_TEST_FRAMEWORK_LIBRARY)
   )
   link_unit_test(angles_test nova)
   
-  register_unit_test(ephemeris
-    ephemeris_test.cpp
-    ${CMAKE_SOURCE_DIR}/src/ephemeris.cpp
-    ${CMAKE_SOURCE_DIR}/src/types.cpp
-    ${AAPLUS_SRCS}
-  )
-  link_unit_test(ephemeris nova)
+  #register_unit_test(ephemeris
+  #  ephemeris_test.cpp
+  #  ${CMAKE_SOURCE_DIR}/src/ephemeris.cpp
+  #  ${CMAKE_SOURCE_DIR}/src/types.cpp
+  #  ${AAPLUS_SRCS}
+  #)
+  #link_unit_test(ephemeris nova)
   
   add_definitions(-DTESTS_NO_WT=1)
-  register_unit_test(utils utils_test.cpp ${CMAKE_SOURCE_DIR}/src/utils/utils.cpp)
-  link_unit_test(utils)
+  #register_unit_test(utils utils_test.cpp ${CMAKE_SOURCE_DIR}/src/utils/utils.cpp)
+  file(GLOB openweather_SRCS ${CMAKE_SOURCE_DIR}/src/openweather/*cpp)
+
+  register_unit_test(openweather_test openweather_parsing_test.cpp ${openweather_SRCS} ${CMAKE_SOURCE_DIR}/src/types.cpp )
+  link_unit_test(openweather_test ${Wt_LIBRARIES} nova)
 endif(Boost_UNIT_TEST_FRAMEWORK_LIBRARY)
 

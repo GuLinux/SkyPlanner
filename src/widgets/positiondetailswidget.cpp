@@ -24,8 +24,11 @@
 #include <Wt/WLink>
 #include <Wt/WAnchor>
 #include <Wt/WImage>
+#include <Wt/WTemplate>
 #include "utils/format.h"
 #include "session.h"
+#include "openweather/openweather.h"
+
 
 using namespace Wt;
 using namespace WtCommons;
@@ -96,18 +99,18 @@ PositionDetailsWidget::PositionDetailsWidget(const AstroGroup& astroGroup, const
   }
 
   auto now = boost::posix_time::second_clock::local_time();
-  if(showMeteo && astroSession->when() > now && astroSession->when() - now < boost::posix_time::hours(72)) {
+  if(showMeteo && astroSession->when() > now /* && astroSession->when() - now < boost::posix_time::hours(72) */) {
     positionDetails->addWidget(new WBreak);
-    WAnchor *_7timerLink = new WAnchor{(format("http://7timer.y234.cn/index.php?product=astro&lon=%f&lat=%f&lang=%s&tzshift=0")
-      % astroSession->position().longitude.degrees()
-      % astroSession->position().latitude.degrees()
-      % wApp->locale().name()).str()
-      , new WImage(WLink{format("http://www.7timer.com/v4/bin/astro.php?lon=%f&lat=%f&lang=%s&ac=0&unit=metric&tzshift=0")
-      % astroSession->position().longitude.degrees() % astroSession->position().latitude.degrees() % wApp->locale().name()
-    } )
-    };
-    _7timerLink->setTarget(TargetNewWindow);
-    positionDetails->addWidget(_7timerLink);
+    WContainerWidget *weatherWidget = WW<WContainerWidget>().css("container");
+    WContainerWidget *weatherWidgetRow = WW<WContainerWidget>().css("row");
+    OpenWeather openWeather;
+    auto forecast = openWeather.forecast(astroSession->position(), "");
+    for(auto weather: forecast.weathers()) {
+        WTemplate *weatherItemWidget = new WTemplate(WString::tr("weather_item"));
+        weatherItemWidget->bindString("weather-date", WDateTime::fromPosixTime(weather.dateGMT()).toString("dd/MM"));
+        weatherWidgetRow->addWidget(weatherItemWidget);
+    }
+    positionDetails->addWidget(weatherWidget);
   }
 }
 

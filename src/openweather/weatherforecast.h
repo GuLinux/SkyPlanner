@@ -1,21 +1,25 @@
 #ifndef WEATHERFORECAST_H
 #define WEATHERFORECAST_H
-#include "utils/d_ptr.h"
 #include "openweather/weathercity.h"
 #include "openweather/weather.h"
 #include <vector>
 
+#include <Wt/Json/Object>
+
 class WeatherForecast
 {
 public:
-    WeatherForecast();
+    WeatherForecast(const Wt::Json::Object &json);
     ~WeatherForecast();
-    std::string cod() const;
-    std::shared_ptr<WeatherCity> city() const;
-    int count() const;
-    std::vector<std::shared_ptr<Weather>> weathers() const;
+    std::string cod() const { return _cod; }
+    WeatherCity city() const { return _city; }
+    int count() const { return _count; }
+    std::vector<Weather> weathers() const { return _weathers; }
 private:
-    D_PTR;
+    std::string _cod;
+    WeatherCity _city;
+    int _count;
+    std::vector<Weather> _weathers;
 };
 
 #endif // WEATHERFORECAST_H

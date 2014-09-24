@@ -1,7 +1,7 @@
 #include "weatherforecast.h"
-#include "private/weatherforecast_p.h"
-#include "utils/d_ptr_implementation.h"
+#include <Wt/Json/Array>
 using namespace std;
+using namespace Wt;
 
 /*
 {
@@ -16,27 +16,17 @@ using namespace std;
 }
 */
 
-WeatherForecast::WeatherForecast()
+WeatherForecast::WeatherForecast(const Json::Object &json)
+    : _city(json.get("city"))
 {
+    _count = json.get("cnt").toNumber().orIfNull(0);
+    _cod = json.get("cod").toString().orIfNull("");
+    Json::Array weathers = json.get("list");
+    for(auto w: weathers) {
+        _weathers.push_back({w});
+    }
 }
 
 WeatherForecast::~WeatherForecast()
 {
-}
-
-shared_ptr<WeatherCity> WeatherForecast::city() const {
-    return d->city;
-}
-
-string WeatherForecast::cod() const
-{
-    return d->cod;
-}
-int WeatherForecast::count() const
-{
-    return d->count;
-}
-vector<std::shared_ptr<Weather>> WeatherForecast::weathers() const
-{
-    return d->weathers;
 }

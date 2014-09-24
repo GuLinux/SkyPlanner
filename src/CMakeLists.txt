@@ -38,7 +38,6 @@ set(SkyPlanner_CORE_SRCS
     session.cpp
 )
 file(GLOB openweather_SRCS openweather/*cpp)
-message("OpenWeather Sources: ${openweather_SRCS}")
 add_custom_command(OUTPUT style.css.cpp COMMAND ${CMAKE_SOURCE_DIR}/scripts/create-style-css
                                               ${CMAKE_SOURCE_DIR}/src/style.css.cpp.in 
                                               ${CMAKE_SOURCE_DIR}/resources/style.css 
