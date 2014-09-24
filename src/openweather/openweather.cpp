@@ -47,8 +47,13 @@ shared_ptr<WeatherForecast> OpenWeather::forecast(const Coordinates::LatLng &coo
         bool parsed = Json::parse(out.str(), weatherForecastObject, error);
         if(parsed) {
             spLog("notice") << "Parse was ok";
-            result = make_shared<WeatherForecast>(weatherForecastObject);
-            return result->cod() == "200";
+            try {
+                result = make_shared<WeatherForecast>(weatherForecastObject);
+                return result->cod() == "200";
+            } catch(...) {
+                spLog("warning") << "Error parsing json: " << out.str();
+                return false;
+            }
         }
         return false;
     };
