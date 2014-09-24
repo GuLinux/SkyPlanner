@@ -35,8 +35,8 @@ public:
     Weather(const Wt::Json::Object &json);
     ~Weather();
     boost::posix_time::ptime dateGMT() const { return _dateGMT; }
-    WeatherTemperature temperature() const { return _temperature; }
-    std::vector<WeatherSummary> summaries() const { return _summaries; }
+    std::shared_ptr<WeatherTemperature> temperature() const { return _temperature; }
+    std::vector<std::shared_ptr<WeatherSummary>> summaries() const { return _summaries; }
     float pressure() const { return _pressure; }
     int humidity() const { return _humidity; }
     float windSpeed() const { return _windSpeed; }
@@ -45,14 +45,14 @@ public:
     int clouds() { return _clouds; }
 private:
     boost::posix_time::ptime _dateGMT;
-    WeatherTemperature _temperature;
+    std::shared_ptr<WeatherTemperature> _temperature;
     float _pressure;
     int _humidity;
     float _windSpeed;
     Angle _windAngle;
     float _rain;
     int _clouds;
-    std::vector<WeatherSummary> _summaries;
+    std::vector<std::shared_ptr<WeatherSummary>> _summaries;
 };
 
 #endif // WEATHER_H

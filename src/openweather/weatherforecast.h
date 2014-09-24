@@ -12,14 +12,14 @@ public:
     WeatherForecast(const Wt::Json::Object &json);
     ~WeatherForecast();
     std::string cod() const { return _cod; }
-    WeatherCity city() const { return _city; }
+    std::shared_ptr<WeatherCity> city() const { return _city; }
     int count() const { return _count; }
-    std::vector<Weather> weathers() const { return _weathers; }
+    std::vector<std::shared_ptr<Weather>> weathers() const { return _weathers; }
 private:
     std::string _cod;
-    WeatherCity _city;
+    std::shared_ptr<WeatherCity> _city;
     int _count;
-    std::vector<Weather> _weathers;
+    std::vector<std::shared_ptr<Weather>> _weathers;
 };
 
 #endif // WEATHERFORECAST_H
