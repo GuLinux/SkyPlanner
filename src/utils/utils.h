@@ -54,4 +54,42 @@ private:
   std::function<void()> f;
 };
 
+template<typename Payload, typename KeyType>
+class Cache {
+public:
+    Cache(const boost::posix_time::time_duration &validity) : validity(validity) {}
+    void put(const KeyType &key, const Payload &payload) {
+        cache[key] = {payload, boost::posix_time::second_clock().local_time() };
+    }
+
+    Payload value(const KeyType &key) {
+        cleanup();
+        CacheEntry cacheEntry = cache[key];
+        if(!cacheEntry.valid(validity))
+            return {};
+        return cacheEntry.payload;
+    }
+
+    void cleanup() {
+        for(auto entry: cache) {
+            if(!entry.second.valid(validity))
+                cache.erase(entry.first);
+        }
+    }
+
+private:
+    struct CacheEntry {
+        Payload payload;
+        boost::posix_time::ptime when;
+        bool valid(const boost::posix_time::time_duration &validity) const {
+            return !when.is_not_a_date_time() && boost::posix_time::second_clock().local_time() - when <= validity;
+        }
+    };
+
+
+    struct
+    std::map<KeyType, CacheEntry> cache;
+    boost::posix_time::time_duration validity;
+};
+
 #endif // UTILS_H
