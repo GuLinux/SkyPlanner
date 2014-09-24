@@ -101,8 +101,8 @@ PositionDetailsWidget::PositionDetailsWidget(const AstroGroup& astroGroup, const
   auto now = boost::posix_time::second_clock::local_time();
   if(showMeteo && astroSession->when() > now /* && astroSession->when() - now < boost::posix_time::hours(72) */) {
     positionDetails->addWidget(new WBreak);
-    WContainerWidget *weatherWidget = WW<WContainerWidget>().css("container");
     WContainerWidget *weatherWidgetRow = WW<WContainerWidget>().css("row");
+    WContainerWidget *weatherWidget = WW<WContainerWidget>().css("container").add(weatherWidgetRow);
     OpenWeather openWeather;
     auto forecast = openWeather.forecast(astroSession->position(), "");
     for(auto weather: forecast.weathers()) {
