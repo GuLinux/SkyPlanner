@@ -32,8 +32,8 @@ shared_ptr<WeatherForecast> OpenWeather::forecast(const Coordinates::LatLng &coo
 {
     days = std::max(days, 16);
     static Cache<WeatherCacheEntry, string> weatherCache(boost::posix_time::hours(6));
-    spLog("notice") << "Coordinates: " << coordinates << ", city name: " << cityName << ", days: " << days;
-    string language = "en";
+    spLog("notice") << "Coordinates: " << coordinates << ", city name: " << cityName << ", days: " << days << ", locale: " << wApp->locale().name();
+    string language = wApp->locale().name();
     string cityUrl = format("http://api.openweathermap.org/data/2.5/forecast/daily?q=%s&mode=json&units=metric&cnt=%d&type=like&lang=%s") % Wt::Utils::urlEncode(cityName) % days % language;
     string coordinatesUrl = format("http://api.openweathermap.org/data/2.5/forecast/daily?lat=%f&lon=%f=json&units=metric&cnt=%d&type=like&lang=%s") % coordinates.latitude.degrees() % coordinates.longitude.degrees() % days % language;
     string cityCacheKey = WeatherCacheEntry::byName(cityName, days, language);
