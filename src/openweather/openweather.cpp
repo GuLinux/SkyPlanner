@@ -68,25 +68,21 @@ shared_ptr<WeatherForecast> OpenWeather::forecast(const Coordinates::LatLng &coo
         } else
             return result;
     }
-    {
-        Curl curl(out);
-        spLog("notice") << "Entry not found in cache; asking web service: " << cityUrl;
-        if(!cityName.empty() && curl.get(cityUrl).requestOk() && parseWeather(out.str())) {
-            spLog("notice") << "Weather ok for city " << cityName;
-            weatherCache.put(cityCacheKey, {cityCacheKey, out.str()});
-            return result;
-        }
-        spLog("notice") << "curl results: " << curl.requestOk() << "-" << curl.httpResponseCode();
+    Curl curl(out);
+    spLog("notice") << "Entry not found in cache; asking web service: " << cityUrl;
+    if(!cityName.empty() && curl.get(cityUrl).requestOk() && parseWeather(out.str())) {
+        spLog("notice") << "Weather ok for city " << cityName;
+        weatherCache.put(cityCacheKey, {cityCacheKey, out.str()});
+        return result;
     }
-    {
-        Curl curl(out);
-        spLog("notice") << "Entry for city didn't match, trying by coordinates: " << coordinatesUrl;
-        if(curl.get(coordinatesUrl).requestOk() && parseWeather(out.str())) {
-            spLog("notice") << "Weather ok for coordinates " << coordinates;
-            weatherCache.put(coordinatesCacheKey, {coordinatesCacheKey, out.str()});
-            return result;
-        }
-        spLog("notice") << "curl results: " << curl.requestOk() << "-" << curl.httpResponseCode();
+    out.str("");
+    spLog("notice") << "curl results: " << curl.requestOk() << "-" << curl.httpResponseCode();
+    spLog("notice") << "Entry for city didn't match, trying by coordinates: " << coordinatesUrl;
+    if(curl.get(coordinatesUrl).requestOk() && parseWeather(out.str())) {
+        spLog("notice") << "Weather ok for coordinates " << coordinates;
+        weatherCache.put(coordinatesCacheKey, {coordinatesCacheKey, out.str()});
+        return result;
     }
+    spLog("notice") << "curl results: " << curl.requestOk() << "-" << curl.httpResponseCode();
     return {};
 }
