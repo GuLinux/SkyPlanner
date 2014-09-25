@@ -59,9 +59,9 @@ shared_ptr<WeatherForecast> OpenWeather::forecast(const Coordinates::LatLng &coo
     };
 
     WeatherCacheEntry cacheEntry = weatherCache.value(cityCacheKey);
-    spLog("notice") << "cache value: " << cacheEntry.json;
     if(!cacheEntry) cacheEntry = weatherCache.value(coordinatesCacheKey);
     if(cacheEntry) {
+        spLog("notice") << "Cache hit for " << cityName << ", " << coordinates;
         if(!parseWeather(cacheEntry.json)) {
             spLog("warning") << "Error parsing cache entry: " << cacheEntry.json << ", falling back to service...";
         } else
