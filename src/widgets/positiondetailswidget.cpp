@@ -35,7 +35,7 @@ using namespace WtCommons;
 using namespace std;
 
 
-PositionDetailsWidget::PositionDetailsWidget(const AstroGroup& astroGroup, const GeoCoder::Place &geoCoderPlace, Session& session, bool showMeteo, Wt::WContainerWidget* parent)
+PositionDetailsWidget::PositionDetailsWidget(const AstroGroup& astroGroup, const GeoCoder::Place &geoCoderPlace, Session& session, Wt::WContainerWidget* parent)
   : WCompositeWidget(parent)
 {
   auto astroSession = astroGroup.astroSession();
@@ -96,12 +96,6 @@ PositionDetailsWidget::PositionDetailsWidget(const AstroGroup& astroGroup, const
         .arg(darkness.end.str(DateTime::DateShort))
         .arg(boost::posix_time::to_simple_string(darkness.duration))
     });
-  }
-
-  auto now = boost::posix_time::second_clock::local_time();
-  if(showMeteo && astroSession->when() > now /* && astroSession->when() - now < boost::posix_time::hours(72) */) {
-    positionDetails->addWidget(new WBreak);
-    positionDetails->addWidget(new WeatherWidget(astroSession->position(), geoCoderPlace, astroSession->when() + boost::posix_time::hours(24)));
   }
 }
 

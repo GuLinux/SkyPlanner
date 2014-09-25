@@ -75,6 +75,7 @@
 <message id="buttons_set">imposta</message>
 <message id="buttons_back">Indietro</message>
 <message id="buttons_share">Condivisione</message>
+<message id="button_retry">Riprova</message>
 
 <message id="astrosessionspage_sessions_list">Elenco Osservazioni</message>
 <message id="astrosessionslisttab_name">Nome</message>

@@ -32,7 +32,7 @@ shared_ptr<WeatherForecast> OpenWeather::forecast(const Coordinates::LatLng &coo
 {
     string apiKey;
     wApp->readConfigurationProperty("openweather_api_key", apiKey);
-    days = std::max(days, 16);
+    days = std::min(days, 16);
     static Cache<WeatherCacheEntry, string> weatherCache(boost::posix_time::hours(6));
     spLog("notice") << "Coordinates: " << coordinates << ", city name: " << cityName << ", days: " << days << ", locale: " << wApp->locale().name();
     string language = wApp->locale().name();
@@ -70,12 +70,13 @@ shared_ptr<WeatherForecast> OpenWeather::forecast(const Coordinates::LatLng &coo
             return result;
     }
 
-    spLog("notice") << "Entry not found in cache; asking web service";
+    spLog("notice") << "Entry not found in cache; asking web service: " << cityUrl;
     if(!cityName.empty() && curl.get(cityUrl).requestOk() && parseWeather(out.str())) {
         spLog("notice") << "Weather ok for city " << cityName;
         weatherCache.put(cityCacheKey, {cityCacheKey, out.str()});
         return result;
     }
+    spLog("notice") << "Entry for city didn't match, trying by coordinates: " << coordinatesUrl;
     if(curl.get(coordinatesUrl).requestOk() && parseWeather(out.str())) {
         spLog("notice") << "Weather ok for coordinates " << coordinates;
         weatherCache.put(coordinatesCacheKey, {coordinatesCacheKey, out.str()});

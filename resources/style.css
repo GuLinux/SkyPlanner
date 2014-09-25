@@ -230,7 +230,8 @@ display: inline;
 div.weather-box {
     display: inline-block;
     border-radius: 10px;
-    border-style: groove;
+    border-width: 1px;
+    border-style: inset;
     margin: 5px;
     background-color: #E9EBFF;
     padding: 0px;

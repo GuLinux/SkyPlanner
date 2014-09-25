@@ -29,7 +29,7 @@ class Session;
 class PositionDetailsWidget : public Wt::WCompositeWidget {
 public:
   ~PositionDetailsWidget();
-  PositionDetailsWidget(const AstroGroup& astroGroup, const GeoCoder::Place &geoCoderPlace, Session& session, bool showMeteo = true, Wt::WContainerWidget* parent = 0);
+  PositionDetailsWidget(const AstroGroup& astroGroup, const GeoCoder::Place &geoCoderPlace, Session& session, Wt::WContainerWidget* parent = 0);
 private:
 };
 #endif

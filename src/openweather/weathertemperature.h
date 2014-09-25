@@ -7,8 +7,9 @@ class WeatherTemperature
 public:
     static constexpr float K2C = -273.15;
     struct Temperature {
-        float kelvin;
-        float celsius() const { return K2C + kelvin; }
+        float _celsius;
+        float kelvin() const { return _celsius - K2C; }
+        float celsius() const { return _celsius; }
     };
 
     WeatherTemperature(const Wt::Json::Object &json);
