@@ -42,6 +42,7 @@ class FilterByMagnitudeWidget;
 class FilterByCatalogue;
 class FilterByTypeWidget;
 class AstroObjectsTable;
+class WeatherWidget;
 class AstroSessionTab::Private
 {
 public:
@@ -69,6 +70,7 @@ public:
     Wt::WStackedWidget *sessionStacked ;
     Wt::WContainerWidget *sessionContainer ;
     Wt::WContainerWidget *sessionPreviewContainer;
+    WeatherWidget *weatherWidget;
 private:
     class AstroSessionTab* const q;
 };

@@ -274,14 +274,17 @@ void AstroSessionTab::Private::reload()
     positionDetails->clear();
     positionDetails->addWidget(new PositionDetailsWidget{{astroSession, selectedTelescope, timezone}, geoCoderPlace, session});
     planetsTable->planets(astroSession, timezone);
+    if(weatherWidget)
+        weatherWidget->reload(astroSession->position(), geoCoderPlace, astroSession->when());
   });
   addPanel(WString::tr("astrosessiontab_add_observable_object"), addObjectsTabWidget, true, true, sessionContainer)->addStyleClass("hidden-print");
   addPanel(WString::tr("astrosessiontab_planets_panel"), planetsTable, true, true, sessionContainer)->addStyleClass("hidden-print");
   bool isPastSession = astroSession->wDateWhen() < WDateTime::currentDateTime();
   if(!isPastSession) {
-      WeatherWidget *weatherWidget = new WeatherWidget(astroSession->position(), geoCoderPlace, astroSession->when(), WeatherWidget::Full);
+      weatherWidget = new WeatherWidget(astroSession->position(), geoCoderPlace, astroSession->when(), WeatherWidget::Full);
       addPanel(WString::tr("weather-panel"), weatherWidget, true, true, sessionContainer)->addStyleClass("hidden-print");
-  }
+  } else
+    weatherWidget = nullptr;
   addObjectsTabWidget->objectsListChanged().connect( [=](const AstroSessionObjectPtr &o, _n5) { populate(o); } );
   WTemplate *title = new WTemplate("<h3 style='display: block'>${tr:astrosessiontab_objects_title} ${counter}${filters-button}</h3>", sessionContainer);
   title->addFunction("tr", &WTemplate::Functions::tr);
