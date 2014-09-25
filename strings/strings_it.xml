@@ -321,4 +321,11 @@ Dopo aver aggiunto una nuova sessione, clicca sul suo nome per aggiungere oggett
 <message id="share-report-message"><p>URL per condividere il report: </p><p><strong class="nowrap">{1}</strong></p></message>
 <message id="share-report-username">Report osservativo di <b>{1}</b></message>
 <message id="reset-filters">Rimuovi filtri</message>
+
+<message id="weather-panel">Meteo</message>
+<message id="weather_not_available">Meteo non disponibile.</message>
+<message id="weather_city_title">Meteo per {1} ({2})</message>
+<message id="weather_clouds">nuvole</message>
+<message id="weather_humidity">umidità</message>
+<message id="openweather_credits">Servizio offerto da <a href='http://www.openweathermap.org/' target='_BLANK'>OpenWeatherMap.org</a></message>
 </messages>
