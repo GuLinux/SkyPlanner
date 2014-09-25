@@ -9,7 +9,7 @@ class WeatherWidget : public Wt::WCompositeWidget
 public:
     enum Format{Embedded, Full };
     WeatherWidget(const Coordinates::LatLng latlng, const GeoCoder::Place &place,
-                  const boost::posix_time::ptime &date, Format format = Embedded, Wt::WContainerWidget *parent = 0);
+                  const boost::posix_time::ptime &date, Format widgetFormat = Embedded, Wt::WContainerWidget *parent = 0);
 };
 
 #endif // WEATHERWIDGET_H

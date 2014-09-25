@@ -9,7 +9,7 @@
 using namespace std;
 using namespace Wt;
 using namespace WtCommons;
-WeatherWidget::WeatherWidget(const Coordinates::LatLng latlng, const GeoCoder::Place &place, const boost::posix_time::ptime &date, Format format, WContainerWidget *parent)
+WeatherWidget::WeatherWidget(const Coordinates::LatLng latlng, const GeoCoder::Place &place, const boost::posix_time::ptime &date, Format widgetFormat, WContainerWidget *parent)
     : WCompositeWidget(parent)
 {
     WContainerWidget *weatherWidgetRow = WW<WContainerWidget>().css("row");
