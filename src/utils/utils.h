@@ -71,7 +71,7 @@ public:
 
     void cleanup() {
         for(auto entry: cache) {
-            std::cout << "validity: " << boost::posix_time::to_simple_string(validity)
+            std::cout << "** entry: " << entry.first << ", validity: " << boost::posix_time::to_simple_string(validity)
                          << ", when: " << boost::posix_time::to_simple_string(entry.second.when)
                          << ", diff: " << boost::posix_time::to_simple_string(boost::posix_time::second_clock().local_time() - entry.second.when)
                             << std::endl;
