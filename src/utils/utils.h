@@ -85,7 +85,7 @@ private:
         Payload payload;
         boost::posix_time::ptime when;
         bool valid(const boost::posix_time::time_duration &validity) const {
-            return when.is_not_a_date_time() && boost::posix_time::second_clock().local_time() - when <= validity;
+            return !when.is_not_a_date_time() && boost::posix_time::second_clock().local_time() - when <= validity;
         }
     };
 
