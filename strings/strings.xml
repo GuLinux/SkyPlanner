@@ -314,5 +314,5 @@ After you added a session, click it to add new objects.
 <message id="weather_city_title">Weather for {1} ({2})</message>
 <message id="weather_clouds">clouds</message>
 <message id="weather_humidity">humidity</message>
-<message id="openweather_credits">Courtesy of <a href='http://www.openweathermap.org/' target='_BLANK'>OpenWeatherMap.org</a></message>
+<message id="openweather_credits"><small>Courtesy of <a href='http://www.openweathermap.org/' target='_BLANK'>OpenWeatherMap.org</a></small></message>
 </messages>
