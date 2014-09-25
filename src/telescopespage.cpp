@@ -51,6 +51,7 @@ TelescopesPage::~TelescopesPage()
 TelescopesPage::TelescopesPage( Session &session, WContainerWidget *parent )
   : WContainerWidget(parent), d( session, this )
 {
+  addStyleClass("container");
   WLineEdit *telescopeName = WW<WLineEdit>();
   WSpinBox *telescopeDiameter = WW<WSpinBox>();
   WSpinBox *telescopeFocalLength = WW<WSpinBox>();
@@ -75,15 +76,16 @@ TelescopesPage::TelescopesPage( Session &session, WContainerWidget *parent )
     d->changed.emit();
     d->populate();
   });
-  addWidget(WW<WForm>(WForm::Horizontal).addCss("col-sm-6").get()
+  addWidget(WW<WContainerWidget>().addCss("row").add(WW<WForm>(WForm::Horizontal).addCss("col-sm-6").get()
     ->add(telescopeName, "telescopes_telescope_name")
     ->add(telescopeDiameter, "telescopes_diameter_mm")
     ->add(telescopeFocalLength, "telescopes_focal_length_mm")
     ->add(d->isDefault)
-    ->addButton(addTelescopeButton)
+    ->addButton(addTelescopeButton))
   );
-  d->telescopesTable = WW<WTable>(this).addCss("table table-striped table-hover");
+  d->telescopesTable = WW<WTable>().addCss("table table-striped table-hover");
   d->telescopesTable->setHeaderCount(1);
+  addWidget(WW<WContainerWidget>().addCss("row").add(d->telescopesTable));
   d->loginChanged();
   session.login().changed().connect(bind(&Private::loginChanged, d.get()));
 }

@@ -12,6 +12,7 @@ using namespace WtCommons;
 WeatherWidget::WeatherWidget(const Coordinates::LatLng latlng, const GeoCoder::Place &place, const boost::posix_time::ptime &date, Format widgetFormat, WContainerWidget *parent)
     : WCompositeWidget(parent)
 {
+    // TODO: translate
     WContainerWidget *weatherWidgetRow = WW<WContainerWidget>().css("row");
     WContainerWidget *weatherWidget = WW<WContainerWidget>().css("container").add(weatherWidgetRow);
     OpenWeather openWeather;
