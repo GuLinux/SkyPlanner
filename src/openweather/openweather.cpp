@@ -10,7 +10,7 @@
 
 using namespace Wt;
 using namespace std;
-#include <utils/utils.h>
+#include <utils/cache.h>
 
 OpenWeather::OpenWeather()
 {
