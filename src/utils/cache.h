@@ -14,7 +14,6 @@ public:
     Payload value(const KeyType &key) {
         cleanup();
         if(cache.count(key) == 0) {
-            std::cout << "cache miss for " << key << std::endl;
             return {};
         }
         return cache.at(key).payload;
@@ -22,10 +21,6 @@ public:
 
     void cleanup() {
         for(auto entry: cache) {
-            std::cout << "** entry: " << entry.first << ", validity: " << boost::posix_time::to_simple_string(validity)
-                         << ", when: " << boost::posix_time::to_simple_string(entry.second.when)
-                         << ", diff: " << boost::posix_time::to_simple_string(boost::posix_time::second_clock().local_time() - entry.second.when)
-                            << std::endl;
             if(!entry.second.valid(validity))
                 cache.erase(entry.first);
         }
@@ -39,7 +34,6 @@ private:
             return !when.is_not_a_date_time() && (boost::posix_time::second_clock().local_time() - when) <= validity;
         }
     };
-
 
     struct
     std::map<KeyType, CacheEntry> cache;

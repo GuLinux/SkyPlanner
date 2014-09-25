@@ -42,16 +42,16 @@ shared_ptr<WeatherForecast> OpenWeather::forecast(const Coordinates::LatLng &coo
     Curl curl(out);
     Json::Object weatherForecastObject;
     shared_ptr<WeatherForecast> result;
-    auto parseWeather = [&out, &weatherForecastObject, &result] {
+    auto parseWeather = [&weatherForecastObject, &result](const string &json) {
         Json::ParseError error;
-        bool parsed = Json::parse(out.str(), weatherForecastObject, error);
+        bool parsed = Json::parse(json, weatherForecastObject, error);
         if(parsed) {
             spLog("notice") << "Parse was ok";
             try {
                 result = make_shared<WeatherForecast>(weatherForecastObject);
                 return result->cod() == "200";
             } catch(...) {
-                spLog("warning") << "Error parsing json: " << out.str();
+                spLog("warning") << "Error parsing json: " << json;
                 return false;
             }
         }
@@ -59,23 +59,24 @@ shared_ptr<WeatherForecast> OpenWeather::forecast(const Coordinates::LatLng &coo
     };
 
     WeatherCacheEntry cacheEntry = weatherCache.value(cityCacheKey);
+    spLog("notice") << "cache value: " << cacheEntry.json;
     if(!cacheEntry) cacheEntry = weatherCache.value(coordinatesCacheKey);
     if(cacheEntry) {
-        out << cacheEntry;
-        spLog("notice") << "Weather data found in cache for city " << cityName << ", coordinates " << coordinates;
-        parseWeather();
-        return result;
+        if(!parseWeather(cacheEntry.json)) {
+            spLog("warning") << "Error parsing cache entry: " << cacheEntry.json << ", falling back to service...";
+        } else
+            return result;
     }
 
     spLog("notice") << "Entry not found in cache; asking web service";
-    if(!cityName.empty() && curl.get(cityUrl).requestOk() && parseWeather()) {
+    if(!cityName.empty() && curl.get(cityUrl).requestOk() && parseWeather(out.str())) {
         spLog("notice") << "Weather ok for city " << cityName;
-        weatherCache.put(cityCacheKey, {out.str()});
+        weatherCache.put(cityCacheKey, {cityCacheKey, out.str()});
         return result;
     }
-    if(curl.get(coordinatesUrl).requestOk() && parseWeather()) {
+    if(curl.get(coordinatesUrl).requestOk() && parseWeather(out.str())) {
         spLog("notice") << "Weather ok for coordinates " << coordinates;
-        weatherCache.put(coordinatesCacheKey, {out.str()});
+        weatherCache.put(coordinatesCacheKey, {coordinatesCacheKey, out.str()});
         return result;
     }
     spLog("notice") << "curl results: " << curl.requestOk() << "-" << curl.httpResponseCode();
