@@ -228,6 +228,7 @@ display: inline;
 
 @import 'bootstrap.less';
 div.weather-box {
+    display: inline-block;
     border-radius: 10px;
     border-style: groove;
     margin: 5px;
