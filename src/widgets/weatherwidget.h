@@ -10,6 +10,11 @@ public:
     enum Format{Embedded, Full };
     WeatherWidget(const Coordinates::LatLng latlng, const GeoCoder::Place &place,
                   const boost::posix_time::ptime &date, Format widgetFormat = Embedded, Wt::WContainerWidget *parent = 0);
+    void reload(const Coordinates::LatLng latlng, const GeoCoder::Place &place,
+                const boost::posix_time::ptime &date);
+private:
+    Format widgetFormat;
+    Wt::WContainerWidget *weatherWidget;
 };
 
 #endif // WEATHERWIDGET_H
