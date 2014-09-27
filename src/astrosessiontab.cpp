@@ -279,8 +279,10 @@ void AstroSessionTab::Private::reload()
   });
   addPanel(WString::tr("astrosessiontab_add_observable_object"), addObjectsTabWidget, true, true, sessionContainer)->addStyleClass("hidden-print");
   addPanel(WString::tr("astrosessiontab_planets_panel"), planetsTable, true, true, sessionContainer)->addStyleClass("hidden-print");
-  bool isPastSession = astroSession->wDateWhen() < WDateTime::currentDateTime();
-  if(!isPastSession) {
+  auto isPastSession = [=](int slackHours = 0) {
+    return (astroSession->when() + boost::posix_time::hours(slackHours)) < boost::posix_time::second_clock().local_time();
+  };
+  if(!isPastSession(72)) {
       weatherWidget = new WeatherWidget(astroSession->position(), geoCoderPlace, astroSession->when(), WeatherWidget::Full);
       addPanel(WString::tr("weather-panel"), weatherWidget, true, true, sessionContainer)->addStyleClass("hidden-print");
   } else
@@ -307,7 +309,7 @@ void AstroSessionTab::Private::reload()
       remove(sessionObject, [=] { populate(); });
     } },
   };
-  if(isPastSession) {
+  if(isPastSession(12)) {
     auto toggleObservedStyle = [=](const AstroObjectsTable::Row &r, bool observed) {
       WPushButton *b = reinterpret_cast<WPushButton*>(r.actions.at("astrosessiontab_object_observed_menu"));
       b->setText(observed ? WString::tr("astrosessiontab_object_observed") : WString::tr("astrosessiontab_object_not_observed"));
@@ -337,12 +339,12 @@ void AstroSessionTab::Private::reload()
     actions.push_back(toggleObserved);
   }
   auto columns = AstroObjectsTable::allColumns;
-  if(isPastSession)
+  if(isPastSession(12))
     columns.remove_if([](AstroObjectsTable::Column c){ return c == AstroObjectsTable::Difficulty || c == AstroObjectsTable::TransitTime || c == AstroObjectsTable::MaxAltitude; });
 
   sessionContainer->addWidget(astroObjectsTable = new AstroObjectsTable(session, actions, AstroObjectsTable::FiltersButtonExternal, NgcObject::allNebulaTypes(), columns ));
   title->bindWidget("filters-button", WW<WPushButton>(astroObjectsTable->filtersButton()).addCss("btn-primary pull-right"));
-  astroObjectsTable->forceActionsAsToolBar(isPastSession); 
+  astroObjectsTable->forceActionsAsToolBar(isPastSession(12)); 
   astroObjectsTable->objectsListChanged().connect([=](const AstroSessionObjectPtr &o, _n5) { populate(o); });
   astroObjectsTable->filtersChanged().connect([=](AstroObjectsTable::Filters, _n5){ populate(); });
   WContainerWidget *telescopeComboContainer;
