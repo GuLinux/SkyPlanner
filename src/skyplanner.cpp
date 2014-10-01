@@ -70,8 +70,11 @@ SkyPlanner::Private::Private( SkyPlanner *q ) : q( q )
 {
 }
 
+static set<SkyPlanner*> SkyPlanner_Instances;
 SkyPlanner::~SkyPlanner()
 {
+    SkyPlanner_Instances.erase(this);
+    WServer::instance()->log("notice") << "session " << sessionId() << " removed, sessions alive: " << SkyPlanner_Instances.size();
 }
 
 
@@ -86,10 +89,12 @@ const string SkyPlanner::HOME_PATH = "/home/";
 SkyPlanner::SkyPlanner( const WEnvironment &environment )
   : WApplication( environment ), d( this )
 {
+
+  SkyPlanner_Instances.insert(this);
   d->initialInternalPath = internalPath();
   d->agentIsBot = environment.agentIsSpiderBot() || environment.userAgent().find("Baiduspider") != string::npos || environment.userAgent().find("YandexBot") != string::npos;
   if(!d->agentIsBot)
-    log("notice") << "Starting new application instance: referer=" << environment.referer() << ", ip=" << environment.headerValue("X-Forwarded-For")
+    log("notice") << "Starting new application instance (" << SkyPlanner_Instances.size() << "): referer=" << environment.referer() << ", ip=" << environment.headerValue("X-Forwarded-For")
                   << ", user agent=" << environment.userAgent() << ", internal path=" << d->initialInternalPath;
   string googleVerificationCode;
   if(readConfigurationProperty("google-site-verification", googleVerificationCode)) {
