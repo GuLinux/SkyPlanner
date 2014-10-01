@@ -37,6 +37,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11 -fstack-protector-all")
 #add_subdirectory(lib)
 include_directories(src)
 add_subdirectory(src)
+add_subdirectory(resources)
+add_subdirectory(strings)
 add_subdirectory(CatalogsParsing)
 
 add_subdirectory(tests)
