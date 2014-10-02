@@ -74,7 +74,7 @@ static set<SkyPlanner*> SkyPlanner_Instances;
 SkyPlanner::~SkyPlanner()
 {
     SkyPlanner_Instances.erase(this);
-    WServer::instance()->log("notice") << "session " << sessionId() << " removed, sessions alive: " << SkyPlanner_Instances.size();
+    log("notice") << "session " << sessionId() << " removed, sessions alive: " << SkyPlanner_Instances.size();
 }
 
 
