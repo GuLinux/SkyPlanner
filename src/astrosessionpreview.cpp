@@ -126,8 +126,7 @@ AstroSessionPreview::AstroSessionPreview(const AstroGroup& astroGroup, const Geo
     toolbar->addButton(shareButton);
   sessionPreviewContainer->addWidget(toolbar);
 
-  WContainerWidget *infoWidget = WW<WContainerWidget>().css("astroobjects-info-widget");
-  sessionPreviewContainer->addWidget(new PositionDetailsWidget{astroGroup, geoCoderPlace, session, false});
+  sessionPreviewContainer->addWidget(new PositionDetailsWidget{astroGroup, geoCoderPlace, session});
 
   if(type == Preview) {
     AstroObjectsTable *planetsTable = new AstroObjectsTable(session, {}, AstroObjectsTable::NoFiltersButton, {}, {AstroObjectsTable::Names, AstroObjectsTable::AR, AstroObjectsTable::DEC, AstroObjectsTable::Constellation, AstroObjectsTable::Magnitude, AstroObjectsTable::AngularSize, AstroObjectsTable::TransitTime, AstroObjectsTable::MaxAltitude});
