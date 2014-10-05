@@ -31,7 +31,8 @@ if(WIN32)
 endif(WIN32)
 
 include_directories(${Wt_INCLUDE_DIR} ${Boost_INCLUDE_DIR})
-add_definitions(-DRESOURCES_DIRECTORY="${CMAKE_SOURCE_DIR}/resources")
+set(resources_directory "${CMAKE_SOURCE_DIR}/resources" CACHE STRING "Resources directory (css, images..)")
+add_definitions(-DRESOURCES_DIRECTORY="${resources_directory}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11 -fstack-protector-all")
 
 #add_subdirectory(lib)
