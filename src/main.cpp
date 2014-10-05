@@ -43,7 +43,9 @@ int main(int argc, char **argv) {
             server.addResource(new QuitResource(quitResourcePassword), "/quit-forced");
             server.addResource(new QuitResource(quitResourcePassword, [] { return activeSessions == 0; }), "/quit-waiting");
         }
-        server.addResource(new WFileResource((boost::filesystem::path(RESOURCES_DIRECTORY) / "logo_350.png") .string()), "/skyplanner_logo.png");
+        auto logo_path = boost::filesystem::path(RESOURCES_DIRECTORY) / "logo_350.png";
+        server.log("notice") << "Using Logo resource: " << logo_path;
+        server.addResource(new WFileResource(logo_path.string()), "/skyplanner_logo.png");
         server.addEntryPoint(Wt::Application, createAstroPlanner);
         Session::configureAuth();
         if (server.start()) {
