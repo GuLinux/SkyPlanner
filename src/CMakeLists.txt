@@ -10,7 +10,6 @@ set(SkyPlanner_SRCS
   astrosessiontab.cpp
   astrosessionslisttab.cpp
   astrosessionspage.cpp
-  ngcresource.cpp
   selectobjectswidget.cpp
   main.cpp
   utils/autopostresource.cpp

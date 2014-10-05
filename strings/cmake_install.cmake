@@ -1,47 +1,47 @@
-# Install script for directory: /home/marco/Sviluppo/SkyPlanner-testing/strings
+# Install script for directory: /home/hdd/home/marco/Sviluppo/Witty/SkyPlanner/strings
 
 # Set the install prefix
-IF(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  SET(CMAKE_INSTALL_PREFIX "/usr/local")
-ENDIF(NOT DEFINED CMAKE_INSTALL_PREFIX)
-STRING(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
+if(NOT DEFINED CMAKE_INSTALL_PREFIX)
+  set(CMAKE_INSTALL_PREFIX "/usr")
+endif()
+string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
 # Set the install configuration name.
-IF(NOT DEFINED CMAKE_INSTALL_CONFIG_NAME)
-  IF(BUILD_TYPE)
-    STRING(REGEX REPLACE "^[^A-Za-z0-9_]+" ""
+if(NOT DEFINED CMAKE_INSTALL_CONFIG_NAME)
+  if(BUILD_TYPE)
+    string(REGEX REPLACE "^[^A-Za-z0-9_]+" ""
            CMAKE_INSTALL_CONFIG_NAME "${BUILD_TYPE}")
-  ELSE(BUILD_TYPE)
-    SET(CMAKE_INSTALL_CONFIG_NAME "Debug")
-  ENDIF(BUILD_TYPE)
-  MESSAGE(STATUS "Install configuration: \"${CMAKE_INSTALL_CONFIG_NAME}\"")
-ENDIF(NOT DEFINED CMAKE_INSTALL_CONFIG_NAME)
+  else()
+    set(CMAKE_INSTALL_CONFIG_NAME "Debug")
+  endif()
+  message(STATUS "Install configuration: \"${CMAKE_INSTALL_CONFIG_NAME}\"")
+endif()
 
 # Set the component getting installed.
-IF(NOT CMAKE_INSTALL_COMPONENT)
-  IF(COMPONENT)
-    MESSAGE(STATUS "Install component: \"${COMPONENT}\"")
-    SET(CMAKE_INSTALL_COMPONENT "${COMPONENT}")
-  ELSE(COMPONENT)
-    SET(CMAKE_INSTALL_COMPONENT)
-  ENDIF(COMPONENT)
-ENDIF(NOT CMAKE_INSTALL_COMPONENT)
+if(NOT CMAKE_INSTALL_COMPONENT)
+  if(COMPONENT)
+    message(STATUS "Install component: \"${COMPONENT}\"")
+    set(CMAKE_INSTALL_COMPONENT "${COMPONENT}")
+  else()
+    set(CMAKE_INSTALL_COMPONENT)
+  endif()
+endif()
 
 # Install shared libraries without execute permission?
-IF(NOT DEFINED CMAKE_INSTALL_SO_NO_EXE)
-  SET(CMAKE_INSTALL_SO_NO_EXE "1")
-ENDIF(NOT DEFINED CMAKE_INSTALL_SO_NO_EXE)
+if(NOT DEFINED CMAKE_INSTALL_SO_NO_EXE)
+  set(CMAKE_INSTALL_SO_NO_EXE "0")
+endif()
 
-IF(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
-  FILE(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/SkyPlanner/strings" TYPE FILE FILES
-    "/home/marco/Sviluppo/SkyPlanner-testing/strings/wt_auth_strings_it.xml"
-    "/home/marco/Sviluppo/SkyPlanner-testing/strings/wt_auth_strings.xml"
-    "/home/marco/Sviluppo/SkyPlanner-testing/strings/strings.xml"
-    "/home/marco/Sviluppo/SkyPlanner-testing/strings/strings_it.xml"
+if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/SkyPlanner/strings" TYPE FILE FILES
+    "/home/hdd/home/marco/Sviluppo/Witty/SkyPlanner/strings/wt_auth_strings.xml"
+    "/home/hdd/home/marco/Sviluppo/Witty/SkyPlanner/strings/wt_auth_strings_it.xml"
+    "/home/hdd/home/marco/Sviluppo/Witty/SkyPlanner/strings/strings.xml"
+    "/home/hdd/home/marco/Sviluppo/Witty/SkyPlanner/strings/strings_it.xml"
     )
-ENDIF(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
+endif()
 
-IF(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
-  FILE(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/SkyPlanner/strings" TYPE DIRECTORY FILES "/home/marco/Sviluppo/SkyPlanner-testing/strings/html")
-ENDIF(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
+if(NOT CMAKE_INSTALL_COMPONENT OR "${CMAKE_INSTALL_COMPONENT}" STREQUAL "Unspecified")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/SkyPlanner/strings" TYPE DIRECTORY FILES "/home/hdd/home/marco/Sviluppo/Witty/SkyPlanner/strings/html")
+endif()
 

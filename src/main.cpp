@@ -3,7 +3,6 @@
 #include <Wt/WMemoryResource>
 #include <Wt/WFileResource>
 #include <signal.h>
-#include "ngcresource.h"
 #include "skyplanner.h"
 #include "style.css.h"
 #include "session.h"
@@ -27,7 +26,6 @@ int main(int argc, char **argv) {
     try {
         WServer server(argv[0]);
         server.setServerConfiguration(argc, argv, WTHTTP_CONFIGURATION);
-        server.addResource(new NgcResource, "/ngc");
 	string noop;
 	if(! server.readConfigurationProperty("style-css-path", noop))
           server.addResource(new WMemoryResource("text/css", SkyPlannerStyle::css()), "/skyplanner_style.css");

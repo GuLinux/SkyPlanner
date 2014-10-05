@@ -45,12 +45,15 @@ int main(int argc, char **argv)
         }
         if( comments.size() )
           comment.reset(boost::algorithm::join(comments, " "));
+        auto otherCatalogue = boost::optional<string>{};
+        string name = string{"B "} + row["Barn"].value;
+        auto number = boost::optional<string>{row["Barn"].value};
         NebulaDenominationPtr denomination = vizier.session().add(new NebulaDenomination(
                                                                     catalogue,
-                                                                    {row["Barn"].value},
-                                                                    string{"B "} + row["Barn"].value,
+                                                                    number,
+                                                                    name,
                                                                     comment,
-                                                                    boost::optional<string>{}
+                                                                    otherCatalogue
                                                                   ));
         object.modify()->nebulae().insert(denomination);
         denominations[row["Barn"].value] = denomination;
