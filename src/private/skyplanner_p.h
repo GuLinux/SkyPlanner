@@ -31,7 +31,8 @@ namespace Wt
 class SkyPlanner::Private
 {
 public:
-    Private(SkyPlanner* q);
+    Private(SkyPlanner* q, OnQuit onQuit);
+    OnQuit onQuit;
     Session session;
     
     std::vector<Wt::WMenuItem*> loggedInItems;

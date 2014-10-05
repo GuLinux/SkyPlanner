@@ -27,7 +27,8 @@
 class SkyPlanner : public Wt::WApplication
 {
 public:
-  SkyPlanner(const Wt::WEnvironment& environment);
+    typedef std::function<void(SkyPlanner*)> OnQuit;
+  SkyPlanner(const Wt::WEnvironment& environment, OnQuit onQuit);
     ~SkyPlanner();
     class Notification {
     public:

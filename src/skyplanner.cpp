@@ -66,7 +66,7 @@ using namespace std;
 using namespace Wt;
 using namespace WtCommons;
 
-SkyPlanner::Private::Private( SkyPlanner *q ) : q( q )
+SkyPlanner::Private::Private( SkyPlanner *q, OnQuit onQuit ) : onQuit(onQuit), q( q )
 {
 }
 
@@ -75,6 +75,7 @@ SkyPlanner::~SkyPlanner()
 {
     SkyPlanner_Instances.erase(this);
     log("notice") << "session " << sessionId() << " removed, sessions alive: " << SkyPlanner_Instances.size();
+    d->onQuit(this);
 }
 
 
@@ -86,8 +87,8 @@ SkyPlanner *SkyPlanner::instance()
 
 const string SkyPlanner::HOME_PATH = "/home/";
 
-SkyPlanner::SkyPlanner( const WEnvironment &environment )
-  : WApplication( environment ), d( this )
+SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
+  : WApplication( environment ), d( this, onQuit )
 {
 
   SkyPlanner_Instances.insert(this);
