@@ -27,6 +27,13 @@
 class SkyPlanner : public Wt::WApplication
 {
 public:
+    struct SessionInfo {
+      std::string ipAddress;
+      std::string userAgent;
+      std::string username;
+      boost::posix_time::ptime started;
+    };
+
     typedef std::function<void(SkyPlanner*)> OnQuit;
   SkyPlanner(const Wt::WEnvironment& environment, OnQuit onQuit);
     ~SkyPlanner();
@@ -50,6 +57,7 @@ public:
     Wt::WLogEntry uLog (const std::string &type) const;
 
     Wt::Signal<> &telescopesListChanged() const;
+    SessionInfo sessionInfo() const;
 private:
   static std::map<std::string,std::string> globalProperties;
   friend int main(int, char**);

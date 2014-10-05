@@ -11,21 +11,49 @@
 #include <boost/filesystem.hpp>
 #include <GraphicsMagick/Magick++.h>
 #include "Wt-Commons/quitresource.h"
+#include <Wt/Http/Response>
 
 using namespace std;
 using namespace Wt;
 using namespace WtCommons;
 
-static long activeSessions = 0;
+static vector<SkyPlanner*> activeSessions;
 
-WApplication *createAstroPlanner(const WEnvironment &env)
+class ActiveSessionsResource : public Wt::WResource {
+public:
+    ActiveSessionsResource(const std::string &password, Wt::WObject *parent = 0) : Wt::WResource(parent), _password(password) {}
+    virtual void handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response);
+
+private:
+    const std::string _password;
+};
+
+void ActiveSessionsResource::handleRequest(const Http::Request &request, Http::Response &response)
 {
-   activeSessions++;
-   std::cerr << "Starting new session: activeSessions=" << activeSessions << std::endl;
-   return new SkyPlanner(env, [](SkyPlanner *) {
-       activeSessions--;
-       std::cerr << "Ending session: activeSessions=" << activeSessions << std::endl;
+    auto password = request.getParameter("pwd");
+    if(_password.empty() || !password || _password != *password) {
+      response.setStatus(403);
+      response.out() << "403 Forbidden";
+      return;
+    }
+    response.out() << "Active sessions: " << activeSessions.size() << std::endl;
+    for(SkyPlanner *app: activeSessions) {
+        SkyPlanner::SessionInfo infos = app->sessionInfo();
+        response.out() << "Session " << app->sessionId() << ", started: " << boost::posix_time::to_simple_string(infos.started) << ", ip: "
+                       << infos.ipAddress << ", user agent: " << infos.userAgent << ", username: " << infos.username << std::endl;
+    }
+    response.setStatus(200);
+}
+
+WApplication *newSkyPlanner(const WEnvironment &env)
+{
+   auto newApp = new SkyPlanner(env, [](SkyPlanner *app) {
+       activeSessions.erase(std::remove(activeSessions.begin(), activeSessions.end(), app));
+       std::cerr << "Ending session: activeSessions=" << activeSessions.size() << std::endl;
    });
+   activeSessions.push_back(newApp);
+   std::cerr << "Starting new session: activeSessions=" << activeSessions.size() << std::endl;
+   return newApp;
 }
 
 int main(int argc, char **argv) {
@@ -41,12 +69,13 @@ int main(int argc, char **argv) {
         string quitResourcePassword;
         if(server.readConfigurationProperty("quit-password", quitResourcePassword)) {
             server.addResource(new QuitResource(quitResourcePassword), "/quit-forced");
-            server.addResource(new QuitResource(quitResourcePassword, [] { return activeSessions == 0; }), "/quit-waiting");
+            server.addResource(new QuitResource(quitResourcePassword, [] { return activeSessions.size() == 0; }), "/quit-waiting");
+            server.addResource(new ActiveSessionsResource(quitResourcePassword), "/active-sessions");
         }
         auto logo_path = boost::filesystem::path(RESOURCES_DIRECTORY) / "logo_350.png";
         server.log("notice") << "Using Logo resource: " << logo_path;
         server.addResource(new WFileResource(logo_path.string()), "/skyplanner_logo.png");
-        server.addEntryPoint(Wt::Application, createAstroPlanner);
+        server.addEntryPoint(Wt::Application, newSkyPlanner);
         Session::configureAuth();
         if (server.start()) {
           int sig = WServer::waitForShutdown(argv[0]);

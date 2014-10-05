@@ -51,6 +51,7 @@ public:
     std::string lastNameSearch;
     bool agentIsBot;
     std::string initialInternalPath;
+    SessionInfo sessionInfo;
 private:
     class SkyPlanner* const q;
 };

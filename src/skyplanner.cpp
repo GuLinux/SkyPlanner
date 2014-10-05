@@ -81,18 +81,28 @@ SkyPlanner *SkyPlanner::instance()
   return dynamic_cast<SkyPlanner*>(wApp);
 }
 
+SkyPlanner::SessionInfo SkyPlanner::sessionInfo() const
+{
+    SessionInfo sessionInfo = d->sessionInfo;
+    sessionInfo.username = d->loginname.toUTF8();
+    return sessionInfo;
+}
 
 const string SkyPlanner::HOME_PATH = "/home/";
 
 SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
   : WApplication( environment ), d( this, onQuit )
 {
-
   d->initialInternalPath = internalPath();
   d->agentIsBot = environment.agentIsSpiderBot() || environment.userAgent().find("Baiduspider") != string::npos || environment.userAgent().find("YandexBot") != string::npos;
   if(!d->agentIsBot)
     log("notice") << "Starting new application instance: referer=" << environment.referer() << ", ip=" << environment.headerValue("X-Forwarded-For")
                   << ", user agent=" << environment.userAgent() << ", internal path=" << d->initialInternalPath;
+
+  d->sessionInfo.started = boost::posix_time::second_clock().local_time();
+  d->sessionInfo.userAgent = environment.userAgent();
+  d->sessionInfo.ipAddress = environment.headerValue("X-Forwarded-For");
+
   string googleVerificationCode;
   if(readConfigurationProperty("google-site-verification", googleVerificationCode)) {
     addMetaHeader("google-site-verification", googleVerificationCode);
