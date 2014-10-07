@@ -12,38 +12,13 @@
 #include <GraphicsMagick/Magick++.h>
 #include "Wt-Commons/quitresource.h"
 #include <Wt/Http/Response>
+#include "webservice/activesessionsresource.h"
 
 using namespace std;
 using namespace Wt;
 using namespace WtCommons;
 
 static vector<SkyPlanner*> activeSessions;
-
-class ActiveSessionsResource : public Wt::WResource {
-public:
-    ActiveSessionsResource(const std::string &password, Wt::WObject *parent = 0) : Wt::WResource(parent), _password(password) {}
-    virtual void handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response);
-
-private:
-    const std::string _password;
-};
-
-void ActiveSessionsResource::handleRequest(const Http::Request &request, Http::Response &response)
-{
-    auto password = request.getParameter("pwd");
-    if(_password.empty() || !password || _password != *password) {
-      response.setStatus(403);
-      response.out() << "403 Forbidden";
-      return;
-    }
-    response.out() << "Active sessions: " << activeSessions.size() << std::endl;
-    for(SkyPlanner *app: activeSessions) {
-        SkyPlanner::SessionInfo infos = app->sessionInfo();
-        response.out() << "Session " << app->sessionId() << ", started: " << boost::posix_time::to_simple_string(infos.started) << ", ip: "
-                       << infos.ipAddress << ", user agent: " << infos.userAgent << ", username: " << infos.username << std::endl;
-    }
-    response.setStatus(200);
-}
 
 WApplication *newSkyPlanner(const WEnvironment &env)
 {
@@ -70,7 +45,7 @@ int main(int argc, char **argv) {
         if(server.readConfigurationProperty("quit-password", quitResourcePassword)) {
             server.addResource(new QuitResource(quitResourcePassword), "/quit-forced");
             server.addResource(new QuitResource(quitResourcePassword, [] { return activeSessions.size() == 0; }), "/quit-waiting");
-            server.addResource(new ActiveSessionsResource(quitResourcePassword), "/active-sessions");
+            server.addResource(new ActiveSessionsResource(activeSessions, quitResourcePassword), "/active-sessions");
         }
         auto logo_path = boost::filesystem::path(RESOURCES_DIRECTORY) / "logo_350.png";
         server.log("notice") << "Using Logo resource: " << logo_path;
