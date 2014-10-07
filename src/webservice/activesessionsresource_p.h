@@ -7,8 +7,8 @@
 class ActiveSessionsResource::Private
 {
 public:
-    Private(std::vector<SkyPlanner*> sessions, const std::string &password, ActiveSessionsResource *q);
-    std::vector<SkyPlanner*> sessions;
+    Private(std::vector<SkyPlanner*> &sessions, const std::string &password, ActiveSessionsResource *q);
+    std::vector<SkyPlanner*> &sessions;
     const std::string password;
 private:
     ActiveSessionsResource *q;

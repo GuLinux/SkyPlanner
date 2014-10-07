@@ -6,7 +6,7 @@
 
 using namespace Wt;
 using namespace std;
-ActiveSessionsResource::Private::Private(vector<SkyPlanner *> sessions, const string &password, ActiveSessionsResource *q)
+ActiveSessionsResource::Private::Private(std::vector<SkyPlanner *> &sessions, const string &password, ActiveSessionsResource *q)
     : sessions(sessions), password(password), q(q)
 {
 }
