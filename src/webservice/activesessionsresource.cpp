@@ -33,13 +33,13 @@ void ActiveSessionsResource::handleRequest(const Http::Request &request, Http::R
       return;
     }
     Json::Value jsonSessionsValue(Json::ArrayType);
-    Json::Array jsonSessions = jsonSessionsValue;
+    Json::Array &jsonSessions = jsonSessionsValue;
     Json::Object jsonResponse;
     jsonResponse["sessions-count"] = {static_cast<long long>(d->sessions.size())};
     for(SkyPlanner *app: d->sessions) {
         SkyPlanner::SessionInfo infos = app->sessionInfo();
         Json::Value value(Json::ObjectType);
-        Json::Object session = value;
+        Json::Object &session = value;
         session["session-id"] = WString::fromUTF8(app->sessionId());
         session["started"] = WString::fromUTF8( boost::posix_time::to_iso_extended_string(infos.started) );
         session["ip-address"] = WString::fromUTF8(infos.ipAddress);
