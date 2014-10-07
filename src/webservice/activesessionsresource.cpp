@@ -24,6 +24,16 @@ ActiveSessionsResource::~ActiveSessionsResource()
 {
 }
 
+// TODO: move into a common place?
+
+Json::Value JsonObject(const std::map<string, Json::Value> &obj) {
+    Json::Value v(Json::ObjectType);
+    Json::Object &o = v;
+    for(auto element: obj)
+        o[element.first] = element.second;
+    return v;
+}
+
 void ActiveSessionsResource::handleRequest(const Http::Request &request, Http::Response &response)
 {
     auto password = request.getParameter("pwd");
@@ -38,14 +48,13 @@ void ActiveSessionsResource::handleRequest(const Http::Request &request, Http::R
     jsonResponse["sessions-count"] = {static_cast<long long>(d->sessions.size())};
     for(SkyPlanner *app: d->sessions) {
         SkyPlanner::SessionInfo infos = app->sessionInfo();
-        Json::Value value(Json::ObjectType);
-        Json::Object &session = value;
-        session["session-id"] = WString::fromUTF8(app->sessionId());
-        session["started"] = WString::fromUTF8( boost::posix_time::to_iso_extended_string(infos.started) );
-        session["ip-address"] = WString::fromUTF8(infos.ipAddress);
-        session["user-agent"] = WString::fromUTF8(infos.userAgent);
-        session["username"] = WString::fromUTF8(infos.username);
-        jsonSessions.push_back(value);
+        jsonSessions.push_back(JsonObject({
+            {"session-id", WString::fromUTF8(app->sessionId())},
+            {"started", WString::fromUTF8(boost::posix_time::to_iso_extended_string(infos.started))},
+            {"ip-address", WString::fromUTF8(infos.ipAddress)},
+            {"user-agent", WString::fromUTF8(infos.userAgent)},
+            {"username", WString::fromUTF8(infos.username)},
+        }));
     }
     jsonResponse["sessions"] = jsonSessionsValue;
     response.out() << Json::serialize(jsonResponse);
