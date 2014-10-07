@@ -3,6 +3,10 @@
 
 #include <utils/d_ptr_implementation.h>
 #include <Wt/Http/Response>
+#include <Wt/Json/Object>
+#include <Wt/Json/Array>
+#include <Wt/Json/Value>
+#include <Wt/Json/Serializer>
 
 using namespace Wt;
 using namespace std;
@@ -28,11 +32,22 @@ void ActiveSessionsResource::handleRequest(const Http::Request &request, Http::R
       response.out() << "403 Forbidden";
       return;
     }
-    response.out() << "Active sessions: " << d->sessions.size() << std::endl;
+    Json::Value jsonSessionsValue(Json::ArrayType);
+    Json::Array jsonSessions = jsonSessionsValue;
+    Json::Object jsonResponse;
+    jsonResponse["sessions-count"] = {static_cast<long long>(d->sessions.size())};
     for(SkyPlanner *app: d->sessions) {
         SkyPlanner::SessionInfo infos = app->sessionInfo();
-        response.out() << "Session " << app->sessionId() << ", started: " << boost::posix_time::to_simple_string(infos.started) << ", ip: "
-                       << infos.ipAddress << ", user agent: " << infos.userAgent << ", username: " << infos.username << std::endl;
+        Json::Value value(Json::ObjectType);
+        Json::Object session = value;
+        session["session-id"] = WString::fromUTF8(app->sessionId());
+        session["started"] = WString::fromUTF8( boost::posix_time::to_iso_extended_string(infos.started) );
+        session["ip-address"] = WString::fromUTF8(infos.ipAddress);
+        session["user-agent"] = WString::fromUTF8(infos.userAgent);
+        session["username"] = WString::fromUTF8(infos.username);
+        jsonSessions.push_back(value);
     }
+    jsonResponse["sessions"] = jsonSessionsValue;
+    response.out() << Json::serialize(jsonResponse);
     response.setStatus(200);
 }
