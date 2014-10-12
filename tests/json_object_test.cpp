@@ -69,3 +69,21 @@ BOOST_AUTO_TEST_CASE(Parsing) {
     BOOST_REQUIRE_EQUAL("3", anObject._string);
 }
 
+BOOST_AUTO_TEST_CASE(ParsingNestes) {
+    AnotherObject anObject;
+
+    anObject.fromJson(R"({
+                      "an_object" : {
+                          "number" : 5,
+                          "string" : "3"
+                      },
+                      "another_number" : 233,
+                      "another_string" : "123"
+                  })");
+
+    BOOST_REQUIRE_EQUAL(233, anObject._number);
+    BOOST_REQUIRE_EQUAL("123", anObject._string);
+    BOOST_REQUIRE_EQUAL("3", anObject._anObject._string);
+    BOOST_REQUIRE_EQUAL(5, anObject._anObject._number);
+}
+

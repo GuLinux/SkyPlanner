@@ -5,11 +5,8 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
 enable_testing()
 find_package(Wt 3.3.1 REQUIRED)
-find_package(Qt4 REQUIRED)
 find_package(GraphicsMagick REQUIRED)
 
-include(${QT_USE_FILE})
-add_definitions(${QT_DEFINITIONS} -DWT_NO_SLOT_MACROS)
 find_package(Boost REQUIRED COMPONENTS signals system filesystem chrono thread regex program_options random date_time OPTIONAL_COMPONENTS unit_test_framework )
 if(Wt_DBOPOSTGRES_LIBRARY)
     add_definitions(-DHAVE_WT_POSTGRES)
