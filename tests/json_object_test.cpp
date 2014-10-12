@@ -2,6 +2,9 @@
 #include "test_helper.h"
 
 #include "webservice/object.h"
+#include <Wt/Json/Object>
+#include <Wt/Json/Serializer>
+#include <Wt/Json/Parser>
 
 using namespace std;
 
@@ -18,11 +21,8 @@ BOOST_AUTO_TEST_CASE(TestConstruction) {
     AnObject anObject(5, "3");
 
     Wt::Json::Object o;
+    Wt::Json::parse(R"({"number" : 5, "string" : "3" })", o);
 
-    BOOST_REQUIRE_EQUAL(R"(
-{
-    "number" : 5,
-    "string" : "3"
-})", anObject.toJson());
+    BOOST_REQUIRE_EQUAL(Wt::Json::serialize(o), anObject.toJson());
 }
 
