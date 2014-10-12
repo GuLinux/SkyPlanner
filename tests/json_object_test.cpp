@@ -20,6 +20,18 @@ public:
     std::string _string;
     int _number;
 };
+class AnotherObject : public WtCommons::Json::Object {
+public:
+    AnotherObject() {
+        addField<string>("another_string", _string).addField<int>("another_number", _number).addField<WtCommons::Json::Object>("an_object", _anObject);
+    }
+    AnotherObject(int a_number, const string &a_string, const AnObject &anObject) : _number(a_number), _string(a_string), _anObject(anObject) {
+        addField<string>("another_string", _string).addField<int>("another_number", _number).addField<WtCommons::Json::Object>("an_object", _anObject);
+    }
+    std::string _string;
+    int _number;
+    AnObject _anObject;
+};
 
 BOOST_AUTO_TEST_CASE(TestConstruction) {
     AnObject anObject(5, "3");
@@ -28,6 +40,24 @@ BOOST_AUTO_TEST_CASE(TestConstruction) {
     Wt::Json::parse(R"({"number" : 5, "string" : "3" })", o);
 
     BOOST_REQUIRE_EQUAL(Wt::Json::serialize(o), anObject.toJson());
+}
+
+
+BOOST_AUTO_TEST_CASE(TestNestedObjectConstruction) {
+    AnObject anObject(5, "3");
+    AnotherObject anotherObject(233, "123", anObject);
+
+    Wt::Json::Object o;
+    Wt::Json::parse(R"({
+                    "an_object" : {
+                        "number" : 5,
+                        "string" : "3"
+                    },
+                    "another_number" : 233,
+                    "another_string" : "123"
+                })", o);
+
+    BOOST_REQUIRE_EQUAL(Wt::Json::serialize(o), anotherObject.toJson());
 }
 
 BOOST_AUTO_TEST_CASE(Parsing) {
