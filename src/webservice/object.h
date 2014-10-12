@@ -5,6 +5,13 @@
 #include <map>
 #include <boost/date_time.hpp>
 
+namespace Wt {
+namespace Json {
+class Value;
+class Object;
+}
+}
+
 namespace WtCommons {
 namespace Json {
 
@@ -24,9 +31,11 @@ public:
     Object &addField(const std::string &name, T &field);
 
     std::string toJson() const;
+    void fromJson(const std::string &jsonString);
 private:
     std::map<std::string, Field> fields;
     template<typename T> friend class FieldBuilder;
+    void from(const Wt::Json::Object &);
 };
 
 template<typename T>

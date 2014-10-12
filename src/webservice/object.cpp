@@ -1,6 +1,7 @@
 #include "object.h"
 #include <Wt/Json/Object>
 #include <Wt/Json/Serializer>
+#include <Wt/Json/Parser>
 
 using namespace std;
 
@@ -9,9 +10,13 @@ namespace Json {
 template<typename T> class Value {
 public:
     Value(void *p) : v(*reinterpret_cast<T*>(p)) {}
-    operator T() const { return v;}
+    operator T&() const { return v;}
+    void set(const T &t) {
+        v = t;
+    }
+
 private:
-    T v;
+    T &v;
 };
 
 string Object::toJson() const {
@@ -40,6 +45,28 @@ string Object::toJson() const {
     return Wt::Json::serialize(wtObject);
 }
 
+void Object::fromJson(const std::string &jsonString) {
+    Wt::Json::Object wtObject;
+    Wt::Json::parse(jsonString, wtObject);
+    from(wtObject);
+}
+
+void Object::from(const Wt::Json::Object &object) {
+    for(auto field: fields) {
+        auto value = object.at(field.first);
+        switch(field.second.type) {
+        case Field::String:
+            Value<string>(field.second.p).set(value);
+            break;
+        case Field::Int:
+            Value<int>(field.second.p).set(value);
+            break;
+        case Field::LongLong:
+            Value<long long>(field.second.p).set(value);
+            break;
+        }
+    }
+}
 
 } // namespace Json
 } // namespace WtCommons
