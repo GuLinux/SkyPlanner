@@ -23,7 +23,7 @@
 #include <Wt/WApplication>
 #include <Wt/WContainerWidget>
 #include "utils/d_ptr.h"
-#include "webservice/object.h"
+#include "Wt-Commons/json_object.h"
 
 class SkyPlanner : public Wt::WApplication
 {

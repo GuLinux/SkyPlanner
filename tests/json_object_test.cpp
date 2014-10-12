@@ -1,7 +1,8 @@
 #define BOOST_TEST_MAIN
 #include "test_helper.h"
 
-#include "webservice/object.h"
+#include "Wt-Commons/json_object.h"
+
 #include <Wt/Json/Object>
 #include <Wt/Json/Serializer>
 #include <Wt/Json/Parser>
