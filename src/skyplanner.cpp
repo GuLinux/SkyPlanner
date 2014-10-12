@@ -88,6 +88,10 @@ SkyPlanner::SessionInfo SkyPlanner::sessionInfo() const
     return sessionInfo;
 }
 
+SkyPlanner::SessionInfo::SessionInfo() {
+    addField("session-id", sessionId).addField("ip-address", ipAddress).addField("user-agent", userAgent).addField("username", username).addField("time-started", started);
+}
+
 const string SkyPlanner::HOME_PATH = "/home/";
 
 SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )

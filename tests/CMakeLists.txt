@@ -53,7 +53,9 @@ if(Boost_UNIT_TEST_FRAMEWORK_LIBRARY)
   #register_unit_test(utils utils_test.cpp ${CMAKE_SOURCE_DIR}/src/utils/utils.cpp)
   file(GLOB openweather_SRCS ${CMAKE_SOURCE_DIR}/src/openweather/*cpp)
 
-  register_unit_test(openweather_test openweather_parsing_test.cpp ${openweather_SRCS} ${CMAKE_SOURCE_DIR}/src/types.cpp )
-  link_unit_test(openweather_test ${Wt_LIBRARIES} nova)
+  #register_unit_test(openweather_test openweather_parsing_test.cpp ${openweather_SRCS} ${CMAKE_SOURCE_DIR}/src/types.cpp )
+  register_unit_test(json_object_test json_object_test.cpp ${CMAKE_SOURCE_DIR}/src/webservice/object.cpp )
+  link_unit_test(json_object_test ${Wt_LIBRARIES})
+  #link_unit_test(openweather_test ${Wt_LIBRARIES} nova)
 endif(Boost_UNIT_TEST_FRAMEWORK_LIBRARY)
 

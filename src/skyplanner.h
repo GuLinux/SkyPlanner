@@ -23,11 +23,14 @@
 #include <Wt/WApplication>
 #include <Wt/WContainerWidget>
 #include "utils/d_ptr.h"
+#include "webservice/object.h"
 
 class SkyPlanner : public Wt::WApplication
 {
 public:
-    struct SessionInfo {
+    struct SessionInfo  : public WtCommons::Json::Object {
+      SessionInfo();
+      std::string sessionId;
       std::string ipAddress;
       std::string userAgent;
       std::string username;
