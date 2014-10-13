@@ -31,7 +31,7 @@ WApplication *newSkyPlanner(const WEnvironment &env)
        std::cerr << nowString() << " - Ending session: activeSessions=" << activeSessions.size() << std::endl;
    });
    activeSessions.push_back(newApp);
-   std::cerr << nowString() << "Starting new session: activeSessions=" << activeSessions.size() << std::endl;
+   std::cerr << nowString() << " - Starting new session: activeSessions=" << activeSessions.size() << std::endl;
    return newApp;
 }
 
