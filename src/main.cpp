@@ -22,12 +22,16 @@ static vector<SkyPlanner*> activeSessions;
 
 WApplication *newSkyPlanner(const WEnvironment &env)
 {
-   auto newApp = new SkyPlanner(env, [](SkyPlanner *app) {
+   auto nowString = [] {
+       return boost::posix_time::to_iso_string(boost::posix_time::second_clock().local_time() );
+   };
+
+   auto newApp = new SkyPlanner(env, [nowString](SkyPlanner *app) {
        activeSessions.erase(std::remove(activeSessions.begin(), activeSessions.end(), app));
-       std::cerr << "Ending session: activeSessions=" << activeSessions.size() << std::endl;
+       std::cerr << nowString() << " - Ending session: activeSessions=" << activeSessions.size() << std::endl;
    });
    activeSessions.push_back(newApp);
-   std::cerr << "Starting new session: activeSessions=" << activeSessions.size() << std::endl;
+   std::cerr << nowString() << "Starting new session: activeSessions=" << activeSessions.size() << std::endl;
    return newApp;
 }
 
