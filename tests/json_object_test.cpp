@@ -20,6 +20,17 @@ public:
     std::string _string;
     int _number;
 };
+
+template<typename T>
+class AnObjectWithAnArray : public WtCommons::Json::Object {
+public:
+    AnObjectWithAnArray() {
+        addField<std::vector<T>>("an-array", anArray).addField<int>("number", _number);
+    }
+    std::vector<T> anArray;
+    int _number;
+};
+
 class AnotherObject : public WtCommons::Json::Object {
 public:
     AnotherObject() {
@@ -38,6 +49,18 @@ BOOST_AUTO_TEST_CASE(TestConstruction) {
 
     Wt::Json::Object o;
     Wt::Json::parse(R"({"number" : 5, "string" : "3" })", o);
+
+    BOOST_REQUIRE_EQUAL(Wt::Json::serialize(o), anObject.toJson());
+}
+BOOST_AUTO_TEST_CASE(TestConstructionWithArray) {
+    AnObjectWithAnArray<int> anObject;
+    anObject._number = 4;
+    anObject.anArray.push_back(5);
+    anObject.anArray.push_back(6);
+    anObject.anArray.push_back(9);
+
+    Wt::Json::Object o;
+    Wt::Json::parse(R"({"number" : 4, "an-array" : [5, 6, 9] })", o);
 
     BOOST_REQUIRE_EQUAL(Wt::Json::serialize(o), anObject.toJson());
 }
