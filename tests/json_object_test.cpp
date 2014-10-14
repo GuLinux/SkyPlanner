@@ -64,7 +64,20 @@ BOOST_AUTO_TEST_CASE(TestConstructionWithArray) {
 
     BOOST_REQUIRE_EQUAL(Wt::Json::serialize(o), anObject.toJson());
 }
+/*
+BOOST_AUTO_TEST_CASE(TestConstructionWithArrayOfObjects) {
+    AnObjectWithAnArray<std::shared_ptr<AnObject>> anObject;
+    anObject._number = 4;
+    anObject.anArray.push_back(std::make_shared<AnObject>(3, "5"));
+    anObject.anArray.push_back(std::make_shared<AnObject>(5, "7"));
+    anObject.anArray.push_back(std::make_shared<AnObject>(7, "9"));
 
+    Wt::Json::Object o;
+    Wt::Json::parse(R"({"number" : 4, "an-array" : [5, 6, 9] })", o);
+
+    BOOST_REQUIRE_EQUAL(Wt::Json::serialize(o), anObject.toJson());
+}
+*/
 
 BOOST_AUTO_TEST_CASE(TestNestedObjectConstruction) {
     AnObject anObject(5, "3");
