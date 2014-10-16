@@ -34,6 +34,7 @@ public:
       std::string ipAddress;
       std::string userAgent;
       std::string username;
+      std::string referrer;
       boost::posix_time::ptime started;
     };
 

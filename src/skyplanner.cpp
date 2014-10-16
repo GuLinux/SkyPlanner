@@ -89,7 +89,9 @@ SkyPlanner::SessionInfo SkyPlanner::sessionInfo() const
 }
 
 SkyPlanner::SessionInfo::SessionInfo() {
-    addField("session-id", sessionId).addField("ip-address", ipAddress).addField("user-agent", userAgent).addField("username", username).addField("time-started", started);
+    addField("session-id", sessionId).addField("ip-address", ipAddress).addField("user-agent", userAgent)
+    .addField("username", username).addField("time-started", started)
+    .addField("referrer", referrer);
 }
 
 const string SkyPlanner::HOME_PATH = "/home/";
@@ -106,6 +108,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
   d->sessionInfo.started = boost::posix_time::second_clock().local_time();
   d->sessionInfo.userAgent = environment.userAgent();
   d->sessionInfo.ipAddress = environment.headerValue("X-Forwarded-For");
+  d->sessionInfo.referrer = environment.referer();
 
   string googleVerificationCode;
   if(readConfigurationProperty("google-site-verification", googleVerificationCode)) {
