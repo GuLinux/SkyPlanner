@@ -567,4 +567,5 @@ Signal<> &SkyPlanner::telescopesListChanged() const
 
 void SkyPlanner::notify(const Wt::WEvent &e) {
     d->sessionInfo.lastEvent = boost::posix_time::second_clock().local_time();
+    WApplication::notify(e);
 }
