@@ -90,8 +90,11 @@ SkyPlanner::SessionInfo SkyPlanner::sessionInfo() const
 
 SkyPlanner::SessionInfo::SessionInfo() {
     addField("session-id", sessionId).addField("ip-address", ipAddress).addField("user-agent", userAgent)
-    .addField("username", username).addField("time-started", started)
+    .addField("username", username)
+    .addField("time-started", started, new WtCommons::Json::PosixTimeValue )
+    .addField("last-event", lastEvent, new WtCommons::Json::PosixTimeValue )
     .addField("referrer", referrer);
+    lastEvent = boost::posix_time::second_clock().local_time();
 }
 
 const string SkyPlanner::HOME_PATH = "/home/";
@@ -560,4 +563,8 @@ SkyPlanner::Notification::~Notification()
 Signal<> &SkyPlanner::telescopesListChanged() const
 {
   return d->telescopesListChanged;
+}
+
+void SkyPlanner::notify(const Wt::WEvent &e) {
+    d->sessionInfo.lastEvent = boost::posix_time::second_clock().local_time();
 }

@@ -36,6 +36,7 @@ public:
       std::string username;
       std::string referrer;
       boost::posix_time::ptime started;
+      boost::posix_time::ptime lastEvent;
     };
 
     typedef std::function<void(SkyPlanner*)> OnQuit;
@@ -62,6 +63,8 @@ public:
 
     Wt::Signal<> &telescopesListChanged() const;
     SessionInfo sessionInfo() const;
+    protected:
+    virtual void notify(const Wt::WEvent &e);
 private:
   static std::map<std::string,std::string> globalProperties;
   friend int main(int, char**);
