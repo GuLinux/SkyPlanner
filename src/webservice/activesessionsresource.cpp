@@ -48,13 +48,7 @@ void ActiveSessionsResource::handleRequest(const Http::Request &request, Http::R
     jsonResponse["sessions-count"] = {static_cast<long long>(d->sessions.size())};
     for(SkyPlanner *app: d->sessions) {
         SkyPlanner::SessionInfo infos = app->sessionInfo();
-        jsonSessions.push_back(JsonObject({
-            {"session-id", WString::fromUTF8(app->sessionId())},
-            {"started", WString::fromUTF8(boost::posix_time::to_iso_extended_string(infos.started))},
-            {"ip-address", WString::fromUTF8(infos.ipAddress)},
-            {"user-agent", WString::fromUTF8(infos.userAgent)},
-            {"username", WString::fromUTF8(infos.username)},
-        }));
+        jsonSessions.push_back(infos.toWtObject());
     }
     jsonResponse["sessions"] = jsonSessionsValue;
     response.out() << Json::serialize(jsonResponse);
