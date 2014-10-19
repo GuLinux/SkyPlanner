@@ -112,6 +112,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
   d->sessionInfo.userAgent = environment.userAgent();
   d->sessionInfo.ipAddress = environment.headerValue("X-Forwarded-For");
   d->sessionInfo.referrer = environment.referer();
+  d->sessionInfo.sessionId = sessionId();
 
   string googleVerificationCode;
   if(readConfigurationProperty("google-site-verification", googleVerificationCode)) {
