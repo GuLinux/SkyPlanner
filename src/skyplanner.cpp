@@ -83,9 +83,7 @@ SkyPlanner *SkyPlanner::instance()
 
 SkyPlanner::SessionInfo SkyPlanner::sessionInfo() const
 {
-    SessionInfo sessionInfo = d->sessionInfo;
-    sessionInfo.username = d->loginname.toUTF8();
-    return sessionInfo;
+    return d->sessionInfo;
 }
 
 SkyPlanner::SessionInfo::SessionInfo() {
@@ -280,7 +278,11 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
     if(d->session.login().loggedIn()) {
       Dbo::Transaction t(d->session);
       d->loginname = d->session.user()->loginName();
+      d->sessionInfo.username = d->session.user()->loginName().toUTF8();
       userSubMenu->setText(d->loginname);
+    } else {
+      d->loginname = {};
+      d->sessionInfo.username = {};
     }
     spLog("notice") << "***** "
                         << (d->session.login().loggedIn() ? "LOGIN"  : "LOGOUT")
