@@ -9,13 +9,13 @@
 
 using namespace Wt;
 using namespace std;
-SkyObjectsResource::Private::Private(Session &session, SkyObjectsResource *q)
-    : session(session), q(q)
+SkyObjectsResource::Private::Private(SkyObjectsResource *q)
+    : q(q)
 {
 }
 
-SkyObjectsResource::SkyObjectsResource(Session &session, WObject *parent)
-    : WResource(parent), d(session, this)
+SkyObjectsResource::SkyObjectsResource(WObject* parent)
+    : WResource(parent), d(this)
 {
 }
 
@@ -37,5 +37,8 @@ void SkyObjectsResource::handleRequest(const Http::Request &request, Http::Respo
     transform(begin(d->sessions), end(d->sessions), back_inserter(activeSessions.sessionInfos), [](SkyPlanner* a){ return a->sessionInfo(); });
     response.out() << activeSessions.toJson();
     */
+  Session session;
+  response.out() << "path: " << request.path() << endl;
+  response.out() << "pathinfo: " << request.pathInfo() << endl;
     response.setStatus(200);
 }

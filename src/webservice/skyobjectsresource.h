@@ -7,7 +7,7 @@
 class SkyPlanner;
 class SkyObjectsResource : public Wt::WResource {
 public:
-    explicit SkyObjectsResource(Session &session, Wt::WObject *parent = 0);
+    explicit SkyObjectsResource(Wt::WObject *parent = 0);
     ~SkyObjectsResource();
     virtual void handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response);
 private:

@@ -7,8 +7,7 @@
 class SkyObjectsResource::Private
 {
 public:
-    Private(Session &session, SkyObjectsResource *q);
-    Session &session;
+    Private(SkyObjectsResource* q);
 private:
     SkyObjectsResource *q;
 };

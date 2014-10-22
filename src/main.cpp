@@ -13,6 +13,7 @@
 #include "Wt-Commons/quitresource.h"
 #include <Wt/Http/Response>
 #include "webservice/activesessionsresource.h"
+#include "webservice/skyobjectsresource.h"
 
 using namespace std;
 using namespace Wt;
@@ -51,6 +52,9 @@ int main(int argc, char **argv) {
             server.addResource(new QuitResource(quitResourcePassword, [] { return activeSessions.size() == 0; }), "/quit-waiting");
             server.addResource(new ActiveSessionsResource(activeSessions, quitResourcePassword), "/active-sessions");
         }
+        
+	  server.addResource(new SkyObjectsResource(), "/skyobjects");
+
         auto logo_path = boost::filesystem::path(RESOURCES_DIRECTORY) / "logo_350.png";
         server.log("notice") << "Using Logo resource: " << logo_path;
         server.addResource(new WFileResource(logo_path.string()), "/skyplanner_logo.png");
