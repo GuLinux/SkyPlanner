@@ -24,16 +24,6 @@ ActiveSessionsResource::~ActiveSessionsResource()
 {
 }
 
-// TODO: move into a common place?
-
-Json::Value JsonObject(const std::map<string, Json::Value> &obj) {
-    Json::Value v(Json::ObjectType);
-    Json::Object &o = v;
-    for(auto element: obj)
-        o[element.first] = element.second;
-    return v;
-}
-
 struct ActiveSessions : public WtCommons::Json::Object {
   std::vector<SkyPlanner::SessionInfo> sessionInfos;
   WtCommons::Json::Array<SkyPlanner::SessionInfo, WtCommons::Json::Vector, WtCommons::Json::ObjectValue> jsonArray;
