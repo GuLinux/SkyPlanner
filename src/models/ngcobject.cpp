@@ -39,11 +39,14 @@ NgcObject::NgcObject()
 void NgcObject::mapJsonFields()
 {
   addField<double>("ar", _rightAscension);
+  addField<double>("dec", _declination);
+  addField<double>("magnitude", _magnitude);
+  addField<double>("angular_size", _angularSize);
 }
 
 void NgcObject::add_to_json(Wt::Json::Object& object) const
 {
-    WtCommons::Json::Object::add_to_json(object);
+    object["type"] = static_cast<int>(_type);
 }
 
 
