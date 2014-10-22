@@ -47,6 +47,9 @@ void NgcObject::mapJsonFields()
 void NgcObject::add_to_json(Wt::Json::Object& object) const
 {
     object["type"] = static_cast<int>(_type);
+    object["type_description"] = Wt::WString::fromUTF8(typeDescriptionKey());
+    if(_objectId)
+      object["object_id"] = Wt::WString::fromUTF8(*_objectId);
 }
 
 
