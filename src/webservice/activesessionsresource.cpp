@@ -34,6 +34,17 @@ Json::Value JsonObject(const std::map<string, Json::Value> &obj) {
     return v;
 }
 
+struct ActiveSessions : public WtCommons::Json::Object {
+  std::vector<SkyPlanner::SessionInfo> sessionInfos;
+  WtCommons::Json::Array<SkyPlanner::SessionInfo, WtCommons::Json::Vector, WtCommons::Json::ObjectValue> jsonArray;
+  
+  ActiveSessions() : jsonArray(sessionInfos) {}
+    virtual void add_to_json(Wt::Json::Object& object) const {
+      object["sessions"] = jsonArray.toWtValue();
+      object["sessions_count"] = static_cast<long long>(sessionInfos.size());
+    }
+};
+
 void ActiveSessionsResource::handleRequest(const Http::Request &request, Http::Response &response)
 {
     auto password = request.getParameter("pwd");
