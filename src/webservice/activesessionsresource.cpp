@@ -53,9 +53,8 @@ void ActiveSessionsResource::handleRequest(const Http::Request &request, Http::R
       response.out() << "403 Forbidden";
       return;
     }
-    std::vector<SkyPlanner::SessionInfo> sessionInfos;
-    transform(begin(d->sessions), end(d->sessions), back_inserter(sessionInfos), [](SkyPlanner* a){ return a->sessionInfo(); });
-    auto jsonArray =  WtCommons::Json::Array<SkyPlanner::SessionInfo, WtCommons::Json::Vector, WtCommons::Json::ObjectValue>(sessionInfos);
-    response.out() << jsonArray.toJson();
+    ActiveSessions activeSessions;
+    transform(begin(d->sessions), end(d->sessions), back_inserter(activeSessions.sessionInfos), [](SkyPlanner* a){ return a->sessionInfo(); });
+    response.out() << activeSessions.toJson();
     response.setStatus(200);
 }
