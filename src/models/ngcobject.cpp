@@ -24,34 +24,44 @@
 
 using namespace std;
 
-NgcObject::NgcObject(Angle rightAscension, Angle declination, float magnitude, Angle angularSize, NebulaType nebulaType,
-          const boost::optional<string> &objectId,
-          const boost::optional<string> &constellationAbbrev,
-          const boost::optional<string> &extraData)
+NgcObject::NgcObject(Angle rightAscension, Angle declination, double magnitude, Angle angularSize, NgcObject::NebulaType nebulaType, const boost::optional< string >& objectId, const boost::optional< string >& constellationAbbrev, const boost::optional< string >& extraData)
   : _rightAscension(rightAscension.radians() ), _declination(declination.radians() ), _magnitude(magnitude), _angularSize(angularSize.degrees() ),
     _type(nebulaType), _objectId(objectId), _constellationAbbrev(constellationAbbrev), _extraData(extraData)
 {
+  mapJsonFields();
 }
 
 NgcObject::NgcObject()
 {
+  mapJsonFields();
 }
+
+void NgcObject::mapJsonFields()
+{
+  addField<double>("ar", _rightAscension);
+}
+
+void NgcObject::add_to_json(Wt::Json::Object& object) const
+{
+    WtCommons::Json::Object::add_to_json(object);
+}
+
 
 NgcObject::~NgcObject()
 {
 }
 
-float NgcObject::angularSize() const
+double NgcObject::angularSize() const
 {
   return _angularSize;
 }
 
-float NgcObject::declination() const
+double NgcObject::declination() const
 {
   return _declination;
 }
 
-float NgcObject::magnitude() const
+double NgcObject::magnitude() const
 {
   return _magnitude;
 }
@@ -63,7 +73,7 @@ boost::optional<string> NgcObject::objectId() const
 {
   return _objectId;
 }
-float NgcObject::rightAscension() const
+double NgcObject::rightAscension() const
 {
   return _rightAscension;
 }

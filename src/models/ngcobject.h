@@ -28,6 +28,7 @@
 #include "constellationfinder.h"
 #include "types.h"
 #include "ptr_defs.h"
+#include <Wt-Commons/json_object.h>
 
 class Telescope;
 class AstroSessionObject;
@@ -44,7 +45,7 @@ namespace Wt {
 
     }
 }
-class NgcObject
+class NgcObject : public WtCommons::Json::Object
 {
 public:
     enum NebulaType
@@ -70,11 +71,11 @@ public:
     ~NgcObject();
     boost::optional<std::string> objectId() const;
     dbo::collection<NebulaDenominationPtr> nebulae() const;
-    float rightAscension() const;
-    float declination() const;
+    double rightAscension() const;
+    double declination() const;
     Coordinates::Equatorial coordinates() const;
-    float magnitude() const;
-    float angularSize() const;
+    double magnitude() const;
+    double angularSize() const;
     NebulaType type() const;
     static std::string typeDescriptionKey(NebulaType type);
     static Wt::WString typeDescription(NebulaType type);
@@ -106,19 +107,21 @@ public:
     std::vector<CatalogueDescription> descriptions() const;
     ConstellationFinder::Constellation constellation() const;
     void updateConstellation();
-    NgcObject(Angle rightAscension, Angle declination, float magnitude, Angle angularSize, NebulaType nebulaType,
+    NgcObject(Angle rightAscension, Angle declination, double magnitude, Angle angularSize, NebulaType nebulaType,
               const boost::optional<std::string> &objectId = boost::optional<std::string>(),
               const boost::optional<std::string> &constellationAbbrev = boost::optional<std::string>(),
               const boost::optional<std::string> &extraData = boost::optional<std::string>());
+    virtual void add_to_json(Wt::Json::Object& object) const;
 private:
     boost::optional<std::string> _objectId;
-    float _rightAscension, _declination, _magnitude, _angularSize;
+    double _rightAscension, _declination, _magnitude, _angularSize;
     NebulaType _type;
     dbo::collection<NebulaDenominationPtr> _nebulae;
     dbo::collection<NebulaDenominationPtr> _astroSessionObjects;
     dbo::dbo_traits<NgcObject>::IdType _id;
     boost::optional<std::string> _constellationAbbrev;
     boost::optional<std::string> _extraData;
+    void mapJsonFields();
 };
 
 
