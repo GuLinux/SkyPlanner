@@ -39,6 +39,7 @@ void SkyObjectsResource::handleRequest(const Http::Request &request, Http::Respo
     response.out() << activeSessions.toJson();
     */
   Session session;
+  dbo::Transaction t(session);
   if(request.pathInfo().empty() || request.pathInfo() == "/") {
     auto objects = session.find<NgcObject>().resultList();
     WtCommons::Json::Array<NgcObjectPtr, Wt::Dbo::collection, WtCommons::Json::PointerObjectConverter<NgcObject, Wt::Dbo::ptr>> jsonArray(objects);
