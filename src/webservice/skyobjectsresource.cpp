@@ -46,5 +46,9 @@ void SkyObjectsResource::handleRequest(const Http::Request &request, Http::Respo
     response.out() << jsonArray.toJson();
     response.setStatus(200);
   }
+  if(false) {
+    auto object = session.find<NgcObject>().where("id = ?").bind(0).resultValue();
+    response.out() << object->toJson();
+  }
   response.setStatus(404);
 }
