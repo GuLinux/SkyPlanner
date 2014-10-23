@@ -1,6 +1,7 @@
 #include "skyobjectsresource_p.h"
 
 #include <utils/d_ptr_implementation.h>
+#include "Models"
 #include <Wt/Http/Response>
 #include <Wt/Json/Object>
 #include <Wt/Json/Array>
@@ -38,7 +39,11 @@ void SkyObjectsResource::handleRequest(const Http::Request &request, Http::Respo
     response.out() << activeSessions.toJson();
     */
   Session session;
-  response.out() << "path: " << request.path() << endl;
-  response.out() << "pathinfo: " << request.pathInfo() << endl;
+  if(request.pathInfo().empty() || request.pathInfo() == "/") {
+    auto objects = session.find<NgcObject>().resultList();
+    WtCommons::Json::Array<NgcObjectPtr, Wt::Dbo::collection, WtCommons::Json::PointerObjectConverter<NgcObject, Wt::Dbo::ptr>> jsonArray(objects);
+    response.out() << jsonArray.toJson();
     response.setStatus(200);
+  }
+  response.setStatus(404);
 }
