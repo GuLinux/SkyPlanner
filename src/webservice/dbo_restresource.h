@@ -47,9 +47,6 @@ public:
     DboRestsResource<T> *handleAll() { return handle(Find(boost::regex("^/*$"), [](type_query &q, const Wt::Http::Request &r, const boost::smatch &s){} )); }
 private:
   std::list<Find> handlers;
-  class not_found_exception : public std::runtime_error {
-    not_found_exception() : std::runtime_error("404/Not Found") {}
-  };
 };
 
 template<typename T> void DboRestsResource<T>::handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response) {
@@ -70,7 +67,7 @@ template<typename T> void DboRestsResource<T>::handleRequest(const Wt::Http::Req
       }
       response.setStatus(200);
       auto objects = query.resultList();
-      WtCommons::Json::Array<Wt::Dbo::ptr<T>, Wt::Dbo::collection, WtCommons::Json::PointerObjectConverter<T, Wt::Dbo::ptr>> jsonArray(objects);
+      WtCommons::Json::Array<type_ptr, Wt::Dbo::collection, WtCommons::Json::PointerObjectConverter<T, Wt::Dbo::ptr>> jsonArray(objects);
       response.out() << jsonArray.toJson();
       return;
     }
