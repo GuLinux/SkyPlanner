@@ -78,7 +78,7 @@ int main(int argc, char **argv) {
       DSS::quickv,
       DSS::phase2_gsc2,
       DSS::phase2_gsc1,}) {
-        ViewPort viewPort = ViewPort::findOrCreate(DSS::poss2ukstu_blue, object, {}, t); // TODO: parameters
+        ViewPort viewPort = ViewPort::findOrCreate(dsstype, object, {}, t); // TODO: parameters
         DSSImage::ImageOptions dssImageOptions{viewPort.coordinates(), viewPort.angularSize(), viewPort.imageVersion(), DSSImage::Full};
         auto outfile = dssImageOptions.file(outdir);
         if(boost::filesystem::exists(outfile)) {
