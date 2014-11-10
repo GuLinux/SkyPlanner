@@ -5,6 +5,8 @@
 #include <vector>
 #include "dss.h"
 #include <widgets/dssimage.h>
+#include <utils/curl.h>
+#include <utils/utils.h>
 
 using namespace std;
 using namespace Wt;
@@ -64,6 +66,7 @@ int main(int argc, char **argv) {
 
   Session session(vm["db-connection"].as<string>(), dbTypes[vm["db-type"].as<string>()]);
   dbo::Transaction t(session);
+
   auto objects = session.find<NgcObject>().resultList();
   for(auto object: objects) {
     for(auto dsstype: vector<DSS::ImageVersion>{      
@@ -75,13 +78,22 @@ int main(int argc, char **argv) {
       DSS::quickv,
       DSS::phase2_gsc2,
       DSS::phase2_gsc1,}) {
-      ViewPort viewPort = ViewPort::findOrCreate(DSS::poss2ukstu_blue, object, {}, t); // TODO: parameters
-      DSSImage::ImageOptions dssImageOptions{viewPort.coordinates(), viewPort.angularSize(), viewPort.imageVersion(), DSSImage::Full};
-      auto outfile = dssImageOptions.file(outdir);
-      if(boost::filesystem::exists(outfile)) {
-        cerr << "File already existing: " << outfile << endl;
-        continue;
-      }
+        ViewPort viewPort = ViewPort::findOrCreate(DSS::poss2ukstu_blue, object, {}, t); // TODO: parameters
+        DSSImage::ImageOptions dssImageOptions{viewPort.coordinates(), viewPort.angularSize(), viewPort.imageVersion(), DSSImage::Full};
+        auto outfile = dssImageOptions.file(outdir);
+        if(boost::filesystem::exists(outfile)) {
+          cerr << "File already existing: " << outfile << endl;
+          continue;
+        }
+      ofstream out(outfile.string());
+      Curl curl{out};
+      Scope cleanup([&]{
+        out.close();
+        if( curl.header("Content-Type") != "image/gif"  || boost::lexical_cast<uint64_t>(curl.header("Content-length")) != boost::filesystem::file_size(outfile) || ! curl.requestOk() || curl.httpResponseCode() != 200 ) {
+          cerr << "Error downloading " << dssImageOptions.url() << ": " << curl.lastErrorMessage() << "; content type: " << curl.header("Content-Type") << ", status: " << curl.httpResponseCode() << endl;
+          boost::filesystem::remove(outfile);
+        }
+      });
       // cout << object.id() << "|" << dssImageOptions.url() << "|" << dssImageOptions.file(outdir).string() << endl;
     }
   }
