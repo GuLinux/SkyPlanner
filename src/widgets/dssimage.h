@@ -26,6 +26,7 @@
 #include <mutex>
 #include <memory>
 #include "dss.h"
+#include <boost/filesystem.hpp>
 
 class ViewPort;
 class DSSImage : public Wt::WCompositeWidget
@@ -47,6 +48,8 @@ class DSSImage : public Wt::WCompositeWidget
         Angle size;
       };
       OriginalCoordinates originalCoordinates;
+      std::string url() const;
+      boost::filesystem::path file(const boost::filesystem::path &cache_dir, const std::string &prefix = {}) const;
     };
     DSS::ImageVersion imageVersion() const;
     Wt::Signal<> &failed() const;

@@ -71,23 +71,23 @@ void DSSImage::Private::save(const boost::system::error_code &errorCode, const H
 {
   shared_ptr<DialogControl::Finish> finishDialogControl(new DialogControl::Finish{dialogControl});
   if(errorCode != boost::system::errc::success) {
-    WServer::instance()->log(aborted ? "notice" : "error") << "Download failed for " << imageLink() << ": " << errorCode.message(); 
+    WServer::instance()->log(aborted ? "notice" : "error") << "Download failed for " << imageOptions.url() << ": " << errorCode.message(); 
     if(!aborted) failed.emit();
     return;
   } 
   if(httpMessage.status() != 200) {
-    WServer::instance()->log(aborted ? "notice" : "error") << "Wrong http status for " << imageLink() << ": " << httpMessage.status(); 
+    WServer::instance()->log(aborted ? "notice" : "error") << "Wrong http status for " << imageOptions.url() << ": " << httpMessage.status(); 
     if(!aborted) failed.emit();
     return;
   }
   string contentType;
   if(httpMessage.getHeader("Content-Type")) contentType = *httpMessage.getHeader("Content-Type");
   if(contentType != "image/gif") {
-    WServer::instance()->log(aborted ? "notice" : "error") << "Wrong content type for " << imageLink() << ": expected image/gif, got " << contentType; 
+    WServer::instance()->log(aborted ? "notice" : "error") << "Wrong content type for " << imageOptions.url() << ": expected image/gif, got " << contentType; 
     if(!aborted) failed.emit();
     return;
   }
-  WServer::instance()->log("notice") << imageLink() << " correctly downloaded, saving to " << fullFile();
+  WServer::instance()->log("notice") << imageOptions.url() << " correctly downloaded, saving to " << fullFile();
   ofstream out(fullFile().string() );
   if(!out) {
     WServer::instance()->log("error") << "Error saving to " << fullFile() << ": " << strerror( errno );
@@ -118,7 +118,6 @@ map<DSSImage::ImageSize,DSSImage::Private::Image> DSSImage::Private::imageSizeMa
 
 boost::filesystem::path DSSImage::Private::Image::file(const DSSImage::ImageOptions &imageOptions)
 {
-  fs::path p;
   static string cacheDir("dss-cache");
   if(cacheDir.empty()) {
     bool success = wApp->readConfigurationProperty("dss-cache-dir", cacheDir);
@@ -127,28 +126,35 @@ boost::filesystem::path DSSImage::Private::Image::file(const DSSImage::ImageOpti
     fs::create_directories(cacheDir);
   }
 
-  string arSignFix = imageOptions.coordinates.rightAscension.degrees() < 0 ? "-" : "";
-  string decSignFix = imageOptions.coordinates.declination.degrees() < 0 ? "-" : "";
-  string cacheKey = format("%s%s-ar_%s%d-%d-%.1f_dec_%s%d-%d-%.1f_size_%d-%d-%.1f.gif")
-  % prefix
-  % DSS::imageVersion(imageOptions.imageVersion)
-  % (imageOptions.coordinates.rightAscension.sexagesimalHours().hours == 0 ? arSignFix : "")
-  % imageOptions.coordinates.rightAscension.sexagesimalHours().hours
-  % imageOptions.coordinates.rightAscension.sexagesimalHours().minutes
-  % imageOptions.coordinates.rightAscension.sexagesimalHours().seconds
-  % (imageOptions.coordinates.declination.sexagesimal().degrees == 0 ? decSignFix : "")
-  % imageOptions.coordinates.declination.sexagesimal().degrees
-  % imageOptions.coordinates.declination.sexagesimal().minutes
-  % imageOptions.coordinates.declination.sexagesimal().seconds
-  % imageOptions.size.sexagesimal().degrees
-  % imageOptions.size.sexagesimal().minutes
-  % imageOptions.size.sexagesimal().seconds;
+  auto p = imageOptions.file(cacheDir, prefix);
 
-  p = fs::path(cacheDir) / cacheKey;
   if( !fs::exists(p)  )
     resize(p, imageOptions);
   return p;
 }
+
+boost::filesystem::path DSSImage::ImageOptions::file(const boost::filesystem::path& cache_dir, const string &prefix) const
+{
+  string arSignFix = coordinates.rightAscension.degrees() < 0 ? "-" : "";
+  string decSignFix = coordinates.declination.degrees() < 0 ? "-" : "";
+  string cacheKey = format("%s%s-ar_%s%d-%d-%.1f_dec_%s%d-%d-%.1f_size_%d-%d-%.1f.gif")
+  % prefix
+  % DSS::imageVersion(imageVersion)
+  % (coordinates.rightAscension.sexagesimalHours().hours == 0 ? arSignFix : "")
+  % coordinates.rightAscension.sexagesimalHours().hours
+  % coordinates.rightAscension.sexagesimalHours().minutes
+  % coordinates.rightAscension.sexagesimalHours().seconds
+  % (coordinates.declination.sexagesimal().degrees == 0 ? decSignFix : "")
+  % coordinates.declination.sexagesimal().degrees
+  % coordinates.declination.sexagesimal().minutes
+  % coordinates.declination.sexagesimal().seconds
+  % size.sexagesimal().degrees
+  % size.sexagesimal().minutes
+  % size.sexagesimal().seconds;
+
+  return cache_dir / cacheKey;
+}
+
 
 void DSSImage::Private::Image::resize(const fs::path &destination, const DSSImage::ImageOptions &imageOptions)
 {
@@ -161,24 +167,26 @@ void DSSImage::Private::Image::resize(const fs::path &destination, const DSSImag
 }
 
 
-string DSSImage::Private::imageLink() const
+
+string DSSImage::ImageOptions::url() const
 {
-  double objectRect = imageOptions.size.arcMinutes();
-  string arSignFix = imageOptions.coordinates.rightAscension.degrees() < 0 ? "-" : "";
-  string decSignFix = imageOptions.coordinates.declination.degrees() < 0 ? "-" : "";
+  double objectRect = size.arcMinutes();
+  string arSignFix = coordinates.rightAscension.degrees() < 0 ? "-" : "";
+  string decSignFix = coordinates.declination.degrees() < 0 ? "-" : "";
 
   return format("http://archive.stsci.edu/cgi-bin/dss_search?v=%s&r=%s%d+%d+%.1f&d=%s%d+%d+%.1f&e=J2000&h=%d&w=%df&f=gif&c=none&fov=SM97&v3=")
-  % DSS::imageVersion(imageOptions.imageVersion)
-  % (imageOptions.coordinates.rightAscension.sexagesimalHours().hours == 0 ? arSignFix : "")
-  % imageOptions.coordinates.rightAscension.sexagesimalHours().hours
-  % imageOptions.coordinates.rightAscension.sexagesimalHours().minutes
-  % imageOptions.coordinates.rightAscension.sexagesimalHours().seconds
-  % (imageOptions.coordinates.declination.sexagesimal().degrees == 0 ? decSignFix : "")
-  % imageOptions.coordinates.declination.sexagesimal().degrees
-  % imageOptions.coordinates.declination.sexagesimal().minutes
-  % imageOptions.coordinates.declination.sexagesimal().seconds
+  % DSS::imageVersion(imageVersion)
+  % (coordinates.rightAscension.sexagesimalHours().hours == 0 ? arSignFix : "")
+  % coordinates.rightAscension.sexagesimalHours().hours
+  % coordinates.rightAscension.sexagesimalHours().minutes
+  % coordinates.rightAscension.sexagesimalHours().seconds
+  % (coordinates.declination.sexagesimal().degrees == 0 ? decSignFix : "")
+  % coordinates.declination.sexagesimal().degrees
+  % coordinates.declination.sexagesimal().minutes
+  % coordinates.declination.sexagesimal().seconds
   % objectRect % objectRect;
 }
+
 
 void DSSImage::Private::setImageFromCache(shared_ptr<DialogControl::Finish> finishDialogControl)
 {
@@ -336,7 +344,7 @@ void DSSImage::Private::DialogControl::downloadControl(bool downloading)
 void DSSImage::Private::wtDownload()
 {
   httpClient.abort();
-  httpClient.get(imageLink()); 
+  httpClient.get(imageOptions.url()); 
 }
 
 void DSSImage::Private::download()
@@ -380,7 +388,7 @@ void DSSImage::Private::curlDownload()
           });
             */
         });
-        curl->get(imageLink());
+        curl->get(imageOptions.url());
         WServer::instance()->post(progressHandler->app->sessionId(), [=] {
             Scope triggerUpdate([=]{ progressHandler->app->triggerUpdate(); });
             std::unique_lock<std::mutex> lock(progressHandler->mutex);
@@ -436,7 +444,7 @@ void DSSImage::Private::reload()
   container->clear();
   content = new WContainerWidget;
   if(showDSSLink) {
-    WAnchor *original = new WAnchor(imageLink(), "Original DSS Image Link");
+    WAnchor *original = new WAnchor(imageOptions.url(), "Original DSS Image Link");
     original->setInline(false);
     original->setTarget(Wt::TargetNewWindow);
     container->addWidget(original);
@@ -455,7 +463,7 @@ void DSSImage::Private::reload()
 
 WLink DSSImage::dssOriginalLink() const
 {
-  return d->imageLink();
+  return d->imageOptions.url();
 }
 
 void DSSImage::startDownload()

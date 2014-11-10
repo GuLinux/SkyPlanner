@@ -62,7 +62,6 @@ class DSSImage::Private
     Private(const DSSImage::ImageOptions &imageOptions, const std::shared_ptr<std::mutex> &downloadMutex, DSSImage *q );
     DSSImage::ImageOptions imageOptions;
 
-    std::string imageLink() const;
     void download();
     void curlDownload();
     void wtDownload();
