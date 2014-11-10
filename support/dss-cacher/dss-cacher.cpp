@@ -36,6 +36,7 @@ int main(int argc, char **argv) {
       ("help", "produce help message")
       ("db-connection", po::value<string>(), "database connection string")
       ("db-type", po::value<string>(), "database type (pg, sqlite3)")
+      ("outdir", po::value<string>(), "output directory")
   ;
   po::variables_map vm;
   po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -53,13 +54,14 @@ int main(int argc, char **argv) {
   vector<string> dbTypes_keys;
   transform(begin(dbTypes), end(dbTypes), back_inserter(dbTypes_keys), [](const pair<string,Session::Provider> &p){ return p.first; });
   
-  if (! check_option<string>(vm, "db-connection") || ! check_option<string>(vm, "db-type", dbTypes_keys)) {
+  if (! check_option<string>(vm, "outdir") || ! check_option<string>(vm, "db-connection") || ! check_option<string>(vm, "db-type", dbTypes_keys)) {
     cerr << desc;
     return 1;
   }
   
   cout << "Dbo connection: " << vm["db-connection"].as<string>() << ", type: " << vm["db-type"].as<string>() << endl;
-  
+  string outdir = vm["outdir"].as<string>();
+
   Session session(vm["db-connection"].as<string>(), dbTypes[vm["db-type"].as<string>()]);
   dbo::Transaction t(session);
   auto objects = session.find<NgcObject>().resultList();
@@ -75,7 +77,12 @@ int main(int argc, char **argv) {
       DSS::phase2_gsc1,}) {
       ViewPort viewPort = ViewPort::findOrCreate(DSS::poss2ukstu_blue, object, {}, t); // TODO: parameters
       DSSImage::ImageOptions dssImageOptions{viewPort.coordinates(), viewPort.angularSize(), viewPort.imageVersion(), DSSImage::Full};
-      cout << object.id() << "|" << dssImageOptions.url() << "|" << dssImageOptions.file("").string() << endl;
+      auto outfile = dssImageOptions.file(outdir);
+      if(boost::filesystem::exists(outfile)) {
+        cerr << "File already existing: " << outfile << endl;
+        continue;
+      }
+      // cout << object.id() << "|" << dssImageOptions.url() << "|" << dssImageOptions.file(outdir).string() << endl;
     }
   }
 }
