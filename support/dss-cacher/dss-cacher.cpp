@@ -94,6 +94,7 @@ int main(int argc, char **argv) {
           boost::filesystem::remove(outfile);
         }
       });
+      curl.get(dssImageOptions.url());
       // cout << object.id() << "|" << dssImageOptions.url() << "|" << dssImageOptions.file(outdir).string() << endl;
     }
   }
