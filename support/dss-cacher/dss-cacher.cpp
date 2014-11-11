@@ -78,7 +78,7 @@ int main(int argc, char **argv) {
   Session session(vm["db-connection"].as<string>(), dbTypes[vm["db-type"].as<string>()]);
   dbo::Transaction t(session);
 
-  auto objects = session.find<NgcObject>().resultList();
+  auto objects = session.find<NgcObject>().orderBy("magnitude ASC").resultList();
   for(auto object: objects) {
     if(!keepGoing)
       break;
