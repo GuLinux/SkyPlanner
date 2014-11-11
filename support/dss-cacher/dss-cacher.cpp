@@ -41,6 +41,47 @@ void handleInterrupt(int s) {
   cerr << "Catched interrupt, finishing current downloads and cleaning up..." << endl;
 }
 
+struct DSSDownloader {
+  string url;
+  boost::filesystem::path file;
+  string object_id;
+  double magnitude;
+  void download();
+  operator string() const { return format("{%s; magnitude: %d; url: %s; file: %s}") % object_id % magnitude % url % file.string(); }
+};
+
+
+void DSSDownloader::download()
+{
+  if(boost::filesystem::exists(file)) {
+    cerr << "File already existing: " << file << endl;
+    return;
+  }
+  ofstream out(file.string());
+  Curl curl{out};
+  Scope cleanup([&]{
+    auto received_content_type = curl.header("Content-Type");
+    auto received_content_length = boost::lexical_cast<uint64_t>(curl.header("Content-length"));
+    if(received_content_type != "image/gif" || received_content_length != boost::filesystem::file_size(file) || ! curl.requestOk() || curl.httpResponseCode() != 200) {
+      cerr << "Error downloading " << url << ": " << curl.lastErrorMessage() << "; content type: " << received_content_type << ", status: " << curl.httpResponseCode() << endl;
+      out << format(R"(
+	<!-- 
+	Error details:
+	  original url: %s
+	  curl response code: %d
+	  curl error message: %s
+	  expected size: %d
+	  actual size: %d
+	-->)") % url % curl.httpResponseCode() % curl.lastErrorMessage() % received_content_length % boost::filesystem::file_size(file);
+      out.close();
+      string suffix = format(".%d.html") % curl.httpResponseCode();
+      auto error_file = file;
+      boost::filesystem::rename(file, error_file.replace_extension(suffix));
+    }
+  });
+  curl.get(url);
+}
+
 
 int main(int argc, char **argv) {
   signal(SIGINT, handleInterrupt);
@@ -79,38 +120,18 @@ int main(int argc, char **argv) {
   dbo::Transaction t(session);
 
   auto objects = session.find<NgcObject>().orderBy("magnitude ASC").resultList();
+  int currentObject{0};
   for(auto object: objects) {
-    if(!keepGoing)
-      break;
-    for(auto dsstype: vector<DSS::ImageVersion>{      
-      DSS::poss2ukstu_red,
-      DSS::poss2ukstu_blue,
-      DSS::poss2ukstu_ir,
-      DSS::poss1_red,
-      DSS::poss1_blue,
-      DSS::quickv,
-      DSS::phase2_gsc2,
-      DSS::phase2_gsc1,}) {
+    for(auto dsstype: vector<DSS::ImageVersion>{ DSS::poss2ukstu_red, DSS::poss2ukstu_blue, DSS::poss2ukstu_ir, DSS::poss1_red,
+      DSS::poss1_blue, DSS::quickv, DSS::phase2_gsc2, DSS::phase2_gsc1,}) {
+	if(!keepGoing)
+	  break;
         ViewPort viewPort = ViewPort::findOrCreate(dsstype, object, {}, t); // TODO: parameters
         DSSImage::ImageOptions dssImageOptions{viewPort.coordinates(), viewPort.angularSize(), viewPort.imageVersion(), DSSImage::Full};
-        auto outfile = dssImageOptions.file(outdir);
-        if(boost::filesystem::exists(outfile)) {
-          cerr << "File already existing: " << outfile << endl;
-          continue;
-        }
-      ofstream out(outfile.string());
-      Curl curl{out};
-      Scope cleanup([&]{
-        out.close();
-        if( curl.header("Content-Type") != "image/gif"  || boost::lexical_cast<uint64_t>(curl.header("Content-length")) != boost::filesystem::file_size(outfile) || ! curl.requestOk() || curl.httpResponseCode() != 200 ) {
-          cerr << "Error downloading " << dssImageOptions.url() << ": " << curl.lastErrorMessage() << "; content type: " << curl.header("Content-Type") << ", status: " << curl.httpResponseCode() << endl;
-	  string suffix = format(".%d.html") % curl.httpResponseCode();
-	  auto error_file = outfile;
-          boost::filesystem::rename(outfile, error_file.replace_extension(suffix));
-        }
-      });
-      curl.get(dssImageOptions.url());
-      // cout << object.id() << "|" << dssImageOptions.url() << "|" << dssImageOptions.file(outdir).string() << endl;
+	DSSDownloader image { dssImageOptions.url(), dssImageOptions.file(outdir)};
+	string as_string = image;
+	cerr << format("%d/%d: %s") % ++currentObject % objects.size() % as_string << endl;
+	image.download();
     }
   }
 }
