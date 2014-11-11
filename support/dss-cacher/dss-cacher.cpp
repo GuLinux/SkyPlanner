@@ -7,6 +7,7 @@
 #include <widgets/dssimage.h>
 #include <utils/curl.h>
 #include <utils/utils.h>
+#include <utils/format.h>
 
 using namespace std;
 using namespace Wt;
@@ -91,7 +92,9 @@ int main(int argc, char **argv) {
         out.close();
         if( curl.header("Content-Type") != "image/gif"  || boost::lexical_cast<uint64_t>(curl.header("Content-length")) != boost::filesystem::file_size(outfile) || ! curl.requestOk() || curl.httpResponseCode() != 200 ) {
           cerr << "Error downloading " << dssImageOptions.url() << ": " << curl.lastErrorMessage() << "; content type: " << curl.header("Content-Type") << ", status: " << curl.httpResponseCode() << endl;
-          boost::filesystem::remove(outfile);
+	  string suffix = format(".%d.html") % curl.httpResponseCode();
+	  auto error_file = outfile;
+          boost::filesystem::rename(outfile, error_file.replace_extension(suffix));
         }
       });
       curl.get(dssImageOptions.url());
