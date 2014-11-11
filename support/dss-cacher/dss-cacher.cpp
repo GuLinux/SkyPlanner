@@ -3,6 +3,7 @@
 #include "session.h"
 #include <boost/program_options.hpp>
 #include <vector>
+#include <signal.h>
 #include "dss.h"
 #include <widgets/dssimage.h>
 #include <utils/curl.h>
@@ -33,7 +34,16 @@ bool check_option(const po::variables_map &vm, string name, const vector<T> &val
   return true;
 }
 
+bool keepGoing = true;
+
+void handleInterrupt(int s) {
+  keepGoing = false;
+  cerr << "Catched interrupt, finishing current downloads and cleaning up..." << endl;
+}
+
+
 int main(int argc, char **argv) {
+  signal(SIGINT, handleInterrupt);
   po::options_description desc("Allowed options");
   desc.add_options()
       ("help", "produce help message")
@@ -70,6 +80,8 @@ int main(int argc, char **argv) {
 
   auto objects = session.find<NgcObject>().resultList();
   for(auto object: objects) {
+    if(!keepGoing)
+      break;
     for(auto dsstype: vector<DSS::ImageVersion>{      
       DSS::poss2ukstu_red,
       DSS::poss2ukstu_blue,
