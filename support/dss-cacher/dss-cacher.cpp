@@ -9,6 +9,7 @@
 #include <utils/curl.h>
 #include <utils/utils.h>
 #include <utils/format.h>
+#include <boost/thread.hpp>
 
 using namespace std;
 using namespace Wt;
@@ -61,7 +62,12 @@ void DSSDownloader::download()
   Curl curl{out};
   Scope cleanup([&]{
     auto received_content_type = curl.header("Content-Type");
-    auto received_content_length = boost::lexical_cast<uint64_t>(curl.header("Content-length"));
+    uint64_t received_content_length = 0;
+    try {
+      received_content_length = boost::lexical_cast<uint64_t>(curl.header("Content-length"));
+    } catch(const std::exception &e) {
+      cerr << "error parsing content length from string '" << curl.header("Content-length") << "': " << e.what() << endl;
+    }
     if(received_content_type != "image/gif" || received_content_length != boost::filesystem::file_size(file) || ! curl.requestOk() || curl.httpResponseCode() != 200) {
       cerr << "Error downloading " << url << ": " << curl.lastErrorMessage() << "; content type: " << received_content_type << ", status: " << curl.httpResponseCode() << endl;
       out << format(R"(
@@ -81,6 +87,15 @@ void DSSDownloader::download()
   });
   curl.get(url);
 }
+
+class thread_pool {
+public:
+  thread_pool(int max_threads = 1) : max_threads(max_threads) {}
+  void run(std::function<void()> f);
+private:
+  int max_threads;
+  boost::mutex mutex;
+};
 
 
 int main(int argc, char **argv) {
