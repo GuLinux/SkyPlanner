@@ -152,6 +152,7 @@ int main(int argc, char **argv) {
   int currentObject{0};
   thread_pool pool(vm["threads"].as<int>());
   for(auto object: objects) {
+    currentObject++;
     for(auto dsstype: vector<DSS::ImageVersion>{ DSS::poss2ukstu_red, DSS::poss2ukstu_blue, DSS::poss2ukstu_ir, DSS::poss1_red,
       DSS::poss1_blue, DSS::quickv, DSS::phase2_gsc2, DSS::phase2_gsc1,}) {
 	if(!keepGoing)
@@ -160,7 +161,7 @@ int main(int argc, char **argv) {
         DSSImage::ImageOptions dssImageOptions{viewPort.coordinates(), viewPort.angularSize(), viewPort.imageVersion(), DSSImage::Full};
 	DSSDownloader image { dssImageOptions.url(), dssImageOptions.file(outdir)};
 	string as_string = image;
-	cerr << format("%d/%d: %s") % ++currentObject % objects.size() % as_string << endl;
+	cerr << format("%d/%d: %s") % currentObject % objects.size() % as_string << endl;
 	pool.run([=]{ image.download(); });
     }
   }
