@@ -82,15 +82,7 @@ int main(int argc, char **argv) {
   for(auto object: objects) {
     if(!keepGoing)
       break;
-    for(auto dsstype: vector<DSS::ImageVersion>{      
-      DSS::poss2ukstu_red,
-      DSS::poss2ukstu_blue,
-      DSS::poss2ukstu_ir,
-      DSS::poss1_red,
-      DSS::poss1_blue,
-      DSS::quickv,
-      DSS::phase2_gsc2,
-      DSS::phase2_gsc1,}) {
+    for(auto dsstype: vector<DSS::ImageVersion>{ DSS::poss2ukstu_red, DSS::poss2ukstu_blue, DSS::poss2ukstu_ir, DSS::poss1_red, DSS::poss1_blue, DSS::quickv, DSS::phase2_gsc2, DSS::phase2_gsc1,}) {
         ViewPort viewPort = ViewPort::findOrCreate(dsstype, object, {}, t); // TODO: parameters
         DSSImage::ImageOptions dssImageOptions{viewPort.coordinates(), viewPort.angularSize(), viewPort.imageVersion(), DSSImage::Full};
         auto outfile = dssImageOptions.file(outdir);
@@ -110,7 +102,6 @@ int main(int argc, char **argv) {
         }
       });
       curl.get(dssImageOptions.url());
-      // cout << object.id() << "|" << dssImageOptions.url() << "|" << dssImageOptions.file(outdir).string() << endl;
     }
   }
 }

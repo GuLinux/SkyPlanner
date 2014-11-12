@@ -112,20 +112,6 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
   d->sessionInfo.referrer = environment.referer();
   d->sessionInfo.sessionId = sessionId();
 
-  string googleVerificationCode;
-  if(readConfigurationProperty("google-site-verification", googleVerificationCode)) {
-    addMetaHeader("google-site-verification", googleVerificationCode);
-  }
-
-  static string facebookAppId;
-  if(facebookAppId.empty()) {
-    wApp->readConfigurationProperty("facebook-oauth2-app-id", facebookAppId);
-  }
-  if(!facebookAppId.empty()) {
-    addMetaHeader("fb:app_id", facebookAppId);
-    addMetaHeader("og:title", "SkyPlanner");
-    addMetaHeader("og:image", wApp->makeAbsoluteUrl("/skyplanner_logo.png"));
-  }
 
   string googleAnalytics_ua, googleAnalytics_domain;
   if(readConfigurationProperty("google-analytics-ua", googleAnalytics_ua) && readConfigurationProperty("google-analytics-domain", googleAnalytics_domain)) {
