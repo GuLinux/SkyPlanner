@@ -120,6 +120,7 @@ int main(int argc, char **argv) {
       ("db-type", po::value<string>(), "database type (pg, sqlite3)")
       ("outdir", po::value<string>(), "output directory")
       ("threads", po::value<int>()->default_value(1), "max concurrent downloads (threads), default=1")
+      ("minimum-free-space", po::value<int>()->default_value(500), "minimum disk free space (MB), default=500")
   ;
   po::variables_map vm;
   po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -147,7 +148,13 @@ int main(int argc, char **argv) {
 
   Session session(vm["db-connection"].as<string>(), dbTypes[vm["db-type"].as<string>()]);
   dbo::Transaction t(session);
+  
+  int minimum_free_space_mb = vm["minimum-free-space"].as<int>();
+  auto free_space_mb = [=] {
+    return boost::filesystem::space(outdir).available / 1024 / 1024;
+  };
 
+  cerr << "Free space (MB): " << free_space_mb() << endl;
   auto objects = session.find<NgcObject>().orderBy("magnitude ASC").resultList();
   int currentObject{0};
   thread_pool pool(vm["threads"].as<int>());
@@ -155,7 +162,7 @@ int main(int argc, char **argv) {
     currentObject++;
     for(auto dsstype: vector<DSS::ImageVersion>{ DSS::poss2ukstu_red, DSS::poss2ukstu_blue, DSS::poss2ukstu_ir, DSS::poss1_red,
       DSS::poss1_blue, DSS::quickv, DSS::phase2_gsc2, DSS::phase2_gsc1,}) {
-	if(!keepGoing)
+	if(!keepGoing || free_space_mb() <= minimum_free_space_mb)
 	  break;
         ViewPort viewPort = ViewPort::findOrCreate(dsstype, object, {}, t); // TODO: parameters
         DSSImage::ImageOptions dssImageOptions{viewPort.coordinates(), viewPort.angularSize(), viewPort.imageVersion(), DSSImage::Full};
