@@ -34,6 +34,7 @@ public:
     Wt::Signal<> &close() const;
     template<typename ObjectWidget>
     static AstroSessionObjectPtr add(const NgcObjectPtr &object, const AstroSessionPtr &astroSession, Session &session, ObjectWidget *objectWidget = nullptr);
+    static void add(const Wt::Dbo::collection< NgcObjectPtr >& ngcObjects, const AstroSessionPtr& astroSession, Session& session);
 private:
     D_PTR;
 };

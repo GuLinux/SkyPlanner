@@ -328,4 +328,5 @@ Dopo aver aggiunto una nuova sessione, clicca sul suo nome per aggiungere oggett
 <message id="weather_clouds">nuvole</message>
 <message id="weather_humidity">umidità</message>
 <message id="openweather_credits"><small>Servizio offerto da <a href='http://www.openweathermap.org/' target='_BLANK'>OpenWeatherMap.org</a></small></message>
+<message id="btn_add_all">Aggiungi tutti</message>
 </messages>

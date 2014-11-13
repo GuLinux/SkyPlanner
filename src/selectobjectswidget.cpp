@@ -102,11 +102,14 @@ void SelectObjectsWidget::Private::suggestedObjects(Dbo::Transaction& transactio
 {
   WContainerWidget *suggestedObjectsContainer = WW<WContainerWidget>();
 
-  suggestedObjectsTable = new AstroObjectsTable(session, {addToSessionAction}, AstroObjectsTable::FiltersButtonIntegrated, NgcObject::allNebulaTypesButStars(), columns);
+  suggestedObjectsTable = new AstroObjectsTable(session, {addToSessionAction}, AstroObjectsTable::FiltersButtonExternal, NgcObject::allNebulaTypesButStars(), columns);
   suggestedObjectsTable->objectsListChanged().connect([=](const AstroSessionObjectPtr &o, _n5) { objectsListChanged.emit(o); });
   suggestedObjectsTable->filtersChanged().connect([=](AstroObjectsTable::Filters, _n5) { populateSuggestedObjectsTable(); });
   suggestedObjectsContainer->setPadding(10);
   q->addTab(suggestedObjectsContainer, WString::tr("select_objects_widget_best_visible_objects"));
+  suggestedObjectsToolbar = WW<WContainerWidget>();
+  suggestedObjectsContainer->addWidget(suggestedObjectsTable->filtersButton());
+  suggestedObjectsContainer->addWidget(suggestedObjectsToolbar);
   suggestedObjectsContainer->addWidget(suggestedObjectsTable);
 }
 
@@ -116,6 +119,9 @@ void SelectObjectsWidget::Private::suggestedObjects(Dbo::Transaction& transactio
 void SelectObjectsWidget::Private::populateSuggestedObjectsTable( int pageNumber )
 {
     suggestedObjectsTable->clear();
+    delete suggestedObjectsAddAllButton;
+    WPushButton *suggestedObjectsAddAllButton = WW<WPushButton>(WString::tr("btn_add_all"));
+    suggestedObjectsToolbar->addWidget(suggestedObjectsAddAllButton);
     auto filters = suggestedObjectsTable->currentFilters();
     if( filters.types.size() == 0) {
       suggestedObjectsTable->tableFooter()->addWidget(WW<WText>(WString::tr("suggested_objects_empty_list")));
@@ -136,6 +142,10 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsTable( int pageNumber
       .where("astro_session_id = ?").bind(astroSession.id());
     suggestedObjectsTable->clear();
     auto results = ngcObjectsQuery.resultList();
+    suggestedObjectsAddAllButton->clicked().connect([=](WMouseEvent){
+      AstroSessionTab::add(results, astroSession, session);
+      objectsListChanged.emit({});
+    });
     vector<AstroObjectsTable::AstroObject> astroObjects;
     transform(begin(results), end(results), back_inserter(astroObjects), [=,&t](const NgcObjectPtr &o) {
       auto ephemerisCache = session.find<EphemerisCache>().where("astro_session_id = ?").bind(astroSession.id()).where("objects_id = ?").bind(o.id()).limit(1).resultValue();

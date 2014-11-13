@@ -128,10 +128,20 @@ AstroSessionObjectPtr AstroSessionTab::add(const NgcObjectPtr &ngcObject, const 
   return astroSessionObject;
 }
 
+void AstroSessionTab::add(const Dbo::collection<NgcObjectPtr> &ngcObjects, const AstroSessionPtr &astroSession, Session &session)
+{
+  Dbo::Transaction t(session);
+  for(auto ngcObject: ngcObjects) {
+      int existing = session.query<int>("select count(*) from astro_session_object where astro_session_id = ? AND objects_id = ? ").bind(astroSession.id() ).bind(ngcObject.id() );
+      if(existing>0)
+	continue;
+      astroSession.modify()->astroSessionObjects().insert(new AstroSessionObject(ngcObject));
+  }
+}
+
 template AstroSessionObjectPtr AstroSessionTab::add(const NgcObjectPtr &ngcObject, const AstroSessionPtr &astroSession, Session &session, WTableRow *objectWidget);
 template AstroSessionObjectPtr AstroSessionTab::add(const NgcObjectPtr &ngcObject, const AstroSessionPtr &astroSession, Session &session, WWidget *objectWidget);
 template AstroSessionObjectPtr AstroSessionTab::add(const NgcObjectPtr &ngcObject, const AstroSessionPtr &astroSession, Session &session, WMenuItem *objectWidget);
-
 void AstroSessionTab::Private::reload()
 {
   q->clear();
