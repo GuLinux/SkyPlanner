@@ -12,9 +12,11 @@ display: inline;
 }
     .skyplanner-notifications {
       position: fixed;
-      width: 100%;
-      top: 55px;
-      z-index: 999;
+      width: 30%;
+      min-width: 400px;
+      bottom: 0px;
+      right: 0px;
+      z-index: 9999;
     }
     .bold {
       font-weight: bold;
