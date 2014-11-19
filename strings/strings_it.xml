@@ -318,8 +318,12 @@ Dopo aver aggiunto una nuova sessione, clicca sul suo nome per aggiungere oggett
 
 
 <message id="share-report-enable">Abilita condivisione di questo report</message>
+<message id="share-sessionpreview-enable">Abilita condivisione di questa anteprima</message>
 <message id="share-report-message"><p>URL per condividere il report: </p><p><strong class="nowrap">{1}</strong></p></message>
+<message id="share-sessionpreview-message"><p>URL per condividere l'anteprima: </p><p><strong class="nowrap">{1}</strong></p></message>
 <message id="share-report-username">Report osservativo di <b>{1}</b></message>
+<message id="share-sessionpreview-username">Sessione osservativa di <b>{1}</b></message>
+
 <message id="reset-filters">Rimuovi filtri</message>
 
 <message id="weather-panel">Meteo</message>

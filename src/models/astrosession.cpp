@@ -113,3 +113,14 @@ void AstroSession::setReportShared(bool shared)
   _reportShared = shared;
 }
 
+bool AstroSession::previewShared() const
+{
+  return _previewShared;
+}
+
+void AstroSession::setPreviewShared(bool shared)
+{
+  _previewShared = shared;
+}
+
+

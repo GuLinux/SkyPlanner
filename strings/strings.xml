@@ -305,9 +305,12 @@ After you added a session, click it to add new objects.
 
 
 <message id="share-report-enable">Enable sharing for this report</message>
+<message id="share-sessionpreview-enable">Enable sharing for this preview</message>
 <message id="share-report-message"><p>URL for sharing this report: </p><p><strong class="nowrap">{1}</strong></p></message>
-
+<message id="share-sessionpreview-message"><p>URL for sharing this preview: </p><p><strong class="nowrap">{1}</strong></p></message>
 <message id="share-report-username">Observation report from <b>{1}</b></message>
+<message id="share-sessionpreview-username">Observation planned by <b>{1}</b></message>
+
 <message id="reset-filters">Remove filters</message>
 <message id="weather-panel">Weather</message>
 <message id="weather_not_available">Weather not available.</message>

@@ -53,6 +53,9 @@ AstroSessionPreview::AstroSessionPreview(const AstroGroup& astroGroup, const Geo
   : WCompositeWidget(parent), d(astroGroup, session, this)
 {
   spLog("notice") << "Switching to preview version..";
+  
+  string typeString = type == Report ? "report" : "sessionpreview";
+
   WContainerWidget *sessionPreviewContainer = WW<WContainerWidget>().css("astroobjects-list");
   setImplementation(sessionPreviewContainer);
   sessionPreviewContainer->setStyleClass("astroobjects-list");
@@ -63,7 +66,7 @@ AstroSessionPreview::AstroSessionPreview(const AstroGroup& astroGroup, const Geo
   if(type == PublicReport || type == PublicPreview) {
     Dbo::Transaction t(session);
     auto user = astroGroup.astroSession()->user()->loginName();
-    sessionPreviewContainer->addWidget(WW<WText>(WString("<h5 class='text-right'>{1}</h5>").arg(WString::tr("share-report-username").arg(user))) );
+    sessionPreviewContainer->addWidget(WW<WText>(WString("<h5 class='text-right'>{1}</h5>").arg(WString::tr(format("share-%s-username") % typeString ).arg(user))) );
   }
   WPushButton *printButton = WW<WPushButton>(WString::tr("buttons_print")).css("btn-info btn-sm");
   printButton->clicked().connect([=](WMouseEvent){
@@ -78,9 +81,8 @@ AstroSessionPreview::AstroSessionPreview(const AstroGroup& astroGroup, const Geo
   WPushButton *shareButton = WW<WPushButton>(WString::tr("buttons_share")).css("btn-success btn-sm").onClick([=](WMouseEvent){
     WDialog *dialog = new WDialog{WString::tr("buttons_share")};
     dialog->setMinimumSize(700, WLength::Auto);
-    WCheckBox *shareCheckBox = WW<WCheckBox>(WString::tr("share-report-enable"));
+    WCheckBox *shareCheckBox = WW<WCheckBox>(WString::tr(format("share-%s-enable") % typeString));
     dialog->contents()->addWidget(WW<WContainerWidget>().add(shareCheckBox));
-    string typeString = type == Report ? "report" : "sessionpreview";
     auto internalUrl = wApp->bookmarkUrl(format("/%s/%x/%s") % typeString % astroGroup.astroSession().id() % ::Utils::sanitizeForURL(astroGroup.astroSession()->name()) );
     
     
@@ -104,19 +106,31 @@ AstroSessionPreview::AstroSessionPreview(const AstroGroup& astroGroup, const Geo
     shareToolbox->bindString("page-url", wApp->makeAbsoluteUrl(internalUrl));
     shareToolbox->bindString("page-title", astroGroup.astroSession()->name() );
     
-    WContainerWidget *shareText = WW<WContainerWidget>().add(new WText{WString::tr("share-report-message").arg(wApp->makeAbsoluteUrl(internalUrl))}).add(shareToolbox);
+    WContainerWidget *shareText = WW<WContainerWidget>().add(new WText{WString::tr(format("share-%s-message") % typeString).arg(wApp->makeAbsoluteUrl(internalUrl))}).add(shareToolbox);
 
     dialog->contents()->addWidget(shareText);
+    
+    auto isShared = [=] {
+      if(type == Report)
+	return astroGroup.astroSession()->reportShared();
+      if(type == Preview)
+	return astroGroup.astroSession()->previewShared();
+      return false;
+    };
 
     shareCheckBox->changed().connect([=](_n1){
       Dbo::Transaction t(d->session);
-      astroGroup.astroSession().modify()->setReportShared(shareCheckBox->isChecked());
+      if(type == Report)
+	astroGroup.astroSession().modify()->setReportShared(shareCheckBox->isChecked());
+      if(type == Preview)
+	astroGroup.astroSession().modify()->setPreviewShared(shareCheckBox->isChecked());
+	
       astroGroup.astroSession().flush();
       
-      shareText->setHidden(!astroGroup.astroSession()->reportShared());
+      shareText->setHidden(!isShared());
     });
-    shareText->setHidden(!astroGroup.astroSession()->reportShared());
-    shareCheckBox->setChecked(astroGroup.astroSession()->reportShared());
+    shareText->setHidden(!isShared());
+    shareCheckBox->setChecked(isShared());
     
     dialog->footer()->addWidget(WW<WPushButton>(WString::tr("Wt.WMessageBox.Ok")).css("btn-primary").onClick([=](WMouseEvent){dialog->accept(); }));
     dialog->show();
