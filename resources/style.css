@@ -173,6 +173,7 @@ display: inline;
     }
 
     .image-inverse {
+/* TODO: http://www.html5canvastutorials.com/advanced/html5-canvas-invert-image-colors-tutorial/ */
       -webkit-filter: invert(100%);
     }
     .nav-tabs .close {
