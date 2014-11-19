@@ -302,6 +302,9 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
     if(internalPathMatches("/report")) {
       d->loadReport(internalPathNextPart("/report/"));
     }
+    if(internalPathMatches("/")) {
+      d->loadPreview(internalPathNextPart("/sessionpreview/"));
+    }
     if(internalPathMatches("/sessions")) {
       astrosessionspage->open(internalPathNextPart("/sessions/"));
     }
@@ -371,7 +374,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
 
  // searchByNameEdit->changed().connect([=](_n1){ startSearch(); });
   searchByNameEdit->keyWentUp().connect([=](WKeyEvent e) { if(e.key() == Key_Enter ) startSearch(); });
-  if(!d->session.login().loggedIn() && ! (internalPathMatches("/dss") || internalPathMatches("/report")) ) {
+  if(!d->session.login().loggedIn() && ! (internalPathMatches("/dss") || internalPathMatches("/report") || internalPathMatches("/sessionpreview")) ) {
     setInternalPath(HOME_PATH, true);
   }
   handlePath(internalPath());
@@ -435,6 +438,31 @@ void SkyPlanner::Private::loadReport( const std::string &hexId )
 
   // TODO: fetch telescope from user?
   auto report = new AstroSessionPreview{{astroSession, TelescopePtr{}, placeInfo.timezone}, placeInfo.geocoderPlace, session, {}, AstroSessionPreview::PublicReport};
+  report->backClicked().connect([=](_n6){
+    reportsContainer->clear();
+    widgets->setCurrentWidget( currentWidget );
+  });
+
+  reportsContainer->addWidget(report);
+  widgets->setCurrentWidget( reportsContainer );
+}
+
+void SkyPlanner::Private::loadPreview( const std::string &hexId )
+{
+  spLog("notice") << "Loading preview for session " << hexId;
+  WWidget *currentWidget = widgets->currentWidget();
+  reportsContainer->clear();
+  auto objectId = Utils::fromHexString<Dbo::dbo_traits<NgcObject>::IdType>(hexId);
+  Dbo::Transaction t(session);
+  AstroSessionPtr astroSession = session.find<AstroSession>().where("id = ?").where("preview_shared = ?").bind(objectId).bind(true);
+  if(!astroSession) {
+    wApp->setInternalPath(HOME_PATH, true);
+    return;
+  }
+  auto placeInfo = ::GeoCoder::placeInformation(astroSession->position(), astroSession->when());
+
+  // TODO: fetch telescope from user?
+  auto report = new AstroSessionPreview{{astroSession, TelescopePtr{}, placeInfo.timezone}, placeInfo.geocoderPlace, session, {}, AstroSessionPreview::PublicPreview};
   report->backClicked().connect([=](_n6){
     reportsContainer->clear();
     widgets->setCurrentWidget( currentWidget );

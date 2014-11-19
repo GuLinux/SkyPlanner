@@ -60,7 +60,7 @@ AstroSessionPreview::AstroSessionPreview(const AstroGroup& astroGroup, const Geo
     .arg(Utils::htmlEncode(WString::fromUTF8(d->astroGroup.astroSession()->name())))
     .arg(WLocalDateTime(astroGroup.astroSession()->wDateWhen().date(), astroGroup.astroSession()->wDateWhen().time())
     .toString("dddd dd MMMM yyyy")) ).css("text-center") );
-  if(type == PublicReport) {
+  if(type == PublicReport || type == PublicPreview) {
     Dbo::Transaction t(session);
     auto user = astroGroup.astroSession()->user()->loginName();
     sessionPreviewContainer->addWidget(WW<WText>(WString("<h5 class='text-right'>{1}</h5>").arg(WString::tr("share-report-username").arg(user))) );
@@ -80,8 +80,8 @@ AstroSessionPreview::AstroSessionPreview(const AstroGroup& astroGroup, const Geo
     dialog->setMinimumSize(700, WLength::Auto);
     WCheckBox *shareCheckBox = WW<WCheckBox>(WString::tr("share-report-enable"));
     dialog->contents()->addWidget(WW<WContainerWidget>().add(shareCheckBox));
-    
-    auto internalUrl = wApp->bookmarkUrl(format("/report/%x/%s") % astroGroup.astroSession().id() % ::Utils::sanitizeForURL(astroGroup.astroSession()->name()) );
+    string typeString = type == Report ? "report" : "sessionpreview";
+    auto internalUrl = wApp->bookmarkUrl(format("/%s/%x/%s") % typeString % astroGroup.astroSession().id() % ::Utils::sanitizeForURL(astroGroup.astroSession()->name()) );
     
     
     WTemplate *shareToolbox = WW<WTemplate>();
@@ -122,13 +122,13 @@ AstroSessionPreview::AstroSessionPreview(const AstroGroup& astroGroup, const Geo
     dialog->show();
   });
   WToolBar *toolbar = WW<WToolBar>().addCss("hidden-print pull-right").addButton(backButton).addButton(invertAllButton).addButton(printButton);
-  if(type == Report)
+  if(type == Report || type == Preview)
     toolbar->addButton(shareButton);
   sessionPreviewContainer->addWidget(toolbar);
 
   sessionPreviewContainer->addWidget(new PositionDetailsWidget{astroGroup, geoCoderPlace, session});
 
-  if(type == Preview) {
+  if(type == Preview || type == PublicPreview) {
     AstroObjectsTable *planetsTable = new AstroObjectsTable(session, {}, AstroObjectsTable::NoFiltersButton, {}, {AstroObjectsTable::Names, AstroObjectsTable::AR, AstroObjectsTable::DEC, AstroObjectsTable::Constellation, AstroObjectsTable::Magnitude, AstroObjectsTable::AngularSize, AstroObjectsTable::TransitTime, AstroObjectsTable::MaxAltitude});
     planetsTable->addStyleClass("planets-table");
     planetsTable->setResponsive(false);
@@ -157,7 +157,7 @@ AstroSessionPreview::AstroSessionPreview(const AstroGroup& astroGroup, const Geo
       }
     };
     displayReport();
-    if(type != PublicReport) {
+    if(type == Report || type == Preview) {
       toolbar->addButton(WW<WPushButton>(WString::tr("astrosessiontab_set_report")).css("btn-primary btn-sm hidden-pront").onClick([=,&session](WMouseEvent){
 	TextEditorDialog::report(session, astroGroup.astroSession(), displayReport, "astrosessiontab_set_report")->show();
       }));
@@ -195,7 +195,7 @@ AstroSessionPreview::AstroSessionPreview(const AstroGroup& astroGroup, const Geo
     WPushButton *editReportButton = WW<WPushButton>(WString::tr("Report")).css("btn-xs");
     WPushButton *editDescriptionButton = WW<WPushButton>(WString::tr("astroobject_actions_edit_description")).css("btn-xs");
     vector<WPushButton*> actionButtons = { collapseButton, hideDSSButton, hideButton };
-    if(type != PublicReport)
+    if(type == Report || type == Preview)
       actionButtons.insert(actionButtons.begin(), editDescriptionButton);
     if(type == Report)
         actionButtons.insert(actionButtons.begin(), editReportButton);
