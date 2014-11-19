@@ -112,6 +112,7 @@ public:
   void forceActionsAsToolBar(bool force);
   void planets(const AstroSessionPtr &astroSession, const Timezone &timezone);
   Wt::WPushButton *filtersButton() const;
+  std::vector<Row> rows() const;
 private:
   D_PTR;
 };

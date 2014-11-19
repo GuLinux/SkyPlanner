@@ -108,7 +108,11 @@ void SelectObjectsWidget::Private::suggestedObjects(Dbo::Transaction& transactio
   suggestedObjectsContainer->setPadding(10);
   q->addTab(suggestedObjectsContainer, WString::tr("select_objects_widget_best_visible_objects"));
   suggestedObjectsToolbar = WW<WContainerWidget>();
-  suggestedObjectsContainer->addWidget(suggestedObjectsTable->filtersButton());
+  suggestedObjectsToolbar->addWidget(WW<WPushButton>("Expand All").css("btn-sm").onClick([=](WMouseEvent){
+    for(auto row: suggestedObjectsTable->rows())
+      row.toggleMoreInfo();
+  }));
+  suggestedObjectsToolbar->addWidget(suggestedObjectsTable->filtersButton());
   suggestedObjectsContainer->addWidget(suggestedObjectsToolbar);
   suggestedObjectsContainer->addWidget(suggestedObjectsTable);
 }

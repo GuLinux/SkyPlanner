@@ -296,6 +296,7 @@ void AstroObjectsTable::populate(const vector<AstroObject> &objects, const Teles
     d->selectedRow = nullptr;
   };
   clearSelection();
+  d->rows.clear();
   d->header();
   d->tableFooter->clear();
   WTableRow *objectAddedRow = nullptr;
@@ -392,6 +393,7 @@ void AstroObjectsTable::populate(const vector<AstroObject> &objects, const Teles
       row->elementAt(d->columns.size())->addStyleClass("hidden-print");
     }
     astroObjectCell->setColumnSpan(d->columns.size() + (d->actions.size() ? 1 : 0));
+    d->rows.push_back(objectRow);
   }
   if(page && page.total > 1) {
     WContainerWidget *paginationWidget = WW<WContainerWidget>().addCss("pagination pagination-sm");
@@ -465,3 +467,9 @@ void AstroObjectsTable::forceActionsAsToolBar(bool force)
 {
   d->forceActionsAsToolBar = force;
 }
+
+vector< AstroObjectsTable::Row > AstroObjectsTable::rows() const
+{
+  return d->rows;
+}
+
