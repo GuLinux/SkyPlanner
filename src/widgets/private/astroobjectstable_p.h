@@ -67,6 +67,7 @@ class AstroObjectsTable::Private
     };
     std::map<std::string,FilterView> filterViews;
     template<typename T> T* filter(const std::string &name) const;
+    std::vector<Row> rows;
   private:
     class AstroObjectsTable *const q; 
 };
