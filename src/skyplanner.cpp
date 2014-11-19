@@ -302,7 +302,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
     if(internalPathMatches("/report")) {
       d->loadReport(internalPathNextPart("/report/"));
     }
-    if(internalPathMatches("/")) {
+    if(internalPathMatches("/sessionpreview")) {
       d->loadPreview(internalPathNextPart("/sessionpreview/"));
     }
     if(internalPathMatches("/sessions")) {
@@ -456,6 +456,7 @@ void SkyPlanner::Private::loadPreview( const std::string &hexId )
   Dbo::Transaction t(session);
   AstroSessionPtr astroSession = session.find<AstroSession>().where("id = ?").where("preview_shared = ?").bind(objectId).bind(true);
   if(!astroSession) {
+    spLog("notice") << "Preview for session " << objectId  << " not found, redirecting to home";
     wApp->setInternalPath(HOME_PATH, true);
     return;
   }
