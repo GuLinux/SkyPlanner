@@ -298,7 +298,7 @@ void AstroSessionTab::Private::reload()
   } else
     weatherWidget = nullptr;
   addObjectsTabWidget->objectsListChanged().connect( [=](const AstroSessionObjectPtr &o, _n5) { populate(o); } );
-  WTemplate *title = new WTemplate("<h3 style='display: block'>${tr:astrosessiontab_objects_title} ${counter}${filters-button}</h3>", sessionContainer);
+  WTemplate *title = new WTemplate("<h3 style='display: block'>${tr:astrosessiontab_objects_title} ${counter}${expand-button}${filters-button}</h3>", sessionContainer);
   title->addFunction("tr", &WTemplate::Functions::tr);
   title->bindWidget("counter", objectsCounter = WW<WText>("0").css("badge"));
 
@@ -353,7 +353,11 @@ void AstroSessionTab::Private::reload()
     columns.remove_if([](AstroObjectsTable::Column c){ return c == AstroObjectsTable::Difficulty || c == AstroObjectsTable::TransitTime || c == AstroObjectsTable::MaxAltitude; });
 
   sessionContainer->addWidget(astroObjectsTable = new AstroObjectsTable(session, actions, AstroObjectsTable::FiltersButtonExternal, NgcObject::allNebulaTypes(), columns ));
-  title->bindWidget("filters-button", WW<WPushButton>(astroObjectsTable->filtersButton()).addCss("btn-primary pull-right"));
+  title->bindWidget("filters-button", WW<WPushButton>(astroObjectsTable->filtersButton()).addCss("btn-sm pull-right"));
+  title->bindWidget("expand-button", WW<WPushButton>(WString::tr("btn-expand-all")).css("btn-sm").onClick([=](WMouseEvent){
+    for(auto row: astroObjectsTable->rows())
+      row.toggleMoreInfo();
+  }));
   astroObjectsTable->forceActionsAsToolBar(isPastSession(12)); 
   astroObjectsTable->objectsListChanged().connect([=](const AstroSessionObjectPtr &o, _n5) { populate(o); });
   astroObjectsTable->filtersChanged().connect([=](AstroObjectsTable::Filters, _n5){ populate(); });

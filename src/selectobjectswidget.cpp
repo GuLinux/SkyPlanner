@@ -112,8 +112,7 @@ void SelectObjectsWidget::Private::suggestedObjects(Dbo::Transaction& transactio
     for(auto row: suggestedObjectsTable->rows())
       row.toggleMoreInfo();
   }));
-  suggestedObjectsTable->filtersButton()->addStyleClass("btn-primary");
-  suggestedObjectsToolbar->addButton(suggestedObjectsTable->filtersButton());
+  suggestedObjectsToolbar->addButton(WW<WPushButton>(suggestedObjectsTable->filtersButton()).addCss("btn-primary btn-sm"));
   suggestedObjectsContainer->addWidget(suggestedObjectsToolbar);
   suggestedObjectsContainer->addWidget(suggestedObjectsTable);
 }
