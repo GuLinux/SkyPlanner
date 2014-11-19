@@ -316,4 +316,5 @@ After you added a session, click it to add new objects.
 <message id="weather_humidity">humidity</message>
 <message id="openweather_credits"><small>Courtesy of <a href='http://www.openweathermap.org/' target='_BLANK'>OpenWeatherMap.org</a></small></message>
 <message id="btn_add_all">Add all</message>
+<message id="btn-expand-all">Expand/collapse all</message>
 </messages>
