@@ -107,12 +107,13 @@ void SelectObjectsWidget::Private::suggestedObjects(Dbo::Transaction& transactio
   suggestedObjectsTable->filtersChanged().connect([=](AstroObjectsTable::Filters, _n5) { populateSuggestedObjectsTable(); });
   suggestedObjectsContainer->setPadding(10);
   q->addTab(suggestedObjectsContainer, WString::tr("select_objects_widget_best_visible_objects"));
-  suggestedObjectsToolbar = WW<WContainerWidget>();
-  suggestedObjectsToolbar->addWidget(WW<WPushButton>(WString::tr("btn-expand-all")).css("btn-sm").onClick([=](WMouseEvent){
+  suggestedObjectsToolbar = WW<WToolBar>();
+  suggestedObjectsToolbar->addButton(WW<WPushButton>(WString::tr("btn-expand-all")).css("btn-sm").onClick([=](WMouseEvent){
     for(auto row: suggestedObjectsTable->rows())
       row.toggleMoreInfo();
   }));
-  suggestedObjectsToolbar->addWidget(suggestedObjectsTable->filtersButton());
+  suggestedObjectsTable->filtersButton()->addStyleClass("btn-primary");
+  suggestedObjectsToolbar->addButton(suggestedObjectsTable->filtersButton());
   suggestedObjectsContainer->addWidget(suggestedObjectsToolbar);
   suggestedObjectsContainer->addWidget(suggestedObjectsTable);
 }
