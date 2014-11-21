@@ -320,4 +320,8 @@ After you added a session, click it to add new objects.
 <message id="openweather_credits"><small>Courtesy of <a href='http://www.openweathermap.org/' target='_BLANK'>OpenWeatherMap.org</a></small></message>
 <message id="btn_add_all">Add all</message>
 <message id="btn-expand-all">Expand/collapse all</message>
+<message id="suggested_objects_sort_magnitude_ascending">Sort by magnitude (ascending)</message>
+<message id="suggested_objects_sort_transit_ascending">Sort by observable Time (ascending)</message>
+<message id="suggested_objects_sort_magnitude_descending">Sort by magnitude (descending)</message>
+<message id="suggested_objects_sort_transit_descending">Sort by observable Time (descending)</message>
 </messages>

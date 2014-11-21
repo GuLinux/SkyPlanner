@@ -108,6 +108,20 @@ void SelectObjectsWidget::Private::suggestedObjects(Dbo::Transaction& transactio
   suggestedObjectsContainer->setPadding(10);
   q->addTab(suggestedObjectsContainer, WString::tr("select_objects_widget_best_visible_objects"));
   suggestedObjectsToolbar = WW<WToolBar>();
+  suggestedSortByCombo = WW<WComboBox>().css("input-sm").setInline(true);
+  suggestedSortByCombo->setModel(suggestedObjectsSortModel = new WStandardItemModel(suggestedObjectsContainer));
+  suggestedSortByCombo->activated().connect([=](int, _n5){populateSuggestedObjectsTable();});
+  
+  auto add_sort_option = [=](const string &label, const string &sort_by) {
+    auto item = new WStandardItem(WString::tr(label));
+    item->setData(sort_by);
+    suggestedObjectsSortModel->appendRow(item);
+  };
+  add_sort_option("suggested_objects_sort_magnitude_ascending", "magnitude asc");
+  add_sort_option("suggested_objects_sort_magnitude_descending", "magnitude desc");
+  add_sort_option("suggested_objects_sort_transit_ascending", "transit_time asc");
+  add_sort_option("suggested_objects_sort_transit_descending", "transit_time desc");
+  suggestedObjectsToolbar->addWidget(WW<WContainerWidget>().setInline(true).addCss("col-xs-3").add(suggestedSortByCombo));
   suggestedObjectsToolbar->addButton(WW<WPushButton>(WString::tr("btn-expand-all")).css("btn-sm").onClick([=](WMouseEvent){
     for(auto row: suggestedObjectsTable->rows())
       row.toggleMoreInfo();
@@ -139,7 +153,8 @@ void SelectObjectsWidget::Private::populateSuggestedObjectsTable( int pageNumber
     }
   
     auto page = AstroObjectsTable::Page::fromCount(pageNumber, objectsCount, [=](long n) { populateSuggestedObjectsTable(n); } );
-    auto ngcObjectsQuery = DboHelper::filterQuery<NgcObjectPtr>(t, "select o from objects o inner join ephemeris_cache on ephemeris_cache.objects_id = o.id", filters, page).orderBy("magnitude asc")
+    string sortBy = boost::any_cast<string>(suggestedObjectsSortModel->item(suggestedSortByCombo->currentIndex())->data());
+    auto ngcObjectsQuery = DboHelper::filterQuery<NgcObjectPtr>(t, "select o from objects o inner join ephemeris_cache on ephemeris_cache.objects_id = o.id", filters, page).orderBy(sortBy)
       .where("astro_session_id = ?").bind(astroSession.id());
     suggestedObjectsTable->clear();
     auto results = ngcObjectsQuery.resultList();

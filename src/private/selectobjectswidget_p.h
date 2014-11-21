@@ -40,6 +40,8 @@ public:
     Wt::Signal<Wt::Dbo::ptr<AstroSessionObject>> objectsListChanged;
     AstroObjectsTable *suggestedObjectsTable;
     Wt::WToolBar *suggestedObjectsToolbar;
+    Wt::WComboBox *suggestedSortByCombo;
+    Wt::WStandardItemModel *suggestedObjectsSortModel;
     Wt::WPushButton *suggestedObjectsAddAllButton = nullptr;
     void searchByCatalogueTab(Wt::Dbo::Transaction &transaction);
     void searchByNameTab(Wt::Dbo::Transaction &transaction);

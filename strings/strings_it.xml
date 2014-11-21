@@ -334,4 +334,8 @@ Dopo aver aggiunto una nuova sessione, clicca sul suo nome per aggiungere oggett
 <message id="openweather_credits"><small>Servizio offerto da <a href='http://www.openweathermap.org/' target='_BLANK'>OpenWeatherMap.org</a></small></message>
 <message id="btn_add_all">Aggiungi tutti</message>
 <message id="btn-expand-all">Espandi/contrai tutti</message>
+<message id="suggested_objects_sort_magnitude_ascending">Ordina per magnitudine (ascendente)</message>
+<message id="suggested_objects_sort_transit_ascending">Ordina per orario (ascendente)</message>
+<message id="suggested_objects_sort_magnitude_descending">Ordina per magnitudine (discendente)</message>
+<message id="suggested_objects_sort_transit_descending">Ordina per orario (discendente)</message>
 </messages>
