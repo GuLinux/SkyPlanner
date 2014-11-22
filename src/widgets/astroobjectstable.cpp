@@ -46,15 +46,18 @@ AstroObjectsTable::Private::Private( Session &session, const vector< AstroObject
 }
 
 #define BY_TYPE "filter_by_type_menu"
-#define BY_MINIMUM_MAGNITUDE "filter_by_minimum_magnitude_menu"
-#define BY_MAXIMUM_MAGNITUDE "filter_by_maximum_magnitude_menu"
+#define BY_MAGNITUDE "filter_by_magnitude_menu"
 #define BY_CONSTELLATION "filter_by_constellation_menu"
 #define BY_CATALOGUE "filter_by_catalogue_menu"
 #define BY_MINIMUM_ALTITUDE "filter_by_minimum_altitude_menu"
 #define BY_MAXIMUM_ALTITUDE "filter_by_maximum_altitude_menu"
 #define BY_OBSERVED "filter_by_observed_in_any_session"
 
-AstroObjectsTable::AstroObjectsTable(Session &session, const vector<Action> &actions, FiltersButtonDisplay showFilters, const set<NgcObject::NebulaType> &initialTypes, const std::list<Column> &columns, WContainerWidget *parent)
+AstroObjectsTable::AstroObjectsTable(Session &session,
+				     const vector<Action> &actions,
+				     FiltersButtonDisplay showFilters,
+				     const set<NgcObject::NebulaType> &initialTypes,
+				     const std::list<Column> &columns, WContainerWidget *parent)
   : WCompositeWidget(parent), d(session, actions, columns, this)
 {
   d->objectsTable = WW<WTable>().addCss("table table-hover astroobjects-table");
@@ -68,8 +71,7 @@ AstroObjectsTable::AstroObjectsTable(Session &session, const vector<Action> &act
       d->filtersBar->addWidget(d->filtersButton);
     
     d->addFilterItem(BY_TYPE, new FilterByTypeWidget(initialTypes));
-    d->addFilterItem(BY_MINIMUM_MAGNITUDE, new FilterByMagnitudeWidget({WString::tr("not_set"), {}, WString::tr("minimum_magnitude_label")}, {-2, 20}));
-    d->addFilterItem(BY_MAXIMUM_MAGNITUDE, new FilterByMagnitudeWidget({{}, WString::tr("not_set"), WString::tr("maximum_magnitude_label")}, {-2, 20}, 20));
+    d->addFilterItem(BY_MAGNITUDE, new FilterByMagnitudeWidget({-5,25}));
     d->addFilterItem(BY_CONSTELLATION, new FilterByConstellation);
     d->addFilterItem(BY_CATALOGUE, new FilterByCatalogue(session));
     d->addFilterItem(BY_MINIMUM_ALTITUDE, new FilterByAltitudeWidget{WString::tr("minimum-altitude"), {Angle::degrees(0), Angle::degrees(0), Angle::degrees(80)} });
@@ -118,11 +120,8 @@ template<typename T> void AstroObjectsTable::Private::addFilterItem(const string
 AstroObjectsTable::Filters AstroObjectsTable::Private::filters() const
 {
   Filters _filters;
-  if(!filter<FilterByMagnitudeWidget>(BY_MINIMUM_MAGNITUDE)->isMinimum())
-    _filters.minimumMagnitude = filter<FilterByMagnitudeWidget>(BY_MINIMUM_MAGNITUDE)->magnitude();
-  if(!filter<FilterByMagnitudeWidget>(BY_MAXIMUM_MAGNITUDE)->isMaximum())
-    _filters.maximumMagnitude = filter<FilterByMagnitudeWidget>(BY_MAXIMUM_MAGNITUDE)->magnitude();
-
+  _filters.minimumMagnitude = filter<FilterByMagnitudeWidget>(BY_MAGNITUDE)->value().minimum;
+  _filters.maximumMagnitude = filter<FilterByMagnitudeWidget>(BY_MAGNITUDE)->value().maximum;
   _filters.catalogue = filter<FilterByCatalogue>(BY_CATALOGUE)->selectedCatalogue();
   _filters.constellation = filter<FilterByConstellation>(BY_CONSTELLATION)->selectedConstellation();
   _filters.types = filter<FilterByTypeWidget>(BY_TYPE)->selected();
@@ -132,10 +131,11 @@ AstroObjectsTable::Filters AstroObjectsTable::Private::filters() const
   return _filters;
 }
 
-void AstroObjectsTable::setMaximumMagnitude( double magnitudeLimit )
+void AstroObjectsTable::setMagnitudeRange(const FilterByMagnitudeWidget::Range& magnitudeRange)
 {
-  d->filter<FilterByMagnitudeWidget>(BY_MINIMUM_MAGNITUDE)->setMaximum(magnitudeLimit);
+  d->filter<FilterByMagnitudeWidget>(BY_MAGNITUDE)->setRange(magnitudeRange);
 }
+
 
 template<typename T> T* AstroObjectsTable::Private::filter(const string &name) const
 {

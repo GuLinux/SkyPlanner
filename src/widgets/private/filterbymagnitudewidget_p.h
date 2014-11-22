@@ -8,19 +8,17 @@ namespace Wt {
 class FilterByMagnitudeWidget::Private
 {
 public:
-  Private(double initialValue, FilterByMagnitudeWidget *q);
+  Private(Range range, FilterByMagnitudeWidget *q);
   Wt::Signal<> changed;
-  Wt::WString minimumValueText;
-  Wt::WString maximumValueText;
   Wt::WSlider *magnitudeSlider;
-  Wt::WText *valueLabel;
-  double initialValue;
-  void checkValue();
   Wt::WPushButton *button;
-  void setLabel(Range range);
+  Range range;
+  Range initialRange;
+  void updateLabel();
 private:
   FilterByMagnitudeWidget *q;
 };
+
 
 #endif // FILTERBYMAGNITUDEWIDGET_H
 

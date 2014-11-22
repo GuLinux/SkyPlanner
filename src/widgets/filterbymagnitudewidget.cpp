@@ -16,25 +16,21 @@ using namespace Wt;
 using namespace WtCommons;
 using namespace std;
 
-FilterByMagnitudeWidget::Private::Private(double initialValue, FilterByMagnitudeWidget *q): initialValue(initialValue), q(q)
+FilterByMagnitudeWidget::Private::Private(Range range, FilterByMagnitudeWidget *q): range(range), initialRange(range), q(q)
 {
 }
 
-FilterByMagnitudeWidget::FilterByMagnitudeWidget(const Options &options, const Range &range, WContainerWidget *parent)
- : FilterByMagnitudeWidget(options, range, range.minimum, parent)
-{
-}
 
-FilterByMagnitudeWidget::FilterByMagnitudeWidget(const Options &options, const Range &range, double initialValue, WContainerWidget *parent)
-  : WCompositeWidget(parent), d(initialValue, this)
+FilterByMagnitudeWidget::FilterByMagnitudeWidget(const FilterByMagnitudeWidget::Range& range, WContainerWidget* parent)
+  : WCompositeWidget(parent), d(range, this)
 {
-
   setImplementation(d->button = WW<WPushButton>().addCss("btn-sm btn-link filter-widget-link"));
   d->button->clicked().connect([=](WMouseEvent){
     WDialog *dialog = new WDialog;
     dialog->setClosable(true);
     dialog->footer()->addWidget(WW<WPushButton>(WString::tr("Wt.WMessageBox.Ok")).onClick([=](WMouseEvent){dialog->accept();}));
-    auto slider = [=](double value) {
+
+    auto slider = [=](double &value) {
       auto _slider = new WSlider(Horizontal);
       _slider->setWidth(400);
       _slider->setMinimum(-50);
@@ -42,42 +38,48 @@ FilterByMagnitudeWidget::FilterByMagnitudeWidget(const Options &options, const R
       _slider->setValue(value*10);
       WText *label = WW<WText>().css("badge pull-right");
       auto set_label = [=](double value){
-	label->setText(WString::fromUTF8(format("%.2f") % value));
+	label->setText(WString::fromUTF8(format("%.1f") % value));
       };
       set_label(value);
-      _slider->valueChanged().connect([=](int v, _n5){ set_label(static_cast<double>(v) / 10.); });
+      _slider->valueChanged().connect([=,&value](int v, _n5){
+	value = static_cast<double>(v) / 10.;
+	set_label(value);
+      });
       dialog->contents()->addWidget(label);
       dialog->contents()->addWidget(WW<WContainerWidget>().add(_slider));
       return _slider;
     };
     dialog->contents()->addWidget(WW<WLabel>(WString::tr("minimum_magnitude_label")));
-    dialog->contents()->addWidget(slider(-5));
+    dialog->contents()->addWidget( slider(d->range.minimum));
     dialog->contents()->addWidget(WW<WLabel>(WString::tr("maximum_magnitude_label")));
-    dialog->contents()->addWidget(slider(20));
+    dialog->contents()->addWidget( slider(d->range.maximum));
+    dialog->finished().connect([=](int result, _n5){
+      if(result == WDialog::Rejected) {
+	resetDefaultValue();
+	return;
+      }
+      d->changed.emit();
+      d->updateLabel();
+    });
     dialog->show();
   });
-  d->setLabel({-1, 10});
-}
-
-
-void FilterByMagnitudeWidget::Private::setLabel(FilterByMagnitudeWidget::Range range)
-{
-  button->setText(WString::tr("magnitude_label").arg(range.minimum).arg(range.maximum));
-}
-
-
-void FilterByMagnitudeWidget::Private::checkValue()
-{
-  spLog("notice") << " magnitude: " << q->magnitude() << ", minimum: " << magnitudeSlider->minimum() << ", maximum: " << magnitudeSlider->maximum() << "minText: " << minimumValueText << ", maxText: " << maximumValueText;
-  valueLabel->setText(format("%.1f") % q->magnitude() );
-  if(q->magnitude()*10 == magnitudeSlider->minimum() && !minimumValueText.empty())
-    valueLabel->setText(minimumValueText);
-  if(q->magnitude()*10 == magnitudeSlider->maximum() && !maximumValueText.empty())
-    valueLabel->setText(maximumValueText);
+  d->updateLabel();
 }
 
 FilterByMagnitudeWidget::~FilterByMagnitudeWidget()
 {
+}
+
+void FilterByMagnitudeWidget::setRange(const FilterByMagnitudeWidget::Range& range)
+{
+  d->range = range;
+  d->updateLabel();
+}
+
+
+void FilterByMagnitudeWidget::Private::updateLabel()
+{
+  button->setText(WString::tr("magnitude_label").arg((format("%.1f") % range.minimum).str()).arg((format("%.1f") % range.maximum).str()));
 }
 
 Signal<> &FilterByMagnitudeWidget::changed() const
@@ -85,41 +87,14 @@ Signal<> &FilterByMagnitudeWidget::changed() const
   return d->changed;
 }
 
-void FilterByMagnitudeWidget::setMinimum(double minimum)
+FilterByMagnitudeWidget::Range FilterByMagnitudeWidget::value() const
 {
-//  d->magnitudeSlider->setMinimum(minimum*10);
-}
-
-void FilterByMagnitudeWidget::setMaximum(double maximum)
-{
-//  d->magnitudeSlider->setMaximum(maximum*10);
-}
-
-void FilterByMagnitudeWidget::setRange(const Range &range)
-{
-//   setMinimum(range.minimum);
-//   setMaximum(range.maximum);
-}
-
-double FilterByMagnitudeWidget::magnitude() const
-{
-  return -1 ;
-}
-
-bool FilterByMagnitudeWidget::isMinimum() const
-{
-  return true;
-}
-
-bool FilterByMagnitudeWidget::isMaximum() const
-{
-  return false;
+  return d->range;
 }
 
 
 void FilterByMagnitudeWidget::resetDefaultValue()
 {
-//   d->magnitudeSlider->setValue(d->initialValue*10.);
-//   d->checkValue();
+  d->range = d->initialRange;
   d->changed.emit();
 }

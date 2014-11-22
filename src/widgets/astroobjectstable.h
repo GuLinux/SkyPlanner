@@ -23,6 +23,7 @@
 #include <Wt/WCompositeWidget>
 #include "utils/d_ptr.h"
 #include "models/Models"
+#include "filterbymagnitudewidget.h"
 #include <functional>
 #include <boost/logic/tribool.hpp>
 
@@ -96,7 +97,9 @@ public:
   enum Column { Names, Type, AR, DEC, Constellation, AngularSize, Magnitude, TransitTime, MaxAltitude, Difficulty };
   enum FiltersButtonDisplay { NoFiltersButton, FiltersButtonIntegrated, FiltersButtonExternal };
   static const std::list<Column> allColumns;
-  AstroObjectsTable(Session &session, const std::vector<Action> &actions = {}, FiltersButtonDisplay showFilters = FiltersButtonIntegrated,
+  AstroObjectsTable(Session &session,
+		    const std::vector<Action> &actions = {},
+		    FiltersButtonDisplay showFilters = FiltersButtonIntegrated,
                     const std::set<NgcObject::NebulaType> &initialTypes = NgcObject::allNebulaTypes(),
                     const std::list<AstroObjectsTable::Column> &columns = allColumns,
                     Wt::WContainerWidget *parent = 0);
@@ -104,7 +107,7 @@ public:
   void clear();
   Wt::Signal<Filters> &filtersChanged() const;
   Filters currentFilters() const;
-  void setMaximumMagnitude(double magnitudeLimit);
+  void setMagnitudeRange(const FilterByMagnitudeWidget::Range &magnitudeRange);
   Wt::WContainerWidget *tableFooter() const;
   void setTableAttribute(const std::string &attributeName, const std::string &attributeValue);
   void setResponsive(bool responsive);

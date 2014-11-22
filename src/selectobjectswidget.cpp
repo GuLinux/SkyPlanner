@@ -172,7 +172,7 @@ void SelectObjectsWidget::populateFor(const Dbo::ptr< Telescope > &telescope , T
   d->suggestedObjectsTable->clear();
 
   double magnitudeLimit = (telescope ? telescope->limitMagnitudeGain() + 6.5 : 12);
-  d->suggestedObjectsTable->setMaximumMagnitude(magnitudeLimit - 0.5);
+  d->suggestedObjectsTable->setMagnitudeRange({-5, magnitudeLimit - 0.5});
   d->selectedTelescope = telescope;
   d->timezone = timezone;
   if(!d->astroSession->position()) return;

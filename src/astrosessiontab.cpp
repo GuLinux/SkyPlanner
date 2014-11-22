@@ -373,7 +373,7 @@ void AstroSessionTab::Private::reload()
   //actionsContainer->addWidget( telescopeComboContainer = WW<WContainerWidget>().css("form-inline pull-right").add(telescopeComboLabel).add(telescopeCombo));
   telescopeCombo->activated().connect([=](int index, _n5){
     selectedTelescope = boost::any_cast<Dbo::ptr<Telescope>>(telescopesModel->item(index)->data());
-    astroObjectsTable->setMaximumMagnitude(selectedTelescope->limitMagnitudeGain() + 6.5);
+    astroObjectsTable->setMagnitudeRange({-5, selectedTelescope->limitMagnitudeGain() + 6.5});
     populate();
     addObjectsTabWidget->populateFor(selectedTelescope, timezone);
   });
@@ -398,7 +398,7 @@ void AstroSessionTab::Private::reload()
 
       if(defaultItem)
         telescopeCombo->setCurrentIndex(telescopesModel->indexFromItem(defaultItem).row());
-      astroObjectsTable->setMaximumMagnitude(selectedTelescope->limitMagnitudeGain() + 6.5);
+      astroObjectsTable->setMagnitudeRange({-5, selectedTelescope->limitMagnitudeGain() + 6.5});
     
     } else {
       telescopeComboContainer->setHidden(true);
