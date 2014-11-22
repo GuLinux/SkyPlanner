@@ -60,6 +60,7 @@ void UserSettingsPage::Private::onDisplay()
   for(auto edit: vector<WLineEdit*>{oldPassword, newPassword, newPasswordConfirm})
     edit->setEchoMode(WLineEdit::Password);
   WPushButton *changePasswordButton = WW<WPushButton>(WString::tr("user_settings_change_password")).css("btn btn-primary").onClick([=](WMouseEvent) {
+    Dbo::Transaction t(session);
     Auth::PasswordService &passwordService = session.passwordAuth();
     if(hasOldPassword && ! passwordService.verifyPassword(session.login().user(), oldPassword->text() )) {
       SkyPlanner::instance()->notification(WString::tr("changepwd_error_title"), WString::tr("changepwd_wrong_password"), SkyPlanner::Notification::Error, 10);
