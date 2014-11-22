@@ -11,6 +11,7 @@
 <message id="not_set">not set</message>
 <message id="minimum_magnitude_label">minimum magnitude: </message>
 <message id="maximum_magnitude_label">maximum magnitude: </message>
+<message id="magnitude_label">magnitude: {1}-{2}</message>
 
 <message id="mainmenu_logout">Logout</message>
 <message id="telescopes_telescope_name">Telescope Name</message>

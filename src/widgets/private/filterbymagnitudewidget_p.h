@@ -16,6 +16,8 @@ public:
   Wt::WText *valueLabel;
   double initialValue;
   void checkValue();
+  Wt::WPushButton *button;
+  void setLabel(Range range);
 private:
   FilterByMagnitudeWidget *q;
 };
