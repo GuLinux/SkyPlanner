@@ -300,8 +300,7 @@ Dopo aver aggiunto una nuova sessione, clicca sul suo nome per aggiungere oggett
 
 
 <message id="filter_by_type_menu">per tipo</message>
-<message id="filter_by_minimum_magnitude_menu">per magnitudine minima</message>
-<message id="filter_by_maximum_magnitude_menu">per magnitudine massima</message>
+<message id="filter_by_magnitude_menu">per magnitudine</message>
 <message id="filter_by_constellation_menu">per costellazione</message>
 <message id="filter_by_catalogue_menu">per catalogo</message>
 <message id="filter_by_minimum_altitude_menu">per altezza minima</message>
@@ -338,4 +337,6 @@ Dopo aver aggiunto una nuova sessione, clicca sul suo nome per aggiungere oggett
 <message id="suggested_objects_sort_transit_ascending">Ordina per orario (ascendente)</message>
 <message id="suggested_objects_sort_magnitude_descending">Ordina per magnitudine (discendente)</message>
 <message id="suggested_objects_sort_transit_descending">Ordina per orario (discendente)</message>
+<message id="magnitude_label">magnitudine: {1}-{2}</message>
+<message id="magnitude_title">Imposta Magnitudine</message>
 </messages>

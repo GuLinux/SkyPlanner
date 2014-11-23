@@ -29,7 +29,7 @@ FilterByMagnitudeWidget::FilterByMagnitudeWidget(const FilterByMagnitudeWidget::
     WDialog *dialog = new WDialog;
     dialog->setClosable(true);
     dialog->footer()->addWidget(WW<WPushButton>(WString::tr("Wt.WMessageBox.Ok")).onClick([=](WMouseEvent){dialog->accept();}));
-
+    dialog->setCaption(WString::tr("magnitude_title"));
     auto slider = [=](double &value) {
       auto _slider = new WSlider(Horizontal);
       _slider->setWidth(400);

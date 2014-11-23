@@ -12,6 +12,7 @@
 <message id="minimum_magnitude_label">minimum magnitude: </message>
 <message id="maximum_magnitude_label">maximum magnitude: </message>
 <message id="magnitude_label">magnitude: {1}-{2}</message>
+<message id="magnitude_title">Set Magnitude</message>
 
 <message id="mainmenu_logout">Logout</message>
 <message id="telescopes_telescope_name">Telescope Name</message>
@@ -285,8 +286,7 @@ After you added a session, click it to add new objects.
 <message id="filter_by_type_button">set type...</message>
 
 <message id="filter_by_type_menu">by type</message>
-<message id="filter_by_minimum_magnitude_menu">by minimum magnitude</message>
-<message id="filter_by_maximum_magnitude_menu">maximum magnitude</message>
+<message id="filter_by_magnitude_menu">by magnitude</message>
 <message id="filter_by_constellation_menu">by constellation</message>
 <message id="filter_by_catalogue_menu">by catalogue</message>
 <message id="filter_by_minimum_altitude_menu">by minimum altitude</message>
