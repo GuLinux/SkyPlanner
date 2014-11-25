@@ -88,14 +88,15 @@ void DSSImage::Private::save(const boost::system::error_code &errorCode, const H
     return;
   }
   WServer::instance()->log("notice") << imageOptions.url() << " correctly downloaded, saving to " << fullFile();
-  ofstream out(fullFile().string() );
-  if(!out) {
-    WServer::instance()->log("error") << "Error saving to " << fullFile() << ": " << strerror( errno );
+  try {
+    Magick::Blob blob(httpMessage.body().data(), httpMessage.body().size());
+    Magick::Image image(blob);
+    image.write(fullFile().string());
+  } catch(std::exception &e) {
+    WServer::instance()->log("error") << "Error saving to " << fullFile() << ": " << e.what();
     return;
   }
-  out << httpMessage.body();
-  out.flush();
-  out.close();
+
   if(aborted)
     return;
   
@@ -137,7 +138,7 @@ boost::filesystem::path DSSImage::ImageOptions::file(const boost::filesystem::pa
 {
   string arSignFix = coordinates.rightAscension.degrees() < 0 ? "-" : "";
   string decSignFix = coordinates.declination.degrees() < 0 ? "-" : "";
-  string cacheKey = format("%s%s-ar_%s%d-%d-%.1f_dec_%s%d-%d-%.1f_size_%d-%d-%.1f.gif")
+  string cacheKey = format("%s%s-ar_%s%d-%d-%.1f_dec_%s%d-%d-%.1f_size_%d-%d-%.1f.jpg")
   % prefix
   % DSS::imageVersion(imageVersion)
   % (coordinates.rightAscension.sexagesimalHours().hours == 0 ? arSignFix : "")
