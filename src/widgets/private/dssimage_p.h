@@ -25,6 +25,7 @@
 #include <Wt/WLink>
 #include <boost/thread.hpp>
 #include <Wt/Http/Client>
+#include <Magick++/Image.h>
 
 class DSSImage::Private
 {
@@ -96,6 +97,7 @@ class DSSImage::Private
     std::shared_ptr<DialogControl> dialogControl;
     bool negated = false;
     Wt::WLink negate(const boost::filesystem::path &file);
+    static Magick::Image &apply_common_options(Magick::Image &image);
   private:
     class DSSImage *const q;
 };

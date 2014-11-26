@@ -39,7 +39,7 @@
 #include <Wt/WPushButton>
 #include <Wt/WSlider>
 #include <mutex>
-#include <GraphicsMagick/Magick++.h>
+#include <Magick++.h>
 #include "models/Models"
 #include <Wt/WDoubleSpinBox>
 #include <Wt/WMemoryResource>
@@ -92,6 +92,7 @@ void DSSImage::Private::save(const boost::system::error_code &errorCode, const H
   try {
     Magick::Blob blob(httpMessage.body().data(), httpMessage.body().size());
     Magick::Image image(blob);
+    apply_common_options(image);
     image.write(fullFile().string());
   } catch(std::exception &e) {
     WServer::instance()->log("error") << "Error saving to " << fullFile() << ": " << e.what();
@@ -139,7 +140,7 @@ boost::filesystem::path DSSImage::ImageOptions::file(const boost::filesystem::pa
 {
   string arSignFix = coordinates.rightAscension.degrees() < 0 ? "-" : "";
   string decSignFix = coordinates.declination.degrees() < 0 ? "-" : "";
-  string cacheKey = format("%s%s-ar_%s%d-%d-%.1f_dec_%s%d-%d-%.1f_size_%d-%d-%.1f.jpg")
+  string cacheKey = format("%s%s-ar_%s%d-%d-%.1f_dec_%s%d-%d-%.1f_size_%d-%d-%.1f.png")
   % prefix
   % DSS::imageVersion(imageVersion)
   % (coordinates.rightAscension.sexagesimalHours().hours == 0 ? arSignFix : "")
@@ -164,6 +165,7 @@ void DSSImage::Private::Image::resize(const fs::path &destination, const DSSImag
   auto fullImage = imageSizeMap[DSSImage::Full].file(imageOptions).string();
   if(! fs::exists(fullImage)) return;
   Magick::Image image(fullImage);
+  apply_common_options(image);
   image.scale({pixels,pixels});
   image.write(destination.string());
 }
@@ -212,9 +214,10 @@ Wt::WLink DSSImage::Private::negate(const boost::filesystem::path &file)
   try {
     spLog("notice") << "negating image..";
     Magick::Image image(file.string());
+    apply_common_options(image);
     image.negate();
     Magick::Blob blob;
-    image.write(&blob, "JPEG");
+    image.write(&blob, "PNG");
     spLog("notice") << "negating image, wrote " << blob.length() << " bytes";
     vector<uint8_t> data(blob.length());
     const uint8_t *data_c = reinterpret_cast<const uint8_t*>(blob.data());
@@ -512,3 +515,10 @@ void DSSImage::startDownload()
   d->download();
 }
 
+Magick::Image& DSSImage::Private::apply_common_options(Magick::Image& image)
+{
+  image.colorSpace(Magick::GRAYColorspace);
+  image.interlaceType(Magick::PlaneInterlace);
+  image.quality(100);
+  return image;
+}

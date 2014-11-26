@@ -10,7 +10,7 @@
 #include <utils/utils.h>
 #include <utils/format.h>
 #include <boost/thread.hpp>
-#include <GraphicsMagick/Magick++.h>
+#include <Magick++.h>
 
 using namespace std;
 using namespace Wt;
