@@ -79,9 +79,8 @@ void DSSDownloader::download() const
 	  curl response code: %d
 	  curl error message: %s
 	  expected size: %d
-	  actual size: %d
 	  exception message: %s
-	-->)") % url % curl.httpResponseCode() % curl.lastErrorMessage() % received_content_length % boost::filesystem::file_size(file) % e.what();
+	-->)") % url % curl.httpResponseCode() % curl.lastErrorMessage() % received_content_length % e.what();
       out.close();
     }
   });
