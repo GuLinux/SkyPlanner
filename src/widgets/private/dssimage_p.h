@@ -67,6 +67,7 @@ class DSSImage::Private
     void wtDownload();
     void save(const boost::system::error_code &errorCode, const Wt::Http::Message &httpMessage);
     void setImageFromCache(std::shared_ptr<DialogControl::Finish> finishDialogControl);
+    void setImage(const Wt::WLink &link);
     Wt::WContainerWidget *content;
     int retry = 0;
 
@@ -93,6 +94,7 @@ class DSSImage::Private
     bool aborted = false;
     Wt::Http::Client httpClient;
     std::shared_ptr<DialogControl> dialogControl;
+    bool negated = false;
   private:
     class DSSImage *const q;
 };

@@ -87,7 +87,7 @@ void DSSPage::Private::setImageType(DSS::ImageVersion version, const shared_ptr<
     i->setLink(image->dssOriginalLink());
     i->setLinkTarget(TargetNewWindow);
     if(wApp->environment().agentIsWebKit())
-      menu->addItem(WString::tr("buttons_invert"))->triggered().connect([=](WMenuItem*, _n5){ image->toggleStyleClass("image-inverse", !image->hasStyleClass("image-inverse")); });
+      menu->addItem(WString::tr("buttons_invert"))->triggered().connect([=](WMenuItem*, _n5){ q->toggleInvert(); });
     WPopupMenu *imageTypeSubmenu = WW<WPopupMenu>().css("dialog-popup-submenu");
     for(auto type: DSS::versions()) {
       WString itemName = WString::tr(string{"dssimage_version_"} + DSS::imageVersion(type));
@@ -175,10 +175,7 @@ DSSPage::DSSPage(const NgcObjectPtr &object, Session &session, const DSSPage::Op
     d->setImageType(type, options.downloadMutex);
   });
 
-  WPushButton *invertButton = WW<WPushButton>(WString::tr("buttons_invert")).css("btn btn-inverse")
-    .onClick([=](WMouseEvent) { toggleInvert(); } )
-    .setEnabled(wApp->environment().agentIsWebKit()
-  );
+  WPushButton *invertButton = WW<WPushButton>(WString::tr("buttons_invert")).css("btn btn-inverse").onClick( [=](WMouseEvent){ toggleInvert(); } );
 
   WPushButton *imageControls = WW<WPushButton>(WString::tr("imagecontrol-menu")).onClick([=](WMouseEvent){ if(d->dssImage) d->dssImage->showImageControls(); });
 
@@ -211,7 +208,8 @@ DSSPage::DSSPage(const NgcObjectPtr &object, Session &session, const DSSPage::Op
 
 void DSSPage::toggleInvert()
 {
-  d->imageContainer->toggleStyleClass("image-inverse", !d->imageContainer->hasStyleClass("image-inverse")); 
+  d->dssImage->negate();
+  //d->imageContainer->toggleStyleClass("image-inverse", !d->imageContainer->hasStyleClass("image-inverse")); 
 }
 
 string DSSPage::internalPath( const Dbo::ptr< NgcObject > &object, Dbo::Transaction &transaction )
