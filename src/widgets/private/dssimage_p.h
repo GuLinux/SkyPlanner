@@ -95,6 +95,7 @@ class DSSImage::Private
     Wt::Http::Client httpClient;
     std::shared_ptr<DialogControl> dialogControl;
     bool negated = false;
+    Wt::WLink negate(const boost::filesystem::path &file);
   private:
     class DSSImage *const q;
 };

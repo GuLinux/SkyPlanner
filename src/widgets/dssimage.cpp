@@ -198,15 +198,20 @@ void DSSImage::Private::setImageFromCache(shared_ptr<DialogControl::Finish> fini
 
 void DSSImage::negate()
 {
-  spLog("notice") << "negated: " << d->negated;
   if(d->negated) {
-    d->setImage(d->linkFor(d->file()));
     d->negated = false;
+    d->setImage(d->linkFor(d->file()));
     return;
   }
+  d->negated = true;
+  d->setImage(d->negate(d->file()));
+}
+
+Wt::WLink DSSImage::Private::negate(const boost::filesystem::path &file)
+{
   try {
     spLog("notice") << "negating image..";
-    Magick::Image image(d->file().string());
+    Magick::Image image(file.string());
     image.negate();
     Magick::Blob blob;
     image.write(&blob, "JPEG");
@@ -214,10 +219,10 @@ void DSSImage::negate()
     vector<uint8_t> data(blob.length());
     const uint8_t *data_c = reinterpret_cast<const uint8_t*>(blob.data());
     copy(data_c, data_c + blob.length(), begin(data));
-    d->setImage(new WMemoryResource("image/jpeg", data, this));
-    d->negated = true;
+    return new WMemoryResource("image/jpeg", data, q);
   } catch(exception &e) {
     spLog("error") << "Error negating dss image: " << e.what();
+    return linkFor(file);
   }
 }
 
@@ -269,6 +274,9 @@ WLink DSSImage::fullImageLink() const
   if(d->imageOptions.imageSize == Full)
     return d->_imageLink;
 
+  if(d->negated) {
+    return d->negate(d->fullFile());
+  }
   return d->linkFor(d->fullFile());
 }
 
