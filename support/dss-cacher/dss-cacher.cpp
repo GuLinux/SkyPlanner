@@ -6,6 +6,7 @@
 #include <signal.h>
 #include "dss.h"
 #include <widgets/dssimage.h>
+#include <widgets/private/dssimage_p.h>
 #include <utils/curl.h>
 #include <utils/utils.h>
 #include <utils/format.h>
@@ -68,6 +69,7 @@ void DSSDownloader::download() const
       received_content_length = boost::lexical_cast<uint64_t>(curl.header("Content-length"));
       Magick::Blob blob(mem.str().data(), mem.str().size());
       Magick::Image image(blob);
+      DSSImage::Private::apply_common_options(image);
       image.write(file.string());
     } catch(const std::exception &e) {
       ofstream out(format("%s.%d.html") % file.string() % curl.httpResponseCode() );
