@@ -86,8 +86,7 @@ void DSSPage::Private::setImageType(DSS::ImageVersion version, const shared_ptr<
     i = menu->addItem(WString::tr("dss_original_menu"));
     i->setLink(image->dssOriginalLink());
     i->setLinkTarget(TargetNewWindow);
-    if(wApp->environment().agentIsWebKit())
-      menu->addItem(WString::tr("buttons_invert"))->triggered().connect([=](WMenuItem*, _n5){ q->toggleInvert(); });
+    menu->addItem(WString::tr("buttons_invert"))->triggered().connect([=](WMenuItem*, _n5){ q->toggleInvert(); });
     WPopupMenu *imageTypeSubmenu = WW<WPopupMenu>().css("dialog-popup-submenu");
     for(auto type: DSS::versions()) {
       WString itemName = WString::tr(string{"dssimage_version_"} + DSS::imageVersion(type));
