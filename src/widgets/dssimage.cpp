@@ -518,6 +518,6 @@ void DSSImage::startDownload()
 Magick::Image& DSSImage::Private::apply_common_options(Magick::Image& image)
 {
   image.colorSpace(Magick::GRAYColorspace);
-  image.quality(100);
+  image.quality(0);
   return image;
 }
