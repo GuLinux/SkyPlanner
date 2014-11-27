@@ -32,6 +32,7 @@ class ObjectPopupMenu;
 
 typedef FilterByRangeWidget<double> FilterByMagnitudeWidget;
 typedef FilterByRangeWidget<Angle> FilterByAltitudeWidget;
+typedef FilterByRangeWidget<Angle> FilterByAngularSizeWidget;
 typedef FilterByRangeWidget<boost::posix_time::ptime> FilterByTimeWidget;
 
 class AstroObjectsTable : public Wt::WCompositeWidget
@@ -90,6 +91,8 @@ public:
     boost::posix_time::ptime start_time;
     boost::posix_time::ptime end_time;
     boost::logic::tribool observed = boost::logic::indeterminate;
+    Angle minimumAngularSize;
+    Angle maximumAngularSize;
   };
   struct Page {
     long current = -1;

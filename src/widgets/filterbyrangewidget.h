@@ -8,7 +8,7 @@ using namespace std;
 using namespace WtCommons;
 using namespace FilterByRange;
 template<class T>
-FilterByRangeWidget<T>::FilterByRangeWidget(const Range<T>& outer, const Labels &labels, const shared_ptr<Traits> &traits, Wt::WContainerWidget* parent)
+FilterByRangeWidget<T>::FilterByRangeWidget(const Range& outer, const Labels &labels, const shared_ptr<Traits> &traits, Wt::WContainerWidget* parent)
   : WCompositeWidget(parent), _value(outer), _original(outer), _outer(outer), _labels(labels), traits(traits)
 {
     setImplementation(button = WW<WPushButton>().addCss("btn-sm btn-link filter-widget-link"));

@@ -39,11 +39,15 @@ struct Traits<double> {
 private:
   unsigned int decimals;
 };
+
 template<>
 struct Traits<Angle> {
-  std::string format(const Angle &t) const { return t.printable(Angle::IntDegrees); }
-  int slider(const Angle &t) const { return t.degrees(); }
-  Angle value(int s) const { return Angle::degrees(s); }
+  typedef std::function<std::string(Angle)> Format;
+  Traits(Format format = [](const Angle &angle) { return angle.printable(); }) : _format(format) {}
+  std::string format(const Angle &t) const { return _format(t); }
+  int slider(const Angle &t) const { return t.degrees() * 50000; }
+  Angle value(int s) const { return Angle::degrees(static_cast<double>(s) / 50000); }
+  Format _format;
 };
 template<>
 struct Traits<boost::posix_time::ptime> {
@@ -61,6 +65,7 @@ template<class T>
 class FilterByRangeWidget : public Wt::WCompositeWidget {
 public:
   typedef FilterByRange::Traits<T> Traits;
+  typedef FilterByRange::Range<T> Range;
   struct Labels {
     std::string button;
     std::string dialog_title;
@@ -70,16 +75,16 @@ public:
       : button(button), dialog_title(dialog_title), lower_slider(lower_slider), upper_slider(upper_slider) {}
   };
   
-  explicit FilterByRangeWidget(const FilterByRange::Range<T> &outer, const Labels &labels, const std::shared_ptr<Traits> &traits = std::make_shared<Traits>(), Wt::WContainerWidget *parent = 0);
+  explicit FilterByRangeWidget(const Range &outer, const Labels &labels, const std::shared_ptr<Traits> &traits = std::make_shared<Traits>(), Wt::WContainerWidget *parent = 0);
   Wt::Signal<> &changed() { return _changed; }
   void resetDefaultValue() { _value = _original; _changed.emit(); updateLabel();}
-  FilterByRange::Range<T> value() const { return _value; }
-  void setValue(const FilterByRange::Range<T> &range) { _value = range; _original = range; updateLabel(); }
-  void setOuterRange(const FilterByRange::Range<T> &range) { _outer = range; }
+  Range value() const { return _value; }
+  void setValue(const Range &range) { _value = range; _original = range; updateLabel(); }
+  void setOuterRange(const Range &range) { _outer = range; }
 private:
-  FilterByRange::Range<T> _value;
-  FilterByRange::Range<T> _original;
-  FilterByRange::Range<T> _outer;
+  Range _value;
+  Range _original;
+  Range _outer;
   Labels _labels;
   Wt::Signal<> _changed;
 

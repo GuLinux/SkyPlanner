@@ -52,6 +52,7 @@ AstroObjectsTable::Private::Private( Session &session, const vector< AstroObject
 #define BY_ALTITUDE "filter_by_altitude_menu"
 #define BY_OBSERVED "filter_by_observed_in_any_session"
 #define BY_TIME "filter_by_time"
+#define BY_ANGULAR_SIZE "filter_by_angular_size"
 
 AstroObjectsTable::AstroObjectsTable(Session &session,
 				     const vector<Action> &actions,
@@ -76,8 +77,11 @@ AstroObjectsTable::AstroObjectsTable(Session &session,
     d->addFilterItem(BY_CONSTELLATION, new FilterByConstellation);
     d->addFilterItem(BY_CATALOGUE, new FilterByCatalogue(session));
     d->addFilterItem(BY_OBSERVED, new FilterByObservedWidget{WString::tr("observed-in-any-session")});
-    d->addFilterItem(BY_MAGNITUDE, new FilterByRangeWidget<double>{ {-5, 25}, {"magnitude_label", "magnitude_title", "minimum_magnitude_label", "maximum_magnitude_label"} });
-    d->addFilterItem(BY_ALTITUDE, new FilterByRangeWidget<Angle>{ {Angle::degrees(0), Angle::degrees(90)}, {"range_angle_label", "range_angle_title", "minimum-altitude", "maximum-altitude"} });
+    d->addFilterItem(BY_MAGNITUDE, new FilterByRangeWidget<double>{ {-5, 25}, {"magnitude_label", "magnitude_title", "minimum_magnitude_label", "maximum_magnitude_label"},  });
+    d->addFilterItem(BY_ALTITUDE, new FilterByAltitudeWidget{ {Angle::degrees(0), Angle::degrees(90)}, {"range_angle_label", "range_angle_title", "minimum-altitude", "maximum-altitude"}, 
+      make_shared<FilterByAltitudeWidget::Traits>([](const Angle &angle){ return angle.printable(Angle::IntDegrees); }) });
+    d->addFilterItem(BY_ANGULAR_SIZE, new FilterByRangeWidget<Angle>{ {Angle::degrees(0), Angle::degrees(2)}, {"range_angular_size_label", "range_angular_size_title", "minimum_angular_size", "maximum_angular_size"},
+      make_shared<FilterByAltitudeWidget::Traits>([](const Angle &angle){ if(angle == Angle::degrees(0) || angle == Angle::degrees(2)) return string{"N/A"}; return angle.printable(); })});
     d->addFilterItem(BY_TIME, new FilterByTimeWidget{ {}, {"range_transit_label", "range_transit_title", "range_transit_minimum", "range_transit_maximum"}, d->timeFilterTraits });
 
     d->availableFilters->addSeparator();
@@ -132,15 +136,18 @@ AstroObjectsTable::Filters AstroObjectsTable::Private::filters() const
   _filters.observed = filter<FilterByObservedWidget>(BY_OBSERVED)->value();
   _filters.start_time = filter<FilterByTimeWidget>(BY_TIME)->value().lower;
   _filters.end_time = filter<FilterByTimeWidget>(BY_TIME)->value().upper;
+  FilterByAngularSizeWidget::Range angularSizeRange = filter<FilterByAngularSizeWidget>(BY_ANGULAR_SIZE)->value();
+  _filters.minimumAngularSize = angularSizeRange.lower == Angle::degrees(0) ? Angle() : angularSizeRange.lower;
+  _filters.maximumAngularSize = angularSizeRange.upper == Angle::degrees(2) ? Angle() : angularSizeRange.upper;
   return _filters;
 }
 
-void AstroObjectsTable::setMagnitudeRange(const FilterByRange::Range<double>& magnitudeRange)
+void AstroObjectsTable::setMagnitudeRange(const FilterByMagnitudeWidget::Range& magnitudeRange)
 {
   d->filter<FilterByMagnitudeWidget>(BY_MAGNITUDE)->setValue(magnitudeRange);
 }
 
-void AstroObjectsTable::setTimeRange(const Range< boost::posix_time::ptime >& timeRange, const Timezone &timezone)
+void AstroObjectsTable::setTimeRange(const FilterByTimeWidget::Range &timeRange, const Timezone &timezone)
 {
   d->timeFilterTraits->_start = timeRange.lower;
   d->timeFilterTraits->_formatter = [=](const boost::posix_time::ptime &t){

@@ -306,6 +306,7 @@ Dopo aver aggiunto una nuova sessione, clicca sul suo nome per aggiungere oggett
 <message id="filter_by_altitude_menu">per altezza</message>
 <message id="filter_by_observed_in_any_session">per osservazioni passate</message>
 <message id="filter_by_time">per ora di transito</message>
+<message id="filter_by_angular_size">per dimensione angolare</message>
 
 <message id="observed-in-any-session">osservati in passato</message>
 
@@ -346,4 +347,10 @@ Dopo aver aggiunto una nuova sessione, clicca sul suo nome per aggiungere oggett
 <message id="range_transit_title">Imposta ora di transito</message>
 <message id="range_transit_minimum">Ora di transito minima</message>
 <message id="range_transit_maximum">Ora di transito massima</message>
+
+<message id="range_angular_size_label">dimensione angolare: {1}-{2}</message>
+<message id="range_angular_size_title">Imposta dimensione angolare</message>
+<message id="minimum_angular_size">Dimensione angolare minima</message>
+<message id="maximum_angular_size">Dimensione angolare massima</message>
+
 </messages>

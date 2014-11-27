@@ -37,13 +37,19 @@ public:
     vector<string> filterConditions{filters.types.size(), "?"};
     query
       .where("magnitude >= ?").bind(filters.minimumMagnitude)
-      .where("magnitude <= ?").bind(filters.maximumMagnitude)
-      .where("altitude >= ?").bind(filters.minimumAltitude.degrees())
-      .where("altitude <= ?").bind(filters.maximumAltitude.degrees());
+      .where("magnitude <= ?").bind(filters.maximumMagnitude);
+    if(filters.minimumAltitude.valid())
+      query.where("altitude >= ?").bind(filters.minimumAltitude.degrees());
+    if(filters.maximumAltitude.valid())
+      query.where("altitude <= ?").bind(filters.maximumAltitude.degrees());
+    if(filters.minimumAngularSize.valid())
+      query.where("angular_size >= ?").bind(filters.minimumAngularSize.degrees());
+    if(filters.maximumAngularSize.valid())
+      query.where("angular_size <= ?").bind(filters.maximumAngularSize.degrees());
     if(!filters.start_time.is_not_a_date_time() && !filters.end_time.is_not_a_date_time()) {
       query
-	.where("transit_time > ?").bind(filters.start_time)
-	.where("transit_time < ?").bind(filters.end_time);
+	.where("transit_time >= ?").bind(filters.start_time)
+	.where("transit_time <= ?").bind(filters.end_time);
     }
     if(catalogue)
       query.where("d.catalogues_id = ?").bind(catalogue.id());
