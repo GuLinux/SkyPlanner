@@ -21,7 +21,6 @@
 #define ASTROOBJECTSTABLE_P_H
 #include "widgets/astroobjectstable.h"
 #include <widgets/filterbytypewidget.h>
-#include <widgets/filterbymagnitudewidget.h>
 #include <widgets/filterbycatalogue.h>
 #include <widgets/filterbyaltitudewidget.h>
 #include <widgets/filterbyconstellation.h>

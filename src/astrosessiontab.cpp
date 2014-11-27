@@ -69,7 +69,6 @@
 #include <Wt/Json/Object>
 #include <Wt/WPopupMenu>
 #include <Wt/WMemoryResource>
-#include "widgets/filterbymagnitudewidget.h"
 #include "widgets/filterbytypewidget.h"
 #include "widgets/filterbycatalogue.h"
 #include "widgets/filterbyconstellation.h"

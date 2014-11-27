@@ -23,12 +23,14 @@
 #include <Wt/WCompositeWidget>
 #include "utils/d_ptr.h"
 #include "models/Models"
-#include "filterbymagnitudewidget.h"
+#include "widgets/filterbyrangewidget.h"
 #include <functional>
 #include <boost/logic/tribool.hpp>
 
 class Session;
 class ObjectPopupMenu;
+
+typedef FilterByRangeWidget<double> FilterByMagnitudeWidget;
 
 class AstroObjectsTable : public Wt::WCompositeWidget
 {
@@ -77,8 +79,8 @@ public:
   };
   struct Filters {
     std::set<NgcObject::NebulaType> types;
-    double minimumMagnitude = -200;
-    double maximumMagnitude = 100;
+    double minimumMagnitude;
+    double maximumMagnitude;
     ConstellationFinder::Constellation constellation;
     CataloguePtr catalogue;
     Angle minimumAltitude;

@@ -71,12 +71,12 @@ AstroObjectsTable::AstroObjectsTable(Session &session,
       d->filtersBar->addWidget(d->filtersButton);
     
     d->addFilterItem(BY_TYPE, new FilterByTypeWidget(initialTypes));
-    d->addFilterItem(BY_MAGNITUDE, new FilterByMagnitudeWidget({-5,25}));
     d->addFilterItem(BY_CONSTELLATION, new FilterByConstellation);
     d->addFilterItem(BY_CATALOGUE, new FilterByCatalogue(session));
     d->addFilterItem(BY_MINIMUM_ALTITUDE, new FilterByAltitudeWidget{WString::tr("minimum-altitude"), {Angle::degrees(0), Angle::degrees(0), Angle::degrees(80)} });
     d->addFilterItem(BY_MAXIMUM_ALTITUDE, new FilterByAltitudeWidget{WString::tr("maximum-altitude"), {Angle::degrees(90), Angle::degrees(10), Angle::degrees(90)} });
     d->addFilterItem(BY_OBSERVED, new FilterByObservedWidget{WString::tr("observed-in-any-session")});
+    d->addFilterItem(BY_MAGNITUDE, new FilterByRangeWidget<double>{ {-5, 25}, {-5, 25}, {"magnitude_label", "magnitude_title", "minimum_magnitude_label", "maximum_magnitude_label"} });
 
     d->availableFilters->addSeparator();
     d->availableFilters->addItem(WString::tr("reset-filters"))->triggered().connect([=](WMenuItem*, _n5) {
@@ -120,8 +120,8 @@ template<typename T> void AstroObjectsTable::Private::addFilterItem(const string
 AstroObjectsTable::Filters AstroObjectsTable::Private::filters() const
 {
   Filters _filters;
-  _filters.minimumMagnitude = filter<FilterByMagnitudeWidget>(BY_MAGNITUDE)->value().minimum;
-  _filters.maximumMagnitude = filter<FilterByMagnitudeWidget>(BY_MAGNITUDE)->value().maximum;
+  _filters.minimumMagnitude = filter<FilterByMagnitudeWidget>(BY_MAGNITUDE)->value().lower;
+  _filters.maximumMagnitude = filter<FilterByMagnitudeWidget>(BY_MAGNITUDE)->value().upper;
   _filters.catalogue = filter<FilterByCatalogue>(BY_CATALOGUE)->selectedCatalogue();
   _filters.constellation = filter<FilterByConstellation>(BY_CONSTELLATION)->selectedConstellation();
   _filters.types = filter<FilterByTypeWidget>(BY_TYPE)->selected();
@@ -133,7 +133,7 @@ AstroObjectsTable::Filters AstroObjectsTable::Private::filters() const
 
 void AstroObjectsTable::setMagnitudeRange(const FilterByMagnitudeWidget::Range& magnitudeRange)
 {
-  d->filter<FilterByMagnitudeWidget>(BY_MAGNITUDE)->setRange(magnitudeRange);
+  d->filter<FilterByMagnitudeWidget>(BY_MAGNITUDE)->setValue(magnitudeRange);
 }
 
 
