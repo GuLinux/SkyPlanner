@@ -340,5 +340,5 @@ After you added a session, click it to add new objects.
 <message id="minimum_angular_size">Minimum angular size</message>
 <message id="maximum_angular_size">Maximum angular size</message>
 
-
+<message id="dss_download_failed">Error downloading DSS Image. There might be an internal SkyPlanner error, or the DSS Website might have a problem.</message>
 </messages>

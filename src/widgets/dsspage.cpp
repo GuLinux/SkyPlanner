@@ -107,8 +107,23 @@ void DSSPage::Private::setImageType(DSS::ImageVersion version, const shared_ptr<
   });
   image->failed().connect([=](_n6) mutable {
     dssImage = nullptr;
-    if(nextDSSTypeIndex+1 > imageVersions.size())
+    spLog("notice") << "DSSImage download failed: " << nextDSSTypeIndex << "/" << imageVersions.size();
+    if(nextDSSTypeIndex+1 > imageVersions.size()) {
+      spLog("notice") << "Giving up...";
+      imageContainer->clear();
+      imageContainer->addWidget(WW<WContainerWidget>().css("alert alert-danger")
+	.add(WW<WText>(WString::tr("dss_download_failed")).setInline(false))
+	.add(WW<WPushButton>(WString::tr("button_retry")).onClick([=](WMouseEvent){
+	Dbo::Transaction t(session);
+	nextDSSTypeIndex = 0;
+	auto nextVersion = imageVersions[nextDSSTypeIndex++];
+	ViewPort::setImageVersion(nextVersion, object, session.user(), t);
+	setImageType(nextVersion, downloadMutex);
+      })
+      ));
+      wApp->triggerUpdate();
       return;
+    }
     Dbo::Transaction t(session);
     auto nextVersion = imageVersions[nextDSSTypeIndex++];
     ViewPort::setImageVersion(nextVersion, object, session.user(), t);
