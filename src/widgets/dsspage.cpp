@@ -165,9 +165,9 @@ DSSPage::DSSPage(const NgcObjectPtr &object, Session &session, const DSSPage::Op
     wApp->setInternalPath(DSSPage::internalPath(object, t));
     wApp->setInternalPathValid(true);
   }
-  d->imageVersions = {DSS::poss2ukstu_red, DSS::poss2ukstu_blue, DSS::poss1_red, DSS::poss1_blue, DSS::phase2_gsc2};
+  d->imageVersions = {DSS::poss2ukstu_red, DSS::poss2ukstu_blue, DSS::poss1_red, DSS::poss1_blue, DSS::phase2_gsc2, DSS::poss2ukstu_ir, DSS::quickv, DSS::phase2_gsc1};
   if(object->type() == NgcObject::NebGx || object->type() == NgcObject::NebGx)
-    d->imageVersions = {DSS::poss2ukstu_blue, DSS::poss1_blue, DSS::poss2ukstu_red, DSS::poss1_red, DSS::phase2_gsc2};
+    d->imageVersions = {DSS::poss2ukstu_blue, DSS::poss1_blue, DSS::poss2ukstu_red, DSS::poss1_red, DSS::phase2_gsc2, DSS::poss2ukstu_ir, DSS::quickv, DSS::phase2_gsc1};
   d->imageContainer = WW<WContainerWidget>();
   if(options.showTitle) {
     WString namesJoined = Utils::htmlEncode(WString::fromUTF8( boost::algorithm::join(NgcObject::namesByCatalogueImportance(t, object), ", ") ));
