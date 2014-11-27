@@ -3,21 +3,14 @@
 #include "filterbyrangewidget_defs.h"
 #include <Wt/WLabel>
 
-template<>
-struct FilterByRangeWidget<double>::Traits {
-  std::string format(const double &t) const { return ::format("%.1f") % t; }
-  int slider(const double &t) const { return t*10; }
-  double value(int s) const { return static_cast<double>(s) / 10.; }
-};
-
 using namespace Wt;
 using namespace WtCommons;
+using namespace FilterByRange;
 template<class T>
-FilterByRangeWidget<T>::FilterByRangeWidget(const Range& value, const Range& outer, const Labels &labels, Wt::WContainerWidget* parent)
-  : WCompositeWidget(parent), _value(value), _original(value), _outer(outer), _labels(labels)
+FilterByRangeWidget<T>::FilterByRangeWidget(const Range<T>& value, const Range<T>& outer, const Labels &labels, const Traits<T> &traits, Wt::WContainerWidget* parent)
+  : WCompositeWidget(parent), _value(value), _original(value), _outer(outer), _labels(labels), traits(traits)
 {
     setImplementation(button = WW<WPushButton>().addCss("btn-sm btn-link filter-widget-link"));
-    Traits traits;
     button->clicked().connect([=](WMouseEvent){
       WDialog *dialog = new WDialog;
       dialog->setClosable(true);
@@ -25,7 +18,7 @@ FilterByRangeWidget<T>::FilterByRangeWidget(const Range& value, const Range& out
       dialog->setCaption(WString::tr(_labels.dialog_title));
       auto slider = [=](T &value) {
 	auto _slider = new WSlider(Horizontal);
-	_slider->setWidth(400);
+	_slider->setWidth(500);
 	_slider->setMinimum(traits.slider(_outer.lower));
 	_slider->setMaximum(traits.slider(_outer.upper));
 	_slider->setValue(traits.slider(value));
@@ -78,7 +71,6 @@ FilterByRangeWidget<T>::FilterByRangeWidget(const Range& value, const Range& out
 template<class T>
 void FilterByRangeWidget<T>::updateLabel()
 {
-  Traits traits;
   button->setText(WString::tr(_labels.button).arg(traits.format(_value.lower)).arg(traits.format(_value.upper)));
 }
 

@@ -131,7 +131,7 @@ AstroObjectsTable::Filters AstroObjectsTable::Private::filters() const
   return _filters;
 }
 
-void AstroObjectsTable::setMagnitudeRange(const FilterByMagnitudeWidget::Range& magnitudeRange)
+void AstroObjectsTable::setMagnitudeRange(const FilterByRange::Range<double>& magnitudeRange)
 {
   d->filter<FilterByMagnitudeWidget>(BY_MAGNITUDE)->setValue(magnitudeRange);
 }

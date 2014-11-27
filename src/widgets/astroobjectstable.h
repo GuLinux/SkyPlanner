@@ -109,7 +109,7 @@ public:
   void clear();
   Wt::Signal<Filters> &filtersChanged() const;
   Filters currentFilters() const;
-  void setMagnitudeRange(const FilterByMagnitudeWidget::Range &magnitudeRange);
+  void setMagnitudeRange(const FilterByRange::Range<double> &magnitudeRange);
   Wt::WContainerWidget *tableFooter() const;
   void setTableAttribute(const std::string &attributeName, const std::string &attributeValue);
   void setResponsive(bool responsive);
