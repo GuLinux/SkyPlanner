@@ -7,8 +7,8 @@ using namespace Wt;
 using namespace WtCommons;
 using namespace FilterByRange;
 template<class T>
-FilterByRangeWidget<T>::FilterByRangeWidget(const Range<T>& value, const Range<T>& outer, const Labels &labels, const Traits<T> &traits, Wt::WContainerWidget* parent)
-  : WCompositeWidget(parent), _value(value), _original(value), _outer(outer), _labels(labels), traits(traits)
+FilterByRangeWidget<T>::FilterByRangeWidget(const Range<T>& outer, const Labels &labels, const Traits<T> &traits, Wt::WContainerWidget* parent)
+  : WCompositeWidget(parent), _value(outer), _original(outer), _outer(outer), _labels(labels), traits(traits)
 {
     setImplementation(button = WW<WPushButton>().addCss("btn-sm btn-link filter-widget-link"));
     button->clicked().connect([=](WMouseEvent){
@@ -71,7 +71,7 @@ FilterByRangeWidget<T>::FilterByRangeWidget(const Range<T>& value, const Range<T
 template<class T>
 void FilterByRangeWidget<T>::updateLabel()
 {
-  button->setText(WString::tr(_labels.button).arg(traits.format(_value.lower)).arg(traits.format(_value.upper)));
+  button->setText(WString::tr(_labels.button).arg(WString::fromUTF8(traits.format(_value.lower))).arg(WString::fromUTF8(traits.format(_value.upper))));
 }
 
 

@@ -303,8 +303,7 @@ Dopo aver aggiunto una nuova sessione, clicca sul suo nome per aggiungere oggett
 <message id="filter_by_magnitude_menu">per magnitudine</message>
 <message id="filter_by_constellation_menu">per costellazione</message>
 <message id="filter_by_catalogue_menu">per catalogo</message>
-<message id="filter_by_minimum_altitude_menu">per altezza minima</message>
-<message id="filter_by_maximum_altitude_menu">per altezza massima</message>
+<message id="filter_by_altitude_menu">per altezza</message>
 <message id="filter_by_observed_in_any_session">per osservazioni passate</message>
 
 <message id="observed-in-any-session">osservati in passato</message>
@@ -338,5 +337,7 @@ Dopo aver aggiunto una nuova sessione, clicca sul suo nome per aggiungere oggett
 <message id="suggested_objects_sort_magnitude_descending">Ordina per magnitudine (discendente)</message>
 <message id="suggested_objects_sort_transit_descending">Ordina per orario (discendente)</message>
 <message id="magnitude_label">magnitudine: {1}-{2}</message>
-<message id="magnitude_title">Imposta Magnitudine</message>
+<message id="range_angle_label">altezza: {1}-{2}</message>
+<message id="magnitude_title">Imposta magnitudine</message>
+<message id="range_angle_title">Imposta altezza</message>
 </messages>

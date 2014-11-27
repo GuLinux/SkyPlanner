@@ -46,7 +46,7 @@ class Angle {
     Hours sexagesimalHours() const;
     double radians() const;
     double hours() const;
-    enum Format { Hourly, Degrees };
+    enum Format { Hourly, Degrees, IntDegrees };
     enum PrintFormat{ UTF8, HTML};
     std::string printable(Format format = Degrees, PrintFormat printFormat = UTF8 ) const;
     bool valid() const;

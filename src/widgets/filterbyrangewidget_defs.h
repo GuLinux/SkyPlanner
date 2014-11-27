@@ -5,6 +5,7 @@
 #include <Wt/WContainerWidget>
 #include "utils/format.h"
 #include "Wt-Commons/wt_helpers.h"
+#include <types.h>
 
 #include <Wt/WPushButton>
 #include <Wt/WDialog>
@@ -37,6 +38,12 @@ struct Traits<double> {
 private:
   unsigned int decimals;
 };
+template<>
+struct Traits<Angle> {
+  std::string format(const Angle &t) const { return t.printable(Angle::IntDegrees); }
+  int slider(const Angle &t) const { return t.degrees(); }
+  Angle value(int s) const { return Angle::degrees(s); }
+};
 }
 
 template<class T>
@@ -51,14 +58,14 @@ public:
       : button(button), dialog_title(dialog_title), lower_slider(lower_slider), upper_slider(upper_slider) {}
   };
   
-  explicit FilterByRangeWidget(const FilterByRange::Range<T> &value, const FilterByRange::Range<T> &outer, const Labels &labels, const FilterByRange::Traits<T> &traits = {}, Wt::WContainerWidget *parent = 0);
+  explicit FilterByRangeWidget(const FilterByRange::Range<T> &outer, const Labels &labels, const FilterByRange::Traits<T> &traits = {}, Wt::WContainerWidget *parent = 0);
   Wt::Signal<> &changed() { return _changed; }
-  void resetDefaultValue() { _value = _original; }
+  void resetDefaultValue() { _value = _original; _changed.emit(); updateLabel();}
   FilterByRange::Range<T> value() const { return _value; }
-  void setValue(const FilterByRange::Range<T> &range) { _value = range; updateLabel(); }
+  void setValue(const FilterByRange::Range<T> &range) { _value = range; _original = range; updateLabel(); }
 private:
   FilterByRange::Range<T> _value;
-  const FilterByRange::Range<T> _original;
+  FilterByRange::Range<T> _original;
   const FilterByRange::Range<T> _outer;
   Labels _labels;
   Wt::Signal<> _changed;

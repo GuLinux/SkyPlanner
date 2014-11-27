@@ -22,7 +22,6 @@
 #include "widgets/astroobjectstable.h"
 #include <widgets/filterbytypewidget.h>
 #include <widgets/filterbycatalogue.h>
-#include <widgets/filterbyaltitudewidget.h>
 #include <widgets/filterbyconstellation.h>
 #include <widgets/filterbyobservedwidget.h>
 #include "session.h"

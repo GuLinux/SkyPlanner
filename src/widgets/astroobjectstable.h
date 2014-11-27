@@ -31,6 +31,7 @@ class Session;
 class ObjectPopupMenu;
 
 typedef FilterByRangeWidget<double> FilterByMagnitudeWidget;
+typedef FilterByRangeWidget<Angle> FilterByAltitudeWidget;
 
 class AstroObjectsTable : public Wt::WCompositeWidget
 {

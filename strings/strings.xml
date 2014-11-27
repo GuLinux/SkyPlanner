@@ -289,8 +289,7 @@ After you added a session, click it to add new objects.
 <message id="filter_by_magnitude_menu">by magnitude</message>
 <message id="filter_by_constellation_menu">by constellation</message>
 <message id="filter_by_catalogue_menu">by catalogue</message>
-<message id="filter_by_minimum_altitude_menu">by minimum altitude</message>
-<message id="filter_by_maximum_altitude_menu">by maximum altitude</message>
+<message id="filter_by_altitude_menu">by altitude</message>
 <message id="filter_by_observed_in_any_session">by past observations</message>
 
 <message id="observed-in-any-session">observed in the past</message>
@@ -325,4 +324,8 @@ After you added a session, click it to add new objects.
 <message id="suggested_objects_sort_transit_ascending">Sort by observable Time (ascending)</message>
 <message id="suggested_objects_sort_magnitude_descending">Sort by magnitude (descending)</message>
 <message id="suggested_objects_sort_transit_descending">Sort by observable Time (descending)</message>
+
+<message id="range_angle_label">altitude: {1}-{2}</message>
+<message id="range_angle_title">Set altitude</message>
+
 </messages>

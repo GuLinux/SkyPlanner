@@ -124,9 +124,15 @@ string Angle::printable(Format format, PrintFormat printFormat) const
     return (boost::format("%s%dh %2dm %.1fs") % ( sHours.hours == 0 ? signFix : "" ) % sHours.hours % sHours.minutes % sHours.seconds ).str();
 
   }
-
+  
   Sexagesimal asSexagesimal = sexagesimal();
-  return (boost::format("%s%d%s %2d' %.1f\"") % ( asSexagesimal.degrees == 0 ? signFix : "" ) % asSexagesimal.degrees % (printFormat == HTML ? "&deg;" : "\302\260") % asSexagesimal.minutes % asSexagesimal.seconds ).str();
+  auto sign = asSexagesimal.degrees == 0 ? signFix : "";
+  auto deg_symbol = printFormat == HTML ? "&deg;" : "\302\260";
+  if(format == IntDegrees) {
+    return (boost::format("%s%d%s") % sign % asSexagesimal.degrees % deg_symbol).str();
+  }
+
+  return (boost::format("%s%d%s %2d' %.1f\"") % sign % asSexagesimal.degrees % deg_symbol % asSexagesimal.minutes % asSexagesimal.seconds ).str();
 }
 
  

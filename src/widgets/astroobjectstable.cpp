@@ -49,8 +49,7 @@ AstroObjectsTable::Private::Private( Session &session, const vector< AstroObject
 #define BY_MAGNITUDE "filter_by_magnitude_menu"
 #define BY_CONSTELLATION "filter_by_constellation_menu"
 #define BY_CATALOGUE "filter_by_catalogue_menu"
-#define BY_MINIMUM_ALTITUDE "filter_by_minimum_altitude_menu"
-#define BY_MAXIMUM_ALTITUDE "filter_by_maximum_altitude_menu"
+#define BY_ALTITUDE "filter_by_altitude_menu"
 #define BY_OBSERVED "filter_by_observed_in_any_session"
 
 AstroObjectsTable::AstroObjectsTable(Session &session,
@@ -73,10 +72,9 @@ AstroObjectsTable::AstroObjectsTable(Session &session,
     d->addFilterItem(BY_TYPE, new FilterByTypeWidget(initialTypes));
     d->addFilterItem(BY_CONSTELLATION, new FilterByConstellation);
     d->addFilterItem(BY_CATALOGUE, new FilterByCatalogue(session));
-    d->addFilterItem(BY_MINIMUM_ALTITUDE, new FilterByAltitudeWidget{WString::tr("minimum-altitude"), {Angle::degrees(0), Angle::degrees(0), Angle::degrees(80)} });
-    d->addFilterItem(BY_MAXIMUM_ALTITUDE, new FilterByAltitudeWidget{WString::tr("maximum-altitude"), {Angle::degrees(90), Angle::degrees(10), Angle::degrees(90)} });
     d->addFilterItem(BY_OBSERVED, new FilterByObservedWidget{WString::tr("observed-in-any-session")});
-    d->addFilterItem(BY_MAGNITUDE, new FilterByRangeWidget<double>{ {-5, 25}, {-5, 25}, {"magnitude_label", "magnitude_title", "minimum_magnitude_label", "maximum_magnitude_label"} });
+    d->addFilterItem(BY_MAGNITUDE, new FilterByRangeWidget<double>{ {-5, 25}, {"magnitude_label", "magnitude_title", "minimum_magnitude_label", "maximum_magnitude_label"} });
+    d->addFilterItem(BY_ALTITUDE, new FilterByRangeWidget<Angle>{ {Angle::degrees(0), Angle::degrees(90)}, {"range_angle_label", "range_angle_title", "minimum-altitude", "maximum-altitude"} });
 
     d->availableFilters->addSeparator();
     d->availableFilters->addItem(WString::tr("reset-filters"))->triggered().connect([=](WMenuItem*, _n5) {
@@ -125,8 +123,8 @@ AstroObjectsTable::Filters AstroObjectsTable::Private::filters() const
   _filters.catalogue = filter<FilterByCatalogue>(BY_CATALOGUE)->selectedCatalogue();
   _filters.constellation = filter<FilterByConstellation>(BY_CONSTELLATION)->selectedConstellation();
   _filters.types = filter<FilterByTypeWidget>(BY_TYPE)->selected();
-  _filters.minimumAltitude = filter<FilterByAltitudeWidget>(BY_MINIMUM_ALTITUDE)->currentValue();
-  _filters.maximumAltitude = filter<FilterByAltitudeWidget>(BY_MAXIMUM_ALTITUDE)->currentValue();
+  _filters.minimumAltitude = filter<FilterByAltitudeWidget>(BY_ALTITUDE)->value().lower;
+  _filters.maximumAltitude = filter<FilterByAltitudeWidget>(BY_ALTITUDE)->value().upper;
   _filters.observed = filter<FilterByObservedWidget>(BY_OBSERVED)->value();
   return _filters;
 }
