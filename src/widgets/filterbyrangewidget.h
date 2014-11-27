@@ -42,10 +42,25 @@ FilterByRangeWidget<T>::FilterByRangeWidget(const Range& value, const Range& out
 	dialog->contents()->addWidget(WW<WContainerWidget>().add(_slider));
 	return _slider;
       };
+      WSlider *lower, *upper;
       dialog->contents()->addWidget(WW<WLabel>(WString::tr(_labels.lower_slider)));
-      dialog->contents()->addWidget( slider(_value.lower));
+      dialog->contents()->addWidget(lower = slider(_value.lower));
       dialog->contents()->addWidget(WW<WLabel>(WString::tr(_labels.upper_slider)));
-      dialog->contents()->addWidget( slider(_value.upper));
+      dialog->contents()->addWidget(upper = slider(_value.upper));
+      
+      upper->valueChanged().connect([=](int v, _n5) {
+	if( v < lower->value() ) {
+	  lower->setValue(v);
+	  lower->valueChanged().emit(v);
+	}
+      });
+      lower->valueChanged().connect([=](int v, _n5) {
+	if( v > upper->value() ) {
+	  upper->setValue(v);
+	  upper->valueChanged().emit(v);
+	}
+      });
+      
       dialog->finished().connect([=](int result, _n5){
 	if(result == WDialog::Rejected) {
 	  resetDefaultValue();
