@@ -4,10 +4,11 @@
 #include <Wt/WLabel>
 
 using namespace Wt;
+using namespace std;
 using namespace WtCommons;
 using namespace FilterByRange;
 template<class T>
-FilterByRangeWidget<T>::FilterByRangeWidget(const Range<T>& outer, const Labels &labels, const Traits<T> &traits, Wt::WContainerWidget* parent)
+FilterByRangeWidget<T>::FilterByRangeWidget(const Range<T>& outer, const Labels &labels, const shared_ptr<Traits> &traits, Wt::WContainerWidget* parent)
   : WCompositeWidget(parent), _value(outer), _original(outer), _outer(outer), _labels(labels), traits(traits)
 {
     setImplementation(button = WW<WPushButton>().addCss("btn-sm btn-link filter-widget-link"));
@@ -19,17 +20,17 @@ FilterByRangeWidget<T>::FilterByRangeWidget(const Range<T>& outer, const Labels 
       auto slider = [=](T &value) {
 	auto _slider = new WSlider(Horizontal);
 	_slider->setWidth(500);
-	_slider->setMinimum(traits.slider(_outer.lower));
-	_slider->setMaximum(traits.slider(_outer.upper));
-	_slider->setValue(traits.slider(value));
+	_slider->setMinimum(traits->slider(_outer.lower));
+	_slider->setMaximum(traits->slider(_outer.upper));
+	_slider->setValue(traits->slider(value));
 	WText *label = WW<WText>().css("badge pull-right");
 	auto set_label = [=](T value){
-	  label->setText(WString::fromUTF8(traits.format(value)));
+	  label->setText(WString::fromUTF8(traits->format(value)));
 	};
 	set_label(value);
 	_slider->valueChanged().connect([=,&value](int v, _n5){
-	  set_label(traits.value(v));
-	  value = traits.value(v);
+	  set_label(traits->value(v));
+	  value = traits->value(v);
 	});
 	dialog->contents()->addWidget(label);
 	dialog->contents()->addWidget(WW<WContainerWidget>().add(_slider));
@@ -71,7 +72,7 @@ FilterByRangeWidget<T>::FilterByRangeWidget(const Range<T>& outer, const Labels 
 template<class T>
 void FilterByRangeWidget<T>::updateLabel()
 {
-  button->setText(WString::tr(_labels.button).arg(WString::fromUTF8(traits.format(_value.lower))).arg(WString::fromUTF8(traits.format(_value.upper))));
+  button->setText(WString::tr(_labels.button).arg(WString::fromUTF8(traits->format(_value.lower))).arg(WString::fromUTF8(traits->format(_value.upper))));
 }
 
 

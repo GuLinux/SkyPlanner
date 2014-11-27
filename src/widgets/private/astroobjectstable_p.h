@@ -51,6 +51,7 @@ class AstroObjectsTable::Private
     Wt::WPushButton *filtersButton = nullptr;
     template<typename T> void addFilterItem(const std::string &text, T *filterWidget);
 
+    std::shared_ptr<FilterByRange::Traits<boost::posix_time::ptime>> timeFilterTraits;
     bool forceActionsAsToolBar = false;
     
     struct FilterView {

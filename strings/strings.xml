@@ -291,6 +291,7 @@ After you added a session, click it to add new objects.
 <message id="filter_by_catalogue_menu">by catalogue</message>
 <message id="filter_by_altitude_menu">by altitude</message>
 <message id="filter_by_observed_in_any_session">by past observations</message>
+<message id="filter_by_time">by transit time</message>
 
 <message id="observed-in-any-session">observed in the past</message>
 
@@ -327,5 +328,11 @@ After you added a session, click it to add new objects.
 
 <message id="range_angle_label">altitude: {1}-{2}</message>
 <message id="range_angle_title">Set altitude</message>
+
+<message id="range_transit_label">transit: {1}-{2}</message>
+<message id="range_transit_title">Set transit time</message>
+<message id="range_transit_minimum">Minimum transit time</message>
+<message id="range_transit_maximum">Maximum transit time</message>
+
 
 </messages>

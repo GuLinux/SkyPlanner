@@ -10,6 +10,7 @@
 #include <Wt/WPushButton>
 #include <Wt/WDialog>
 #include <Wt/WSlider>
+#include <boost/date_time.hpp>
 
 namespace FilterByRange {
   template<class T>
@@ -44,11 +45,22 @@ struct Traits<Angle> {
   int slider(const Angle &t) const { return t.degrees(); }
   Angle value(int s) const { return Angle::degrees(s); }
 };
+template<>
+struct Traits<boost::posix_time::ptime> {
+  typedef std::function<std::string(boost::posix_time::ptime)> Format;
+  Traits(const boost::posix_time::ptime &start, Format formatter = [](const boost::posix_time::ptime &t) { return boost::posix_time::to_simple_string(t); }) : _start(start), _formatter(formatter) {}
+  std::string format(const boost::posix_time::ptime &t) const { return _formatter(t); }
+  int slider(const boost::posix_time::ptime &t) const { return (t - _start).total_seconds(); }
+  boost::posix_time::ptime value(int s) const { return _start + boost::posix_time::seconds(s); }
+  boost::posix_time::ptime _start;
+  Format _formatter;
+};
 }
 
 template<class T>
 class FilterByRangeWidget : public Wt::WCompositeWidget {
 public:
+  typedef FilterByRange::Traits<T> Traits;
   struct Labels {
     std::string button;
     std::string dialog_title;
@@ -58,21 +70,22 @@ public:
       : button(button), dialog_title(dialog_title), lower_slider(lower_slider), upper_slider(upper_slider) {}
   };
   
-  explicit FilterByRangeWidget(const FilterByRange::Range<T> &outer, const Labels &labels, const FilterByRange::Traits<T> &traits = {}, Wt::WContainerWidget *parent = 0);
+  explicit FilterByRangeWidget(const FilterByRange::Range<T> &outer, const Labels &labels, const std::shared_ptr<Traits> &traits = std::make_shared<Traits>(), Wt::WContainerWidget *parent = 0);
   Wt::Signal<> &changed() { return _changed; }
   void resetDefaultValue() { _value = _original; _changed.emit(); updateLabel();}
   FilterByRange::Range<T> value() const { return _value; }
   void setValue(const FilterByRange::Range<T> &range) { _value = range; _original = range; updateLabel(); }
+  void setOuterRange(const FilterByRange::Range<T> &range) { _outer = range; }
 private:
   FilterByRange::Range<T> _value;
   FilterByRange::Range<T> _original;
-  const FilterByRange::Range<T> _outer;
+  FilterByRange::Range<T> _outer;
   Labels _labels;
   Wt::Signal<> _changed;
 
   Wt::WPushButton *button;
   void updateLabel();
-  FilterByRange::Traits<T> traits;
+  std::shared_ptr<Traits> traits;
 };
 
 #endif

@@ -32,6 +32,7 @@ class ObjectPopupMenu;
 
 typedef FilterByRangeWidget<double> FilterByMagnitudeWidget;
 typedef FilterByRangeWidget<Angle> FilterByAltitudeWidget;
+typedef FilterByRangeWidget<boost::posix_time::ptime> FilterByTimeWidget;
 
 class AstroObjectsTable : public Wt::WCompositeWidget
 {
@@ -86,6 +87,8 @@ public:
     CataloguePtr catalogue;
     Angle minimumAltitude;
     Angle maximumAltitude = Angle::degrees(90);
+    boost::posix_time::ptime start_time;
+    boost::posix_time::ptime end_time;
     boost::logic::tribool observed = boost::logic::indeterminate;
   };
   struct Page {
@@ -111,6 +114,7 @@ public:
   Wt::Signal<Filters> &filtersChanged() const;
   Filters currentFilters() const;
   void setMagnitudeRange(const FilterByRange::Range<double> &magnitudeRange);
+  void setTimeRange(const FilterByRange::Range<boost::posix_time::ptime> &timeRange, const Timezone &timezone);
   Wt::WContainerWidget *tableFooter() const;
   void setTableAttribute(const std::string &attributeName, const std::string &attributeValue);
   void setResponsive(bool responsive);

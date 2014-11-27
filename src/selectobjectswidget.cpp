@@ -103,6 +103,10 @@ void SelectObjectsWidget::Private::suggestedObjects(Dbo::Transaction& transactio
   WContainerWidget *suggestedObjectsContainer = WW<WContainerWidget>();
 
   suggestedObjectsTable = new AstroObjectsTable(session, {addToSessionAction}, AstroObjectsTable::FiltersButtonIntegrated, NgcObject::allNebulaTypesButStars(), columns);
+  {
+    Ephemeris ephemeris(astroSession->position(), timezone);
+    suggestedObjectsTable->setTimeRange({ephemeris.sun(astroSession->date()).set.utc, ephemeris.sun(astroSession->date()).rise.utc}, timezone);
+  }
   suggestedObjectsTable->objectsListChanged().connect([=](const AstroSessionObjectPtr &o, _n5) { objectsListChanged.emit(o); });
   suggestedObjectsTable->filtersChanged().connect([=](AstroObjectsTable::Filters, _n5) { populateSuggestedObjectsTable(); });
   suggestedObjectsContainer->setPadding(10);

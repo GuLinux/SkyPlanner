@@ -51,6 +51,7 @@ AstroObjectsTable::Private::Private( Session &session, const vector< AstroObject
 #define BY_CATALOGUE "filter_by_catalogue_menu"
 #define BY_ALTITUDE "filter_by_altitude_menu"
 #define BY_OBSERVED "filter_by_observed_in_any_session"
+#define BY_TIME "filter_by_time"
 
 AstroObjectsTable::AstroObjectsTable(Session &session,
 				     const vector<Action> &actions,
@@ -69,12 +70,15 @@ AstroObjectsTable::AstroObjectsTable(Session &session,
     if(showFilters == FiltersButtonIntegrated)
       d->filtersBar->addWidget(d->filtersButton);
     
+    d->timeFilterTraits = make_shared<FilterByRange::Traits< boost::posix_time::ptime >>(boost::posix_time::second_clock::local_time());
+    
     d->addFilterItem(BY_TYPE, new FilterByTypeWidget(initialTypes));
     d->addFilterItem(BY_CONSTELLATION, new FilterByConstellation);
     d->addFilterItem(BY_CATALOGUE, new FilterByCatalogue(session));
     d->addFilterItem(BY_OBSERVED, new FilterByObservedWidget{WString::tr("observed-in-any-session")});
     d->addFilterItem(BY_MAGNITUDE, new FilterByRangeWidget<double>{ {-5, 25}, {"magnitude_label", "magnitude_title", "minimum_magnitude_label", "maximum_magnitude_label"} });
     d->addFilterItem(BY_ALTITUDE, new FilterByRangeWidget<Angle>{ {Angle::degrees(0), Angle::degrees(90)}, {"range_angle_label", "range_angle_title", "minimum-altitude", "maximum-altitude"} });
+    d->addFilterItem(BY_TIME, new FilterByTimeWidget{ {}, {"range_transit_label", "range_transit_title", "range_transit_minimum", "range_transit_maximum"}, d->timeFilterTraits });
 
     d->availableFilters->addSeparator();
     d->availableFilters->addItem(WString::tr("reset-filters"))->triggered().connect([=](WMenuItem*, _n5) {
@@ -126,12 +130,24 @@ AstroObjectsTable::Filters AstroObjectsTable::Private::filters() const
   _filters.minimumAltitude = filter<FilterByAltitudeWidget>(BY_ALTITUDE)->value().lower;
   _filters.maximumAltitude = filter<FilterByAltitudeWidget>(BY_ALTITUDE)->value().upper;
   _filters.observed = filter<FilterByObservedWidget>(BY_OBSERVED)->value();
+  _filters.start_time = filter<FilterByTimeWidget>(BY_TIME)->value().lower;
+  _filters.end_time = filter<FilterByTimeWidget>(BY_TIME)->value().upper;
   return _filters;
 }
 
 void AstroObjectsTable::setMagnitudeRange(const FilterByRange::Range<double>& magnitudeRange)
 {
   d->filter<FilterByMagnitudeWidget>(BY_MAGNITUDE)->setValue(magnitudeRange);
+}
+
+void AstroObjectsTable::setTimeRange(const Range< boost::posix_time::ptime >& timeRange, const Timezone &timezone)
+{
+  d->timeFilterTraits->_start = timeRange.lower;
+  d->timeFilterTraits->_formatter = [=](const boost::posix_time::ptime &t){
+    return DateTime::fromUTC(t, timezone).str();
+  };
+  d->filter<FilterByTimeWidget>(BY_TIME)->setOuterRange(timeRange);
+  d->filter<FilterByTimeWidget>(BY_TIME)->setValue(timeRange);
 }
 
 

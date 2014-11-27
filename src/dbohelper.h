@@ -40,6 +40,11 @@ public:
       .where("magnitude <= ?").bind(filters.maximumMagnitude)
       .where("altitude >= ?").bind(filters.minimumAltitude.degrees())
       .where("altitude <= ?").bind(filters.maximumAltitude.degrees());
+    if(!filters.start_time.is_not_a_date_time() && !filters.end_time.is_not_a_date_time()) {
+      query
+	.where("transit_time > ?").bind(filters.start_time)
+	.where("transit_time < ?").bind(filters.end_time);
+    }
     if(catalogue)
       query.where("d.catalogues_id = ?").bind(catalogue.id());
     query.where(format("\"type\" IN (%s)") % boost::algorithm::join(filterConditions, ", ") );
