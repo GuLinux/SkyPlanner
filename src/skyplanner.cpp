@@ -100,6 +100,8 @@ const string SkyPlanner::HOME_PATH = "/home/";
 SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
   : WApplication( environment ), d( this, onQuit )
 {
+
+  
   d->initialInternalPath = internalPath();
   d->agentIsBot = environment.agentIsSpiderBot() || environment.userAgent().find("Baiduspider") != string::npos || environment.userAgent().find("YandexBot") != string::npos;
   if(!d->agentIsBot)
@@ -260,8 +262,23 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
       i->setHidden(loggedIn);
   };
   
+  
+    
+  auto banUser = [=] {
+    if(d->session.login().loggedIn() && 
+    (d->session.login().user().email() == "alessia.rabaioli@gmail.com" || d->session.login().user().unverifiedEmail() == "alessia.rabaioli@gmail.com")) {
+      auto w = new WText{"User account is blocked."};
+      d->widgets->addWidget(w);
+      d->widgets->setCurrentWidget(w);
+      triggerUpdate();
+      quit();
+      return;
+    }
+  };
+  
   auto loginLogoutMessage = [=] {
     if(d->session.login().loggedIn()) {
+      banUser();
       Dbo::Transaction t(d->session);
       d->loginname = d->session.user()->loginName();
       d->sessionInfo.username = d->session.user()->loginName().toUTF8();
