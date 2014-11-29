@@ -267,9 +267,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
   auto banUser = [=] {
     if(d->session.login().loggedIn() && 
     (d->session.login().user().email() == "alessia.rabaioli@gmail.com" || d->session.login().user().unverifiedEmail() == "alessia.rabaioli@gmail.com")) {
-      auto w = new WText{"User account is blocked."};
-      d->widgets->addWidget(w);
-      d->widgets->setCurrentWidget(w);
+      notification("Blocked", "User account is blocked. This session will be ended.", Notification::Error);
       triggerUpdate();
       quit();
       return;
