@@ -262,14 +262,15 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
       i->setHidden(loggedIn);
   };
   
-  
+#define blocked_user "alessia.rabaioli@gmail.com"
+//#define blocked_user "marco.gulino@gmail.com"
     
   auto banUser = [=] {
     if(d->session.login().loggedIn() && 
-    (d->session.login().user().email() == "alessia.rabaioli@gmail.com" || d->session.login().user().unverifiedEmail() == "alessia.rabaioli@gmail.com")) {
-      notification("Blocked", "User account is blocked. This session will be ended.", Notification::Error);
+    (d->session.login().user().email() == blocked_user || d->session.login().user().unverifiedEmail() == blocked_user)) {
+      notification(WString::tr("blocked_user_message_title"), WString::tr("blocked_user_message"), Notification::Error);
       triggerUpdate();
-      quit();
+      quit(WString::tr("blocked_user_message"));
       return;
     }
   };

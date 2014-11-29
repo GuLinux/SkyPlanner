@@ -355,4 +355,6 @@ Dopo aver aggiunto una nuova sessione, clicca sul suo nome per aggiungere oggett
 
 <message id="dss_download_failed">Errore nel download dell'immagine DSS. Potrebbe esserci un errore interno di SkyPlanner, o un problema al sito DSS.</message>
 
+<message id="blocked_user_message_title">Utente Bloccato</message>
+<message id="blocked_user_message">Il tuo account utente è stato bloccato dall'amministratore. La sessione corrente verrà terminata.</message>
 </messages>

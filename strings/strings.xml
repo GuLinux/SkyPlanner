@@ -341,4 +341,6 @@ After you added a session, click it to add new objects.
 <message id="maximum_angular_size">Maximum angular size</message>
 
 <message id="dss_download_failed">Error downloading DSS Image. There might be an internal SkyPlanner error, or the DSS Website might have a problem.</message>
+<message id="blocked_user_message_title">Banned User</message>
+<message id="blocked_user_message">User account is blocked by the administrator. This session will be ended.</message>
 </messages>
