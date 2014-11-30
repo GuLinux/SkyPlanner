@@ -262,27 +262,9 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
       i->setHidden(loggedIn);
   };
   
-#define blocked_user "alessia.rabaioli@gmail.com"
-//#define blocked_user "marco.gulino@gmail.com"
-    
-  auto banUser = [=] {
-    if(!d->session.login().loggedIn())
-      return false;
-    auto email = d->session.login().user().email().empty() ? d->session.login().user().unverifiedEmail() : d->session.login().user().email();
-    if(email == blocked_user) {
-      notification(WString::tr("blocked_user_message_title"), WString::tr("blocked_user_message"), Notification::Error);
-      triggerUpdate();
-      spLog("notice") << "BANNED USER DETECTED: " << this->environment().headerValue("X-Forwarded-For") << ", " << d->session.login().user().identity("loginname") << ", " << email;
-      quit(WString::tr("blocked_user_message"));
-      return true;
-    }
-    return false;
-  };
   
   auto loginLogoutMessage = [=] {
     if(d->session.login().loggedIn()) {
-      if(banUser())
-	return;
       Dbo::Transaction t(d->session);
       d->loginname = d->session.user()->loginName();
       d->sessionInfo.username = d->session.user()->loginName().toUTF8();
