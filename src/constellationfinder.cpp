@@ -1,6 +1,6 @@
 /*
  * <one line to give the program's name and a brief idea of what it does.>
- * Copyright (C) 2013  <copyright holder> <email>
+ * Copyright (C) 2013  Marco Gulino <marco.gulino@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,6 +15,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
+ * 
+ *  Adapted from: http://djm.cc/constellation.js
+ * 
+ */
+// David Moews, 2008-VI-14; revised 2008-VIII-2
+
+/*
+ * precess() and get_name() are adapted from program.c, from
+ * ftp://cdsarc.u-strasbg.fr/pub/cats/VI/42/program.c
+ * which is from
+ * CDS (Centre de donnees astronomiques de Strasbourg) catalog VI/42; also see
+ *
+ * Identification of a constellation from a position,
+ * Nancy G. Roman,
+ * PUBLICATIONS OF THE ASTRONOMICAL SOCIETY OF THE PACIFIC,
+ * 99 (July 1987), pp. 695-699.
+ *
+ * Program.c says:
+ * This program is a translation with a few adaptations of the 
+ * Fortran program.f, made by FO @ CDS  (francois@simbad.u-strasbg.fr)  
+ * in November 1996.
  */
 #include <string>
 #include <map>
