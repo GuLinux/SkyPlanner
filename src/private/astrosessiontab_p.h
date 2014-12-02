@@ -38,7 +38,6 @@ namespace Wt
 
 class Session;
 class ExportAstroSessionResource;
-class FilterByMagnitudeWidget;
 class FilterByCatalogue;
 class FilterByTypeWidget;
 class AstroObjectsTable;

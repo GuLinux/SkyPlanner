@@ -21,9 +21,7 @@
 #define ASTROOBJECTSTABLE_P_H
 #include "widgets/astroobjectstable.h"
 #include <widgets/filterbytypewidget.h>
-#include <widgets/filterbymagnitudewidget.h>
 #include <widgets/filterbycatalogue.h>
-#include <widgets/filterbyaltitudewidget.h>
 #include <widgets/filterbyconstellation.h>
 #include <widgets/filterbyobservedwidget.h>
 #include "session.h"
@@ -53,6 +51,7 @@ class AstroObjectsTable::Private
     Wt::WPushButton *filtersButton = nullptr;
     template<typename T> void addFilterItem(const std::string &text, T *filterWidget);
 
+    std::shared_ptr<FilterByRange::Traits<boost::posix_time::ptime>> timeFilterTraits;
     bool forceActionsAsToolBar = false;
     
     struct FilterView {

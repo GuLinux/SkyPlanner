@@ -6,10 +6,12 @@
 #include <signal.h>
 #include "dss.h"
 #include <widgets/dssimage.h>
+#include <widgets/private/dssimage_p.h>
 #include <utils/curl.h>
 #include <utils/utils.h>
 #include <utils/format.h>
 #include <boost/thread.hpp>
+#include <Magick++.h>
 
 using namespace std;
 using namespace Wt;
@@ -58,16 +60,19 @@ void DSSDownloader::download() const
     cerr << "File already existing: " << file << endl;
     return;
   }
-  ofstream out(file.string());
-  Curl curl{out};
+  stringstream mem;
+  Curl curl{mem};
   Scope cleanup([&]{
     auto received_content_type = curl.header("Content-Type");
     uint64_t received_content_length = 0;
     try {
       received_content_length = boost::lexical_cast<uint64_t>(curl.header("Content-length"));
+      Magick::Blob blob(mem.str().data(), mem.str().size());
+      Magick::Image image(blob);
+      DSSImage::Private::apply_common_options(image);
+      image.write(file.string());
     } catch(const std::exception &e) {
-    }
-    if(received_content_type != "image/gif" || received_content_length != boost::filesystem::file_size(file) || ! curl.requestOk() || curl.httpResponseCode() != 200) {
+      ofstream out(format("%s.%d.html") % file.string() % curl.httpResponseCode() );
       cerr << "Error downloading " << url << ": " << curl.lastErrorMessage() << "; content type: " << received_content_type << ", status: " << curl.httpResponseCode() << endl;
       out << format(R"(
 	<!-- 
@@ -76,12 +81,9 @@ void DSSDownloader::download() const
 	  curl response code: %d
 	  curl error message: %s
 	  expected size: %d
-	  actual size: %d
-	-->)") % url % curl.httpResponseCode() % curl.lastErrorMessage() % received_content_length % boost::filesystem::file_size(file);
+	  exception message: %s
+	-->)") % url % curl.httpResponseCode() % curl.lastErrorMessage() % received_content_length % e.what();
       out.close();
-      string suffix = format(".%d.html") % curl.httpResponseCode();
-      auto error_file = file;
-      boost::filesystem::rename(file, error_file.replace_extension(suffix));
     }
   });
   curl.get(url);
@@ -112,6 +114,7 @@ void thread_pool::run(function<void()> f)
 
 
 int main(int argc, char **argv) {
+  Magick::InitializeMagick(*argv);
   signal(SIGINT, handleInterrupt);
   po::options_description desc("Allowed options");
   desc.add_options()

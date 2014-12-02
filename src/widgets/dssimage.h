@@ -54,6 +54,7 @@ class DSSImage : public Wt::WCompositeWidget
     DSS::ImageVersion imageVersion() const;
     Wt::Signal<> &failed() const;
     Wt::Signal<Wt::WMouseEvent> &imageClicked() const;
+    void negate();
     Wt::Signal<Wt::WLink> &imageLoaded() const;
     DSSImage( const ImageOptions &imageOptions, const std::shared_ptr<std::mutex> &downloadMutex = {}, bool anchor = true, bool showDSSLink = true, Wt::WContainerWidget *parent = 0 );
     ~DSSImage();
@@ -62,6 +63,7 @@ class DSSImage : public Wt::WCompositeWidget
     Wt::WLink dssOriginalLink() const;
     void showImageControls();
   private:
+    friend class DSSDownloader;
     D_PTR;
 };
 

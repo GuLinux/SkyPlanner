@@ -39,9 +39,10 @@
 #include <Wt/WPushButton>
 #include <Wt/WSlider>
 #include <mutex>
-#include <GraphicsMagick/Magick++.h>
+#include <Magick++.h>
 #include "models/Models"
 #include <Wt/WDoubleSpinBox>
+#include <Wt/WMemoryResource>
 
 
 using namespace Wt;
@@ -91,6 +92,7 @@ void DSSImage::Private::save(const boost::system::error_code &errorCode, const H
   try {
     Magick::Blob blob(httpMessage.body().data(), httpMessage.body().size());
     Magick::Image image(blob);
+    apply_common_options(image);
     image.write(fullFile().string());
   } catch(std::exception &e) {
     WServer::instance()->log("error") << "Error saving to " << fullFile() << ": " << e.what();
@@ -138,7 +140,7 @@ boost::filesystem::path DSSImage::ImageOptions::file(const boost::filesystem::pa
 {
   string arSignFix = coordinates.rightAscension.degrees() < 0 ? "-" : "";
   string decSignFix = coordinates.declination.degrees() < 0 ? "-" : "";
-  string cacheKey = format("%s%s-ar_%s%d-%d-%.1f_dec_%s%d-%d-%.1f_size_%d-%d-%.1f.jpg")
+  string cacheKey = format("%s%s-ar_%s%d-%d-%.1f_dec_%s%d-%d-%.1f_size_%d-%d-%.1f.png")
   % prefix
   % DSS::imageVersion(imageVersion)
   % (coordinates.rightAscension.sexagesimalHours().hours == 0 ? arSignFix : "")
@@ -163,6 +165,7 @@ void DSSImage::Private::Image::resize(const fs::path &destination, const DSSImag
   auto fullImage = imageSizeMap[DSSImage::Full].file(imageOptions).string();
   if(! fs::exists(fullImage)) return;
   Magick::Image image(fullImage);
+  apply_common_options(image);
   image.scale({pixels,pixels});
   image.write(destination.string());
 }
@@ -192,17 +195,54 @@ string DSSImage::ImageOptions::url() const
 void DSSImage::Private::setImageFromCache(shared_ptr<DialogControl::Finish> finishDialogControl)
 {
   (void) finishDialogControl;
-  content->clear();
-  string deployPath;
-  _imageLink = linkFor(file());
+  setImage(linkFor(file()));
+}
 
+void DSSImage::negate()
+{
+  if(d->negated) {
+    d->negated = false;
+    d->setImage(d->linkFor(d->file()));
+    return;
+  }
+  d->negated = true;
+  d->setImage(d->negate(d->file()));
+}
+
+Wt::WLink DSSImage::Private::negate(const boost::filesystem::path &file)
+{
+  try {
+    spLog("notice") << "negating image..";
+    Magick::Image image(file.string());
+    apply_common_options(image);
+    image.negate();
+    Magick::Blob blob;
+    image.write(&blob, "PNG");
+    spLog("notice") << "negating image, wrote " << blob.length() << " bytes";
+    vector<uint8_t> data(blob.length());
+    const uint8_t *data_c = reinterpret_cast<const uint8_t*>(blob.data());
+    copy(data_c, data_c + blob.length(), begin(data));
+    return new WMemoryResource("image/jpeg", data, q);
+  } catch(exception &e) {
+    spLog("error") << "Error negating dss image: " << e.what();
+    return linkFor(file);
+  }
+}
+
+
+
+void DSSImage::Private::setImage(const Wt::WLink& link)
+{
+  _imageLink = link;
+  spLog("notice") << "reloading image: " << link.url();
+  content->clear();
   if(showAnchor) {
-    content->addWidget(WW<WAnchor>(_imageLink).setTarget(TargetNewWindow).add(WW<WImage>(_imageLink).addCss("img-responsive")));
+    content->addWidget(WW<WAnchor>(link).setTarget(TargetNewWindow).add(WW<WImage>(link).addCss("img-responsive")));
   }
   else {
-    content->addWidget(WW<WImage>(_imageLink).addCss("img-responsive").onClick([=](const WMouseEvent &e){imageClicked.emit(e); }));
+    content->addWidget(WW<WImage>(link).addCss("img-responsive").onClick([=](const WMouseEvent &e){imageClicked.emit(e); }));
   }
-  _loaded.emit(_imageLink);
+  _loaded.emit(link);
 }
 
 
@@ -237,6 +277,9 @@ WLink DSSImage::fullImageLink() const
   if(d->imageOptions.imageSize == Full)
     return d->_imageLink;
 
+  if(d->negated) {
+    return d->negate(d->fullFile());
+  }
   return d->linkFor(d->fullFile());
 }
 
@@ -472,3 +515,9 @@ void DSSImage::startDownload()
   d->download();
 }
 
+Magick::Image& DSSImage::Private::apply_common_options(Magick::Image& image)
+{
+  image.colorSpace(Magick::GRAYColorspace);
+  image.quality(0);
+  return image;
+}

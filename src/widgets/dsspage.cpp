@@ -86,8 +86,7 @@ void DSSPage::Private::setImageType(DSS::ImageVersion version, const shared_ptr<
     i = menu->addItem(WString::tr("dss_original_menu"));
     i->setLink(image->dssOriginalLink());
     i->setLinkTarget(TargetNewWindow);
-    if(wApp->environment().agentIsWebKit())
-      menu->addItem(WString::tr("buttons_invert"))->triggered().connect([=](WMenuItem*, _n5){ image->toggleStyleClass("image-inverse", !image->hasStyleClass("image-inverse")); });
+    menu->addItem(WString::tr("buttons_invert"))->triggered().connect([=](WMenuItem*, _n5){ q->toggleInvert(); });
     WPopupMenu *imageTypeSubmenu = WW<WPopupMenu>().css("dialog-popup-submenu");
     for(auto type: DSS::versions()) {
       WString itemName = WString::tr(string{"dssimage_version_"} + DSS::imageVersion(type));
@@ -108,8 +107,23 @@ void DSSPage::Private::setImageType(DSS::ImageVersion version, const shared_ptr<
   });
   image->failed().connect([=](_n6) mutable {
     dssImage = nullptr;
-    if(nextDSSTypeIndex+1 > imageVersions.size())
+    spLog("notice") << "DSSImage download failed: " << nextDSSTypeIndex << "/" << imageVersions.size();
+    if(nextDSSTypeIndex+1 > imageVersions.size()) {
+      spLog("notice") << "Giving up...";
+      imageContainer->clear();
+      imageContainer->addWidget(WW<WContainerWidget>().css("alert alert-danger")
+	.add(WW<WText>(WString::tr("dss_download_failed")).setInline(false))
+	.add(WW<WPushButton>(WString::tr("button_retry")).onClick([=](WMouseEvent){
+	Dbo::Transaction t(session);
+	nextDSSTypeIndex = 0;
+	auto nextVersion = imageVersions[nextDSSTypeIndex++];
+	ViewPort::setImageVersion(nextVersion, object, session.user(), t);
+	setImageType(nextVersion, downloadMutex);
+      })
+      ));
+      wApp->triggerUpdate();
       return;
+    }
     Dbo::Transaction t(session);
     auto nextVersion = imageVersions[nextDSSTypeIndex++];
     ViewPort::setImageVersion(nextVersion, object, session.user(), t);
@@ -151,9 +165,9 @@ DSSPage::DSSPage(const NgcObjectPtr &object, Session &session, const DSSPage::Op
     wApp->setInternalPath(DSSPage::internalPath(object, t));
     wApp->setInternalPathValid(true);
   }
-  d->imageVersions = {DSS::poss2ukstu_red, DSS::poss2ukstu_blue, DSS::poss1_red, DSS::poss1_blue, DSS::phase2_gsc2};
+  d->imageVersions = {DSS::poss2ukstu_red, DSS::poss2ukstu_blue, DSS::poss1_red, DSS::poss1_blue, DSS::phase2_gsc2, DSS::poss2ukstu_ir, DSS::quickv, DSS::phase2_gsc1};
   if(object->type() == NgcObject::NebGx || object->type() == NgcObject::NebGx)
-    d->imageVersions = {DSS::poss2ukstu_blue, DSS::poss1_blue, DSS::poss2ukstu_red, DSS::poss1_red, DSS::phase2_gsc2};
+    d->imageVersions = {DSS::poss2ukstu_blue, DSS::poss1_blue, DSS::poss2ukstu_red, DSS::poss1_red, DSS::phase2_gsc2, DSS::poss2ukstu_ir, DSS::quickv, DSS::phase2_gsc1};
   d->imageContainer = WW<WContainerWidget>();
   if(options.showTitle) {
     WString namesJoined = Utils::htmlEncode(WString::fromUTF8( boost::algorithm::join(NgcObject::namesByCatalogueImportance(t, object), ", ") ));
@@ -175,10 +189,7 @@ DSSPage::DSSPage(const NgcObjectPtr &object, Session &session, const DSSPage::Op
     d->setImageType(type, options.downloadMutex);
   });
 
-  WPushButton *invertButton = WW<WPushButton>(WString::tr("buttons_invert")).css("btn btn-inverse")
-    .onClick([=](WMouseEvent) { toggleInvert(); } )
-    .setEnabled(wApp->environment().agentIsWebKit()
-  );
+  WPushButton *invertButton = WW<WPushButton>(WString::tr("buttons_invert")).css("btn btn-inverse").onClick( [=](WMouseEvent){ toggleInvert(); } );
 
   WPushButton *imageControls = WW<WPushButton>(WString::tr("imagecontrol-menu")).onClick([=](WMouseEvent){ if(d->dssImage) d->dssImage->showImageControls(); });
 
@@ -211,7 +222,8 @@ DSSPage::DSSPage(const NgcObjectPtr &object, Session &session, const DSSPage::Op
 
 void DSSPage::toggleInvert()
 {
-  d->imageContainer->toggleStyleClass("image-inverse", !d->imageContainer->hasStyleClass("image-inverse")); 
+  d->dssImage->negate();
+  //d->imageContainer->toggleStyleClass("image-inverse", !d->imageContainer->hasStyleClass("image-inverse")); 
 }
 
 string DSSPage::internalPath( const Dbo::ptr< NgcObject > &object, Dbo::Transaction &transaction )

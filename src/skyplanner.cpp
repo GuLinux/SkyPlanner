@@ -100,6 +100,8 @@ const string SkyPlanner::HOME_PATH = "/home/";
 SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
   : WApplication( environment ), d( this, onQuit )
 {
+
+  
   d->initialInternalPath = internalPath();
   d->agentIsBot = environment.agentIsSpiderBot() || environment.userAgent().find("Baiduspider") != string::npos || environment.userAgent().find("YandexBot") != string::npos;
   if(!d->agentIsBot)
@@ -259,6 +261,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
     for(auto i: d->loggedOutItems)
       i->setHidden(loggedIn);
   };
+  
   
   auto loginLogoutMessage = [=] {
     if(d->session.login().loggedIn()) {

@@ -23,12 +23,17 @@
 #include <Wt/WCompositeWidget>
 #include "utils/d_ptr.h"
 #include "models/Models"
-#include "filterbymagnitudewidget.h"
+#include "widgets/filterbyrangewidget.h"
 #include <functional>
 #include <boost/logic/tribool.hpp>
 
 class Session;
 class ObjectPopupMenu;
+
+typedef FilterByRangeWidget<double> FilterByMagnitudeWidget;
+typedef FilterByRangeWidget<Angle> FilterByAltitudeWidget;
+typedef FilterByRangeWidget<Angle> FilterByAngularSizeWidget;
+typedef FilterByRangeWidget<boost::posix_time::ptime> FilterByTimeWidget;
 
 class AstroObjectsTable : public Wt::WCompositeWidget
 {
@@ -77,13 +82,17 @@ public:
   };
   struct Filters {
     std::set<NgcObject::NebulaType> types;
-    double minimumMagnitude = -200;
-    double maximumMagnitude = 100;
+    double minimumMagnitude;
+    double maximumMagnitude;
     ConstellationFinder::Constellation constellation;
     CataloguePtr catalogue;
     Angle minimumAltitude;
     Angle maximumAltitude = Angle::degrees(90);
+    boost::posix_time::ptime start_time;
+    boost::posix_time::ptime end_time;
     boost::logic::tribool observed = boost::logic::indeterminate;
+    Angle minimumAngularSize;
+    Angle maximumAngularSize;
   };
   struct Page {
     long current = -1;
@@ -107,7 +116,8 @@ public:
   void clear();
   Wt::Signal<Filters> &filtersChanged() const;
   Filters currentFilters() const;
-  void setMagnitudeRange(const FilterByMagnitudeWidget::Range &magnitudeRange);
+  void setMagnitudeRange(const FilterByRange::Range<double> &magnitudeRange);
+  void setTimeRange(const FilterByRange::Range<boost::posix_time::ptime> &timeRange, const Timezone &timezone);
   Wt::WContainerWidget *tableFooter() const;
   void setTableAttribute(const std::string &attributeName, const std::string &attributeValue);
   void setResponsive(bool responsive);

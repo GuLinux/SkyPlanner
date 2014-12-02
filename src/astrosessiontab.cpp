@@ -69,7 +69,6 @@
 #include <Wt/Json/Object>
 #include <Wt/WPopupMenu>
 #include <Wt/WMemoryResource>
-#include "widgets/filterbymagnitudewidget.h"
 #include "widgets/filterbytypewidget.h"
 #include "widgets/filterbycatalogue.h"
 #include "widgets/filterbyconstellation.h"
@@ -203,8 +202,6 @@ void AstroSessionTab::Private::reload()
   });
 
   auto printableVersionButton = WW<WPushButton>(WString::tr("astrosessiontab_printable_version")).css("btn btn-info btn-xs").onClick( [=](WMouseEvent){ printableVersion(); } );
-
-
 
   WPushButton *exportButton = WW<WPushButton>(WString::tr("astrosessiontab_export")).css("btn btn-xs btn-info");
   WPopupMenu *exportMenu = new WPopupMenu;
@@ -415,9 +412,15 @@ void AstroSessionTab::Private::reload()
       addObjectsTabWidget->populateFor(selectedTelescope, timezone);
     });
   });
+  
+  {
+    Ephemeris ephemeris(astroSession->position(), timezone);
+    astroObjectsTable->setTimeRange({ephemeris.sun(astroSession->date()).set.utc, ephemeris.sun(astroSession->date()).rise.utc}, timezone);
+  }
+  
   populate();
   positionDetails->clear();
-  positionDetails->addWidget(new PositionDetailsWidget{{astroSession, selectedTelescope, timezone}, geoCoderPlace, session});  
+  positionDetails->addWidget(new PositionDetailsWidget{{astroSession, selectedTelescope, timezone}, geoCoderPlace, session});
   // TODO: something seems to be wrong here...
   // TODO: wait for ready signal?
   WTimer::singleShot(500, [=](WMouseEvent) {

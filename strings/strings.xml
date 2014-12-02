@@ -289,9 +289,10 @@ After you added a session, click it to add new objects.
 <message id="filter_by_magnitude_menu">by magnitude</message>
 <message id="filter_by_constellation_menu">by constellation</message>
 <message id="filter_by_catalogue_menu">by catalogue</message>
-<message id="filter_by_minimum_altitude_menu">by minimum altitude</message>
-<message id="filter_by_maximum_altitude_menu">by maximum altitude</message>
+<message id="filter_by_altitude_menu">by altitude</message>
 <message id="filter_by_observed_in_any_session">by past observations</message>
+<message id="filter_by_time">by transit time</message>
+<message id="filter_by_angular_size">by angular size</message>
 
 <message id="observed-in-any-session">observed in the past</message>
 
@@ -325,4 +326,21 @@ After you added a session, click it to add new objects.
 <message id="suggested_objects_sort_transit_ascending">Sort by observable Time (ascending)</message>
 <message id="suggested_objects_sort_magnitude_descending">Sort by magnitude (descending)</message>
 <message id="suggested_objects_sort_transit_descending">Sort by observable Time (descending)</message>
+
+<message id="range_angle_label">altitude: {1}-{2}</message>
+<message id="range_angle_title">Set altitude</message>
+
+<message id="range_transit_label">transit: {1}-{2}</message>
+<message id="range_transit_title">Set transit time</message>
+<message id="range_transit_minimum">Minimum transit time</message>
+<message id="range_transit_maximum">Maximum transit time</message>
+
+<message id="range_angular_size_label">angular size: {1}-{2}</message>
+<message id="range_angular_size_title">Set angular size</message>
+<message id="minimum_angular_size">Minimum angular size</message>
+<message id="maximum_angular_size">Maximum angular size</message>
+
+<message id="dss_download_failed">Error downloading DSS Image. There might be an internal SkyPlanner error, or the DSS Website might have a problem.</message>
+<message id="blocked_user_message_title">Banned User</message>
+<message id="blocked_user_message">User account is blocked by the administrator. This session will be ended.</message>
 </messages>

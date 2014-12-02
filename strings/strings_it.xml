@@ -303,9 +303,10 @@ Dopo aver aggiunto una nuova sessione, clicca sul suo nome per aggiungere oggett
 <message id="filter_by_magnitude_menu">per magnitudine</message>
 <message id="filter_by_constellation_menu">per costellazione</message>
 <message id="filter_by_catalogue_menu">per catalogo</message>
-<message id="filter_by_minimum_altitude_menu">per altezza minima</message>
-<message id="filter_by_maximum_altitude_menu">per altezza massima</message>
+<message id="filter_by_altitude_menu">per altezza</message>
 <message id="filter_by_observed_in_any_session">per osservazioni passate</message>
+<message id="filter_by_time">per ora di transito</message>
+<message id="filter_by_angular_size">per dimensione angolare</message>
 
 <message id="observed-in-any-session">osservati in passato</message>
 
@@ -338,5 +339,22 @@ Dopo aver aggiunto una nuova sessione, clicca sul suo nome per aggiungere oggett
 <message id="suggested_objects_sort_magnitude_descending">Ordina per magnitudine (discendente)</message>
 <message id="suggested_objects_sort_transit_descending">Ordina per orario (discendente)</message>
 <message id="magnitude_label">magnitudine: {1}-{2}</message>
-<message id="magnitude_title">Imposta Magnitudine</message>
+<message id="range_angle_label">altezza: {1}-{2}</message>
+<message id="magnitude_title">Imposta magnitudine</message>
+<message id="range_angle_title">Imposta altezza</message>
+
+<message id="range_transit_label">transito: {1}-{2}</message>
+<message id="range_transit_title">Imposta ora di transito</message>
+<message id="range_transit_minimum">Ora di transito minima</message>
+<message id="range_transit_maximum">Ora di transito massima</message>
+
+<message id="range_angular_size_label">dimensione angolare: {1}-{2}</message>
+<message id="range_angular_size_title">Imposta dimensione angolare</message>
+<message id="minimum_angular_size">Dimensione angolare minima</message>
+<message id="maximum_angular_size">Dimensione angolare massima</message>
+
+<message id="dss_download_failed">Errore nel download dell'immagine DSS. Potrebbe esserci un errore interno di SkyPlanner, o un problema al sito DSS.</message>
+
+<message id="blocked_user_message_title">Utente Bloccato</message>
+<message id="blocked_user_message">Il tuo account utente è stato bloccato dall'amministratore. La sessione corrente verrà terminata.</message>
 </messages>

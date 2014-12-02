@@ -9,7 +9,7 @@
 #include "utils/utils.h"
 #include "curl/curl.h"
 #include <boost/filesystem.hpp>
-#include <GraphicsMagick/Magick++.h>
+#include <Magick++.h>
 #include "Wt-Commons/quitresource.h"
 #include <Wt/Http/Response>
 #include "webservice/activesessionsresource.h"
