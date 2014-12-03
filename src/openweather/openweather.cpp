@@ -50,8 +50,7 @@ shared_ptr<WeatherForecast> OpenWeather::forecast(const Coordinates::LatLng &coo
     string apiKey;
     wApp->readConfigurationProperty("openweather_api_key", apiKey);
     days = std::min(days, 16);
-    static Cache<WeatherCacheEntry, string> weatherCache(boost::posix_time::minutes(1));
-    //static Cache<WeatherCacheEntry, string> weatherCache(boost::posix_time::hours(6));
+    static Cache<WeatherCacheEntry, string> weatherCache(boost::posix_time::hours(6));
     spLog("notice") << "Coordinates: " << coordinates << ", city name: " << cityName << ", days: " << days << ", locale: " << wApp->locale().name();
     string language = wApp->locale().name();
     string cityUrl = format("http://api.openweathermap.org/data/2.5/forecast/daily?q=%s&mode=json&units=metric&cnt=%d&type=like&lang=%s&APPID=%s") % Wt::Utils::urlEncode(cityName) % days % language % apiKey;

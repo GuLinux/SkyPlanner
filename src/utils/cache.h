@@ -40,12 +40,8 @@ public:
     void cleanup() {
       std::list<KeyType> expired_keys;
       for(auto element: cache)
-	if(!element.second.valid(validity))
-	  expired_keys.push_back(element.first);
-      for(auto expired: expired_keys) {
-	std::cerr << __PRETTY_FUNCTION__ << " Removing expired element: " << expired << std::endl;
-	cache.erase(expired);
-      }
+	if(!element.second.valid(validity)) { expired_keys.push_back(element.first); }
+      for(auto expired: expired_keys) {	cache.erase(expired);       }
     }
 
 private:
