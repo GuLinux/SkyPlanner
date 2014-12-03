@@ -503,15 +503,21 @@ void SkyPlanner::clearNotifications()
   d->shownNotifications.clear();
 }
 
-shared_ptr<SkyPlanner::Notification> SkyPlanner::notification(const WString &title, const WString &content, Notification::Type type, int autoHideSeconds, WContainerWidget *addTo)
+shared_ptr<SkyPlanner::Notification> SkyPlanner::notification(const WString &title, const WString &content, Notification::Type type, int autoHideSeconds, WContainerWidget *addTo, const string &categoryTag)
 {
-  return notification(title, new WText(content), type, autoHideSeconds, addTo);
+  return notification(title, new WText(content), type, autoHideSeconds, addTo, categoryTag);
 }
-shared_ptr<SkyPlanner::Notification> SkyPlanner::notification(const WString &title, WWidget *content, Notification::Type type, int autoHideSeconds, WContainerWidget *addTo)
+shared_ptr<SkyPlanner::Notification> SkyPlanner::notification(const WString& title, WWidget* content, SkyPlanner::Notification::Type type, int autoHideSeconds, WContainerWidget* addTo, const string& categoryTag)
 {
-  auto notification = make_shared<Notification>(title, content, type, true);
+  auto notification = make_shared<Notification>(title, content, type, true, categoryTag);
   (addTo ? addTo : d->notifications)->addWidget(notification->widget() );
   notification->widget()->animateShow({WAnimation::Fade, WAnimation::EaseInOut, 500});
+  if(!categoryTag.empty()) {
+    auto old_notification = find_if(begin(d->shownNotifications), end(d->shownNotifications), [categoryTag](const shared_ptr<Notification> &n){ return n->categoryTag() == categoryTag; });
+    if(old_notification != end(d->shownNotifications)) {
+      (*old_notification)->close();
+    }
+  }
   if(autoHideSeconds > 0)
     WTimer::singleShot(1000*autoHideSeconds, [=](WMouseEvent) { notification->close(); } );
   d->shownNotifications.insert(notification);
@@ -524,6 +530,7 @@ public:
   Signal<> closed;
   WContainerWidget *widget;
   bool valid = true;
+  string categoryTag;
 };
 
 Signal<> &SkyPlanner::Notification::closed() const
@@ -553,9 +560,10 @@ bool SkyPlanner::Notification::valid() const
   return d->valid;
 }
 
-SkyPlanner::Notification::Notification(const WString &title, WWidget *content, Type type, bool addCloseButton, WContainerWidget *parent)
+SkyPlanner::Notification::Notification(const WString& title, WWidget* content, SkyPlanner::Notification::Type type, bool addCloseButton, const string& categoryTag, WContainerWidget* parent)
   : d()
 {
+  d->categoryTag = categoryTag;
   static map<Type,string> notificationStyles {
     {Error, "alert-danger"},
     {Success, "alert-success"},
@@ -573,6 +581,12 @@ SkyPlanner::Notification::Notification(const WString &title, WWidget *content, T
   d->widget->addWidget(new WText{WString("<h4>{1}</h4>").arg(title) });
   d->widget->addWidget(content);
 }
+
+string SkyPlanner::Notification::categoryTag() const
+{
+  return d->categoryTag;
+}
+
 
 SkyPlanner::Notification::~Notification()
 {

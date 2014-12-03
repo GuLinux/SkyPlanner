@@ -607,7 +607,7 @@ void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject
 
   astroObjectsTable->populate(astroObjects, selectedTelescope, timezone, page,
     addedObject ? AstroObjectsTable::Selection{addedObject->ngcObject(), "success", [=](const AstroObjectsTable::Row &r) {
-      SkyPlanner::instance()->notification(WString::tr("notification_success_title"), WString::tr("notification_object_added").arg(r.tableRow->id()), SkyPlanner::Notification::Information, 5);
+      SkyPlanner::instance()->notification(WString::tr("notification_success_title"), WString::tr("notification_object_added").arg(r.tableRow->id()), SkyPlanner::Notification::Information, 5, nullptr, "astrosession_object_added");
     }} : AstroObjectsTable::Selection{} );
   if(page.total > 1) {
     if(page) {
