@@ -18,6 +18,7 @@
 #ifndef CACHE_H
 #define CACHE_H
 #include <boost/date_time.hpp>
+#include <list>
 
 
 template<typename Payload, typename KeyType>
@@ -37,10 +38,10 @@ public:
     }
 
     void cleanup() {
-        for(auto entry: cache) {
-            if(!entry.second.valid(validity))
-                cache.erase(entry.first);
-        }
+      std::list<KeyType> expired_keys;
+      for(auto element: cache)
+	if(!element.second.valid(validity)) { expired_keys.push_back(element.first); }
+      for(auto expired: expired_keys) {	cache.erase(expired);       }
     }
 
 private:
