@@ -104,7 +104,10 @@ void AstroSessionsPage::open(const string &tabName)
   }
   string internalPath = AstroSessionTab::pathComponent(astroSession, t);
   d->sessionsNamesCache[internalPath] = astroSession->name();
-  wApp->setTitle(WString::tr("session-application_title").arg( d->sessionsNamesCache[internalPath] ));
+  auto setSessionTitle = [=] {
+    wApp->setTitle(WString::tr("session-application_title").arg( d->sessionsNamesCache[internalPath] ));
+  };
+  setSessionTitle();
   spLog("notice") << "Setting internal path to " << internalPath;
   wApp->setInternalPath(internalPath, false);
   for(auto tab = find_if(begin(d->tabs), end(d->tabs), [=](pair<int, Private::Tab> t){ return t.second.astroSession.id() == sessionId; }); tab != end(d->tabs); tab++) {
@@ -116,6 +119,8 @@ void AstroSessionsPage::open(const string &tabName)
   newTab->addStyleClass("hidden-print");
   //newTab->setPathComponent( AstroSessionTab::pathComponent(astroSession, t) );
   astroSessionTab->nameChanged().connect([=](const string &newName,_n5){
+    d->sessionsNamesCache[internalPath] = newName;
+    setSessionTitle();
     newTab->setText(WString::fromUTF8(newName));
     d->astroSessionsListTab->reload();
   });
