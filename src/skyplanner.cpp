@@ -259,8 +259,8 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
     for(auto i: d->loggedOutItems)
       i->setHidden(loggedIn);
   };
+#define blocked_user "alessia.rabaioli@gmail.com"
   auto banUser = [=] {
-/*  
     if(!d->session.login().loggedIn())
       return false;
     auto email = d->session.login().user().email().empty() ? d->session.login().user().unverifiedEmail() : d->session.login().user().email();
@@ -271,7 +271,6 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
       quit(WString::tr("blocked_user_message"));
       return true;
     }
-*/
     return false;
   };
   
