@@ -34,6 +34,7 @@ public:
   void persist(Action& a)
   {
     dbo::field(a, _isAdmin, "is_admin");
+    dbo::field(a, _banned, "banned");
     dbo::hasMany(a, _telescopes, dbo::ManyToOne);
     dbo::hasMany(a, _astroSessions, dbo::ManyToOne);
     dbo::hasMany(a, _settings, dbo::ManyToOne);
@@ -44,12 +45,14 @@ public:
   dbo::weak_ptr<AuthInfo> authInfo() const;
   Wt::WString loginName() const;
   bool isAdmin() const;
+  bool banned() const;
   class Setting;
   typedef dbo::ptr<Setting> SettingPtr;
 private:
   dbo::collection<dbo::ptr<Telescope>> _telescopes;
   dbo::collection<AstroSessionPtr> _astroSessions;
   bool _isAdmin = false;
+  bool _banned = false;
 
   friend class Setting;
   dbo::collection<dbo::ptr<Setting>> _settings;

@@ -42,3 +42,8 @@ WString User::loginName() const
 {
   return _authInfo->identity("loginname");
 }
+
+bool User::banned() const
+{
+  return _banned;
+}
