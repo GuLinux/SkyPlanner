@@ -21,7 +21,6 @@ using namespace std;
 
 Telescope::Telescope()
 {
-
 }
 
 Telescope::Telescope( const string &name, int diameter, int focalLength, bool isDefault )
@@ -60,4 +59,51 @@ void Telescope::setDefault(bool _default)
 {
   this->_default = _default;
 }
+
+EyePiece::EyePiece(const string& name, int focalLength, int aFOV)
+  : _name(name), _focalLength(focalLength), _aFOV(aFOV)
+{
+
+}
+
+EyePiece::EyePiece()
+{
+}
+
+
+int EyePiece::aFOV() const
+{
+  return _aFOV;
+}
+
+int EyePiece::focalLength() const
+{
+  return _focalLength;
+}
+
+string EyePiece::name() const
+{
+  return _name;
+}
+
+
+FocalModifier::FocalModifier(const string& name, double ratio)
+  : _name(name), _ratio(ratio)
+{
+}
+
+FocalModifier::FocalModifier()
+{
+}
+
+string FocalModifier::name() const
+{
+  return _name;
+}
+
+double FocalModifier::ratio() const
+{
+  return _ratio;
+}
+
 

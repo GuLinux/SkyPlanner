@@ -21,6 +21,47 @@
 
 class User;
 namespace dbo = Wt::Dbo;
+
+class EyePiece {
+public:
+  explicit EyePiece();
+  explicit EyePiece(const std::string &name, int focalLength, int aFOV);
+  std::string name() const;
+  int focalLength() const;
+  int aFOV() const;
+  
+  template<typename Action>
+  void persist(Action& a) {
+    dbo::field(a, _name, "name");
+    dbo::field(a, _focalLength, "focal_length");
+    dbo::field(a, _aFOV, "afov");
+    dbo::belongsTo(a, _user);
+  }
+private:
+  std::string _name;
+  int _focalLength;
+  int _aFOV;
+  dbo::ptr<User> _user;
+};
+
+class FocalModifier {
+public:
+  explicit FocalModifier();
+  explicit FocalModifier(const std::string &name, double ratio);
+  std::string name() const;
+  double ratio() const;
+  template<typename Action>
+  void persist(Action& a) {
+    dbo::field(a, _name, "name");
+    dbo::field(a, _ratio, "ratio");
+    dbo::belongsTo(a, _user);
+  }
+private:
+  std::string _name;
+  double _ratio;
+  dbo::ptr<User> _user;
+};
+
 class Telescope
 {
 public:
