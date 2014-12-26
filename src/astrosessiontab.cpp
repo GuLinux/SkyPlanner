@@ -262,7 +262,7 @@ void AstroSessionTab::Private::reload()
   }
   updateTimezone();
 
-  AstroObjectsTable *planetsTable = new AstroObjectsTable(session, {}, AstroObjectsTable::NoFiltersButton, {}, {AstroObjectsTable::Names, AstroObjectsTable::AR, AstroObjectsTable::DEC, AstroObjectsTable::Constellation, AstroObjectsTable::Magnitude, AstroObjectsTable::AngularSize, AstroObjectsTable::TransitTime, AstroObjectsTable::MaxAltitude});
+  AstroObjectsTable *planetsTable = new AstroObjectsTable(session, {}, AstroObjectsTable::NoFiltersButton, {}, AstroObjectsTable::PlanetColumns());
 
 
   planetsTable->planets(astroSession, timezone);
@@ -346,7 +346,7 @@ void AstroSessionTab::Private::reload()
   }
   auto columns = AstroObjectsTable::allColumns;
   if(isPastSession(12))
-    columns.remove_if([](AstroObjectsTable::Column c){ return c == AstroObjectsTable::Difficulty || c == AstroObjectsTable::TransitTime || c == AstroObjectsTable::MaxAltitude; });
+    columns.remove_if([](AstroObjectsTable::Column c){ return c == AstroObjectsTable::Difficulty || c == AstroObjectsTable::ObservationTime || c == AstroObjectsTable::MaxAltitude; });
 
   sessionContainer->addWidget(astroObjectsTable = new AstroObjectsTable(session, actions, AstroObjectsTable::FiltersButtonExternal, NgcObject::allNebulaTypes(), columns ));
   title->bindWidget("filters-button", WW<WPushButton>(astroObjectsTable->filtersButton()).addCss("btn-sm btn-primary"));

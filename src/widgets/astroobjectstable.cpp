@@ -187,7 +187,7 @@ void AstroObjectsTable::clear()
 }
 
 const list<AstroObjectsTable::Column> AstroObjectsTable::allColumns = {
-  Names, Type, AR, DEC, Constellation, AngularSize, Magnitude, TransitTime, MaxAltitude, Difficulty
+  Names, Type, AR, DEC, Constellation, AngularSize, Magnitude, ObservationTime, MaxAltitude, Difficulty
 };
 
 void AstroObjectsTable::Private::header()
@@ -206,7 +206,10 @@ void AstroObjectsTable::Private::header()
     {Constellation, {"object_column_constellation", "object_column_constellation_short"}},
     {AngularSize, {"object_column_angular_size", "object_column_angular_size_short"}},
     {Magnitude, {"object_column_magnitude", "object_column_magnitude_short"}},
-    {TransitTime, {"object_column_highest_time", "object_column_highest_time_short"}},
+    {RiseTime, {"object_column_rise_time", "object_column_rise_time_short"}},
+    {TransitTime, {"object_column_transit_time", "object_column_transit_time_short"}},
+    {SetsTime, {"object_column_set_time", "object_column_set_time_short"}},
+    {ObservationTime, {"object_column_highest_time", "object_column_highest_time_short"}},
     {MaxAltitude, {"object_column_max_altitude", "object_column_max_altitude_short"}},
     {Difficulty, {"object_column_difficulty"}},
   };
@@ -283,6 +286,15 @@ Angle AstroObjectsTable::AstroObject::maxAltitude() const
   return bestAltitude.coordinates.altitude;
 }
 
+Ephemeris::RiseTransitSet AstroObjectsTable::AstroObject::rts() const
+{
+  if(planet) {
+    return planet->rst;
+  }
+  return bestAltitude.rst;
+}
+
+
 WWidget *AstroObjectsTable::AstroObject::difficultyWidget(const TelescopePtr &telescope) const
 {
   return new ObjectDifficultyWidget{object, telescope, bestAltitude.coordinates.altitude.degrees() };
@@ -309,6 +321,23 @@ void AstroObjectsTable::planets(const AstroSessionPtr &astroSession, const Timez
   }
   populate(_planets, {}, timezone);
 }
+
+list< AstroObjectsTable::Column > AstroObjectsTable::PlanetColumns()
+{
+  return {
+    AstroObjectsTable::Names,
+    AstroObjectsTable::AR,
+    AstroObjectsTable::DEC,
+    AstroObjectsTable::Constellation, 
+    AstroObjectsTable::Magnitude, 
+    AstroObjectsTable::AngularSize, 
+    AstroObjectsTable::RiseTime,
+    AstroObjectsTable::TransitTime, 
+    AstroObjectsTable::SetsTime, 
+    AstroObjectsTable::MaxAltitude
+  };
+}
+
 
 void AstroObjectsTable::populate(const vector<AstroObject> &objects, const TelescopePtr &telescope, const Timezone &timezone, const Page &page, const Selection &selection)
 {
@@ -379,7 +408,10 @@ void AstroObjectsTable::populate(const vector<AstroObject> &objects, const Teles
     addColumn(Constellation, [=] { return new WText{ WString::fromUTF8(astroObject.constellation().name) }; });
     addColumn(AngularSize, [=] { return new WText{ Utils::htmlEncode( WString::fromUTF8( astroObject.angularSize() > Angle::degrees(0) ? astroObject.angularSize().printable() : "N/A" ) )}; });
     addColumn(Magnitude, [=] { return new WText{ astroObject.magnitude() > 90. ? "N/A" : (format("%.1f") % astroObject.magnitude()).str() }; });
-    addColumn(TransitTime, [=] { return new WText{ astroObject.transitTime().str() }; });
+    addColumn(ObservationTime, [=] { return new WText{ astroObject.transitTime().str() }; });
+    addColumn(RiseTime, [=] { return new WText{ astroObject.rts().rise.str() }; });
+    addColumn(TransitTime, [=] { return new WText{ astroObject.rts().transit.str() }; });
+    addColumn(SetsTime, [=] { return new WText{ astroObject.rts().set.str() }; });
     addColumn(MaxAltitude, [=] { return new WText{ Utils::htmlEncode(WString::fromUTF8( astroObject.maxAltitude().printable() )) }; });
     addColumn(Difficulty, [=] { return astroObject.difficultyWidget(telescope); }); 
     

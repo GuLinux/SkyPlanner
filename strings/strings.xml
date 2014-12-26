@@ -115,6 +115,14 @@
 <message id="object_column_dec">DEC</message>
 <message id="object_column_angular_size">Angular Size</message>
 <message id="object_column_angular_size_short">Size</message>
+
+<message id="object_column_rise_time">Rise</message>
+<message id="object_column_rise_time_short">Rise</message>
+<message id="object_column_transit_time">Transit</message>
+<message id="object_column_transit_time_short">Transit</message>
+<message id="object_column_set_time">Set</message>
+<message id="object_column_set_time_short">Set</message>
+
 <message id="object_row_cataloguedesc"><h5>Catalogues description:</h5></message>
 
 <message id="printable_timezone_info">All time info are for timezone {1}</message>

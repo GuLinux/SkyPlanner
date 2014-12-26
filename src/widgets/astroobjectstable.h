@@ -53,6 +53,7 @@ public:
     Angle angularSize() const;
     double magnitude() const;
     DateTime transitTime() const;
+    Ephemeris::RiseTransitSet rts() const;
     Angle maxAltitude() const;
     Wt::WWidget *difficultyWidget(const TelescopePtr &telescope) const;
   };
@@ -102,7 +103,7 @@ public:
     static Page fromCount(long pageNumber, long count, std::function<void(long)> onChange, std::size_t pageSize = 15);
     long offset() const;
   };
-  enum Column { Names, Type, AR, DEC, Constellation, AngularSize, Magnitude, TransitTime, MaxAltitude, Difficulty };
+  enum Column { Names, Type, AR, DEC, Constellation, AngularSize, Magnitude, ObservationTime, MaxAltitude, Difficulty, RiseTime, TransitTime, SetsTime };
   enum FiltersButtonDisplay { NoFiltersButton, FiltersButtonIntegrated, FiltersButtonExternal };
   static const std::list<Column> allColumns;
   AstroObjectsTable(Session &session,
@@ -125,6 +126,7 @@ public:
   void planets(const AstroSessionPtr &astroSession, const Timezone &timezone);
   Wt::WPushButton *filtersButton() const;
   std::vector<Row> rows() const;
+  static std::list<Column> PlanetColumns();
 private:
   D_PTR;
 };

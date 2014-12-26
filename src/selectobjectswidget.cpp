@@ -65,7 +65,7 @@ SelectObjectsWidget::Private::Private(const Dbo::ptr< AstroSession >& astroSessi
   addToSessionAction("buttons_add", [=](const AstroObjectsTable::Row &r, WWidget*){ addToSession(r.astroObject.object, r.tableRow);  }, "btn-primary" ),  q(q)
 {
   columns = {  AstroObjectsTable::Names, AstroObjectsTable::Type, AstroObjectsTable::Constellation, AstroObjectsTable::AngularSize, 
-    AstroObjectsTable::Magnitude, AstroObjectsTable::TransitTime, AstroObjectsTable::MaxAltitude, AstroObjectsTable::Difficulty};
+    AstroObjectsTable::Magnitude, AstroObjectsTable::ObservationTime, AstroObjectsTable::MaxAltitude, AstroObjectsTable::Difficulty};
 }
 
 SelectObjectsWidget::~SelectObjectsWidget()

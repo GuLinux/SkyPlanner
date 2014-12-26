@@ -152,6 +152,13 @@
 <message id="object_column_angular_size">Dimensione Angolare</message>
 <message id="object_column_angular_size_short">Dimens.</message>
 
+<message id="object_column_rise_time">Sorge</message>
+<message id="object_column_rise_time_short">Sorge</message>
+<message id="object_column_transit_time">Transita</message>
+<message id="object_column_transit_time_short">Transita</message>
+<message id="object_column_set_time">Tramonta</message>
+<message id="object_column_set_time_short">Tramonta</message>
+
 <message id="printable_timezone_info">Tempi indicati per il fuso orario {1}</message>
 <message id="objects_number_label">{1} oggetti</message>
 <message id="printable_telescope_info">Suggerimenti per il telescopio: "{1}", diametro {2} mm, lunghezza focale {3} mm</message>
