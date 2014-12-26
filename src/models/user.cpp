@@ -18,10 +18,16 @@
 #include "user.h"
 #include "Models"
 using namespace Wt;
-Dbo::collection<Dbo::ptr<Telescope>> User::telescopes() const
+Dbo::collection<TelescopePtr> User::telescopes() const
 {
   return _telescopes;
 }
+
+Dbo::collection< EyepiecePtr > User::eyepieces() const
+{
+  return _eyepieces;
+}
+
 
 Dbo::collection< Dbo::ptr< AstroSession > > User::astroSessions() const
 {

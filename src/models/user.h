@@ -36,11 +36,13 @@ public:
     dbo::field(a, _isAdmin, "is_admin");
     dbo::field(a, _banned, "banned");
     dbo::hasMany(a, _telescopes, dbo::ManyToOne);
+    dbo::hasMany(a, _eyepieces, dbo::ManyToOne);
     dbo::hasMany(a, _astroSessions, dbo::ManyToOne);
     dbo::hasMany(a, _settings, dbo::ManyToOne);
     dbo::hasOne(a, _authInfo);
   }
-  dbo::collection<dbo::ptr<Telescope>> telescopes() const;
+  dbo::collection<TelescopePtr> telescopes() const;
+  dbo::collection<EyepiecePtr> eyepieces() const;
   dbo::collection<AstroSessionPtr> astroSessions() const;
   dbo::weak_ptr<AuthInfo> authInfo() const;
   Wt::WString loginName() const;
@@ -49,7 +51,8 @@ public:
   class Setting;
   typedef dbo::ptr<Setting> SettingPtr;
 private:
-  dbo::collection<dbo::ptr<Telescope>> _telescopes;
+  dbo::collection<TelescopePtr> _telescopes;
+  dbo::collection<EyepiecePtr> _eyepieces;
   dbo::collection<AstroSessionPtr> _astroSessions;
   bool _isAdmin = false;
   bool _banned = false;

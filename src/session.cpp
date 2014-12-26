@@ -64,6 +64,7 @@ void Session::Private::init(const string &connectionString, Session::Provider pr
   q->mapClass<User>("user");
   q->mapClass<User::Setting>("user_settings");
   q->mapClass<Telescope>("telescope");
+  q->mapClass<Eyepiece>("eyepiece");
   q->mapClass<AuthInfo>("auth_info");
   q->mapClass<AuthInfo::AuthIdentityType>("auth_identity");
   q->mapClass<AuthInfo::AuthTokenType>("auth_token");

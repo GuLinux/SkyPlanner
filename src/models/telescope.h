@@ -22,10 +22,10 @@
 class User;
 namespace dbo = Wt::Dbo;
 
-class EyePiece {
+class Eyepiece {
 public:
-  explicit EyePiece();
-  explicit EyePiece(const std::string &name, int focalLength, int aFOV);
+  explicit Eyepiece();
+  explicit Eyepiece(const std::string &name, int focalLength, int aFOV);
   std::string name() const;
   int focalLength() const;
   int aFOV() const;

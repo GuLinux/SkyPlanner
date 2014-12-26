@@ -60,28 +60,28 @@ void Telescope::setDefault(bool _default)
   this->_default = _default;
 }
 
-EyePiece::EyePiece(const string& name, int focalLength, int aFOV)
+Eyepiece::Eyepiece(const string& name, int focalLength, int aFOV)
   : _name(name), _focalLength(focalLength), _aFOV(aFOV)
 {
 
 }
 
-EyePiece::EyePiece()
+Eyepiece::Eyepiece()
 {
 }
 
 
-int EyePiece::aFOV() const
+int Eyepiece::aFOV() const
 {
   return _aFOV;
 }
 
-int EyePiece::focalLength() const
+int Eyepiece::focalLength() const
 {
   return _focalLength;
 }
 
-string EyePiece::name() const
+string Eyepiece::name() const
 {
   return _name;
 }

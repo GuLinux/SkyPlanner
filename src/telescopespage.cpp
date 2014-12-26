@@ -31,6 +31,7 @@
 #include <Wt/WLabel>
 #include <Wt/WCheckBox>
 #include <Wt/WToolBar>
+#include <Wt/WGroupBox>
 #include <Wt-Commons/wform.h>
 #include <boost/format.hpp>
 
@@ -49,8 +50,8 @@ TelescopesPage::~TelescopesPage()
 TelescopesPage::TelescopesPage( Session &session, WContainerWidget *parent )
   : WContainerWidget(parent), d( session, this )
 {
-  addStyleClass("container");
   d->setupTelescopesTable();
+  d->setupEyepiecesTable();
   d->loginChanged();
   session.login().changed().connect(bind(&Private::loginChanged, d.get()));
 }
@@ -61,17 +62,11 @@ void TelescopesPage::Private::setupTelescopesTable()
   WLineEdit *telescopeName = WW<WLineEdit>().css("input-sm");
   WSpinBox *telescopeDiameter = WW<WSpinBox>().css("input-sm");
   WSpinBox *telescopeFocalLength = WW<WSpinBox>().css("input-sm");
-  WLabel *telescopeNameLabel = WW<WLabel>(WString::tr("telescopes_telescope_name")).css("control-label");
-  WLabel *telescopeDiameterLabel = WW<WLabel>(WString::tr("telescopes_diameter_mm")).css("control-label");
-  WLabel *telescopeFocalLengthLabel = WW<WLabel>(WString::tr("telescopes_focal_length_mm")).css("control-label");
   
   telescopeName->setTextSize(38);
   telescopeDiameter->setTextSize(8);
   telescopeFocalLength->setTextSize(8);
   
-  telescopeNameLabel->setBuddy(telescopeName);
-  telescopeDiameterLabel->setBuddy(telescopeDiameter);
-  telescopeFocalLengthLabel->setBuddy(telescopeFocalLength);
   isDefault = WW<WCheckBox>(WString::tr("buttons_default")).addCss("checkbox-no-form-control");
 
   telescopeName->setEmptyText(WString::tr("telescopes_telescope_name"));
@@ -86,7 +81,8 @@ void TelescopesPage::Private::setupTelescopesTable()
     changed.emit();
     populateTelescopes();
   });
-  q->addWidget(WW<WContainerWidget>().addCss("row").add(WW<WForm>(WForm::Inline).get()
+  WGroupBox *groupBox = WW<WGroupBox>(WString::tr("telescopes_group")).addCss("container");
+  groupBox->addWidget(WW<WContainerWidget>().addCss("row").add(WW<WForm>(WForm::Inline).get()
     ->add(telescopeName, "telescopes_telescope_name")
     ->add(telescopeDiameter, "telescopes_diameter_mm")
     ->add(telescopeFocalLength, "telescopes_focal_length_mm")
@@ -95,7 +91,42 @@ void TelescopesPage::Private::setupTelescopesTable()
   );
   telescopesTable = WW<WTable>().addCss("table table-striped table-hover");
   telescopesTable->setHeaderCount(1);
-  q->addWidget(WW<WContainerWidget>().addCss("row").add(telescopesTable));
+  groupBox->addWidget(WW<WContainerWidget>().addCss("row").add(telescopesTable));
+  q->addWidget(groupBox);
+}
+
+
+void TelescopesPage::Private::setupEyepiecesTable()
+{
+  WLineEdit *eyepieceName = WW<WLineEdit>().css("input-sm");
+  WSpinBox *eyepieceFocalLength = WW<WSpinBox>().css("input-sm");
+  WSpinBox *eyepieceAFOV = WW<WSpinBox>().css("input-sm");
+  
+  eyepieceName->setTextSize(38);
+  eyepieceFocalLength->setTextSize(8);
+  eyepieceAFOV->setTextSize(8);
+  
+  eyepieceName->setEmptyText(WString::tr("eyepiece_name"));
+  eyepieceFocalLength->setEmptyText(WString::tr("eyepiece_focal_length"));
+  eyepieceAFOV->setEmptyText(WString::tr("eyepiece_afov"));
+  WPushButton *addEyepieceButton = WW<WPushButton>(WString::tr("buttons_add")).css("btn btn-primary").onClick([=](WMouseEvent){
+//     Dbo::Transaction t(session);
+//     session.user().modify()->telescopes().insert(new Telescope(telescopeName->text().toUTF8(), telescopeDiameter->value(), telescopeFocalLength->value(), isDefault->isChecked() ));
+//     t.commit();
+//     changed.emit();
+//     populateTelescopes();
+  });
+  WGroupBox *groupBox = WW<WGroupBox>(WString::tr("eyepieces_group")).addCss("container");
+  groupBox->addWidget(WW<WContainerWidget>().addCss("row").add(WW<WForm>(WForm::Inline).get()
+    ->add(eyepieceName, "eyepiece_name")
+    ->add(eyepieceFocalLength, "eyepiece_focal_length")
+    ->add(eyepieceAFOV, "eyepiece_afov")
+    ->addButton(addEyepieceButton))
+  );
+  //telescopesTable = WW<WTable>().addCss("table table-striped table-hover");
+  //telescopesTable->setHeaderCount(1);
+  //q->addWidget(WW<WContainerWidget>().addCss("row").add(telescopesTable));
+  q->addWidget(groupBox);
 }
 
 
