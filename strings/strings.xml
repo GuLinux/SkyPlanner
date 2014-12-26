@@ -15,7 +15,7 @@
 <message id="magnitude_title">Set Magnitude</message>
 
 <message id="mainmenu_logout">Logout</message>
-<message id="telescopes_telescope_name">Telescope Name</message>
+<message id="telescopes_telescope_name">Name</message>
 <message id="telescopes_diameter_mm">Diameter (mm)</message>
 <message id="telescopes_focal_length_mm">Focal Length (mm)</message>
 <message id="telescopes_magnitude_gain">Magnitude gain</message>

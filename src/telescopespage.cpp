@@ -50,12 +50,16 @@ TelescopesPage::TelescopesPage( Session &session, WContainerWidget *parent )
   : WContainerWidget(parent), d( session, this )
 {
   addStyleClass("container");
-  WLineEdit *telescopeName = WW<WLineEdit>();
-  WSpinBox *telescopeDiameter = WW<WSpinBox>();
-  WSpinBox *telescopeFocalLength = WW<WSpinBox>();
+  WLineEdit *telescopeName = WW<WLineEdit>().css("input-sm");
+  WSpinBox *telescopeDiameter = WW<WSpinBox>().css("input-sm");
+  WSpinBox *telescopeFocalLength = WW<WSpinBox>().css("input-sm");
   WLabel *telescopeNameLabel = WW<WLabel>(WString::tr("telescopes_telescope_name")).css("control-label");
   WLabel *telescopeDiameterLabel = WW<WLabel>(WString::tr("telescopes_diameter_mm")).css("control-label");
   WLabel *telescopeFocalLengthLabel = WW<WLabel>(WString::tr("telescopes_focal_length_mm")).css("control-label");
+  
+  telescopeName->setTextSize(38);
+  telescopeDiameter->setTextSize(8);
+  telescopeFocalLength->setTextSize(8);
   
   telescopeNameLabel->setBuddy(telescopeName);
   telescopeDiameterLabel->setBuddy(telescopeDiameter);
@@ -74,7 +78,7 @@ TelescopesPage::TelescopesPage( Session &session, WContainerWidget *parent )
     d->changed.emit();
     d->populate();
   });
-  addWidget(WW<WContainerWidget>().addCss("row").add(WW<WForm>(WForm::Horizontal).addCss("col-sm-6").get()
+  addWidget(WW<WContainerWidget>().addCss("row").add(WW<WForm>(WForm::Inline).get()
     ->add(telescopeName, "telescopes_telescope_name")
     ->add(telescopeDiameter, "telescopes_diameter_mm")
     ->add(telescopeFocalLength, "telescopes_focal_length_mm")

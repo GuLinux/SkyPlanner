@@ -51,7 +51,7 @@
 <message id="mainmenu_feedback">Feedback</message>
 
 <message id="mainmenu_logout">Esci</message>
-<message id="telescopes_telescope_name">Nome Telescopio</message>
+<message id="telescopes_telescope_name">Nome</message>
 <message id="telescopes_diameter_mm">Diametro (mm)</message>
 <message id="telescopes_focal_length_mm">Lunghezza Focale (mm)</message>
 <message id="telescopes_magnitude_gain">Guadagno Magnitudini</message>
