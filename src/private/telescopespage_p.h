@@ -30,11 +30,13 @@ class TelescopesPage::Private
     Private( Session &session, TelescopesPage *q );
     Session &session;
     void loginChanged();
-    void populate();
+    void populateTelescopes();
+    void setupTelescopesTable();
     Wt::WTable *telescopesTable;
     Wt::WCheckBox *isDefault;
     Wt::Signal<> changed;
   private:
     class TelescopesPage *const q;
 };
+
 #endif // TELESCOPESPAGE_P_H

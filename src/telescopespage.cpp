@@ -50,6 +50,14 @@ TelescopesPage::TelescopesPage( Session &session, WContainerWidget *parent )
   : WContainerWidget(parent), d( session, this )
 {
   addStyleClass("container");
+  d->setupTelescopesTable();
+  d->loginChanged();
+  session.login().changed().connect(bind(&Private::loginChanged, d.get()));
+}
+
+
+void TelescopesPage::Private::setupTelescopesTable()
+{
   WLineEdit *telescopeName = WW<WLineEdit>().css("input-sm");
   WSpinBox *telescopeDiameter = WW<WSpinBox>().css("input-sm");
   WSpinBox *telescopeFocalLength = WW<WSpinBox>().css("input-sm");
@@ -64,35 +72,34 @@ TelescopesPage::TelescopesPage( Session &session, WContainerWidget *parent )
   telescopeNameLabel->setBuddy(telescopeName);
   telescopeDiameterLabel->setBuddy(telescopeDiameter);
   telescopeFocalLengthLabel->setBuddy(telescopeFocalLength);
-  d->isDefault = WW<WCheckBox>(WString::tr("buttons_default")).addCss("checkbox-no-form-control");
+  isDefault = WW<WCheckBox>(WString::tr("buttons_default")).addCss("checkbox-no-form-control");
 
   telescopeName->setEmptyText(WString::tr("telescopes_telescope_name"));
   telescopeDiameter->setEmptyText(WString::tr("telescopes_diameter_mm"));
   telescopeFocalLength->setEmptyText(WString::tr("telescopes_focal_length_mm"));
   WPushButton *addTelescopeButton = WW<WPushButton>(WString::tr("buttons_add")).css("btn btn-primary").onClick([=](WMouseEvent){
-    Dbo::Transaction t(d->session);
-    if(d->isDefault->isChecked())
-      d->session.execute(R"(UPDATE telescope set "default" = ? where "user_id" = ?)").bind(false).bind(d->session.user().id());
-    d->session.user().modify()->telescopes().insert(new Telescope(telescopeName->text().toUTF8(), telescopeDiameter->value(), telescopeFocalLength->value(), d->isDefault->isChecked() ));
+    Dbo::Transaction t(session);
+    if(isDefault->isChecked())
+      session.execute(R"(UPDATE telescope set "default" = ? where "user_id" = ?)").bind(false).bind(session.user().id());
+    session.user().modify()->telescopes().insert(new Telescope(telescopeName->text().toUTF8(), telescopeDiameter->value(), telescopeFocalLength->value(), isDefault->isChecked() ));
     t.commit();
-    d->changed.emit();
-    d->populate();
+    changed.emit();
+    populateTelescopes();
   });
-  addWidget(WW<WContainerWidget>().addCss("row").add(WW<WForm>(WForm::Inline).get()
+  q->addWidget(WW<WContainerWidget>().addCss("row").add(WW<WForm>(WForm::Inline).get()
     ->add(telescopeName, "telescopes_telescope_name")
     ->add(telescopeDiameter, "telescopes_diameter_mm")
     ->add(telescopeFocalLength, "telescopes_focal_length_mm")
-    ->add(d->isDefault)
+    ->add(isDefault)
     ->addButton(addTelescopeButton))
   );
-  d->telescopesTable = WW<WTable>().addCss("table table-striped table-hover");
-  d->telescopesTable->setHeaderCount(1);
-  addWidget(WW<WContainerWidget>().addCss("row").add(d->telescopesTable));
-  d->loginChanged();
-  session.login().changed().connect(bind(&Private::loginChanged, d.get()));
+  telescopesTable = WW<WTable>().addCss("table table-striped table-hover");
+  telescopesTable->setHeaderCount(1);
+  q->addWidget(WW<WContainerWidget>().addCss("row").add(telescopesTable));
 }
 
-void TelescopesPage::Private::populate()
+
+void TelescopesPage::Private::populateTelescopes()
 {
   Dbo::Transaction t(session);
   telescopesTable->clear();
@@ -114,7 +121,7 @@ void TelescopesPage::Private::populate()
           current.flush();
         }
         t.commit();
-        populate();
+        populateTelescopes();
     });
     
     WTableRow *row = telescopesTable->insertRow(telescopesTable->rowCount());
@@ -133,7 +140,7 @@ void TelescopesPage::Private::populate()
         tel.remove();
         t.commit();
         changed.emit();
-        populate();
+        populateTelescopes();
       }) )
     );
   }
@@ -148,7 +155,7 @@ void TelescopesPage::Private::loginChanged()
     return;
   }
   q->enable();
-  populate();
+  populateTelescopes();
 }
 
 Signal<> &TelescopesPage::changed() const
