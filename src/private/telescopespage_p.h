@@ -32,10 +32,13 @@ class TelescopesPage::Private
     void loginChanged();
     void populateTelescopes();
     void populateEyepieces();
+    void populateFocalMultipliers();
     void setupTelescopesTable();
     void setupEyepiecesTable();
+    void setupFocalMultipliersTable();
     Wt::WTable *telescopesTable;
     Wt::WTable *eyepiecesTable;
+    Wt::WTable *focalMultipliersTable;
     Wt::WCheckBox *isDefault;
     Wt::Signal<> changed;
   private:

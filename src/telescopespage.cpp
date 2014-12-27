@@ -32,6 +32,7 @@
 #include <Wt/WCheckBox>
 #include <Wt/WToolBar>
 #include <Wt/WGroupBox>
+#include <Wt/WDoubleSpinBox>
 #include <Wt-Commons/wform.h>
 #include <boost/format.hpp>
 
@@ -52,6 +53,7 @@ TelescopesPage::TelescopesPage( Session &session, WContainerWidget *parent )
 {
   d->setupTelescopesTable();
   d->setupEyepiecesTable();
+  d->setupFocalMultipliersTable();
   d->loginChanged();
   session.login().changed().connect(bind(&Private::loginChanged, d.get()));
 }
@@ -95,6 +97,38 @@ void TelescopesPage::Private::setupTelescopesTable()
   q->addWidget(groupBox);
 }
 
+
+
+
+void TelescopesPage::Private::setupFocalMultipliersTable()
+{
+  WLineEdit *focalMultiplierName = WW<WLineEdit>().css("input-sm");
+  WDoubleSpinBox *focalMultiplierRatio = WW<WDoubleSpinBox>().css("input-sm");
+  
+  focalMultiplierName->setTextSize(38);
+  focalMultiplierRatio->setTextSize(8);
+  focalMultiplierRatio->setValue(1);
+  
+  focalMultiplierName->setEmptyText(WString::tr("focalMultiplier_name"));
+  //focalMultiplierRatio->setEmptyText(WString::tr("focalMultiplier_ratio"));
+  WPushButton *addFocalMultiplier = WW<WPushButton>(WString::tr("buttons_add")).css("btn btn-primary").onClick([=](WMouseEvent){
+     Dbo::Transaction t(session);
+     session.user().modify()->focalModifiers().insert(new FocalModifier(focalMultiplierName->text().toUTF8(), focalMultiplierRatio->value() ));
+     t.commit();
+     changed.emit();
+     populateFocalMultipliers();
+  });
+  WGroupBox *groupBox = WW<WGroupBox>(WString::tr("focalMultipliers_group")).addCss("container");
+  groupBox->addWidget(WW<WContainerWidget>().addCss("row spacing-bottom").add(WW<WForm>(WForm::Inline).get()
+    ->add(focalMultiplierName, "focalMultiplier_name")
+    ->add(focalMultiplierRatio, "focalMultiplier_ratio")
+    ->addButton(addFocalMultiplier))
+  );
+  focalMultipliersTable = WW<WTable>().addCss("table table-striped table-hover");
+  focalMultipliersTable->setHeaderCount(1);
+  groupBox->addWidget(WW<WContainerWidget>().addCss("row").add(focalMultipliersTable));
+  q->addWidget(groupBox);
+}
 
 void TelescopesPage::Private::setupEyepiecesTable()
 {
@@ -146,7 +180,7 @@ void TelescopesPage::Private::populateEyepieces()
     row->elementAt(0)->addWidget(new WText{eyepiece->name() });
     row->elementAt(1)->addWidget(new WText{WString("{1}").arg(eyepiece->focalLength()) });
     row->elementAt(2)->addWidget(new WText{WString("{1}").arg(eyepiece->aFOV().degrees() ) });
-    row->elementAt(5)->addWidget(
+    row->elementAt(3)->addWidget(
       WW<WPushButton>(WString::tr("buttons_remove")).css("btn btn-danger btn-xs").onClick([=](WMouseEvent){
         Dbo::Transaction t(session);
         session.user().modify()->eyepieces().erase(eyepiece);
@@ -155,6 +189,33 @@ void TelescopesPage::Private::populateEyepieces()
         t.commit();
         changed.emit();
         populateEyepieces();
+      })
+    );
+  }
+}
+
+
+void TelescopesPage::Private::populateFocalMultipliers()
+{
+  Dbo::Transaction t(session);
+  focalMultipliersTable->clear();
+
+  focalMultipliersTable->elementAt(0, 0)->addWidget(new WText{WString::tr("focalMultiplier_name")});
+  focalMultipliersTable->elementAt(0, 1)->addWidget(new WText{WString::tr("focalMultiplier_ratio")});
+
+  for(auto focalMultiplier: session.user()->focalModifiers()) {
+    WTableRow *row = focalMultipliersTable->insertRow(focalMultipliersTable->rowCount());
+    row->elementAt(0)->addWidget(new WText{focalMultiplier->name() });
+    row->elementAt(1)->addWidget(new WText{ format("%.2f") % focalMultiplier->ratio() });
+    row->elementAt(2)->addWidget(
+      WW<WPushButton>(WString::tr("buttons_remove")).css("btn btn-danger btn-xs").onClick([=](WMouseEvent){
+        Dbo::Transaction t(session);
+        session.user().modify()->focalModifiers().erase(focalMultiplier);
+        FocalModifierPtr e = focalMultiplier;
+        e.remove();
+        t.commit();
+        changed.emit();
+        populateFocalMultipliers();
       })
     );
   }
@@ -212,12 +273,15 @@ void TelescopesPage::Private::loginChanged()
   bool loggedIn = session.login().loggedIn();
   if(!loggedIn) {
     telescopesTable->clear();
+    focalMultipliersTable->clear();
+    eyepiecesTable->clear();
     q->disable();
     return;
   }
   q->enable();
   populateTelescopes();
   populateEyepieces();
+  populateFocalMultipliers();
 }
 
 Signal<> &TelescopesPage::changed() const
