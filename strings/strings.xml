@@ -290,7 +290,6 @@ After you added a session, click it to add new objects.
 <message id="objectnames_nearby_objects_caption">Objects near {1}</message>
 
 
-
 <message id="filter_by_type_button">set type...</message>
 
 <message id="filter_by_type_menu">by type</message>
@@ -358,13 +357,18 @@ After you added a session, click it to add new objects.
 <message id="telescope">Telescope</message>
 <message id="eyepiece">Eyepiece</message>
 
-<message id="eyepiece_name">Eyepieces</message>
+<message id="astrosessiontab_instruments_panel">Instruments</message>
+<message id="eyepiece_name">Name</message>
 <message id="eyepiece_focal_length">Focal Length</message>
 <message id="eyepiece_afov">Apparent Field of View</message>
 <message id="afov">aFoV</message>
 <message id="telescope_dia_focal">diam./focal length</message>
 <message id="magnification">Magnification</message>
 <message id="fov">FoV</message>
+<message id="focalMultiplier">Focal Multiplier</message>
+<message id="focalMultipliers_group">Focal Multipliers/Reducers</message>
+<message id="focalMultiplier_name">Name</message>
+<message id="focalMultiplier_ratio">Multiplier</message>
 
 
 </messages>

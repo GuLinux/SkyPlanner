@@ -45,7 +45,7 @@ public:
   dbo::collection<TelescopePtr> telescopes() const;
   dbo::collection<EyepiecePtr> eyepieces() const;
   dbo::collection<FocalModifierPtr> focalModifiers() const;
-  std::list<FocalModifierPtr> focalModifiers(const std::string &idempotentLabel);
+  std::list<FocalModifierPtr> focalModifiers(const std::string &idempotentLabel) const;
   dbo::collection<AstroSessionPtr> astroSessions() const;
   dbo::weak_ptr<AuthInfo> authInfo() const;
   Wt::WString loginName() const;
