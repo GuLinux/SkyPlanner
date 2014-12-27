@@ -51,6 +51,8 @@ class Angle {
     Angle operator*(double coefficient) const;
     Angle &operator+=(const Angle &other) { _degrees += other.degrees(); return *this; }
     Angle &operator /=(double d) { _degrees /= d; return *this; }
+    Angle operator/(double d) { return Angle::degrees(_degrees/d); }
+    Angle operator*(double d) { return Angle::degrees(_degrees*d); }
     bool operator>(const Angle &other) const { return degrees() > other.degrees(); }
     bool operator<(const Angle &other) const { return degrees() < other.degrees(); }
     bool operator==(const Angle &other) const { return degrees() == other.degrees(); }

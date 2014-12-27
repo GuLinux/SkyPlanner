@@ -46,7 +46,7 @@
 <message id="maximum_magnitude_label">magnitudine massima: </message>
 
 <message id="mainmenu_my_sessions">Le Mie Osservazioni</message>
-<message id="mainmenu_my_telescopes">I Miei Telescopi</message>
+<message id="mainmenu_my_telescopes">La Mia Strumentazione</message>
 <message id="mainmenu_my_settings">Impostazioni</message>
 <message id="mainmenu_feedback">Feedback</message>
 
@@ -364,4 +364,5 @@ Dopo aver aggiunto una nuova sessione, clicca sul suo nome per aggiungere oggett
 
 <message id="blocked_user_message_title">Utente Bloccato</message>
 <message id="blocked_user_message">Il tuo account utente è stato bloccato dall'amministratore. La sessione corrente verrà terminata.</message>
+
 </messages>

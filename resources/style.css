@@ -94,7 +94,7 @@ display: inline;
   }
 
    .astroobject-list-item {
-//     margin-top: 5px;
+/*      margin-top: 5px; */
      padding: 5px;
      border: 1px;
      border-color: grey;
@@ -126,9 +126,6 @@ display: inline;
       }
       .astroobject_text,.astroobjects-info-widget {
         font-size: x-small!important;
-      }
-      .astroobject_title {
-//        font-size: 15px!important;
       }
     .astroobjectwidget {
        counter-increment:astroobjects;
@@ -238,4 +235,8 @@ div.weather-box {
     margin: 5px;
     background-color: #E9EBFF;
     padding: 0px;
+}
+
+.spacing-bottom {
+  margin-bottom: 20px;
 }

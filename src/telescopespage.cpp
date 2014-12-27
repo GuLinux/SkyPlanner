@@ -82,7 +82,7 @@ void TelescopesPage::Private::setupTelescopesTable()
     populateTelescopes();
   });
   WGroupBox *groupBox = WW<WGroupBox>(WString::tr("telescopes_group")).addCss("container");
-  groupBox->addWidget(WW<WContainerWidget>().addCss("row").add(WW<WForm>(WForm::Inline).get()
+  groupBox->addWidget(WW<WContainerWidget>().addCss("row spacing-bottom").add(WW<WForm>(WForm::Inline).get()
     ->add(telescopeName, "telescopes_telescope_name")
     ->add(telescopeDiameter, "telescopes_diameter_mm")
     ->add(telescopeFocalLength, "telescopes_focal_length_mm")
@@ -110,25 +110,55 @@ void TelescopesPage::Private::setupEyepiecesTable()
   eyepieceFocalLength->setEmptyText(WString::tr("eyepiece_focal_length"));
   eyepieceAFOV->setEmptyText(WString::tr("eyepiece_afov"));
   WPushButton *addEyepieceButton = WW<WPushButton>(WString::tr("buttons_add")).css("btn btn-primary").onClick([=](WMouseEvent){
-//     Dbo::Transaction t(session);
-//     session.user().modify()->telescopes().insert(new Telescope(telescopeName->text().toUTF8(), telescopeDiameter->value(), telescopeFocalLength->value(), isDefault->isChecked() ));
-//     t.commit();
-//     changed.emit();
-//     populateTelescopes();
+     Dbo::Transaction t(session);
+     session.user().modify()->eyepieces().insert(new Eyepiece(eyepieceName->text().toUTF8(), eyepieceFocalLength->value(), Angle::degrees(eyepieceAFOV->value())));
+     t.commit();
+     changed.emit();
+     populateEyepieces();
   });
   WGroupBox *groupBox = WW<WGroupBox>(WString::tr("eyepieces_group")).addCss("container");
-  groupBox->addWidget(WW<WContainerWidget>().addCss("row").add(WW<WForm>(WForm::Inline).get()
+  groupBox->addWidget(WW<WContainerWidget>().addCss("row spacing-bottom").add(WW<WForm>(WForm::Inline).get()
     ->add(eyepieceName, "eyepiece_name")
     ->add(eyepieceFocalLength, "eyepiece_focal_length")
     ->add(eyepieceAFOV, "eyepiece_afov")
     ->addButton(addEyepieceButton))
   );
-  //telescopesTable = WW<WTable>().addCss("table table-striped table-hover");
-  //telescopesTable->setHeaderCount(1);
-  //q->addWidget(WW<WContainerWidget>().addCss("row").add(telescopesTable));
+  eyepiecesTable = WW<WTable>().addCss("table table-striped table-hover");
+  eyepiecesTable->setHeaderCount(1);
+  groupBox->addWidget(WW<WContainerWidget>().addCss("row").add(eyepiecesTable));
   q->addWidget(groupBox);
 }
 
+
+
+
+void TelescopesPage::Private::populateEyepieces()
+{
+  Dbo::Transaction t(session);
+  eyepiecesTable->clear();
+
+  eyepiecesTable->elementAt(0, 0)->addWidget(new WText{WString::tr("eyepiece_name")});
+  eyepiecesTable->elementAt(0, 1)->addWidget(new WText{WString::tr("eyepiece_focal_length")});
+  eyepiecesTable->elementAt(0, 2)->addWidget(new WText{WString::tr("eyepiece_afov")});
+
+  for(auto eyepiece: session.user()->eyepieces()) {
+    WTableRow *row = eyepiecesTable->insertRow(eyepiecesTable->rowCount());
+    row->elementAt(0)->addWidget(new WText{eyepiece->name() });
+    row->elementAt(1)->addWidget(new WText{WString("{1}").arg(eyepiece->focalLength()) });
+    row->elementAt(2)->addWidget(new WText{WString("{1}").arg(eyepiece->aFOV().degrees() ) });
+    row->elementAt(5)->addWidget(
+      WW<WPushButton>(WString::tr("buttons_remove")).css("btn btn-danger btn-xs").onClick([=](WMouseEvent){
+        Dbo::Transaction t(session);
+        session.user().modify()->eyepieces().erase(eyepiece);
+        EyepiecePtr e = eyepiece;
+        e.remove();
+        t.commit();
+        changed.emit();
+        populateEyepieces();
+      })
+    );
+  }
+}
 
 void TelescopesPage::Private::populateTelescopes()
 {
@@ -187,6 +217,7 @@ void TelescopesPage::Private::loginChanged()
   }
   q->enable();
   populateTelescopes();
+  populateEyepieces();
 }
 
 Signal<> &TelescopesPage::changed() const

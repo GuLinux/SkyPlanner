@@ -18,17 +18,18 @@
 #ifndef TELESCOPE_H
 #define TELESCOPE_H
 #include <Wt/Dbo/Dbo>
+#include "ptr_defs.h"
+#include <types.h>
 
-class User;
 namespace dbo = Wt::Dbo;
 
 class Eyepiece {
 public:
   explicit Eyepiece();
-  explicit Eyepiece(const std::string &name, int focalLength, int aFOV);
+  explicit Eyepiece(const std::string &name, int focalLength, Angle aFOV);
   std::string name() const;
   int focalLength() const;
-  int aFOV() const;
+  Angle aFOV() const;
   
   template<typename Action>
   void persist(Action& a) {
@@ -89,6 +90,24 @@ private:
   dbo::ptr<User> _user;
 };
 
-typedef dbo::ptr<Telescope> TelescopePtr;
+class OpticalSetup {
+public:
+  OpticalSetup(const TelescopePtr &telescope = {}, const EyepiecePtr &eyepiece = {}, const FocalModifierPtr &focalModifier = {} );
+  OpticalSetup &telescope(const TelescopePtr &telescope);
+  OpticalSetup &eyepiece(const EyepiecePtr &eyepiece);
+  OpticalSetup &focalModifier(const FocalModifierPtr& focalModifier);
+  
+  TelescopePtr telescope() const;
+  EyepiecePtr eyepiece() const;
+  FocalModifierPtr focalModifier() const;
+  
+  double magnification() const;
+  Angle fov() const;
+private:
+  TelescopePtr _telescope;
+  EyepiecePtr _eyepiece;
+  FocalModifierPtr _focalModifier;
+};
+
 
 #endif // TELESCOPE_H

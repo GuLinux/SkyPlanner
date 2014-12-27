@@ -5,7 +5,7 @@
 <message id="mainmenu_login">Login</message>
 <message id="mainmenu_home">Home</message>
 <message id="mainmenu_my_sessions">My Sessions</message>
-<message id="mainmenu_my_telescopes">My Telescopes</message>
+<message id="mainmenu_my_telescopes">Optical Instruments</message>
 <message id="mainmenu_my_settings">Settings</message>
 <message id="mainmenu_feedback">Feedback</message>
 <message id="not_set">not set</message>
@@ -351,4 +351,20 @@ After you added a session, click it to add new objects.
 <message id="dss_download_failed">Error downloading DSS Image. There might be an internal SkyPlanner error, or the DSS Website might have a problem.</message>
 <message id="blocked_user_message_title">Banned User</message>
 <message id="blocked_user_message">User account is blocked by the administrator. This session will be ended.</message>
+
+<message id="telescopes_group">Telescopes</message>
+<message id="eyepieces_group">Eyepieces</message>
+
+<message id="telescope">Telescope</message>
+<message id="eyepiece">Eyepiece</message>
+
+<message id="eyepiece_name">Eyepieces</message>
+<message id="eyepiece_focal_length">Focal Length</message>
+<message id="eyepiece_afov">Apparent Field of View</message>
+<message id="afov">aFoV</message>
+<message id="telescope_dia_focal">diam./focal length</message>
+<message id="magnification">Magnification</message>
+<message id="fov">FoV</message>
+
+
 </messages>

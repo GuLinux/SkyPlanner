@@ -60,8 +60,8 @@ void Telescope::setDefault(bool _default)
   this->_default = _default;
 }
 
-Eyepiece::Eyepiece(const string& name, int focalLength, int aFOV)
-  : _name(name), _focalLength(focalLength), _aFOV(aFOV)
+Eyepiece::Eyepiece(const string& name, int focalLength, Angle aFOV)
+  : _name(name), _focalLength(focalLength), _aFOV(aFOV.degrees())
 {
 
 }
@@ -71,9 +71,9 @@ Eyepiece::Eyepiece()
 }
 
 
-int Eyepiece::aFOV() const
+Angle Eyepiece::aFOV() const
 {
-  return _aFOV;
+  return Angle::degrees(_aFOV);
 }
 
 int Eyepiece::focalLength() const
@@ -106,4 +106,55 @@ double FocalModifier::ratio() const
   return _ratio;
 }
 
+OpticalSetup::OpticalSetup(const TelescopePtr& telescope, const EyepiecePtr& eyepiece, const FocalModifierPtr &focalModifier)
+  : _telescope(telescope), _eyepiece(eyepiece), _focalModifier(focalModifier)
+{
+}
 
+EyepiecePtr OpticalSetup::eyepiece() const
+{
+  return _eyepiece;
+}
+
+OpticalSetup& OpticalSetup::eyepiece(const EyepiecePtr& eyepiece)
+{
+  _eyepiece = eyepiece;
+  return *this;
+}
+
+TelescopePtr OpticalSetup::telescope() const
+{
+  return _telescope;
+}
+
+OpticalSetup& OpticalSetup::telescope(const TelescopePtr& telescope)
+{
+  _telescope = telescope;
+  return *this;
+}
+
+FocalModifierPtr OpticalSetup::focalModifier() const
+{
+  return _focalModifier;
+}
+
+OpticalSetup& OpticalSetup::focalModifier(const FocalModifierPtr& focalModifier)
+{
+  _focalModifier = focalModifier;
+  return *this;
+}
+
+
+Angle OpticalSetup::fov() const
+{
+  return _eyepiece->aFOV() / magnification();
+}
+
+double OpticalSetup::magnification() const
+{
+  if(!_telescope || !_eyepiece) {
+    throw runtime_error("You must add an eyepiece and a telescope");
+  }
+  double multiplier = _focalModifier ? _focalModifier->ratio() : 1.;
+  return static_cast<double>(_telescope->focalLength()) / static_cast<double>(_eyepiece->focalLength() ) * multiplier;
+}
