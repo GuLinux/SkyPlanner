@@ -18,6 +18,7 @@
 #include "user.h"
 #include "Models"
 using namespace Wt;
+using namespace std;
 Dbo::collection<TelescopePtr> User::telescopes() const
 {
   return _telescopes;
@@ -53,3 +54,16 @@ bool User::banned() const
 {
   return _banned;
 }
+
+Dbo::collection< FocalModifierPtr > User::focalModifiers() const
+{
+  return _focalModifiers;
+}
+
+list< FocalModifierPtr > User::focalModifiers(const std::string& idempotentLabel)
+{
+  list<FocalModifierPtr> l{FocalModifierPtr(new FocalModifier(idempotentLabel, 1.))};
+  copy(begin(_focalModifiers), end(_focalModifiers), back_inserter(l));
+  return l;
+}
+
