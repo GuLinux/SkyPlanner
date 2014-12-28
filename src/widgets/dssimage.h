@@ -34,6 +34,9 @@ class DSSImage : public Wt::WCompositeWidget
     enum ImageSize {
       Full, Mid, Thumb
     };
+    struct Size {
+      int width, height;
+    };
     struct ImageOptions {
       ImageOptions(const Coordinates::Equatorial &coordinates, const Angle &size, DSS::ImageVersion imageVersion, ImageSize imageSize)
       : coordinates(coordinates), size(size), imageVersion(imageVersion), imageSize(imageSize) {}
@@ -61,6 +64,7 @@ class DSSImage : public Wt::WCompositeWidget
     Wt::WLink fullImageLink() const;
     Wt::WLink dssOriginalLink() const;
     void showImageControls();
+    Size imageSize() const;
   private:
     friend class DSSDownloader;
     D_PTR;

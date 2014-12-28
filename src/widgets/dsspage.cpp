@@ -38,6 +38,10 @@
 #include <Wt/WEnvironment>
 #include <Wt/WTemplate>
 #include <Wt/WPopupMenu>
+#include <Wt/WSvgImage>
+#include <Wt/WPainterPath>
+#include <Wt/WImage>
+#include <Wt/WPainter>
 #include "skyplanner.h"
 
 using namespace Wt;
@@ -73,9 +77,6 @@ void DSSPage::Private::setImageType(DSS::ImageVersion version, const shared_ptr<
   };
   DSSImage *image = new DSSImage(dssImageOptions, downloadMutex, !options.optionsAsMenu, !options.optionsAsMenu );
 
-
-
-
   dssImage = image;
   image->imageClicked().connect([=](const WMouseEvent &e, _n5) {
     WPopupMenu *menu = new WPopupMenu;
@@ -101,7 +102,29 @@ void DSSPage::Private::setImageType(DSS::ImageVersion version, const shared_ptr<
     }
     menu->addMenu(WString::tr("dss_change_type_menu"), imageTypeSubmenu);
     menu->addItem(WString::tr("imagecontrol-menu"))->triggered().connect([=](WMenuItem*, _n5){ if(dssImage) dssImage->showImageControls(); });
-
+    Dbo::Transaction t(session);
+    if(session.user()->telescopes().size() && session.user()->eyepieces().size()) {
+      WMenu *circles = new WPopupMenu;
+      menu->addMenu("FoV Indicators", circles);
+      for(auto telescope: session.user()->telescopes()) {
+	for(auto focalModifier: session.user()->focalModifiers("no multiplier")) {
+	  for(auto eyepiece: session.user()->eyepieces()) {
+	    WString label = WString("{1}, {3} ({2})").arg(telescope->name()).arg(focalModifier->name()).arg(eyepiece->name());
+	    OpticalSetup opticalSetup(telescope, eyepiece, focalModifier);
+	    circles->addItem(label)->triggered().connect([=](WMenuItem*, _n5){
+		auto size = image->imageSize();
+	        WSvgImage *overlay = new WSvgImage(size.width, size.height);
+		imageContainer->addWidget(new WImage(overlay));
+		WPainter p(overlay);
+		auto pen = p.pen();
+		pen.setColor(WColor("red"));
+		p.setPen(pen);
+		p.drawEllipse(size.width/2, size.height/2, 100, 100);
+	    });
+	  }
+	}
+      }
+    }
     menu->popup(e);
   });
   image->failed().connect([=](_n6) mutable {
@@ -129,6 +152,7 @@ void DSSPage::Private::setImageType(DSS::ImageVersion version, const shared_ptr<
     setImageType(nextVersion, downloadMutex);
   });
   imageContainer->addWidget(image);
+  
   if(!options.optionsAsMenu) {
     for(int index=0; index<typeModel->rowCount(); index++)
       if(boost::any_cast<DSS::ImageVersion>(typeModel->item(index)->data()) == viewPort.imageVersion() )

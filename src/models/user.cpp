@@ -60,10 +60,11 @@ Dbo::collection< FocalModifierPtr > User::focalModifiers() const
   return _focalModifiers;
 }
 
-list< FocalModifierPtr > User::focalModifiers(const string& idempotentLabel) const
+vector< FocalModifierPtr > User::focalModifiers(const string& idempotentLabel) const
 {
-  list<FocalModifierPtr> l{FocalModifierPtr(new FocalModifier(idempotentLabel, 1.))};
+  vector<FocalModifierPtr> l{FocalModifierPtr(new FocalModifier(idempotentLabel, 1.))};
   copy(begin(_focalModifiers), end(_focalModifiers), back_inserter(l));
+  sort(begin(l), end(l), [=](const FocalModifierPtr &f1, const FocalModifierPtr &f2) { return f1->ratio() < f2->ratio(); });
   return l;
 }
 

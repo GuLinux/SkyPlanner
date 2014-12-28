@@ -97,6 +97,7 @@ class DSSImage::Private
     bool negated = false;
     Wt::WLink negate(const boost::filesystem::path &file);
     static Magick::Image &apply_common_options(Magick::Image &image);
+    Size imageSize;
   private:
     class DSSImage *const q;
 };

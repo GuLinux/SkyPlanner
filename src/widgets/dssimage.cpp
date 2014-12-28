@@ -241,6 +241,14 @@ void DSSImage::Private::setImage(const Wt::WLink& link)
   else {
     content->addWidget(WW<WImage>(link).addCss("img-responsive").onClick([=](const WMouseEvent &e){imageClicked.emit(e); }));
   }
+  spLog("notice") << "Loading image file: " << file() ;
+  Magick::Image image(file().string());
+  if(image.isValid()) {
+    imageSize = Size{image.size().width(), image.size().height()};
+  } else
+  {
+    spLog("notice") << "image loading failed";
+  }
   _loaded.emit(link);
 }
 
@@ -519,4 +527,9 @@ Magick::Image& DSSImage::Private::apply_common_options(Magick::Image& image)
   image.colorSpace(Magick::GRAYColorspace);
   image.quality(0);
   return image;
+}
+
+DSSImage::Size DSSImage::imageSize() const
+{
+  return d->imageSize;
 }
