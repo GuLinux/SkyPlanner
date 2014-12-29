@@ -378,7 +378,8 @@ Dopo aver aggiunto una nuova sessione, clicca sul suo nome per aggiungere oggett
 <message id="focalMultiplier_ratio">Moltiplicatore</message>
 
 <message id="fov_menu">Indicatori di Campo</message>
-<message id="fov_too_big">Il campo per questa strumentazione è troppo grande. L'indicatore non verrà mostrato.</message>
+<message id="fov_too_big">Il campo per questa strumentazione è troppo grande. L'indicatore non verrà mostrato.<br />
+  Prova a cambiare livello di zoom, o ad usare un altro oculare o altra strumentazione.</message>
 
 <message id="telescopes_group">Telescopi</message>
 <message id="eyepieces_group">Oculari</message>
