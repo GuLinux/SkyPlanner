@@ -107,11 +107,17 @@ void DSSPage::Private::setImageType(DSS::ImageVersion version, const shared_ptr<
       WMenu *circles = new WPopupMenu;
       menu->addMenu(WString::tr("fov_menu"), circles);
       for(auto telescope: session.user()->telescopes()) {
+	WPopupMenu *telescopeMenu = new WPopupMenu;
+	circles->addMenu(WString::fromUTF8(telescope->name()), telescopeMenu);
+	
 	for(auto focalModifier: session.user()->focalModifiers("no multiplier")) {
+	  WPopupMenu *focalModifierMenu = new WPopupMenu;
+	  telescopeMenu->addMenu(WString::fromUTF8(focalModifier->name()), focalModifierMenu);
+	  
 	  for(auto eyepiece: session.user()->eyepieces()) {
-	    WString label = WString("{1}, {3} ({2})").arg(telescope->name()).arg(focalModifier->name()).arg(eyepiece->name());
+	    WString fullLabel = WString("{1}, {3} ({2})").arg(telescope->name()).arg(focalModifier->name()).arg(eyepiece->name());
 	    OpticalSetup opticalSetup(telescope, eyepiece, focalModifier);
-	    circles->addItem(label)->triggered().connect([=](WMenuItem*, _n5){
+	    focalModifierMenu->addItem(WString::fromUTF8(eyepiece->name()))->triggered().connect([=](WMenuItem*, _n5){
 		auto size = image->imageSize();
 		double circleSize = opticalSetup.fov().degrees() * size.width /image->fov().degrees();
 		if(circleSize > size.width * 1.2) {
@@ -125,7 +131,7 @@ void DSSPage::Private::setImageType(DSS::ImageVersion version, const shared_ptr<
 		pen.setColor(WColor("red"));
 		p.setPen(pen);
 		p.drawEllipse(size.width/2 - circleSize/2, size.height/2 - circleSize/2, circleSize, circleSize);
-		p.drawText(10, 10, size.width-10, size.height-10, AlignTop, label);
+		p.drawText(10, 10, size.width-10, size.height-10, AlignTop, fullLabel);
 	    });
 	  }
 	}
