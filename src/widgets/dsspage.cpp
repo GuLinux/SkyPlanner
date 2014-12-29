@@ -110,21 +110,20 @@ void DSSPage::Private::setImageType(DSS::ImageVersion version, const shared_ptr<
 	WPopupMenu *telescopeMenu = new WPopupMenu;
 	circles->addMenu(WString::fromUTF8(telescope->name()), telescopeMenu);
 	
-	for(auto focalModifier: session.user()->focalModifiers("no multiplier")) {
-	  WPopupMenu *focalModifierMenu = new WPopupMenu;
-	  telescopeMenu->addMenu(WString::fromUTF8(focalModifier->name()), focalModifierMenu);
-	  
+	auto eyepieces_menu = [=](WMenu *menu, const FocalModifierPtr focalModifier){
 	  for(auto eyepiece: session.user()->eyepieces()) {
-	    WString fullLabel = WString("{1}, {3} ({2})").arg(telescope->name()).arg(focalModifier->name()).arg(eyepiece->name());
+	    WString fullLabel = focalModifier ?
+	      WString("{1}, {3} ({2})").arg(telescope->name()).arg(focalModifier->name()).arg(eyepiece->name())
+	      : WString("{1} ({2})").arg(telescope->name()).arg(eyepiece->name());
 	    OpticalSetup opticalSetup(telescope, eyepiece, focalModifier);
-	    focalModifierMenu->addItem(WString::fromUTF8(eyepiece->name()))->triggered().connect([=](WMenuItem*, _n5){
+	    menu->addItem(WString::fromUTF8(eyepiece->name()))->triggered().connect([=](WMenuItem*, _n5){
 		auto size = image->imageSize();
 		double circleSize = opticalSetup.fov().degrees() * size.width /image->fov().degrees();
 		if(circleSize > size.width * 1.2) {
 		  SkyPlanner::instance()->notification(WString::tr("notification_warning_title"), WString::tr("fov_too_big"), SkyPlanner::Notification::Alert, 10);
 		  return;
 		}
-	        WSvgImage *overlay = new WSvgImage(size.width, size.height, q);
+		WSvgImage *overlay = new WSvgImage(size.width, size.height, q);
 		image->addOverlay(overlay);
 		WPainter p(overlay);
 		auto pen = p.pen();
@@ -134,6 +133,12 @@ void DSSPage::Private::setImageType(DSS::ImageVersion version, const shared_ptr<
 		p.drawText(10, 10, size.width-10, size.height-10, AlignTop, fullLabel);
 	    });
 	  }
+	};
+	eyepieces_menu(telescopeMenu, {});
+	for(auto focalModifier: session.user()->focalModifiers()) {
+	  WPopupMenu *focalModifierMenu = new WPopupMenu;
+	  telescopeMenu->addMenu(WString::fromUTF8(focalModifier->name()), focalModifierMenu);
+	  eyepieces_menu(focalModifierMenu, focalModifier);
 	}
       }
     }
