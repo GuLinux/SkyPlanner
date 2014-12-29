@@ -33,6 +33,7 @@
 #include "widgets/astroobjectwidget.h"
 #include "widgets/positiondetailswidget.h"
 #include "widgets/texteditordialog.h"
+#include "widgets/instrumentstable.h"
 #include <Wt/WDialog>
 #include <Wt/WCheckBox>
 #include <Wt/WTemplate>
@@ -51,6 +52,7 @@ AstroSessionPreview::Private::Private(const AstroGroup& astroGroup, Session& ses
 AstroSessionPreview::AstroSessionPreview(const AstroGroup& astroGroup, const GeoCoder::Place &geoCoderPlace, Session& session, list<ObjectAction> actions, Type type, Wt::WContainerWidget* parent)
   : WCompositeWidget(parent), d(astroGroup, session, this)
 {
+  Dbo::Transaction t(session);
   spLog("notice") << "Switching to preview version..";
   
   string typeString = type == Report ? "report" : "sessionpreview";
@@ -140,6 +142,16 @@ AstroSessionPreview::AstroSessionPreview(const AstroGroup& astroGroup, const Geo
   sessionPreviewContainer->addWidget(toolbar);
 
   sessionPreviewContainer->addWidget(new PositionDetailsWidget{astroGroup, geoCoderPlace, session});
+  if(type == Preview && session.user()->instruments_ok() ) {
+    InstrumentsTable *instrumentsTable = new InstrumentsTable(session.user(), session);
+    WPanel *instrumentsPanel = new WPanel;
+    instrumentsPanel->setTitle(WString::tr("astrosessiontab_instruments_panel"));
+    instrumentsPanel->setCollapsible(true);
+    instrumentsPanel->setCollapsed(true);
+    instrumentsPanel->titleBarWidget()->addStyleClass("hidden-print");
+    instrumentsPanel->setCentralWidget(WW<WContainerWidget>().add(WW<WText>(WString("<h5>{1}</h5>").arg(WString::tr("astrosessiontab_instruments_panel"))).css("visible-print") ).add(instrumentsTable));
+    sessionPreviewContainer->addWidget(instrumentsPanel);
+  }
 
   if(type == Preview || type == PublicPreview) {
     AstroObjectsTable *planetsTable = new AstroObjectsTable(session, {}, AstroObjectsTable::NoFiltersButton, {}, AstroObjectsTable::PlanetColumns());
@@ -148,6 +160,7 @@ AstroSessionPreview::AstroSessionPreview(const AstroGroup& astroGroup, const Geo
     WPanel *planetsPanel = new WPanel;
     planetsPanel->setTitle(WString::tr("astrosessiontab_planets_panel"));
     planetsPanel->setCollapsible(true);
+    planetsPanel->setCollapsed(true);
     planetsPanel->titleBarWidget()->addStyleClass("hidden-print");
     planetsPanel->setCentralWidget(WW<WContainerWidget>().add(WW<WText>(WString("<h5>{1}</h5>").arg(WString::tr("astrosessiontab_planets_panel"))).css("visible-print") ).add(planetsTable));
     sessionPreviewContainer->addWidget(planetsPanel);
@@ -179,7 +192,6 @@ AstroSessionPreview::AstroSessionPreview(const AstroGroup& astroGroup, const Geo
   sessionPreviewContainer->addWidget(WW<WText>(WString::tr("dss-embed-menu-info-message")).css("hidden-print"));
 
   shared_ptr<mutex> downloadImagesMutex(new mutex);
-  Dbo::Transaction t(session);
 
   typedef pair<AstroSessionObjectPtr, Ephemeris::BestAltitude> AstroSessionObjectElement;
   vector<AstroSessionObjectElement> sessionObjects;

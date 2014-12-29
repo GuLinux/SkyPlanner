@@ -15,5 +15,6 @@ ${CMAKE_SOURCE_DIR}/src/widgets/objectpopupmenu.cpp
 ${CMAKE_SOURCE_DIR}/src/widgets/positiondetailswidget.cpp
 ${CMAKE_SOURCE_DIR}/src/widgets/texteditordialog.cpp
 ${CMAKE_SOURCE_DIR}/src/widgets/weatherwidget.cpp
+${CMAKE_SOURCE_DIR}/src/widgets/instrumentstable.cpp
 )
 

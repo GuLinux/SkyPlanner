@@ -53,6 +53,7 @@ public:
   bool banned() const;
   class Setting;
   typedef dbo::ptr<Setting> SettingPtr;
+  bool instruments_ok() const;
 private:
   dbo::collection<TelescopePtr> _telescopes;
   dbo::collection<EyepiecePtr> _eyepieces;

@@ -68,3 +68,7 @@ vector< FocalModifierPtr > User::focalModifiers(const string& idempotentLabel) c
   return l;
 }
 
+bool User::instruments_ok() const
+{
+  return _telescopes.size() && _eyepieces.size();
+}

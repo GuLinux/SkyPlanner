@@ -80,6 +80,7 @@
 #include "widgets/positiondetailswidget.h"
 #include "widgets/weatherwidget.h"
 #include "widgets/texteditordialog.h"
+#include "widgets/instrumentstable.h"
 #include "astrosessionpreview.h"
 #include "Wt-Commons/wglyphicon.h"
 
@@ -285,42 +286,10 @@ void AstroSessionTab::Private::reload()
   });
   addPanel(WString::tr("astrosessiontab_add_observable_object"), addObjectsTabWidget, true, true, sessionContainer)->addStyleClass("hidden-print");
   addPanel(WString::tr("astrosessiontab_planets_panel"), planetsTable, true, true, sessionContainer)->addStyleClass("hidden-print");
-  if(session.user()->telescopes().size() && session.user()->eyepieces().size()) {
-    WTable *instrumentsTable = WW<WTable>().addCss("table table-condensed table-hover table-bordered");
-    instrumentsTable->elementAt(0, 0)->addWidget(WW<WText>(WString::tr("telescope")));
-    instrumentsTable->elementAt(0, 1)->addWidget(WW<WText>(WString::tr("telescope_dia_focal")));
-    instrumentsTable->elementAt(0, 2)->addWidget(WW<WText>(WString::tr("focalMultiplier")));
-    instrumentsTable->elementAt(0, 3)->addWidget(WW<WText>(WString::tr("eyepiece")));
-    instrumentsTable->elementAt(0, 4)->addWidget(WW<WText>(WString::tr("eyepiece_focal_length")));
-    instrumentsTable->elementAt(0, 5)->addWidget(WW<WText>(WString::tr("afov")));
-    instrumentsTable->elementAt(0, 6)->addWidget(WW<WText>(WString::tr("magnification")));
-    instrumentsTable->elementAt(0, 7)->addWidget(WW<WText>(WString::tr("fov")));
-    instrumentsTable->elementAt(0, 8)->addWidget(WW<WGlyphicon>("glyphicon-refresh").addCss("link").onClick([=](WMouseEvent){
-      for(int i=0; i<instrumentsTable->rowCount(); i++)
-	instrumentsTable->rowAt(i)->show();
-    }).get()->color("blue") );
-    
+  if(session.user()->instruments_ok()) {
     WContainerWidget *instrumentsPanel = WW<WContainerWidget>().addCss("container");
-    for(auto telescope: session.user()->telescopes()) {
-      for(auto focalMultiplier: session.user()->focalModifiers("no multiplier")) {
-	WString focalMultiplierLabel = focalMultiplier->ratio() == 1. ?
-	  WString(focalMultiplier->name()) :
-	  WString("{1} ({2}x)").arg(focalMultiplier->name()).arg((::format("%.2f") % focalMultiplier->ratio()).str() );
-	for(auto eyepiece: session.user()->eyepieces()) {
-	  WTableRow *row = instrumentsTable->insertRow(instrumentsTable->rowCount());
-	  OpticalSetup setup(telescope, eyepiece, focalMultiplier);
-	  row->elementAt(0)->addWidget(WW<WText>(WString::fromUTF8(telescope->name())));
-	  row->elementAt(1)->addWidget(WW<WText>(format("%dmm/%dmm") % telescope->diameter() % telescope->focalLength() ));
-	  row->elementAt(2)->addWidget(WW<WText>(focalMultiplierLabel));
-	  row->elementAt(3)->addWidget(WW<WText>(WString::fromUTF8(eyepiece->name())));
-	  row->elementAt(4)->addWidget(WW<WText>(format("%dmm") % eyepiece->focalLength() ));
-	  row->elementAt(5)->addWidget(WW<WText>(WString::fromUTF8(eyepiece->aFOV().printable(Angle::IntDegrees))));
-	  row->elementAt(6)->addWidget(WW<WText>(format("%.2f") % setup.magnification()));
-	  row->elementAt(7)->addWidget(WW<WText>(WString::fromUTF8(setup.fov().printable())));
-	  row->elementAt(8)->addWidget(WW<WGlyphicon>("glyphicon-remove").addCss("link").onClick([=](WMouseEvent){ row->hide(); }).get()->color("red"));
-	}
-      }
-    }
+    
+    auto instrumentsTable = new InstrumentsTable(session.user(), session);
     addPanel(WString::tr("astrosessiontab_instruments_panel"), instrumentsTable, true, true, sessionContainer);
   }
   auto isPastSession = [=](int slackHours = 0) {
