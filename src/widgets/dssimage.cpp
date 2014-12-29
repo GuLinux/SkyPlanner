@@ -235,8 +235,9 @@ void DSSImage::Private::setImage(const Wt::WLink& link)
   _imageLink = link;
   spLog("notice") << "reloading image: " << link.url();
   content->clear();
+  content->setPositionScheme(Wt::Relative);
   if(showAnchor) {
-    content->addWidget(WW<WAnchor>(link).setTarget(TargetNewWindow).add(WW<WImage>(link).addCss("img-responsive dss-image-overlay")));
+    content->addWidget(WW<WAnchor>(link).setTarget(TargetNewWindow).add(WW<WImage>(link).addCss("img-responsive")));
   }
   else {
     content->addWidget(WW<WImage>(link).addCss("img-responsive").onClick([=](const WMouseEvent &e){imageClicked.emit(e); }));
@@ -521,8 +522,7 @@ void DSSImage::addOverlay(const WLink& source)
 {
   WImage *imageOverlay = new WImage(source);
   imageOverlay->clicked().connect([=](WMouseEvent){ delete imageOverlay; });
-  imageOverlay->setPositionScheme(Wt::Absolute);
-  imageOverlay->addStyleClass("dss-image-overlay");
+  imageOverlay->addStyleClass("dss-image-overlay img-responsive");
   d->content->addWidget(imageOverlay);
 }
 

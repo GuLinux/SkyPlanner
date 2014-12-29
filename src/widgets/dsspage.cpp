@@ -105,7 +105,7 @@ void DSSPage::Private::setImageType(DSS::ImageVersion version, const shared_ptr<
     Dbo::Transaction t(session);
     if(session.user()->telescopes().size() && session.user()->eyepieces().size()) {
       WMenu *circles = new WPopupMenu;
-      menu->addMenu("FoV Indicators", circles);
+      menu->addMenu(WString::tr("fov_menu"), circles);
       for(auto telescope: session.user()->telescopes()) {
 	for(auto focalModifier: session.user()->focalModifiers("no multiplier")) {
 	  for(auto eyepiece: session.user()->eyepieces()) {
@@ -114,7 +114,11 @@ void DSSPage::Private::setImageType(DSS::ImageVersion version, const shared_ptr<
 	    circles->addItem(label)->triggered().connect([=](WMenuItem*, _n5){
 		auto size = image->imageSize();
 		double circleSize = opticalSetup.fov().degrees() * size.width /image->fov().degrees();
-	        WSvgImage *overlay = new WSvgImage(size.width, size.height);
+		if(circleSize > size.width * 1.2) {
+		  SkyPlanner::instance()->notification(WString::tr("notification_warning_title"), WString::tr("fov_too_big"), SkyPlanner::Notification::Alert, 10);
+		  return;
+		}
+	        WSvgImage *overlay = new WSvgImage(size.width, size.height, q);
 		image->addOverlay(overlay);
 		WPainter p(overlay);
 		auto pen = p.pen();

@@ -357,6 +357,7 @@ After you added a session, click it to add new objects.
 <message id="telescope">Telescope</message>
 <message id="eyepiece">Eyepiece</message>
 
+
 <message id="astrosessiontab_instruments_panel">Instruments</message>
 <message id="eyepiece_name">Name</message>
 <message id="eyepiece_focal_length">Focal Length</message>
@@ -370,5 +371,6 @@ After you added a session, click it to add new objects.
 <message id="focalMultiplier_name">Name</message>
 <message id="focalMultiplier_ratio">Multiplier</message>
 
-
+<message id="fov_menu">Field of View Markers</message>
+<message id="fov_too_big">The field of view for this instruments is too big. Field of view overlay will not be shown.</message>
 </messages>

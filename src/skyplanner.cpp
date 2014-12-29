@@ -219,7 +219,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
 
   WMenuItem *telescopesMenuItem = WW<WMenuItem>(userPopup->addItem(WString::tr("mainmenu_my_telescopes"), telescopesPage));
   d->loggedInItems.push_back(telescopesMenuItem);
-  telescopesMenuItem->setPathComponent("telescopes/");
+  telescopesMenuItem->setPathComponent("instruments/");
 
   WMenuItem *userSettingsMenuItem = WW<WMenuItem>(userPopup->addItem(WString::tr("mainmenu_my_settings"), new UserSettingsPage(d->session)));
   d->loggedInItems.push_back(userSettingsMenuItem);

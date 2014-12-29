@@ -242,6 +242,7 @@ div.weather-box {
 }
 
 .dss-image-overlay {
+  position:absolute;
   top: 0px;
   left: 0px;
 }

@@ -365,4 +365,25 @@ Dopo aver aggiunto una nuova sessione, clicca sul suo nome per aggiungere oggett
 <message id="blocked_user_message_title">Utente Bloccato</message>
 <message id="blocked_user_message">Il tuo account utente è stato bloccato dall'amministratore. La sessione corrente verrà terminata.</message>
 
+
+<message id="astrosessiontab_instruments_panel">Strumentazione</message>
+<message id="eyepiece_name">Nome</message>
+<message id="eyepiece_focal_length">Lunghezza Focale</message>
+<message id="eyepiece_afov">Campo Apparente</message>
+<message id="telescope_dia_focal">diam./lunghezza focale</message>
+<message id="magnification">Ingrandimento</message>
+<message id="focalMultiplier">Moltiplicatore Focale</message>
+<message id="focalMultipliers_group">Barlow/Riduttori Focale</message>
+<message id="focalMultiplier_name">Nome</message>
+<message id="focalMultiplier_ratio">Moltiplicatore</message>
+
+<message id="fov_menu">Indicatori di Campo</message>
+<message id="fov_too_big">Il campo per questa strumentazione è troppo grande. L'indicatore non verrà mostrato.</message>
+
+<message id="telescopes_group">Telescopi</message>
+<message id="eyepieces_group">Oculari</message>
+
+<message id="telescope">Telescopio</message>
+<message id="eyepiece">Oculare</message>
+
 </messages>
