@@ -81,6 +81,7 @@
 #include "widgets/weatherwidget.h"
 #include "widgets/texteditordialog.h"
 #include "astrosessionpreview.h"
+#include "Wt-Commons/wglyphicon.h"
 
 using namespace Wt;
 using namespace WtCommons;
@@ -294,6 +295,10 @@ void AstroSessionTab::Private::reload()
     instrumentsTable->elementAt(0, 5)->addWidget(WW<WText>(WString::tr("afov")));
     instrumentsTable->elementAt(0, 6)->addWidget(WW<WText>(WString::tr("magnification")));
     instrumentsTable->elementAt(0, 7)->addWidget(WW<WText>(WString::tr("fov")));
+    instrumentsTable->elementAt(0, 8)->addWidget(WW<WGlyphicon>("glyphicon-refresh").addCss("link").onClick([=](WMouseEvent){
+      for(int i=0; i<instrumentsTable->rowCount(); i++)
+	instrumentsTable->rowAt(i)->show();
+    }).get()->color("blue") );
     
     WContainerWidget *instrumentsPanel = WW<WContainerWidget>().addCss("container");
     for(auto telescope: session.user()->telescopes()) {
@@ -312,6 +317,7 @@ void AstroSessionTab::Private::reload()
 	  row->elementAt(5)->addWidget(WW<WText>(WString::fromUTF8(eyepiece->aFOV().printable(Angle::IntDegrees))));
 	  row->elementAt(6)->addWidget(WW<WText>(format("%.2f") % setup.magnification()));
 	  row->elementAt(7)->addWidget(WW<WText>(WString::fromUTF8(setup.fov().printable())));
+	  row->elementAt(8)->addWidget(WW<WGlyphicon>("glyphicon-remove").addCss("link").onClick([=](WMouseEvent){ row->hide(); }).get()->color("red"));
 	}
       }
     }
