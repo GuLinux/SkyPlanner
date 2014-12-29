@@ -236,7 +236,7 @@ void DSSImage::Private::setImage(const Wt::WLink& link)
   spLog("notice") << "reloading image: " << link.url();
   content->clear();
   if(showAnchor) {
-    content->addWidget(WW<WAnchor>(link).setTarget(TargetNewWindow).add(WW<WImage>(link).addCss("img-responsive")));
+    content->addWidget(WW<WAnchor>(link).setTarget(TargetNewWindow).add(WW<WImage>(link).addCss("img-responsive dss-image-overlay")));
   }
   else {
     content->addWidget(WW<WImage>(link).addCss("img-responsive").onClick([=](const WMouseEvent &e){imageClicked.emit(e); }));
@@ -365,6 +365,11 @@ void DSSImage::Private::showImageController()
   dialogControl.reset(new DialogControl(dialog, content));
   dialog->finished().connect([=](WDialog::DialogCode, _n5) { dialogControl.reset(); });
   dialog->show();
+}
+
+Angle DSSImage::fov() const
+{
+  return d->imageOptions.size;
 }
 
 
@@ -511,6 +516,16 @@ void DSSImage::Private::reload()
   }
 
 }
+
+void DSSImage::addOverlay(const WLink& source)
+{
+  WImage *imageOverlay = new WImage(source);
+  imageOverlay->clicked().connect([=](WMouseEvent){ delete imageOverlay; });
+  imageOverlay->setPositionScheme(Wt::Absolute);
+  imageOverlay->addStyleClass("dss-image-overlay");
+  d->content->addWidget(imageOverlay);
+}
+
 
 WLink DSSImage::dssOriginalLink() const
 {

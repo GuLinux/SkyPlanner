@@ -113,13 +113,15 @@ void DSSPage::Private::setImageType(DSS::ImageVersion version, const shared_ptr<
 	    OpticalSetup opticalSetup(telescope, eyepiece, focalModifier);
 	    circles->addItem(label)->triggered().connect([=](WMenuItem*, _n5){
 		auto size = image->imageSize();
+		double circleSize = opticalSetup.fov().degrees() * size.width /image->fov().degrees();
 	        WSvgImage *overlay = new WSvgImage(size.width, size.height);
-		imageContainer->addWidget(new WImage(overlay));
+		image->addOverlay(overlay);
 		WPainter p(overlay);
 		auto pen = p.pen();
 		pen.setColor(WColor("red"));
 		p.setPen(pen);
-		p.drawEllipse(size.width/2, size.height/2, 100, 100);
+		p.drawEllipse(size.width/2 - circleSize/2, size.height/2 - circleSize/2, circleSize, circleSize);
+		p.drawText(10, 10, size.width-10, size.height-10, AlignTop, label);
 	    });
 	  }
 	}

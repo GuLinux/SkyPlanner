@@ -65,6 +65,8 @@ class DSSImage : public Wt::WCompositeWidget
     Wt::WLink dssOriginalLink() const;
     void showImageControls();
     Size imageSize() const;
+    void addOverlay(const Wt::WLink &source);
+    Angle fov() const;
   private:
     friend class DSSDownloader;
     D_PTR;

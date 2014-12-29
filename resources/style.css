@@ -240,3 +240,8 @@ div.weather-box {
 .spacing-bottom {
   margin-bottom: 20px;
 }
+
+.dss-image-overlay {
+  top: 0px;
+  left: 0px;
+}
