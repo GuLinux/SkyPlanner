@@ -386,5 +386,6 @@ Dopo aver aggiunto una nuova sessione, clicca sul suo nome per aggiungere oggett
 
 <message id="telescope">Telescopio</message>
 <message id="eyepiece">Oculare</message>
+<message id="object_suggested_eyepiece">Oculare suggerito</message>
 
 </messages>

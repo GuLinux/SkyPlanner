@@ -86,6 +86,24 @@ void AstroObjectWidget::Private::init()
   info->bindString("angular_size", Utils::htmlEncode( WString::fromUTF8( Angle::degrees(ngcObject->angularSize()).printable() )) );
   info->setCondition("have-magnitude", ngcObject->magnitude() <= 90.);
   info->bindString("magnitude", Utils::htmlEncode( (format("%.1f") % ngcObject->magnitude()).str() ));
+  
+  bool have_eyepieces = ngcObject->angularSize() > 0 && astroSession->user() == session.user() && session.user()->instruments_ok() && astroGroup.telescope;
+  if(have_eyepieces) {
+    std::vector<OpticalSetup> fieldInfos;
+    std::transform(begin(session.user()->eyepieces()), end(session.user()->eyepieces()), back_inserter(fieldInfos), [=](const EyepiecePtr &e){ return OpticalSetup{astroGroup.telescope, e}; } );
+    auto angularSize = Angle::degrees(ngcObject->angularSize());
+    fieldInfos.erase(remove_if(fieldInfos.begin(), fieldInfos.end(), [=](const OpticalSetup &o) { return o.fov() < angularSize || o.fov() > angularSize * 3.5; } ), fieldInfos.end() );
+    
+    auto fovIndex = [=] (const OpticalSetup &o) { return abs( (angularSize * 1.7 - o.fov()).degrees() ); };
+    std::sort(fieldInfos.begin(), fieldInfos.end(), [=](const OpticalSetup &a, const OpticalSetup &b){
+      return fovIndex(a) < fovIndex(b);
+    });
+
+    info->setCondition("have-eyepiece", !fieldInfos.empty() );
+    if(info->conditionValue("have-eyepiece")) {
+      info->bindString("eyepiece", WString::fromUTF8(fieldInfos[0].eyepiece()->name()));
+    }
+  }
 
   info->setCondition("have-ephemeris", astroSession);
   if(astroSession) {

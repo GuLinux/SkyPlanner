@@ -374,4 +374,5 @@ After you added a session, click it to add new objects.
 <message id="fov_menu">Field of View Markers</message>
 <message id="fov_too_big">The field of view for this instruments is too big. Field of view overlay will not be shown.<br />
   Try reducing zoom level, or changing eyepiece or other instruments.</message>
+<message id="object_suggested_eyepiece">Suggested eyepiece</message>
 </messages>
