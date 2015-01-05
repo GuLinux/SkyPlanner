@@ -94,7 +94,7 @@ void AstroObjectWidget::Private::init()
     auto angularSize = Angle::degrees(ngcObject->angularSize());
     fieldInfos.erase(remove_if(fieldInfos.begin(), fieldInfos.end(), [=](const OpticalSetup &o) { return o.fov() < angularSize || o.fov() > angularSize * 3.5; } ), fieldInfos.end() );
     
-    auto fovIndex = [=] (const OpticalSetup &o) { return abs( (angularSize * 1.7 - o.fov()).degrees() ); };
+    auto fovIndex = [=] (const OpticalSetup &o) { return abs( (angularSize * 2.2 - o.fov()).degrees() ); };
     std::sort(fieldInfos.begin(), fieldInfos.end(), [=](const OpticalSetup &a, const OpticalSetup &b){
       return fovIndex(a) < fovIndex(b);
     });
