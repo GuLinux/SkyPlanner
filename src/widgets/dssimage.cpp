@@ -121,11 +121,9 @@ map<DSSImage::ImageSize,DSSImage::Private::Image> DSSImage::Private::imageSizeMa
 boost::filesystem::path DSSImage::Private::Image::file(const DSSImage::ImageOptions &imageOptions)
 {
   static string cacheDir("dss-cache");
-  if(cacheDir.empty()) {
-    bool success = wApp->readConfigurationProperty("dss-cache-dir", cacheDir);
-    if(!success)
+  wApp->readConfigurationProperty("dss-cache-dir", cacheDir);
+  if(!fs::create_directories(cacheDir)) {
       throw runtime_error("Error reading dss-cache-dir property!");
-    fs::create_directories(cacheDir);
   }
 
   auto p = imageOptions.file(cacheDir, prefix);
