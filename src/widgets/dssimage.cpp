@@ -123,7 +123,7 @@ boost::filesystem::path DSSImage::Private::Image::file(const DSSImage::ImageOpti
   static string cacheDir("dss-cache");
   wApp->readConfigurationProperty("dss-cache-dir", cacheDir);
   if(!fs::create_directories(cacheDir)) {
-      throw runtime_error("Error reading dss-cache-dir property!");
+      throw runtime_error(format("Error creating dss-cache directory: %s") % cacheDir );
   }
 
   auto p = imageOptions.file(cacheDir, prefix);
