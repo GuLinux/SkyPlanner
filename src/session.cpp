@@ -57,7 +57,9 @@ void Session::Private::init(const string &connectionString, Session::Provider pr
   connection = make_shared<Dbo::backend::Sqlite3>(connectionString);
 #endif
   q->setConnection(*connection);
-  connection->setProperty("show-queries", "false");
+  string show_queries = "false";
+  WServer::instance()->readConfigurationProperty("show-queries", show_queries);
+  connection->setProperty("show-queries", show_queries);
   q->mapClass<Catalogue>("catalogues");
   q->mapClass<NgcObject>("objects");
   q->mapClass<NebulaDenomination>("denominations");
