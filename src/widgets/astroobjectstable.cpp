@@ -525,3 +525,40 @@ vector< AstroObjectsTable::Row > AstroObjectsTable::rows() const
   return d->rows;
 }
 
+ostream& operator<<(ostream& o, const AstroObjectsTable::Filters& f)
+{
+  /*
+    std::set<NgcObject::NebulaType> types;
+    double minimumMagnitude;
+    double maximumMagnitude;
+    ConstellationFinder::Constellation constellation;
+    CataloguePtr catalogue;
+    Angle minimumAltitude;
+    Angle maximumAltitude = Angle::degrees(90);
+    boost::posix_time::ptime start_time;
+    boost::posix_time::ptime end_time;
+    boost::logic::tribool observed = boost::logic::indeterminate;
+    Angle minimumAngularSize;
+    Angle maximumAngularSize;
+  */
+  o << "AstroObjectsTable::Filters{ types: [";
+  string sep;
+  for(auto type: f.types) {
+    o << sep << NgcObject::typeDescriptionKey(type);
+    sep = ", ";
+  }
+  o << "], ";
+  o << format("minimumMagnitude: %.2f, maximumMagnitude: %.2f, ") % f.minimumMagnitude % f.maximumMagnitude;
+  o << "constellation: " << f.constellation.abbrev << ", ";
+  o << "catalogue: " << string{f.catalogue ? f.catalogue->name() : "<null>"} << ", ";
+  o << "minimumAltitude: " << f.minimumAltitude.printable() << " (valid: " << boolalpha << f.minimumAltitude.valid() 
+    << ", maximumAltitude: " << f.maximumAltitude.printable() << " (valid: " << boolalpha << f.maximumAltitude.valid() << "), ";
+  o << "start_time: " << boost::posix_time::to_iso_extended_string(f.start_time) << ", end_time: " << boost::posix_time::to_iso_extended_string(f.end_time) << ", ";
+  o << "observed: " << f.observed << ", ";
+  o << "minimumAngularSize: " << f.minimumAngularSize.printable() << " (valid: " << f.minimumAngularSize.valid()
+    << "), maximumAngularSize: " << f.maximumAngularSize.printable() << " (valid: " << f.maximumAngularSize.valid() << ") ";
+  o << " }";
+  return o;
+}
+
+

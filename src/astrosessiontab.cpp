@@ -167,6 +167,7 @@ void AstroSessionTab::Private::reload()
       Dbo::Transaction t(session);
       astroSession.modify()->setName(sessionName->text().toUTF8());
       astroSession.modify()->setDateTime(WDateTime{sessionDate->date()});
+      session.execute("UPDATE astro_session_object SET azimuth = NULL, altitude = NULL, transit_time = NULL, ephemeris_context_key = NULL WHERE astro_session_id = ?").bind(astroSession.id());
       changeNameOrDateDialog->accept();
       nameChanged.emit(astroSession->name());
       reload();
@@ -584,6 +585,7 @@ void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject
   const string orderByClause{"transit_time ASC, ra asc, dec asc, constellation_abbrev asc"};
   long objectsCount = DboHelper::filterQuery<long>(t, "select count(*) from astro_session_object a inner join objects o on a.objects_id = o.id", filters)
       .where("astro_session_id = ?").bind(astroSession.id()).resultValue();
+  wApp->log("notice") << "pageNumber: " << pageNumber << ", objectsCount: " << objectsCount << ", filters: " << filters;
   if(pageNumber >=0 ) {
     page = AstroObjectsTable::Page::fromCount(pageNumber, objectsCount, [=] (long pageNumber) { populate({}, pageNumber); });
     if(addedObject) {

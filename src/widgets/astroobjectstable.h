@@ -131,5 +131,6 @@ private:
   D_PTR;
 };
 
+std::ostream &operator<<(std::ostream &o, const AstroObjectsTable::Filters &f);
 
 #endif
