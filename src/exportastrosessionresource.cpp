@@ -277,7 +277,7 @@ void ExportAstroSessionResource::handleRequest(const Wt::Http::Request &request,
   printable.setCondition("have-place", d->astroSession->position());
   printable.setCondition("have-place-geocoding", !d->place.formattedAddress.empty() );
   printable.bindString("place-geocoding", d->place.formattedAddress );
-  printable.setCondition("have-telescope", d->telescope);
+  printable.setCondition("have-telescope", static_cast<bool>(d->telescope));
   if(d->telescope) {
     printable.bindString("printable_telescope_info", WString::tr("printable_telescope_info")
                          .arg(d->telescope->name())
@@ -332,7 +332,7 @@ void ExportAstroSessionResource::handleRequest(const Wt::Http::Request &request,
     rowTemplate.bindString("magnitude", format("%.1f") % sessionObject->ngcObject()->magnitude() );
     rowTemplate.bindString("type", sessionObject->ngcObject()->typeDescription());
     rowTemplate.setCondition("have-place", d->astroSession->position());
-    rowTemplate.setCondition("have-telescope", d->telescope);
+    rowTemplate.setCondition("have-telescope", static_cast<bool>(d->telescope));
     rowTemplate.bindInt("total-columns", d->astroSession->position() ? 10 : 8);
     auto bestAltitude = sessionObject->bestAltitude(ephemeris, d->timezone);
     if(d->astroSession->position()) {

@@ -91,7 +91,7 @@ void TelescopesPage::Private::setupTelescopesTable()
     ->add(isDefault)
     ->addButton(addTelescopeButton))
   );
-  telescopesTable = WW<WTable>().addCss("table table-striped table-hover");
+  telescopesTable = WW<WTable>().addCss("table table-condensed table-hover");
   telescopesTable->setHeaderCount(1);
   groupBox->addWidget(WW<WContainerWidget>().addCss("row").add(telescopesTable));
   q->addWidget(groupBox);
@@ -124,7 +124,7 @@ void TelescopesPage::Private::setupFocalMultipliersTable()
     ->add(focalMultiplierRatio, "focalMultiplier_ratio")
     ->addButton(addFocalMultiplier))
   );
-  focalMultipliersTable = WW<WTable>().addCss("table table-striped table-hover");
+  focalMultipliersTable = WW<WTable>().addCss("table table-condensed table-hover");
   focalMultipliersTable->setHeaderCount(1);
   groupBox->addWidget(WW<WContainerWidget>().addCss("row").add(focalMultipliersTable));
   q->addWidget(groupBox);
@@ -157,7 +157,7 @@ void TelescopesPage::Private::setupEyepiecesTable()
     ->add(eyepieceAFOV, "eyepiece_afov")
     ->addButton(addEyepieceButton))
   );
-  eyepiecesTable = WW<WTable>().addCss("table table-striped table-hover");
+  eyepiecesTable = WW<WTable>().addCss("table table-condensed table-hover");
   eyepiecesTable->setHeaderCount(1);
   groupBox->addWidget(WW<WContainerWidget>().addCss("row").add(eyepiecesTable));
   q->addWidget(groupBox);

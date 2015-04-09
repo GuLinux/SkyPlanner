@@ -60,7 +60,7 @@ AstroObjectsTable::AstroObjectsTable(Session &session,
 				     const std::list<Column> &columns, WContainerWidget *parent)
   : WCompositeWidget(parent), d(session, actions, columns, this)
 {
-  d->objectsTable = WW<WTable>().addCss("table table-hover astroobjects-table");
+  d->objectsTable = WW<WTable>().addCss("table table-hover table-condensed astroobjects-table");
   d->objectsTable->setHeaderCount(1);
   WContainerWidget *container = WW<WContainerWidget>();
   if(showFilters != NoFiltersButton) {

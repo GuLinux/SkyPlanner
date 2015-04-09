@@ -105,7 +105,7 @@ void AstroObjectWidget::Private::init()
     }
   }
 
-  info->setCondition("have-ephemeris", astroSession);
+  info->setCondition("have-ephemeris", static_cast<bool>(astroSession));
   if(astroSession) {
     Ephemeris ephemeris(astroSession->position(), astroGroup.timezone);
     auto bestAltitude =  AstroSessionObject::bestAltitude(astroSession, ngcObject, ephemeris);

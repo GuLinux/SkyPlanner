@@ -111,7 +111,7 @@ AstroSessionsListTab::AstroSessionsListTab(Session &session, Wt::WContainerWidge
     }));
   }
   
-  addWidget(d->sessionsTable = WW<WTable>().addCss("table table-striped table-hover"));
+  addWidget(d->sessionsTable = WW<WTable>().addCss("table table-condensed table-hover"));
   d->sessionsTable->setHeaderCount(1);
   d->populateSessions();
   d->session.login().changed().connect([=](_n6){ d->populateSessions(); });

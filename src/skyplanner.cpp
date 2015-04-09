@@ -148,6 +148,13 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
   auto theme = new WBootstrapTheme(this);
   theme->setVersion(WBootstrapTheme::Version3);
   setTheme( theme );
+  string styleCssPath = "/skyplanner_style.css";
+  string themeCssPath;
+  readConfigurationProperty("style-css-path", styleCssPath);
+  useStyleSheet("//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css");
+  if(readConfigurationProperty("theme-css-path", themeCssPath))
+    useStyleSheet( themeCssPath );
+  useStyleSheet( styleCssPath );
   //requireJQuery("https://code.jquery.com/jquery-1.11.1.min.js");
   requireJQuery("https://code.jquery.com/jquery-2.1.1.min.js");
   require("http://s7.addthis.com/js/300/addthis_widget.js#pubid=ra-53db62c0246c3a25");
@@ -177,9 +184,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
 
   navBar->setResponsive( true );
   navBar->setTitle( WString::tr("application_title"), WLink(WLink::InternalPath, HOME_PATH) );
-  string styleCssPath = "/skyplanner_style.css";
-  readConfigurationProperty("style-css-path", styleCssPath);
-  useStyleSheet( styleCssPath );
+
   root()->addWidget(d->notifications = WW<WContainerWidget>().addCss("skyplanner-notifications hidden-print"));
   d->widgets = WW<WStackedWidget>( root() ).addCss("contents");
   d->widgets->setTransitionAnimation({WAnimation::AnimationEffect::Fade});
