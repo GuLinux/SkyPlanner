@@ -151,7 +151,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
   string styleCssPath = "/skyplanner_style.css";
   string themeCssPath;
   readConfigurationProperty("style-css-path", styleCssPath);
-  useStyleSheet("//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css");
+  useStyleSheet("http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css");
   if(readConfigurationProperty("theme-css-path", themeCssPath))
     useStyleSheet( themeCssPath );
   useStyleSheet( styleCssPath );
