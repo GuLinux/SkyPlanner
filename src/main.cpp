@@ -71,10 +71,14 @@ int main(int argc, char **argv) {
         }
         
 	server.addResource((new DboRestsResource<NgcObject>())->handleAll()->handleById(), "/SkyPlanner/api/skyobjects");
+        
+        auto addStaticResource = [&server] (const boost::filesystem::path &relPath, const std::string &deployPath) {
+          auto resource_path = boost::filesystem::path(RESOURCES_DIRECTORY) / relPath;
+          server.addResource(new WFileResource(resource_path.string()), deployPath);
+        };
+        addStaticResource("logo_350.png", "/skyplanner_logo.png");
+        addStaticResource("loading-64.png", SkyPlanner::LoadingIndicator);
 
-        auto logo_path = boost::filesystem::path(RESOURCES_DIRECTORY) / "logo_350.png";
-        server.log("notice") << "Using Logo resource: " << logo_path;
-        server.addResource(new WFileResource(logo_path.string()), "/skyplanner_logo.png");
         server.addEntryPoint(Wt::Application, newSkyPlanner);
         Session::configureAuth();
         if (server.start()) {

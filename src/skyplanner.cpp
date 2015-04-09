@@ -58,6 +58,7 @@
 #include "astrosessiontab.h"
 #include <boost/algorithm/string.hpp>
 #include <Wt/WMemoryResource>
+#include <Wt/WFileResource>
 #include "astrosessionpreview.h"
 
 using namespace std;
@@ -620,3 +621,5 @@ void SkyPlanner::notify(const Wt::WEvent &e) {
     d->sessionInfo.lastEvent = boost::posix_time::second_clock().local_time();
     WApplication::notify(e);
 }
+
+std::string SkyPlanner::LoadingIndicator = "/loading_indicator.png";

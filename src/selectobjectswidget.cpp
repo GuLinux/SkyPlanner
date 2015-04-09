@@ -179,7 +179,7 @@ void SelectObjectsWidget::populateFor(const Dbo::ptr< Telescope > &telescope , T
   d->selectedTelescope = telescope;
   d->timezone = timezone;
   if(!d->astroSession->position()) return;
-  d->suggestedObjectsTable->tableFooter()->addWidget(WW<WImage>("http://gulinux.net/loading_animation.gif").addCss("center-block"));
+  d->suggestedObjectsTable->tableFooter()->addWidget(WW<WImage>(SkyPlanner::LoadingIndicator).addCss("loading center-block"));
 
   auto astroSessionId = d->astroSession.id();
   WApplication *app = wApp;

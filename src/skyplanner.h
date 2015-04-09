@@ -38,6 +38,7 @@ public:
     };
 
     typedef std::function<void(SkyPlanner*)> OnQuit;
+    static std::string LoadingIndicator;
   SkyPlanner(const Wt::WEnvironment& environment, OnQuit onQuit);
     ~SkyPlanner();
     class Notification {

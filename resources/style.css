@@ -246,3 +246,40 @@ div.weather-box {
   top: 0px;
   left: 0px;
 }
+
+
+@keyframes loading-rotate {
+  from {
+    -ms-transform: rotate(0deg); /* IE 9 */
+    -webkit-transform: rotate(0deg); /* Chrome, Safari, Opera */
+    transform: rotate(0deg);
+  }
+  to {
+    -ms-transform: rotate(360eg); /* IE 9 */
+    -webkit-transform: rotate(360deg); /* Chrome, Safari, Opera */
+    transform: rotate(360deg);
+  }
+}
+@-webkit-keyframes loading-rotate {
+  from {
+    -ms-transform: rotate(0deg); /* IE 9 */
+    -webkit-transform: rotate(0deg); /* Chrome, Safari, Opera */
+    transform: rotate(0deg);
+  }
+  to {
+    -ms-transform: rotate(360eg); /* IE 9 */
+    -webkit-transform: rotate(360deg); /* Chrome, Safari, Opera */
+    transform: rotate(360deg);
+  }
+}
+
+.loading {
+  animation-duration: 900ms;
+  animation-name: loading-rotate;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+  -webkit-animation-duration: 900ms;
+  -webkit-animation-name: loading-rotate;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-timing-function: linear;
+}

@@ -412,7 +412,7 @@ void DSSImage::Private::download()
   content->clear();
   content->addWidget(new WText(WString::tr("dss_downloading_message")));
   content->addWidget(new WBreak);
-  content->addWidget(WW<WImage>("http://gulinux.net/loading_animation.gif").addCss("center-block"));
+  content->addWidget(WW<WImage>(SkyPlanner::LoadingIndicator).addCss("loading center-block"));
 
   wtDownload();
 }
