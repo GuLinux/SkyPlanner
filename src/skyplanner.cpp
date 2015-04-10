@@ -85,6 +85,9 @@ SkyPlanner::SessionInfo SkyPlanner::sessionInfo() const
     return d->sessionInfo;
 }
 
+
+
+
 SkyPlanner::SessionInfo::SessionInfo() {
     addField("session-id", sessionId).addField("ip-address", ipAddress).addField("user-agent", userAgent)
     .addField("username", username)
@@ -617,9 +620,18 @@ Signal<> &SkyPlanner::telescopesListChanged() const
   return d->telescopesListChanged;
 }
 
+
+
+#include "utils/stacktrace.h"
+
 void SkyPlanner::notify(const Wt::WEvent &e) {
     d->sessionInfo.lastEvent = boost::posix_time::second_clock().local_time();
-    WApplication::notify(e);
+    try {
+      WApplication::notify(e);
+    } catch(std::exception &exception) {
+    log("warning") << "Exception caught: " << exception.what() << " on event: " << e.eventType();
+    print_stacktrace();
+    throw exception;
+  }
 }
 
-std::string SkyPlanner::LoadingIndicator = "/loading_indicator.png";
