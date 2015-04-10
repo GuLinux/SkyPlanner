@@ -87,7 +87,7 @@ void AstroObjectWidget::Private::init()
   info->setCondition("have-magnitude", ngcObject->magnitude() <= 90.);
   info->bindString("magnitude", Utils::htmlEncode( (format("%.1f") % ngcObject->magnitude()).str() ));
   
-  bool have_eyepieces = ngcObject->angularSize() > 0 && astroSession->user() == session.user() && session.user()->instruments_ok() && astroGroup.telescope;
+  bool have_eyepieces = ngcObject->angularSize() > 0 && astroSession && astroSession->user() == session.user() && session.user()->instruments_ok() && astroGroup.telescope;
   if(have_eyepieces) {
     std::vector<OpticalSetup> fieldInfos;
     std::transform(begin(session.user()->eyepieces()), end(session.user()->eyepieces()), back_inserter(fieldInfos), [=](const EyepiecePtr &e){ return OpticalSetup{astroGroup.telescope, e}; } );
