@@ -38,7 +38,7 @@ public:
     };
 
     typedef std::function<void(SkyPlanner*)> OnQuit;
-    static constexpr char *LoadingIndicator = "/loading_indicator.png"; // TODO: move all locations in a different place
+    static constexpr char *LoadingIndicator = "/skyplanner_loading_indicator.png"; // TODO: move all locations in a different place
   SkyPlanner(const Wt::WEnvironment& environment, OnQuit onQuit);
     ~SkyPlanner();
     class Notification {
