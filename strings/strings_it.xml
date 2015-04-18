@@ -388,4 +388,10 @@ Dopo aver aggiunto una nuova sessione, clicca sul suo nome per aggiungere oggett
 <message id="eyepiece">Oculare</message>
 <message id="object_suggested_eyepiece">Oculare suggerito</message>
 
+<message id="buttons_copy">Copia come Nuova Sessione</message>
+<message id="copy_session_name">Nome della nuova sessione che sarà creata (potrai cambiare successivamente le altre informazioni):</message>
+<message id="session_copy_of">Copia di {1}</message>
+<message id="session_copied">Sessione Copiata</message>
+<message id="session_copied_text">Sessione correttamente copiata come {1}</message>
+
 </messages>
