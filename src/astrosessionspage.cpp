@@ -124,6 +124,9 @@ void AstroSessionsPage::open(const string &tabName)
     newTab->setText(WString::fromUTF8(newName));
     d->astroSessionsListTab->reload();
   });
+  astroSessionTab->sessionsChanged().connect([=](_n6){
+    d->astroSessionsListTab->reload();
+  });
   newTab->setCloseable(true);
   astroSessionTab->close().connect([=](_n6){
     newTab->close();

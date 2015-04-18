@@ -28,6 +28,7 @@ public:
     ~AstroSessionTab();
     AstroSessionTab(const AstroSessionPtr& astroSession, Session& session, Wt::WContainerWidget* parent = 0);
     Wt::Signal<std::string> &nameChanged() const;
+    Wt::Signal<> &sessionsChanged() const;
     static std::string pathComponent(const AstroSessionPtr& astroSession, Wt::Dbo::Transaction &transaction );
     Wt::Signal<> &close() const;
     template<typename ObjectWidget>

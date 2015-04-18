@@ -156,8 +156,9 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
   string themeCssPath;
   readConfigurationProperty("style-css-path", styleCssPath);
   useStyleSheet("http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css");
-  if(readConfigurationProperty("theme-css-path", themeCssPath))
+  if(readConfigurationProperty("theme-css-path", themeCssPath)) {
     useStyleSheet( themeCssPath );
+  }
   useStyleSheet( styleCssPath );
   //requireJQuery("https://code.jquery.com/jquery-1.11.1.min.js");
   requireJQuery("https://code.jquery.com/jquery-2.1.1.min.js");

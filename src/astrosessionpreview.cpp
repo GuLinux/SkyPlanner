@@ -40,6 +40,8 @@
 #include "utils/format.h"
 #include "utils/utils.h"
 #include <Wt/WLocalDateTime>
+#include <Wt/WLineEdit>
+#include <Wt/WMessageBox>
 using namespace Wt;
 using namespace WtCommons;
 using namespace std;
@@ -136,6 +138,33 @@ AstroSessionPreview::AstroSessionPreview(const AstroGroup& astroGroup, const Geo
     dialog->footer()->addWidget(WW<WPushButton>(WString::tr("Wt.WMessageBox.Ok")).css("btn-primary").onClick([=](WMouseEvent){dialog->accept(); }));
     dialog->show();
   });
+  WPushButton *copyButton = WW<WPushButton>(WString::tr("buttons_copy")).css("btn-sm").onClick([=,&session](WMouseEvent){
+    Dbo::Transaction t(session);
+    auto dialog = new WMessageBox(WString::tr("buttons_copy"), WString::tr("copy_session_name"), Question, Ok | Cancel, this);
+    auto sessionName = new WLineEdit( WString::tr("session_copy_of").arg(astroGroup.astroSession()->name()));
+    dialog->contents()->addWidget(sessionName);
+    dialog->button(Ok)->clicked().connect([=](WMouseEvent){ dialog->accept();});
+    dialog->button(Ok)->setEnabled(!sessionName->text().empty());
+    sessionName->keyWentUp().connect([=](WKeyEvent){ dialog->button(Ok)->setEnabled(! sessionName->text().empty() ); });
+    dialog->button(Cancel)->clicked().connect([=](WMouseEvent){ dialog->reject();});
+    dialog->finished().connect([=,&session](int r, _n5){
+      Scope scope([=]{ delete dialog; } );
+      if(r != WDialog::Accepted || sessionName->text().empty())
+	return;
+      Dbo::Transaction t(session);
+      auto newSession = new AstroSession(sessionName->text().toUTF8(), astroGroup.astroSession()->when(), session.user());
+      session.add(newSession);
+      auto query = session.find<AstroSessionObject>().where("astro_session_id = ?").bind(astroGroup.astroSession().id());
+      if(type == Report)
+	query.where("observed = ?").bind(true);
+      for(auto o: query.resultList()) {
+	newSession->astroSessionObjects().insert(new AstroSessionObject{o->ngcObject()});
+      }
+      WMessageBox::show(WString::tr("session_copied"), WString::tr("session_copied_text").arg(newSession->name()), Ok);
+      d->sessionsChanged.emit();
+    });
+    dialog->show();
+  });
   WToolBar *toolbar = WW<WToolBar>().addCss("hidden-print pull-right").addButton(backButton).addButton(invertAllButton).addButton(printButton);
   if(type == Report || type == Preview)
     toolbar->addButton(shareButton);
@@ -188,6 +217,9 @@ AstroSessionPreview::AstroSessionPreview(const AstroGroup& astroGroup, const Geo
 	TextEditorDialog::report(session, astroGroup.astroSession(), displayReport, "astrosessiontab_set_report")->show();
       }));
     }
+  }
+  if(session.user()) {
+    toolbar->addButton(copyButton);
   }
   sessionPreviewContainer->addWidget(WW<WText>(WString::tr("dss-embed-menu-info-message")).css("hidden-print"));
 
@@ -258,6 +290,13 @@ Signal<> &AstroSessionPreview::backClicked() const
 {
   return d->backClicked;
 }
+
+Signal<> &AstroSessionPreview::sessionsChanged() const
+{
+  return d->sessionsChanged;
+}
+
+
 
 AstroSessionPreview::~AstroSessionPreview()
 {

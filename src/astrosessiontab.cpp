@@ -184,6 +184,7 @@ void AstroSessionTab::Private::reload()
     auto preview = new AstroSessionPreview{{astroSession, selectedTelescope, timezone}, geoCoderPlace, session, {{"astroobject_remove_from_session", "btn-danger", [=](const AstroSessionObjectPtr &o, AstroObjectWidget* w){
       remove(o, [=] { delete w; });
     } }}};
+    preview->sessionsChanged().connect([=](_n6){sessionsChanged.emit(); });
     sessionPreviewContainer->addWidget(preview);
     sessionStacked->setCurrentWidget(sessionPreviewContainer);
     preview->backClicked().connect([=](_n6){
@@ -194,6 +195,7 @@ void AstroSessionTab::Private::reload()
   auto reportButton = WW<WPushButton>(WString::tr("Report")).css("btn-primary btn-xs").onClick([=](WMouseEvent){
     sessionPreviewContainer->clear();
     auto preview = new AstroSessionPreview{{astroSession, selectedTelescope, timezone}, geoCoderPlace, session, {}, AstroSessionPreview::Report};
+    preview->sessionsChanged().connect([=](_n6){sessionsChanged.emit(); });
     sessionPreviewContainer->addWidget(preview);
     sessionStacked->setCurrentWidget(sessionPreviewContainer);
     preview->backClicked().connect([=](_n6){
@@ -445,6 +447,11 @@ string AstroSessionTab::pathComponent(const AstroSessionPtr &astroSession, Dbo::
 Wt::Signal<std::string> &AstroSessionTab::nameChanged() const
 {
   return d->nameChanged;
+}
+
+Wt::Signal<> &AstroSessionTab::sessionsChanged() const
+{
+  return d->sessionsChanged;
 }
 
 

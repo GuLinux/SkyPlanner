@@ -40,6 +40,7 @@
 <message id="buttons_back">Back</message>
 <message id="buttons_share">Share</message>
 <message id="button_retry">Retry</message>
+<message id="button_retry">Retry</message>
 
 <message id="astrosessionspage_sessions_list">Sessions List</message>
 <message id="astrosessionslisttab_name">Name</message>
@@ -375,4 +376,10 @@ After you added a session, click it to add new objects.
 <message id="fov_too_big">The field of view for this instruments is too big. Field of view overlay will not be shown.<br />
   Try reducing zoom level, or changing eyepiece or other instruments.</message>
 <message id="object_suggested_eyepiece">Suggested eyepiece</message>
+
+<message id="buttons_copy">Copy as New Session</message>
+<message id="copy_session_name">Name of the new session that will be created (you can change additional properties later):</message>
+<message id="session_copy_of">Copy of {1}</message>
+<message id="session_copied">Session Copied</message>
+<message id="session_copied_text">Session correctly copied as {1}</message>
 </messages>

@@ -31,6 +31,7 @@ public:
     AstroGroup astroGroup;
     Session &session;
     Wt::Signal<> backClicked;
+    Wt::Signal<> sessionsChanged;
 private:
     class AstroSessionPreview* const q;
 };

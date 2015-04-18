@@ -36,6 +36,7 @@ public:
   ~AstroSessionPreview();
   AstroSessionPreview(const AstroGroup& astroGroup, const GeoCoder::Place &geoCoderPlace, Session& session, std::list<ObjectAction> actions = {}, Type type = Preview, Wt::WContainerWidget* parent = 0);
   Wt::Signal<> &backClicked() const;
+  Wt::Signal<> &sessionsChanged() const;
 private:
   D_PTR;
 };

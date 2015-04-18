@@ -55,6 +55,7 @@ public:
     Forecast forecast;
     Wt::Dbo::ptr<Telescope> selectedTelescope;
     Wt::Signal<std::string> nameChanged;
+    Wt::Signal<> sessionsChanged;
     void printableVersion();
     bool pastObservation;
     Timezone timezone;
