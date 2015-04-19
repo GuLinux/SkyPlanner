@@ -21,6 +21,7 @@
 #include "skyplanner.h"
 #include "session.h"
 
+class AstroSessionsPage;
 class AstroObjectsTable;
 namespace Wt
 {
@@ -52,6 +53,7 @@ public:
     bool agentIsBot;
     std::string initialInternalPath;
     SessionInfo sessionInfo;
+    AstroSessionsPage* astrosessionspage;
 private:
     class SkyPlanner* const q;
 };

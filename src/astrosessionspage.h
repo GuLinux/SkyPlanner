@@ -29,6 +29,7 @@ public:
     ~AstroSessionsPage();
     AstroSessionsPage(Session &session, Wt::WContainerWidget* parent = 0);
     void open(const std::string &tabName);
+    void reloadSessions();
 private:
     D_PTR;
 };

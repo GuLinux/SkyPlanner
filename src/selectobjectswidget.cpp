@@ -70,7 +70,9 @@ SelectObjectsWidget::Private::Private(const Dbo::ptr< AstroSession >& astroSessi
 
 SelectObjectsWidget::~SelectObjectsWidget()
 {
+  boost::unique_lock<boost::mutex> lock(d->suggestedObjectsListMutex); // TODO: better multithreading support for this class
 }
+
 
 Signal< AstroSessionObjectPtr >& SelectObjectsWidget::objectsListChanged() const
 {

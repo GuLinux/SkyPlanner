@@ -135,3 +135,8 @@ void AstroSessionsPage::open(const string &tabName)
   d->tabs[d->tabWidget->indexOf(astroSessionTab)] = {internalPath, astroSessionTab, newTab, astroSession};
   d->tabWidget->setCurrentWidget(astroSessionTab);
 }
+
+void AstroSessionsPage::reloadSessions()
+{
+  d->astroSessionsListTab->reload();
+}

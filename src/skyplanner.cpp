@@ -213,9 +213,9 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
   authMenuItem->setPathComponent("login/");
   TelescopesPage *telescopesPage = new TelescopesPage(d->session);
   telescopesPage->changed().connect([=](_n6) { d->telescopesListChanged.emit(); });
-  AstroSessionsPage *astrosessionspage = new AstroSessionsPage(d->session);
+  d->astrosessionspage = new AstroSessionsPage(d->session);
 
-  WMenuItem *mySessionsMenuItem = navBarMenu->addItem(WString::tr("mainmenu_my_sessions"), astrosessionspage);
+  WMenuItem *mySessionsMenuItem = navBarMenu->addItem(WString::tr("mainmenu_my_sessions"), d->astrosessionspage);
   d->loggedInItems.push_back(mySessionsMenuItem);
   mySessionsMenuItem->setPathComponent("sessions/");
 
@@ -330,7 +330,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
       d->loadPreview(internalPathNextPart("/sessionpreview/"));
     }
     if(internalPathMatches("/sessions")) {
-      astrosessionspage->open(internalPathNextPart("/sessions/"));
+      d->astrosessionspage->open(internalPathNextPart("/sessions/"));
     }
     d->previousInternalPath = newPath;
   };
@@ -462,6 +462,7 @@ void SkyPlanner::Private::loadReport( const std::string &hexId )
 
   // TODO: fetch telescope from user?
   auto report = new AstroSessionPreview{{astroSession, TelescopePtr{}, placeInfo.timezone}, placeInfo.geocoderPlace, session, {}, AstroSessionPreview::PublicReport};
+  report->sessionsChanged().connect([=](_n6){ astrosessionspage->reloadSessions(); });
   report->backClicked().connect([=](_n6){
     reportsContainer->clear();
     widgets->setCurrentWidget( currentWidget );
@@ -488,6 +489,7 @@ void SkyPlanner::Private::loadPreview( const std::string &hexId )
 
   // TODO: fetch telescope from user?
   auto report = new AstroSessionPreview{{astroSession, TelescopePtr{}, placeInfo.timezone}, placeInfo.geocoderPlace, session, {}, AstroSessionPreview::PublicPreview};
+  report->sessionsChanged().connect([=](_n6){ astrosessionspage->reloadSessions(); });
   report->backClicked().connect([=](_n6){
     reportsContainer->clear();
     widgets->setCurrentWidget( currentWidget );
