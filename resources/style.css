@@ -283,3 +283,7 @@ div.weather-box {
   -webkit-animation-iteration-count: infinite;
   -webkit-animation-timing-function: linear;
 }
+
+.form-control-dateedit {
+  background-image: url('resources/themes/bootstrap/3/date-edit-button.png');
+}

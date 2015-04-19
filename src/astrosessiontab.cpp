@@ -161,7 +161,7 @@ void AstroSessionTab::Private::reload()
   auto changeNameOrDateButton = WW<WPushButton>(WString::tr("astrosessiontab_change_name_or_date")).css("btn btn-xs").onClick([=](WMouseEvent){
     WDialog *changeNameOrDateDialog = new WDialog(WString::tr("astrosessiontab_change_name_or_date"));
     WLineEdit *sessionName = WW<WLineEdit>(astroSession->name()).css("input-block-level");
-    WDateEdit *sessionDate = WW<WDateEdit>().css("input-block-level");
+    WDateEdit *sessionDate = WW<WDateEdit>().css("input-block-level form-control-dateedit");
     sessionDate->setDate(astroSession->wDateWhen().date());
     changeNameOrDateDialog->footer()->addWidget(WW<WPushButton>(WString::tr("Wt.WMessageBox.Ok")).css("btn btn-primary").onClick([=](WMouseEvent){
       Dbo::Transaction t(session);
