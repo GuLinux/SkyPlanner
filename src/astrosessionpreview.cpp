@@ -153,6 +153,7 @@ AstroSessionPreview::AstroSessionPreview(const AstroGroup& astroGroup, const Geo
 	return;
       Dbo::Transaction t(session);
       auto newSession = new AstroSession(sessionName->text().toUTF8(), astroGroup.astroSession()->when(), session.user());
+      newSession->setPosition(astroGroup.astroSession()->position());
       session.add(newSession);
       auto query = session.find<AstroSessionObject>().where("astro_session_id = ?").bind(astroGroup.astroSession().id());
       if(type == Report)
