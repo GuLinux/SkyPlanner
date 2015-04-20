@@ -101,7 +101,7 @@ AstroSessionTab::AstroSessionTab(const AstroSessionPtr& astroSession, Session& s
     : WContainerWidget(parent), d(astroSession, session, this)
 {
   spLog("notice") << "astroSession: " << astroSession.id() << ", id=" << id();
-  d->reload();
+  d->load();
 }
 
 Signal< NoClass > &AstroSessionTab::close() const
@@ -141,7 +141,8 @@ void AstroSessionTab::add(const Dbo::collection<NgcObjectPtr> &ngcObjects, const
 template AstroSessionObjectPtr AstroSessionTab::add(const NgcObjectPtr &ngcObject, const AstroSessionPtr &astroSession, Session &session, WTableRow *objectWidget);
 template AstroSessionObjectPtr AstroSessionTab::add(const NgcObjectPtr &ngcObject, const AstroSessionPtr &astroSession, Session &session, WWidget *objectWidget);
 template AstroSessionObjectPtr AstroSessionTab::add(const NgcObjectPtr &ngcObject, const AstroSessionPtr &astroSession, Session &session, WMenuItem *objectWidget);
-void AstroSessionTab::Private::reload()
+
+void AstroSessionTab::Private::load()
 {
   q->clear();
   sessionStacked = new WStackedWidget;
@@ -162,17 +163,13 @@ void AstroSessionTab::Private::reload()
 
   actionsContainer->add(actionsToolbar(), string{}, false);
   
-  WContainerWidget *sessionInfo = WW<WContainerWidget>();
-  sessionInfo->addWidget(new WText{WLocalDateTime(astroSession->wDateWhen().date(), astroSession->wDateWhen().time())
-    .toString("dddd dd MMMM yyyy")});
+  sessionInfoWidget = WW<WContainerWidget>();
 
-
-  sessionInfo->addWidget(positionDetails = WW<WContainerWidget>());
 
   PlaceWidget *placeWidget = new PlaceWidget(astroSession, session);
 
   auto locationPanel = WW<WPanel>(addPanel(WString::tr("position_title"), placeWidget, false, true, sessionContainer )).addCss("hidden-print").get();
-  addPanel(WString::tr("astrosessiontab_information_panel"), sessionInfo, true, true, sessionContainer)->addStyleClass("hidden-print");
+  addPanel(WString::tr("astrosessiontab_information_panel"), sessionInfoWidget, true, true, sessionContainer)->addStyleClass("hidden-print");
   shared_ptr<SkyPlanner::Notification> placeWidgetInstructions;
   if(astroSession->position()) {
     placeWidget->mapReady().connect([=](_n6){ WTimer::singleShot(1500, [=](WMouseEvent){
@@ -189,7 +186,7 @@ void AstroSessionTab::Private::reload()
 
   planetsTable->planets(astroSession, timezone);
 
-  SelectObjectsWidget *addObjectsTabWidget = new SelectObjectsWidget(astroSession, session);
+  addObjectsTabWidget = new SelectObjectsWidget(astroSession, session);
   placeWidget->placeChanged().connect([=](double lat, double lng, _n4) {
     Dbo::Transaction t(session);
     updateTimezone();
@@ -198,8 +195,7 @@ void AstroSessionTab::Private::reload()
     SkyPlanner::instance()->notification(WString::tr("notification_success_title"), WString::tr("placewidget_place_set_notification"), SkyPlanner::Notification::Success, 5);
     populate();
     addObjectsTabWidget->populateFor(selectedTelescope, timezone);
-    positionDetails->clear();
-    positionDetails->addWidget(new PositionDetailsWidget{{astroSession, selectedTelescope, timezone}, geoCoderPlace, session});
+    reload();
     planetsTable->planets(astroSession, timezone);
     if(weatherWidget)
         weatherWidget->reload(astroSession->position(), geoCoderPlace, astroSession->when());
@@ -345,13 +341,22 @@ void AstroSessionTab::Private::reload()
   }
   
   populate();
-  positionDetails->clear();
-  positionDetails->addWidget(new PositionDetailsWidget{{astroSession, selectedTelescope, timezone}, geoCoderPlace, session});
   // TODO: something seems to be wrong here...
   // TODO: wait for ready signal?
-  WTimer::singleShot(500, [=](WMouseEvent) {
-    addObjectsTabWidget->populateFor(selectedTelescope, timezone);
-  });
+//   WTimer::singleShot(500, [=](WMouseEvent) {
+//     addObjectsTabWidget->populateFor(selectedTelescope, timezone);
+//   });
+  reload();
+}
+
+void AstroSessionTab::Private::reload()
+{
+  sessionInfoWidget->clear();
+  sessionInfoWidget->addWidget(new WText{WLocalDateTime(astroSession->wDateWhen().date(), astroSession->wDateWhen().time())
+    .toString("dddd dd MMMM yyyy")});
+  sessionInfoWidget->addWidget(positionDetails = WW<WContainerWidget>());
+  positionDetails->addWidget(new PositionDetailsWidget{{astroSession, selectedTelescope, timezone}, geoCoderPlace, session});
+  addObjectsTabWidget->populateFor(selectedTelescope, timezone);
 }
 
 

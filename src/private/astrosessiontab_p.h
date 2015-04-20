@@ -25,6 +25,8 @@
 #include "geocoder.h"
 
 #include "exportastrosessionresource.h"
+
+class SelectObjectsWidget;
 class FilterByConstellation;
 namespace Wt
 {
@@ -46,6 +48,7 @@ class AstroSessionTab::Private
 public:
 
     Private(const Wt::Dbo::ptr<AstroSession>& astroSession, Session& session, AstroSessionTab* q);
+    void load();
     void reload();
     Wt::WToolBar *actionsToolbar();
     Wt::Dbo::ptr<AstroSession> astroSession;
@@ -71,6 +74,8 @@ public:
     Wt::WContainerWidget *sessionContainer ;
     Wt::WContainerWidget *sessionPreviewContainer;
     WeatherWidget *weatherWidget;
+    Wt::WContainerWidget *sessionInfoWidget;
+    SelectObjectsWidget *addObjectsTabWidget;
 private:
     class AstroSessionTab* const q;
 };

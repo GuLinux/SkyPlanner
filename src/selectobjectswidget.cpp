@@ -142,6 +142,7 @@ void SelectObjectsWidget::Private::suggestedObjects(Dbo::Transaction& transactio
 void SelectObjectsWidget::Private::populateSuggestedObjectsTable( int pageNumber )
 {
     suggestedObjectsTable->clear();
+    suggestedObjectsTable->tableFooter()->clear();
     auto filters = suggestedObjectsTable->currentFilters();
     if( filters.types.size() == 0) {
       suggestedObjectsTable->tableFooter()->addWidget(WW<WText>(WString::tr("suggested_objects_empty_list")));
