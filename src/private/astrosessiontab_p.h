@@ -47,6 +47,7 @@ public:
 
     Private(const Wt::Dbo::ptr<AstroSession>& astroSession, Session& session, AstroSessionTab* q);
     void reload();
+    Wt::WToolBar *actionsToolbar();
     Wt::Dbo::ptr<AstroSession> astroSession;
     Session &session;
     Wt::WContainerWidget *positionDetails;
@@ -73,6 +74,7 @@ public:
 private:
     class AstroSessionTab* const q;
 };
+
 
 
 #endif // ASTROSESSIONTAB_P_H

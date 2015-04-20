@@ -157,93 +157,10 @@ void AstroSessionTab::Private::reload()
   }
 
   Dbo::Transaction t(session);
-
-  auto changeNameOrDateButton = WW<WPushButton>(WString::tr("astrosessiontab_change_name_or_date")).css("btn btn-xs").onClick([=](WMouseEvent){
-    WDialog *changeNameOrDateDialog = new WDialog(WString::tr("astrosessiontab_change_name_or_date"));
-    WLineEdit *sessionName = WW<WLineEdit>(astroSession->name()).css("input-block-level");
-    WDateEdit *sessionDate = WW<WDateEdit>().css("input-block-level form-control-dateedit");
-    sessionDate->setDate(astroSession->wDateWhen().date());
-    changeNameOrDateDialog->footer()->addWidget(WW<WPushButton>(WString::tr("Wt.WMessageBox.Ok")).css("btn btn-primary").onClick([=](WMouseEvent){
-      Dbo::Transaction t(session);
-      astroSession.modify()->setName(sessionName->text().toUTF8());
-      astroSession.modify()->setDateTime(WDateTime{sessionDate->date()});
-      session.execute("UPDATE astro_session_object SET azimuth = NULL, altitude = NULL, transit_time = NULL, ephemeris_context_key = NULL WHERE astro_session_id = ?").bind(astroSession.id());
-      changeNameOrDateDialog->accept();
-      nameChanged.emit(astroSession->name());
-      reload();
-    }));
-    WTemplate *form = new WTemplate("<form><fieldset><label>Name</label>${sessionName}<label>Date</label>${sessionDate}</fieldset></form>");
-    form->bindWidget("sessionName", sessionName);
-    form->bindWidget("sessionDate", sessionDate);
-    changeNameOrDateDialog->contents()->addWidget(form);
-    changeNameOrDateDialog->show();
-  });
-
-  auto previewVersionButton = WW<WPushButton>(WString::tr("astrosessiontab_preview_version")).css("btn-primary btn-xs").onClick([=](WMouseEvent){
-    sessionPreviewContainer->clear();
-    auto preview = new AstroSessionPreview{{astroSession, selectedTelescope, timezone}, geoCoderPlace, session, {{"astroobject_remove_from_session", "btn-danger", [=](const AstroSessionObjectPtr &o, AstroObjectWidget* w){
-      remove(o, [=] { delete w; });
-    } }}};
-    preview->sessionsChanged().connect([=](_n6){sessionsChanged.emit(); });
-    sessionPreviewContainer->addWidget(preview);
-    sessionStacked->setCurrentWidget(sessionPreviewContainer);
-    preview->backClicked().connect([=](_n6){
-      sessionPreviewContainer->clear();
-      sessionStacked->setCurrentWidget(sessionContainer);
-    });
-  });
-  auto reportButton = WW<WPushButton>(WString::tr("Report")).css("btn-primary btn-xs").onClick([=](WMouseEvent){
-    sessionPreviewContainer->clear();
-    auto preview = new AstroSessionPreview{{astroSession, selectedTelescope, timezone}, geoCoderPlace, session, {}, AstroSessionPreview::Report};
-    preview->sessionsChanged().connect([=](_n6){sessionsChanged.emit(); });
-    sessionPreviewContainer->addWidget(preview);
-    sessionStacked->setCurrentWidget(sessionPreviewContainer);
-    preview->backClicked().connect([=](_n6){
-      sessionPreviewContainer->clear();
-      sessionStacked->setCurrentWidget(sessionContainer);
-    });
-  });
-
-  auto printableVersionButton = WW<WPushButton>(WString::tr("astrosessiontab_printable_version")).css("btn btn-info btn-xs").onClick( [=](WMouseEvent){ printableVersion(); } );
-
-  WPushButton *exportButton = WW<WPushButton>(WString::tr("astrosessiontab_export")).css("btn btn-xs btn-info");
-  WPopupMenu *exportMenu = new WPopupMenu;
-  exportButton->setMenu(exportMenu);
-  for(auto exportType: map<string, ExportAstroSessionResource::ReportType>{
-    {"CSV", ExportAstroSessionResource::CSV},
-    {"Cartes du Ciel", ExportAstroSessionResource::CartesDuCiel},
-#ifndef PRODUCTION_MODE
-    {"KStars", ExportAstroSessionResource::KStars},
-#endif
-  }) {
-    WMenuItem *exportMenuItem = exportMenu->addItem(exportType.first);
-    delete exportResources[exportType.second];
-    exportResources[exportType.second] = new ExportAstroSessionResource(astroSession, session, timezone, exportMenuItem);
-    exportResources[exportType.second]->setPlace(geoCoderPlace);
-    exportResources[exportType.second]->setReportType(exportType.second);
-    exportMenuItem->setLink(exportResources[exportType.second]);
-    exportMenuItem->setLinkTarget(TargetNewWindow);
-    if(exportType.second == ExportAstroSessionResource::KStars) {
-      exportMenuItem->triggered().connect([=](WMenuItem*, _n5) {
-	SkyPlanner::instance()->notification(WString::tr("notification_suggestion_title"), WString::tr("kstars_suggestion"), SkyPlanner::Notification::Information);
-      });
-    }
-  }
-
-  auto closeButton = WW<WPushButton>(WString::tr("buttons_close")).css("btn btn-warning btn-xs").onClick( [=](WMouseEvent){ close.emit(); } );
-
   WForm *actionsContainer = WW<WForm>(WForm::Inline).addCss("hidden-print").setMargin(10);
-  WToolBar *actionsToolbar = WW<WToolBar>().addCss("hidden-print");
   sessionContainer->addWidget(actionsContainer);
-  actionsToolbar->addButton(changeNameOrDateButton);
-  actionsToolbar->addButton(previewVersionButton);
-  if(astroSession->wDateWhen() < WDateTime::currentDateTime())
-    actionsToolbar->addButton(reportButton);
-  actionsToolbar->addButton(printableVersionButton);
-  actionsToolbar->addButton(exportButton);
-  actionsToolbar->addButton(closeButton);
 
-  actionsContainer->add(actionsToolbar, string{}, false);
+  actionsContainer->add(actionsToolbar(), string{}, false);
   
   WContainerWidget *sessionInfo = WW<WContainerWidget>();
   sessionInfo->addWidget(new WText{WLocalDateTime(astroSession->wDateWhen().date(), astroSession->wDateWhen().time())
@@ -452,6 +369,100 @@ Wt::Signal<std::string> &AstroSessionTab::nameChanged() const
 Wt::Signal<> &AstroSessionTab::sessionsChanged() const
 {
   return d->sessionsChanged;
+}
+
+
+WToolBar *AstroSessionTab::Private::actionsToolbar()
+{
+  auto reportButton = WW<WPushButton>(WString::tr("Report")).css("btn-primary btn-xs").onClick([=](WMouseEvent){
+    sessionPreviewContainer->clear();
+    auto preview = new AstroSessionPreview{{astroSession, selectedTelescope, timezone}, geoCoderPlace, session, {}, AstroSessionPreview::Report};
+    preview->sessionsChanged().connect([=](_n6){sessionsChanged.emit(); });
+    sessionPreviewContainer->addWidget(preview);
+    sessionStacked->setCurrentWidget(sessionPreviewContainer);
+    preview->backClicked().connect([=](_n6){
+      sessionPreviewContainer->clear();
+      sessionStacked->setCurrentWidget(sessionContainer);
+    });
+  }).get();
+  
+  auto reportButtonVisibility = [=](Dbo::Transaction &t) {
+    reportButton->setHidden( astroSession->wDateWhen() >= WDateTime::currentDateTime() );
+  };
+
+  auto changeNameOrDateButton = WW<WPushButton>(WString::tr("astrosessiontab_change_name_or_date")).css("btn btn-xs").onClick([=](WMouseEvent){
+    WDialog *changeNameOrDateDialog = new WDialog(WString::tr("astrosessiontab_change_name_or_date"));
+    WLineEdit *sessionName = WW<WLineEdit>(astroSession->name()).css("input-block-level");
+    WDateEdit *sessionDate = WW<WDateEdit>().css("input-block-level form-control-dateedit");
+    sessionDate->setDate(astroSession->wDateWhen().date());
+    changeNameOrDateDialog->footer()->addWidget(WW<WPushButton>(WString::tr("Wt.WMessageBox.Ok")).css("btn btn-primary").onClick([=](WMouseEvent){
+      Dbo::Transaction t(session);
+      astroSession.modify()->setName(sessionName->text().toUTF8());
+      astroSession.modify()->setDateTime(WDateTime{sessionDate->date()});
+      session.execute("UPDATE astro_session_object SET azimuth = NULL, altitude = NULL, transit_time = NULL, ephemeris_context_key = NULL WHERE astro_session_id = ?").bind(astroSession.id());
+      changeNameOrDateDialog->accept();
+      nameChanged.emit(astroSession->name());
+      reportButtonVisibility(t);
+      reload();
+    }));
+    WTemplate *form = new WTemplate("<form><fieldset><label>Name</label>${sessionName}<label>Date</label>${sessionDate}</fieldset></form>");
+    form->bindWidget("sessionName", sessionName);
+    form->bindWidget("sessionDate", sessionDate);
+    changeNameOrDateDialog->contents()->addWidget(form);
+    changeNameOrDateDialog->show();
+  });
+  
+  auto previewVersionButton = WW<WPushButton>(WString::tr("astrosessiontab_preview_version")).css("btn-primary btn-xs").onClick([=](WMouseEvent){
+    sessionPreviewContainer->clear();
+    auto preview = new AstroSessionPreview{{astroSession, selectedTelescope, timezone}, geoCoderPlace, session, {{"astroobject_remove_from_session", "btn-danger", [=](const AstroSessionObjectPtr &o, AstroObjectWidget* w){
+      remove(o, [=] { delete w; });
+    } }}};
+    preview->sessionsChanged().connect([=](_n6){sessionsChanged.emit(); });
+    sessionPreviewContainer->addWidget(preview);
+    sessionStacked->setCurrentWidget(sessionPreviewContainer);
+    preview->backClicked().connect([=](_n6){
+      sessionPreviewContainer->clear();
+      sessionStacked->setCurrentWidget(sessionContainer);
+    });
+  });
+
+  auto printableVersionButton = WW<WPushButton>(WString::tr("astrosessiontab_printable_version")).css("btn btn-info btn-xs").onClick( [=](WMouseEvent){ printableVersion(); } );
+
+  WPushButton *exportButton = WW<WPushButton>(WString::tr("astrosessiontab_export")).css("btn btn-xs btn-info");
+  WPopupMenu *exportMenu = new WPopupMenu;
+  exportButton->setMenu(exportMenu);
+  for(auto exportType: map<string, ExportAstroSessionResource::ReportType>{
+    {"CSV", ExportAstroSessionResource::CSV},
+    {"Cartes du Ciel", ExportAstroSessionResource::CartesDuCiel},
+#ifndef PRODUCTION_MODE
+    {"KStars", ExportAstroSessionResource::KStars},
+#endif
+  }) {
+    WMenuItem *exportMenuItem = exportMenu->addItem(exportType.first);
+    delete exportResources[exportType.second];
+    exportResources[exportType.second] = new ExportAstroSessionResource(astroSession, session, timezone, exportMenuItem);
+    exportResources[exportType.second]->setPlace(geoCoderPlace);
+    exportResources[exportType.second]->setReportType(exportType.second);
+    exportMenuItem->setLink(exportResources[exportType.second]);
+    exportMenuItem->setLinkTarget(TargetNewWindow);
+    if(exportType.second == ExportAstroSessionResource::KStars) {
+      exportMenuItem->triggered().connect([=](WMenuItem*, _n5) {
+        SkyPlanner::instance()->notification(WString::tr("notification_suggestion_title"), WString::tr("kstars_suggestion"), SkyPlanner::Notification::Information);
+      });
+    }
+  }
+  auto closeButton = WW<WPushButton>(WString::tr("buttons_close")).css("btn btn-warning btn-xs").onClick( [=](WMouseEvent){ close.emit(); } );
+
+  WToolBar *actionsToolbar = WW<WToolBar>().addCss("hidden-print");
+  actionsToolbar->addButton(changeNameOrDateButton);
+  actionsToolbar->addButton(previewVersionButton);
+  actionsToolbar->addButton(reportButton);
+  actionsToolbar->addButton(printableVersionButton);
+  actionsToolbar->addButton(exportButton);
+  actionsToolbar->addButton(closeButton);
+  Dbo::Transaction t(session);
+  reportButtonVisibility(t);
+  return actionsToolbar;
 }
 
 
