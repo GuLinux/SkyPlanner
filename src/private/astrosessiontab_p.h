@@ -49,7 +49,7 @@ public:
 
     Private(const Wt::Dbo::ptr<AstroSession>& astroSession, Session& session, AstroSessionTab* q);
     void load();
-    void reload();
+    void updatePosition();
     Wt::WToolBar *actionsToolbar();
     Wt::Dbo::ptr<AstroSession> astroSession;
     Session &session;

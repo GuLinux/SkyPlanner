@@ -195,7 +195,7 @@ void AstroSessionTab::Private::load()
     SkyPlanner::instance()->notification(WString::tr("notification_success_title"), WString::tr("placewidget_place_set_notification"), SkyPlanner::Notification::Success, 5);
     populate();
     addObjectsTabWidget->populateFor(selectedTelescope, timezone);
-    reload();
+    updatePosition();
     planetsTable->planets(astroSession, timezone);
     if(weatherWidget)
         weatherWidget->reload(astroSession->position(), geoCoderPlace, astroSession->when());
@@ -346,10 +346,10 @@ void AstroSessionTab::Private::load()
 //   WTimer::singleShot(500, [=](WMouseEvent) {
 //     addObjectsTabWidget->populateFor(selectedTelescope, timezone);
 //   });
-  reload();
+  updatePosition();
 }
 
-void AstroSessionTab::Private::reload()
+void AstroSessionTab::Private::updatePosition()
 {
   sessionInfoWidget->clear();
   sessionInfoWidget->addWidget(new WText{WLocalDateTime(astroSession->wDateWhen().date(), astroSession->wDateWhen().time())
@@ -408,7 +408,7 @@ WToolBar *AstroSessionTab::Private::actionsToolbar()
       changeNameOrDateDialog->accept();
       nameChanged.emit(astroSession->name());
       reportButtonVisibility(t);
-      reload();
+      updatePosition();
     }));
     WTemplate *form = new WTemplate("<form><fieldset><label>Name</label>${sessionName}<label>Date</label>${sessionDate}</fieldset></form>");
     form->bindWidget("sessionName", sessionName);
