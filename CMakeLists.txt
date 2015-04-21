@@ -32,7 +32,7 @@ include_directories(${Wt_INCLUDE_DIR} ${Boost_INCLUDE_DIR})
 set(resources_directory "${CMAKE_SOURCE_DIR}/resources" CACHE STRING "Resources directory (css, images..)")
 add_definitions(-DRESOURCES_DIRECTORY="${resources_directory}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11 -fstack-protector-all")
-set(HAVE_WT_JSON_SERIALIZE On)
+set(HAVE_WT_JSON_SERIALIZE On CACHE STRING "" FORCE)
 
 #add_subdirectory(lib)
 include_directories(src)
