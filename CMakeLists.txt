@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 enable_testing()
 project(SkyPlanner)
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/" ${CMAKE_SOURCE_DIR}/src/Wt-Commons/cmake)
 
 enable_testing()
 find_package(Wt 3.3.1 REQUIRED)
@@ -32,6 +32,7 @@ include_directories(${Wt_INCLUDE_DIR} ${Boost_INCLUDE_DIR})
 set(resources_directory "${CMAKE_SOURCE_DIR}/resources" CACHE STRING "Resources directory (css, images..)")
 add_definitions(-DRESOURCES_DIRECTORY="${resources_directory}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11 -fstack-protector-all")
+set(HAVE_WT_JSON_SERIALIZE On)
 
 #add_subdirectory(lib)
 include_directories(src)
