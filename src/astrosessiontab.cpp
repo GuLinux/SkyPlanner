@@ -501,6 +501,8 @@ void AstroSessionTab::Private::printableVersion()
   // TODO printableResource->setNamesLimit(1);
   okButton->setLink(printableResource);
   okButton->setLinkTarget(TargetNewWindow);
+  printableDialog->contents()->addWidget(new WText(WString::tr("printable_version_deprecated_use_preview")));
+  printableDialog->contents()->addWidget(new WBreak);
   printableDialog->contents()->addWidget(new WLabel(WString::tr("printable_version_dialog_spacing_between_objects")));
   printableDialog->contents()->addWidget(new WBreak);
   WSlider *emptyRowsSlider = new WSlider();

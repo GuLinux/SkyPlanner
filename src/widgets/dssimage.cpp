@@ -246,14 +246,21 @@ void DSSImage::Private::setImage(const Wt::WLink& link)
     content->addWidget(WW<WImage>(link).addCss("img-responsive").onClick([=](const WMouseEvent &e){imageClicked.emit(e); }));
   }
   spLog("notice") << "Loading image file: " << file() ;
-  Magick::Image image(file().string());
-  if(image.isValid()) {
-    imageSize = Size{image.size().width(), image.size().height()};
-  } else
-  {
-    spLog("notice") << "image loading failed";
+  try {
+    Magick::Image image(file().string());
+    if(image.isValid()) {
+      imageSize = Size{image.size().width(), image.size().height()};
+    } else
+    {
+      spLog("notice") << "image loading failed";
+      failed.emit();
+      return;
+    }
+    _loaded.emit(link);
+  } catch(std::exception &e) {
+      spLog("notice") << "image loading failed: " << e.what();
+      failed.emit();
   }
-  _loaded.emit(link);
 }
 
 

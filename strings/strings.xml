@@ -382,4 +382,7 @@ After you added a session, click it to add new objects.
 <message id="session_copy_of">Copy of {1}</message>
 <message id="session_copied">Session Copied</message>
 <message id="session_copied_text">Session correctly copied as {1}</message>
+<message id="printable_version_deprecated_use_preview"><strong>This section is deprecated</strong>: you can get a much better printable version of 
+  your planned session by clicking the <em>Preview with images</em> button, customize the page (inverting images, collapsing items, and so on)
+  and then clicking <em>Print</em>.<hr /></message>
 </messages>
