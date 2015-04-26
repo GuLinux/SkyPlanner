@@ -99,6 +99,24 @@ SkyPlanner::SessionInfo::SessionInfo() {
 
 const string SkyPlanner::HOME_PATH = "/home/";
 
+class AuthWidget : public Auth::AuthWidget {
+public:
+    AuthWidget(const Auth::AuthService& baseAuth, Auth::AbstractUserDatabase& users, Auth::Login& login, WStackedWidget *stack, WContainerWidget* parent = 0)
+      : Auth::AuthWidget(baseAuth, users, login, parent), stack(stack) {}
+protected:
+    virtual void registerNewUser(const Auth::Identity& oauth);
+    WStackedWidget *stack;
+};
+
+void AuthWidget::registerNewUser(const Auth::Identity& oauth)
+{
+  auto registerWidget = createRegistrationView(oauth);
+  stack->addWidget(registerWidget);
+  stack->setCurrentWidget(registerWidget);
+//     Wt::Auth::AuthWidget::registerNewUser(oauth);
+}
+
+
 SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
   : WApplication( environment ), d( this, onQuit )
 {
@@ -197,11 +215,14 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
   WMenu *navBarMenu = new WMenu(d->widgets);
   
   navBar->addMenu(navBarMenu);
-  Auth::AuthWidget *authWidget = new Auth::AuthWidget( Session::auth(), d->session.users(), d->session.login() );
+  WStackedWidget *authWidgetStack = new WStackedWidget;
+  Auth::AuthWidget *authWidget = new AuthWidget( Session::auth(), d->session.users(), d->session.login(), authWidgetStack );
+  authWidgetStack->addWidget(authWidget);
   authWidget->model()->addPasswordAuth( &Session::passwordAuth() );
   authWidget->model()->addOAuth(Session::oAuth());
   authWidget->setRegistrationEnabled( true );
   authWidget->processEnvironment();
+//   authWidget->setInternalBasePath("/login");
   
   navBarMenu->setInternalPathEnabled("/");
   
@@ -209,7 +230,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
   home->setPathComponent("home/");
   
   WMenuItem *authMenuItem;
-  d->loggedOutItems.push_back(authMenuItem = navBarMenu->addItem(WString::tr("mainmenu_login"), authWidget));
+  d->loggedOutItems.push_back(authMenuItem = navBarMenu->addItem(WString::tr("mainmenu_login"), authWidgetStack));
   authMenuItem->setPathComponent("login/");
   TelescopesPage *telescopesPage = new TelescopesPage(d->session);
   telescopesPage->changed().connect([=](_n6) { d->telescopesListChanged.emit(); });
@@ -269,24 +290,11 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
     for(auto i: d->loggedOutItems)
       i->setHidden(loggedIn);
   };
-  auto banUser = [=] {
-    if(!d->session.login().loggedIn())
-      return false;
-    if(d->session.user()->banned() ) {
-      notification(WString::tr("blocked_user_message_title"), WString::tr("blocked_user_message"), Notification::Error);
-      triggerUpdate();
-      spLog("notice") << "BANNED USER DETECTED: " << this->environment().headerValue("X-Forwarded-For") << ", " << d->session.login().user().identity("loginname");
-      quit(WString::tr("blocked_user_message"));
-      return true;
-    }
-    return false;
-  };
+
   
   auto loginLogoutMessage = [=] {
     if(d->session.login().loggedIn()) {
       Dbo::Transaction t(d->session);
-      if(banUser())
-	return;
       d->loginname = d->session.user()->loginName();
       d->sessionInfo.username = d->session.user()->loginName().toUTF8();
       userSubMenu->setText(d->loginname);
