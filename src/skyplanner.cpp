@@ -405,13 +405,14 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
 
   WTemplate *footer = WW<WTemplate>();
   footer->setTemplateText(R"(
-    <nav class="navbar navbar-default navbar-fixed-bottom" role="navigation">
+    <nav class="navbar navbar-default navbar-fixed-bottom" role="navigation" id="footer_gulinux">
       <div class="container-fluid">
       <div class="navbar-text addthis_native_toolbox"  data-url="${share-url}"></div>
 	<ul class="nav navbar-nav navbar-right">
 	  <li><a href="http://blog.gulinux.net/" target="_BLANK">GuLinux Blog</a></li>
 	  <li><a href="http://blog.gulinux.net/skyplanner" target="_BLANK">SkyPlanner Homepage</a></li>
-	  <p class="navbar-text">Copyright <a href="http://gulinux.net" target="_BLANK">Gulinux.net</a></p>
+	  <li><p class="navbar-text">Copyright <a href="http://gulinux.net" target="_BLANK">Gulinux.net</a></p></li>
+	  <li><p class="navbar-text"><button type="button" class="close" onclick="$('#footer_gulinux').hide();" aria-label="Close" style="font-size: x-large;"><span aria-hidden="true">&times;</span></button></p></li>
         </ul>
       </div>
     </nav>
