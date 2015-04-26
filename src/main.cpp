@@ -66,7 +66,10 @@ int main(int argc, char **argv) {
         string quitResourcePassword;
         if(server.readConfigurationProperty("quit-password", quitResourcePassword)) {
             server.addResource(new QuitResource(quitResourcePassword), "/quit-forced");
-            server.addResource(new QuitResource(quitResourcePassword, [] { return activeSessions.size() == 0; }), "/quit-waiting");
+            server.addResource(new QuitResource(quitResourcePassword, [] { 
+              std::cerr << "quit-resource called with waiting mode, active sessions: " << activeSessions.size() << std::endl;
+              return activeSessions.size() == 0; 
+            }), "/quit-waiting");
             server.addResource(new ActiveSessionsResource(activeSessions, quitResourcePassword), "/active-sessions");
         }
         
