@@ -9,6 +9,7 @@ ST_Distance(( select ST_GeomFromText('POINT(' || ra || ' ' || dec || ')') as geo
 
 from objects INNER JOIN denominations on objects.id = denominations.objects_id order by dist asc LIMIT 20
 
+alter table objects drop column coordinates_geom if exists
 alter table objects add column coordinates_geom geometry
 
 select *, ST_AsText(ST_GeomFromText('POINT(' || DEGREES(ra) || ' ' || DEGREES(dec) || ')')) as geom2 from objects where object_id = 'NGC224';
