@@ -18,6 +18,7 @@
 #include "astroobjectwidget.h"
 #include "private/astroobjectwidget_p.h"
 #include "Wt-Commons/wt_helpers.h"
+#include <Wt-Commons/whtmltxt.h>
 
 #include <utils/d_ptr_implementation.h>
 #include "utils/format.h"
@@ -77,15 +78,15 @@ void AstroObjectWidget::Private::init()
   info = WW<WTemplate>(WString::tr("astroobjectwidget")).css("col-xs-7 col-lg-7");
   info->addFunction( "tr", &WTemplate::Functions::tr);
   info->bindWidget("title", names());
-  info->bindString("ar", ngcObject->coordinates().rightAscension.printable(Angle::Hourly));
-  info->bindString("dec", Utils::htmlEncode( WString::fromUTF8(ngcObject->coordinates().declination.printable()) ));
-  info->bindString("type", ngcObject->typeDescription());
-  info->bindString("constellation", WString::fromUTF8(ngcObject->constellation().name));
-  info->bindString("constellation_abbrev", WString::fromUTF8(ngcObject->constellation().abbrev));
+  info->bindWidget("ar", new WHTMLTxt{ngcObject->coordinates().rightAscension.printable(Angle::Hourly)});
+  info->bindWidget("dec", new WHTMLTxt{ngcObject->coordinates().declination.printable()});
+  info->bindWidget("type", new WHTMLTxt{ngcObject->typeDescription()});
+  info->bindWidget("constellation", new WHTMLTxt{ngcObject->constellation().name});
+  info->bindWidget("constellation_abbrev", new WHTMLTxt{ngcObject->constellation().abbrev});
   info->setCondition("have-angular-size", ngcObject->angularSize() > 0);
-  info->bindString("angular_size", Utils::htmlEncode( WString::fromUTF8( Angle::degrees(ngcObject->angularSize()).printable() )) );
+  info->bindWidget("angular_size", new WHTMLTxt{Angle::degrees(ngcObject->angularSize()).printable() });
   info->setCondition("have-magnitude", ngcObject->magnitude() <= 90.);
-  info->bindString("magnitude", Utils::htmlEncode( (format("%.1f") % ngcObject->magnitude()).str() ));
+  info->bindWidget("magnitude", new WHTMLTxt{(format("%.1f") % ngcObject->magnitude()).str() });
   
   bool have_eyepieces = ngcObject->angularSize() > 0 && astroSession && astroSession->user() == session.user() && session.user()->instruments_ok() && astroGroup.telescope;
   if(have_eyepieces) {
@@ -101,7 +102,7 @@ void AstroObjectWidget::Private::init()
 
     info->setCondition("have-eyepiece", !fieldInfos.empty() );
     if(info->conditionValue("have-eyepiece")) {
-      info->bindString("eyepiece", WString::fromUTF8(fieldInfos[0].eyepiece()->name()));
+      info->bindWidget("eyepiece", new WHTMLTxt{fieldInfos[0].eyepiece()->name()});
     }
   }
 
@@ -110,17 +111,17 @@ void AstroObjectWidget::Private::init()
     Ephemeris ephemeris(astroSession->position(), astroGroup.timezone);
     auto bestAltitude =  AstroSessionObject::bestAltitude(astroSession, ngcObject, ephemeris);
 
-    info->bindString("best_altitude_when", bestAltitude.when.str() );
-    info->bindString("best_altitude", Utils::htmlEncode(WString::fromUTF8(bestAltitude.coordinates.altitude.printable() )) );
+    info->bindWidget("best_altitude_when", new WHTMLTxt{bestAltitude.when.str()});
+    info->bindWidget("best_altitude", new WHTMLTxt{bestAltitude.coordinates.altitude.printable() } );
     auto riseSet = [](const Ephemeris::RiseTransitSet &r, const DateTime &t) {
       if(r.type == Ephemeris::RiseTransitSet::Normal)
 	return WString::fromUTF8(t.str(DateTime::HoursAndMinutes));
       return r.type == Ephemeris::RiseTransitSet::CircumPolar ? WString::tr("circumpolar") : WString::tr("never_rises");
     };
-    info->bindString("rst", Utils::htmlEncode(WString("{1} - {2} - {3}") 
+    info->bindWidget("rst", new WHTMLTxt{WString("{1} - {2} - {3}") 
       .arg(riseSet(bestAltitude.rst, bestAltitude.rst.rise))
       .arg(bestAltitude.rst.transit.str(DateTime::HoursAndMinutes))
-      .arg(riseSet(bestAltitude.rst, bestAltitude.rst.set)) ) );
+      .arg(riseSet(bestAltitude.rst, bestAltitude.rst.set)) } );
     auto difficultyWidget = new ObjectDifficultyWidget{ngcObject, astroGroup.telescope, bestAltitude.coordinates.altitude.degrees() };
     info->setCondition("have-difficulty", difficultyWidget->hasDifficulty() );
     info->bindWidget("difficulty", difficultyWidget );
@@ -136,12 +137,12 @@ void AstroObjectWidget::Private::init()
 
   info->setCondition("has-custom-description", astroSessionObject && astroSessionObject->description().size() > 0);
   if(info->conditionValue("has-custom-description")) {
-    info->bindString("custom-description", WString::fromUTF8(astroSessionObject->description()));
+    info->bindWidget("custom-description",new WHTMLTxt{astroSessionObject->description()});
   }
 
   info->setCondition("has-report", astroSessionObject && astroSessionObject->observed() && astroSessionObject->report());
   if(info->conditionValue("has-report")) {
-    info->bindString("report", Utils::htmlEncode(WString::fromUTF8(*astroSessionObject->report()), Utils::EncodeNewLines));
+    info->bindWidget("report", new WHTMLTxt{*astroSessionObject->report(), Utils::EncodeNewLines });
   }
 
   auto actionButtons = this->actionButtons;
@@ -158,9 +159,11 @@ void AstroObjectWidget::Private::init()
     }));
     int index = 0;
     for(auto description: astroSessionObjectsWithDescription) {
-      rowsTemplate->bindString(format("object-description-header-%d") % index, WString("{1}").arg(description->astroSession()->user()->loginName()) );
-      rowsTemplate->bindString(format("object-description-%d") % index++, WString("<b>{1}, {2}</b><br />{3}")
-        .arg(WString::fromUTF8(description->astroSession()->name())).arg(description->astroSession()->wDateWhen().toString("dddd, d MMM, yyyy")).arg(WString::fromUTF8(description->description()) ) );
+      rowsTemplate->bindWidget(format("object-description-header-%d") % index, new WHTMLTxt{WString("{1}").arg(description->astroSession()->user()->loginName())});
+      rowsTemplate->bindWidget(format("object-description-%d") % index++, new WHTMLTxt{WString("<b>{1}, {2}</b><br />{3}")
+        .arg(WString::fromUTF8(description->astroSession()->name()))
+        .arg(description->astroSession()->wDateWhen().toString("dddd, d MMM, yyyy"))
+        .arg(WString::fromUTF8(description->description()) ) } );
     }
     info->bindWidget("other-descriptions", rowsTemplate);
     } else {

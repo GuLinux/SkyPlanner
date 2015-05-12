@@ -69,7 +69,7 @@ AstroSessionsListTab::AstroSessionsListTab(Session &session, Wt::WContainerWidge
   WLineEdit *newSessionName = WW<WLineEdit>();
   newSessionName->setWidth(300);
 //  newSessionName->setEmptyText(WString::tr("astrosessionslisttab_name"));
-  WDateEdit *newSessionDate = WW<WDateEdit>();
+  WDateEdit *newSessionDate = WW<WDateEdit>().css("form-control-dateedit");
 //  newSessionDate->setEmptyText(WString::tr("astrosessionslisttab_when"));
   newSessionDate->setDate(WDate::currentDate());
   setMinimumSize(WLength::Auto, 500);

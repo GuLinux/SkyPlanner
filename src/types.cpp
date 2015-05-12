@@ -125,7 +125,7 @@ string Angle::printable(Format format, PrintFormat printFormat) const
   
   Sexagesimal asSexagesimal = sexagesimal();
   auto sign = asSexagesimal.degrees == 0 ? signFix : "";
-  auto deg_symbol = printFormat == HTML ? "&deg;" : "\302\260";
+  auto deg_symbol = printFormat == HTML ? "&deg;" : "°";
   if(format == IntDegrees) {
     return (boost::format("%s%d%s") % sign % asSexagesimal.degrees % deg_symbol).str();
   }

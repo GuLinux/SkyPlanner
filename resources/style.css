@@ -286,6 +286,7 @@ div.weather-box {
 
 .form-control-dateedit {
   background-image: url('resources/themes/bootstrap/3/date-edit-button.png');
+  min-width: 11em;
 }
 
 .lead {

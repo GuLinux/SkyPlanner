@@ -155,6 +155,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
 
   string stringsDirectory = (boost::filesystem::current_path() / "strings").string();
   readConfigurationProperty("strings_directory", stringsDirectory);
+  log("notice") << "Using strings directlry: " << stringsDirectory;
 
   WCombinedLocalizedStrings *combinedLocalization = new WCombinedLocalizedStrings();
   WMessageResourceBundle *bundle = new WMessageResourceBundle();
