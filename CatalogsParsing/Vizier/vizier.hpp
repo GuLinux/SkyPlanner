@@ -23,6 +23,7 @@ public:
     std::string value;
     Angle degrees() const;
     Angle arcMinutes() const;
+    double asDouble() const;
   };
   typedef std::map<std::string,Column> Row;
 

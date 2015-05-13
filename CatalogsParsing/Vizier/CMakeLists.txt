@@ -6,3 +6,4 @@ add_library(vizier STATIC ${vizier_srcs})
 set(vizier_libraries vizier SkyPlanner_CORE Wt_Commons_Library ${Boost_LIBRARIES} ${Wt_LIBRARIES} nova)
 
 add_subdirectory(Barnard)
+add_subdirectory(Hickson)

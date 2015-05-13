@@ -31,6 +31,16 @@ Angle Vizier::Column::degrees() const
   }
 }
 
+double Vizier::Column::asDouble() const
+{
+  try {
+  return boost::lexical_cast<double>(value);
+  } catch(exception &e) {
+    return -1;
+  }
+}
+
+
 Vizier::Private::Private(Vizier *q): q(q)
 {
 }

@@ -1,0 +1,1092 @@
+#
+#   VizieR Astronomical Server vizier.u-strasbg.fr
+#    Date: 2015-05-13T18:48:34 [V1.99+ (14-Oct-2013)]
+#   In case of problem, please report to:	cds-question@unistra.fr
+#
+#
+#Coosys	J2000:	eq_FK5 J2000
+#INFO	votable-version=1.99+ (14-Oct-2013)	
+#INFO	-ref=VIZ55539b4ea33c	
+#INFO	-out.max=unlimited	
+#INFO	queryParameters=37	
+#-oc.form=dec
+#-out.max=unlimited
+#-out.add=_r
+#-out.add=_p
+#-out.add=_x,_y
+#-out.add=_RAJ,_DEJ
+#-sort=_r
+#-order=I
+#-out.src=VII/213/groups,VII/213/dynamics,VII/213/galaxies,VII/213/morpho
+#-nav=cat:VII/213&tab:{VII/213/groups}&tab:{VII/213/dynamics}&tab:{VII/213/galaxies}&tab:{VII/213/morpho}&key:source=VII/213/groups&key:source=VII/213/dynamics&key:source=VII/213/galaxies&key:source=VII/213/morpho&HTTPPRM:&&-ref=VIZ55539b4ea33c&-out.max=50&-out.form=HTML Table&-out.add=_r&-out.add=_p&-out.add=_x,_y&-out.add=_RAJ,_DEJ&-sort=_r&-oc.form=sexa&-c.eq=J2000&-c.r=  2&-c.u=arcmin&-c.geom=r&-order=I&-out=HCG&-joincol={VII/213/groups}.{HCG}&-out=Dyna&-out=Type&-out=MCount&-out=AngSize&-out=TotMag&-out=Emag&-out=Aname1&-out=Aname2&-out=Aname3&-out=Aname4&-out=n&-out=log(sV)&-out=log(V)&-out=log(R)&-out=log(Ho.tc)&-out=MType&-out=Names&-out=Comments&-file=.&-meta.ucd=2&-meta=1&-meta.foot=1&-usenav=1&-bmark=POST&-out.src=VII/213/groups,VII/213/dynamics,VII/213/galaxies,VII/213/morpho
+#-c.eq=J2000
+#-c.r=  2
+#-c.u=arcmin
+#-c.geom=r
+#-source=VII/213/groups VII/213/dynamics VII/213/galaxies VII/213/morpho
+#-order=I
+#-out=HCG
+#-joincol={VII/213/groups}.{HCG}
+#-joincol=HCG
+#-out=Dyna
+#-out=Type
+#-out=MCount
+#-out=AngSize
+#-out=TotMag
+#-out=Emag
+#-out=Aname1
+#-out=Aname2
+#-out=Aname3
+#-out=Aname4
+#-out=n
+#-out=log(sV)
+#-out=log(V)
+#-out=log(R)
+#-out=log(Ho.tc)
+#-out=MType
+#-out=Names
+#-out=Comments
+#
+
+#RESOURCE=join
+#Name: #Join
+#Title:  Join tables VII/213/groups,VII/213/dynamics,VII/213/galaxies,VII/213/morpho
+#
+#Coosys	B1950:	eq_FK4 B1950
+#Table	VII_213_groups_VII_213_dynamics_VII_213_galaxies_VII_213_morpho:
+#Name: VII/213/groups,VII/213/dynamics,VII/213/galaxies,VII/213/morpho
+#Title:
+#Column	_RAJ2000{1}	(F7.3)	Right ascension (FK5, Equinox=J2000.0) (computed by VizieR, not part of the original data)	[ucd=pos.eq.ra]
+#Column	_DEJ2000{1}	(F7.3)	Declination (FK5, Equinox=J2000.0) (computed by VizieR, not part of the original data)	[ucd=pos.eq.dec]
+#Column	HCG{1}	(I3)	[1/100]+ Number of the group in this catalog [NULL integer written as an empty string]	[ucd=meta.id;meta.main]
+#Column	Dyna{1}	(A1)	[*] '*' when group has dynamical parameters	[ucd=meta.code]
+#Column	Type{1}	(A2)	Group type	[ucd=src.class]
+#Column	MCount{1}	(I2)	Member count [NULL integer written as an empty string]	[ucd=meta.number]
+#Column	AngSize{1}	(F5.1)	Angular size	[ucd=phys.angSize;src]
+#Column	TotMag{1}	(F5.1)	Total magnitude of group	[ucd=phot.mag;em.opt.B]
+#Column	Emag{1}	(F5.1)	Brightest member magnitude	[ucd=phot.mag;em.opt.R]
+#Column	Aname1{1}	(a6)	Alternate name 1	[ucd=meta.id]
+#Column	Aname2{1}	(a6)	Alternate name 2	[ucd=meta.id]
+#Column	Aname3{1}	(a6)	Alternate name 3	[ucd=meta.id]
+#Column	Aname4{1}	(a6)	Alternate name 4	[ucd=meta.id]
+#Column	n{2}	(I1)	Number of galaxies with accordant velocities [NULL integer written as an empty string]	[ucd=meta.number]
+#Column	log(sV){2}	(F5.2)	Radial velocity dispersion	[ucd=phys.veloc.dispersion]
+#Column	log(V){2}	(F5.2)	? Estimated instrinsic 3D velocity dispersion	[ucd=phys.veloc.dispersion]
+#Column	log(R){2}	(F5.2)	Median projected separation	[ucd=pos.angDistance]
+#Column	log(Ho.tc){2}	(F5.2)	Crossing time (expressed in 1/Ho units)	[ucd=time.crossing]
+#Column	MType{3}	(a4)	Hubble Morphological type	[ucd=src.morph.type]
+#Column	Names{3}	(a18)	Other names	[ucd=meta.id]
+#Column	MType{4}	(a4)	Morphological type	[ucd=src.morph.type]
+#Column	Comments{4}	(a69)	Comments	[ucd=meta.note]
+_DEJ2000	_RAJ2000	HCG	Dyna	Type	MCount	AngSize	TotMag	Emag	Aname1	Aname2	Aname3	Aname4	n	log(sV)	log(V)	log(R)	log(Ho.tc)	MType	Names	MType	Comments
+deg	deg	 	 	 	 	arcmin	mag	mag	 	 	 	 	 	[km/s]	[km/s]	[kpc]	 	 	 	 	
+-------	-------	---	-	--	--	-----	-----	-----	------	------	------	------	-	-----	-----	-----	-----	----	------------------	----	---------------------------------------------------------------------
++25.7181	006.5008	  1	*	S3	 4	  2.9	 12.8	 13.8	U248  	      	      	      	4	 1.93	 2.12	 1.69	-1.32	Sc  	U248a             	Im  	Tidal arm (I)
++25.7181	006.5008	  1	*	S3	 4	  2.9	 12.8	 13.8	U248  	      	      	      	4	 1.93	 2.12	 1.69	-1.32	Sc  	U248a             	Sc  	Tidal arm (I)
++25.7181	006.5008	  1	*	S3	 4	  2.9	 12.8	 13.8	U248  	      	      	      	4	 1.93	 2.12	 1.69	-1.32	Im  	U248b             	Im  	Tidal arm (I)
++25.7181	006.5008	  1	*	S3	 4	  2.9	 12.8	 13.8	U248  	      	      	      	4	 1.93	 2.12	 1.69	-1.32	Im  	U248b             	Sc  	Tidal arm (I)
++25.7181	006.5008	  1	*	S3	 4	  2.9	 12.8	 13.8	U248  	      	      	      	4	 1.93	 2.12	 1.69	-1.32	E0  	                  	Im  	Tidal arm (I)
++25.7181	006.5008	  1	*	S3	 4	  2.9	 12.8	 13.8	U248  	      	      	      	4	 1.93	 2.12	 1.69	-1.32	E0  	                  	Sc  	Tidal arm (I)
++25.7181	006.5008	  1	*	S3	 4	  2.9	 12.8	 13.8	U248  	      	      	      	4	 1.93	 2.12	 1.69	-1.32	S0  	                  	Im  	Tidal arm (I)
++25.7181	006.5008	  1	*	S3	 4	  2.9	 12.8	 13.8	U248  	      	      	      	4	 1.93	 2.12	 1.69	-1.32	S0  	                  	Sc  	Tidal arm (I)
+ +8.4313	007.8752	  2	*	S2	 4	  7.1	 12.1	 12.9	U312  	      	      	      	3	 1.74	 1.88	 1.72	-1.06	SBd 	U312              	SBc 	Disturbed morpho (I)
+ +8.4313	007.8752	  2	*	S2	 4	  7.1	 12.1	 12.9	U312  	      	      	      	3	 1.74	 1.88	 1.72	-1.06	SBd 	U312              	cI  	Disturbed morpho-IR (I)
+ +8.4313	007.8752	  2	*	S2	 4	  7.1	 12.1	 12.9	U312  	      	      	      	3	 1.74	 1.88	 1.72	-1.06	SBd 	U312              	SBd 	Disturbed morpho tail-like possibly IR (I)
+ +8.4313	007.8752	  2	*	S2	 4	  7.1	 12.1	 12.9	U312  	      	      	      	3	 1.74	 1.88	 1.72	-1.06	cI  	Mk552 MCG1-2-18   	SBc 	Disturbed morpho (I)
+ +8.4313	007.8752	  2	*	S2	 4	  7.1	 12.1	 12.9	U312  	      	      	      	3	 1.74	 1.88	 1.72	-1.06	cI  	Mk552 MCG1-2-18   	cI  	Disturbed morpho-IR (I)
+ +8.4313	007.8752	  2	*	S2	 4	  7.1	 12.1	 12.9	U312  	      	      	      	3	 1.74	 1.88	 1.72	-1.06	cI  	Mk552 MCG1-2-18   	SBd 	Disturbed morpho tail-like possibly IR (I)
+ +8.4313	007.8752	  2	*	S2	 4	  7.1	 12.1	 12.9	U312  	      	      	      	3	 1.74	 1.88	 1.72	-1.06	SBc 	U314              	SBc 	Disturbed morpho (I)
+ +8.4313	007.8752	  2	*	S2	 4	  7.1	 12.1	 12.9	U312  	      	      	      	3	 1.74	 1.88	 1.72	-1.06	SBc 	U314              	cI  	Disturbed morpho-IR (I)
+ +8.4313	007.8752	  2	*	S2	 4	  7.1	 12.1	 12.9	U312  	      	      	      	3	 1.74	 1.88	 1.72	-1.06	SBc 	U314              	SBd 	Disturbed morpho tail-like possibly IR (I)
+ +8.4313	007.8752	  2	*	S2	 4	  7.1	 12.1	 12.9	U312  	      	      	      	3	 1.74	 1.88	 1.72	-1.06	SBb 	U315              	SBc 	Disturbed morpho (I)
+ +8.4313	007.8752	  2	*	S2	 4	  7.1	 12.1	 12.9	U312  	      	      	      	3	 1.74	 1.88	 1.72	-1.06	SBb 	U315              	cI  	Disturbed morpho-IR (I)
+ +8.4313	007.8752	  2	*	S2	 4	  7.1	 12.1	 12.9	U312  	      	      	      	3	 1.74	 1.88	 1.72	-1.06	SBb 	U315              	SBd 	Disturbed morpho tail-like possibly IR (I)
+-21.4467	008.5665	  4	*	S1	 5	  3.6	 12.5	 13.0	      	      	      	      	3	 2.53	 2.76	 1.76	-1.90	Sc  	                  	E4  	Disturbed morpho-emission-too blue (M)
+-21.4467	008.5665	  4	*	S1	 5	  3.6	 12.5	 13.0	      	      	      	      	3	 2.53	 2.76	 1.76	-1.90	Sc  	                  	E2  	Disturbed morpho (M?)
+-21.4467	008.5665	  4	*	S1	 5	  3.6	 12.5	 13.0	      	      	      	      	3	 2.53	 2.76	 1.76	-1.90	Sc  	                  	Sc  	IR
+-21.4467	008.5665	  4	*	S1	 5	  3.6	 12.5	 13.0	      	      	      	      	3	 2.53	 2.76	 1.76	-1.90	Sc  	                  	E4  	Disturbed morpho-emission-too blue (M)
+-21.4467	008.5665	  4	*	S1	 5	  3.6	 12.5	 13.0	      	      	      	      	3	 2.53	 2.76	 1.76	-1.90	Sc  	                  	E2  	Disturbed morpho (M?)
+-21.4467	008.5665	  4	*	S1	 5	  3.6	 12.5	 13.0	      	      	      	      	3	 2.53	 2.76	 1.76	-1.90	Sc  	                  	Sc  	IR
+-21.4467	008.5665	  4	*	S1	 5	  3.6	 12.5	 13.0	      	      	      	      	3	 2.53	 2.76	 1.76	-1.90	E2  	                  	E4  	Disturbed morpho-emission-too blue (M)
+-21.4467	008.5665	  4	*	S1	 5	  3.6	 12.5	 13.0	      	      	      	      	3	 2.53	 2.76	 1.76	-1.90	E2  	                  	E2  	Disturbed morpho (M?)
+-21.4467	008.5665	  4	*	S1	 5	  3.6	 12.5	 13.0	      	      	      	      	3	 2.53	 2.76	 1.76	-1.90	E2  	                  	Sc  	IR
+-21.4467	008.5665	  4	*	S1	 5	  3.6	 12.5	 13.0	      	      	      	      	3	 2.53	 2.76	 1.76	-1.90	E4  	                  	E4  	Disturbed morpho-emission-too blue (M)
+-21.4467	008.5665	  4	*	S1	 5	  3.6	 12.5	 13.0	      	      	      	      	3	 2.53	 2.76	 1.76	-1.90	E4  	                  	E2  	Disturbed morpho (M?)
+-21.4467	008.5665	  4	*	S1	 5	  3.6	 12.5	 13.0	      	      	      	      	3	 2.53	 2.76	 1.76	-1.90	E4  	                  	Sc  	IR
+-21.4467	008.5665	  4	*	S1	 5	  3.6	 12.5	 13.0	      	      	      	      	3	 2.53	 2.76	 1.76	-1.90	Sab 	                  	E4  	Disturbed morpho-emission-too blue (M)
+-21.4467	008.5665	  4	*	S1	 5	  3.6	 12.5	 13.0	      	      	      	      	3	 2.53	 2.76	 1.76	-1.90	Sab 	                  	E2  	Disturbed morpho (M?)
+-21.4467	008.5665	  4	*	S1	 5	  3.6	 12.5	 13.0	      	      	      	      	3	 2.53	 2.76	 1.76	-1.90	Sab 	                  	Sc  	IR
+ +7.0635	009.7254	  5	*	S2	 4	  1.6	 12.5	 13.3	N190  	U397  	      	      	3	 2.17	 2.39	 1.41	-1.88	Sab 	N190N U397a       	E0  	Interacting with a (I)
+ +7.0635	009.7254	  5	*	S2	 4	  1.6	 12.5	 13.3	N190  	U397  	      	      	3	 2.17	 2.39	 1.41	-1.88	Sab 	N190N U397a       	Sab 	Distorted spiral arm-interacting with b (I)
+ +7.0635	009.7254	  5	*	S2	 4	  1.6	 12.5	 13.3	N190  	U397  	      	      	3	 2.17	 2.39	 1.41	-1.88	E0  	N1905 U397b       	E0  	Interacting with a (I)
+ +7.0635	009.7254	  5	*	S2	 4	  1.6	 12.5	 13.3	N190  	U397  	      	      	3	 2.17	 2.39	 1.41	-1.88	E0  	N1905 U397b       	Sab 	Distorted spiral arm-interacting with b (I)
+ +7.0635	009.7254	  5	*	S2	 4	  1.6	 12.5	 13.3	N190  	U397  	      	      	3	 2.17	 2.39	 1.41	-1.88	S0  	                  	E0  	Interacting with a (I)
+ +7.0635	009.7254	  5	*	S2	 4	  1.6	 12.5	 13.3	N190  	U397  	      	      	3	 2.17	 2.39	 1.41	-1.88	S0  	                  	Sab 	Distorted spiral arm-interacting with b (I)
+ +7.0635	009.7254	  5	*	S2	 4	  1.6	 12.5	 13.3	N190  	U397  	      	      	3	 2.17	 2.39	 1.41	-1.88	Sc  	                  	E0  	Interacting with a (I)
+ +7.0635	009.7254	  5	*	S2	 4	  1.6	 12.5	 13.3	N190  	U397  	      	      	3	 2.17	 2.39	 1.41	-1.88	Sc  	                  	Sab 	Distorted spiral arm-interacting with b (I)
+ -8.3954	009.7921	  6	*	E3	 4	  1.6	 12.3	 13.4	      	      	      	      	4	 2.40	 2.63	 1.40	-2.12	S0a 	                  	Sab 	Boxy dust lane-weak radio
+ -8.3954	009.7921	  6	*	E3	 4	  1.6	 12.3	 13.4	      	      	      	      	4	 2.40	 2.63	 1.40	-2.12	Sab 	                  	Sab 	Boxy dust lane-weak radio
+ -8.3954	009.7921	  6	*	E3	 4	  1.6	 12.3	 13.4	      	      	      	      	4	 2.40	 2.63	 1.40	-2.12	E5  	                  	Sab 	Boxy dust lane-weak radio
+ -8.3954	009.7921	  6	*	E3	 4	  1.6	 12.3	 13.4	      	      	      	      	4	 2.40	 2.63	 1.40	-2.12	Sbc 	                  	Sab 	Boxy dust lane-weak radio
+ +0.8782	009.8496	  7	*	E2	 4	  5.7	 11.4	 12.1	N192  	U401  	      	      	4	 1.95	 2.16	 1.66	-1.40	Sb  	N192 U401         	SBc 	IR
+ +0.8782	009.8496	  7	*	E2	 4	  5.7	 11.4	 12.1	N192  	U401  	      	      	4	 1.95	 2.16	 1.66	-1.40	Sb  	N192 U401         	Sb  	Dust lane-tidal spiral arms-radio-IR (I)
+ +0.8782	009.8496	  7	*	E2	 4	  5.7	 11.4	 12.1	N192  	U401  	      	      	4	 1.95	 2.16	 1.66	-1.40	SB0 	N196 U405         	SBc 	IR
+ +0.8782	009.8496	  7	*	E2	 4	  5.7	 11.4	 12.1	N192  	U401  	      	      	4	 1.95	 2.16	 1.66	-1.40	SB0 	N196 U405         	Sb  	Dust lane-tidal spiral arms-radio-IR (I)
+ +0.8782	009.8496	  7	*	E2	 4	  5.7	 11.4	 12.1	N192  	U401  	      	      	4	 1.95	 2.16	 1.66	-1.40	SBc 	N201 U419         	SBc 	IR
+ +0.8782	009.8496	  7	*	E2	 4	  5.7	 11.4	 12.1	N192  	U401  	      	      	4	 1.95	 2.16	 1.66	-1.40	SBc 	N201 U419         	Sb  	Dust lane-tidal spiral arms-radio-IR (I)
+ +0.8782	009.8496	  7	*	E2	 4	  5.7	 11.4	 12.1	N192  	U401  	      	      	4	 1.95	 2.16	 1.66	-1.40	SBc 	N197 U406         	SBc 	IR
+ +0.8782	009.8496	  7	*	E2	 4	  5.7	 11.4	 12.1	N192  	U401  	      	      	4	 1.95	 2.16	 1.66	-1.40	SBc 	N197 U406         	Sb  	Dust lane-tidal spiral arms-radio-IR (I)
++23.5808	012.4034	  8	*	E2	 4	  1.2	 12.3	 13.2	      	      	      	      	4	 2.65	 2.89	 1.46	-2.32	E5  	                  	S0  	Extension toward 08a (I)
++23.5808	012.4034	  8	*	E2	 4	  1.2	 12.3	 13.2	      	      	      	      	4	 2.65	 2.89	 1.46	-2.32	E5  	                  	E5  	Double nuclei strongly n.c.i. (M,I)
++23.5808	012.4034	  8	*	E2	 4	  1.2	 12.3	 13.2	      	      	      	      	4	 2.65	 2.89	 1.46	-2.32	S0  	                  	S0  	Extension toward 08a (I)
++23.5808	012.4034	  8	*	E2	 4	  1.2	 12.3	 13.2	      	      	      	      	4	 2.65	 2.89	 1.46	-2.32	S0  	                  	E5  	Double nuclei strongly n.c.i. (M,I)
++23.5808	012.4034	  8	*	E2	 4	  1.2	 12.3	 13.2	      	      	      	      	4	 2.65	 2.89	 1.46	-2.32	S0  	                  	S0  	Extension toward 08a (I)
++23.5808	012.4034	  8	*	E2	 4	  1.2	 12.3	 13.2	      	      	      	      	4	 2.65	 2.89	 1.46	-2.32	S0  	                  	E5  	Double nuclei strongly n.c.i. (M,I)
++23.5808	012.4034	  8	*	E2	 4	  1.2	 12.3	 13.2	      	      	      	      	4	 2.65	 2.89	 1.46	-2.32	S0  	                  	S0  	Extension toward 08a (I)
++23.5808	012.4034	  8	*	E2	 4	  1.2	 12.3	 13.2	      	      	      	      	4	 2.65	 2.89	 1.46	-2.32	S0  	                  	E5  	Double nuclei strongly n.c.i. (M,I)
++34.6909	021.5308	 10	*	S3	 4	 10.9	 10.1	 10.9	N536  	U1013 	      	      	4	 2.32	 2.56	 1.97	-1.48	SBb 	N536 U1013        	Sc  	Warped disk or tidally distorted spiral arms (I)
++34.6909	021.5308	 10	*	S3	 4	 10.9	 10.1	 10.9	N536  	U1013 	      	      	4	 2.32	 2.56	 1.97	-1.48	SBb 	N536 U1013        	E1  	Sharp extension (M)
++34.6909	021.5308	 10	*	S3	 4	 10.9	 10.1	 10.9	N536  	U1013 	      	      	4	 2.32	 2.56	 1.97	-1.48	SBb 	N536 U1013        	SBb 	H I anomalous profile (I)
++34.6909	021.5308	 10	*	S3	 4	 10.9	 10.1	 10.9	N536  	U1013 	      	      	4	 2.32	 2.56	 1.97	-1.48	E1  	N529 U995         	Sc  	Warped disk or tidally distorted spiral arms (I)
++34.6909	021.5308	 10	*	S3	 4	 10.9	 10.1	 10.9	N536  	U1013 	      	      	4	 2.32	 2.56	 1.97	-1.48	E1  	N529 U995         	E1  	Sharp extension (M)
++34.6909	021.5308	 10	*	S3	 4	 10.9	 10.1	 10.9	N536  	U1013 	      	      	4	 2.32	 2.56	 1.97	-1.48	E1  	N529 U995         	SBb 	H I anomalous profile (I)
++34.6909	021.5308	 10	*	S3	 4	 10.9	 10.1	 10.9	N536  	U1013 	      	      	4	 2.32	 2.56	 1.97	-1.48	Sc  	N531 U1012        	Sc  	Warped disk or tidally distorted spiral arms (I)
++34.6909	021.5308	 10	*	S3	 4	 10.9	 10.1	 10.9	N536  	U1013 	      	      	4	 2.32	 2.56	 1.97	-1.48	Sc  	N531 U1012        	E1  	Sharp extension (M)
++34.6909	021.5308	 10	*	S3	 4	 10.9	 10.1	 10.9	N536  	U1013 	      	      	4	 2.32	 2.56	 1.97	-1.48	Sc  	N531 U1012        	SBb 	H I anomalous profile (I)
++34.6909	021.5308	 10	*	S3	 4	 10.9	 10.1	 10.9	N536  	U1013 	      	      	4	 2.32	 2.56	 1.97	-1.48	Scd 	N542              	Sc  	Warped disk or tidally distorted spiral arms (I)
++34.6909	021.5308	 10	*	S3	 4	 10.9	 10.1	 10.9	N536  	U1013 	      	      	4	 2.32	 2.56	 1.97	-1.48	Scd 	N542              	E1  	Sharp extension (M)
++34.6909	021.5308	 10	*	S3	 4	 10.9	 10.1	 10.9	N536  	U1013 	      	      	4	 2.32	 2.56	 1.97	-1.48	Scd 	N542              	SBb 	H I anomalous profile (I)
+ -4.6705	021.8904	 12	*	E1	 5	  2.6	 12.9	 13.4	      	      	      	      	5	 2.38	 2.62	 1.77	-1.73	S0  	                  	SB0 	Large P.A. twist
+ -4.6705	021.8904	 12	*	E1	 5	  2.6	 12.9	 13.4	      	      	      	      	5	 2.38	 2.62	 1.77	-1.73	S0  	                  	S0  	Double nuclei (M)
+ -4.6705	021.8904	 12	*	E1	 5	  2.6	 12.9	 13.4	      	      	      	      	5	 2.38	 2.62	 1.77	-1.73	SB0 	                  	SB0 	Large P.A. twist
+ -4.6705	021.8904	 12	*	E1	 5	  2.6	 12.9	 13.4	      	      	      	      	5	 2.38	 2.62	 1.77	-1.73	SB0 	                  	S0  	Double nuclei (M)
+ -4.6705	021.8904	 12	*	E1	 5	  2.6	 12.9	 13.4	      	      	      	      	5	 2.38	 2.62	 1.77	-1.73	S0  	                  	SB0 	Large P.A. twist
+ -4.6705	021.8904	 12	*	E1	 5	  2.6	 12.9	 13.4	      	      	      	      	5	 2.38	 2.62	 1.77	-1.73	S0  	                  	S0  	Double nuclei (M)
+ -4.6705	021.8904	 12	*	E1	 5	  2.6	 12.9	 13.4	      	      	      	      	5	 2.38	 2.62	 1.77	-1.73	Sbc 	                  	SB0 	Large P.A. twist
+ -4.6705	021.8904	 12	*	E1	 5	  2.6	 12.9	 13.4	      	      	      	      	5	 2.38	 2.62	 1.77	-1.73	Sbc 	                  	S0  	Double nuclei (M)
+ -4.6705	021.8904	 12	*	E1	 5	  2.6	 12.9	 13.4	      	      	      	      	5	 2.38	 2.62	 1.77	-1.73	S0  	                  	SB0 	Large P.A. twist
+ -4.6705	021.8904	 12	*	E1	 5	  2.6	 12.9	 13.4	      	      	      	      	5	 2.38	 2.62	 1.77	-1.73	S0  	                  	S0  	Double nuclei (M)
+ -7.8811	023.0921	 13	*	E2	 5	  2.5	 13.3	 14.0	      	      	      	      	5	 2.26	 2.44	 1.67	-1.66	SBab	                  	S0  	Asym-interacting with b (I)
+ -7.8811	023.0921	 13	*	E2	 5	  2.5	 13.3	 14.0	      	      	      	      	5	 2.26	 2.44	 1.67	-1.66	SBab	                  	E0  	n.c.i.-interacting with c emission-radio (I)
+ -7.8811	023.0921	 13	*	E2	 5	  2.5	 13.3	 14.0	      	      	      	      	5	 2.26	 2.44	 1.67	-1.66	E0  	                  	S0  	Asym-interacting with b (I)
+ -7.8811	023.0921	 13	*	E2	 5	  2.5	 13.3	 14.0	      	      	      	      	5	 2.26	 2.44	 1.67	-1.66	E0  	                  	E0  	n.c.i.-interacting with c emission-radio (I)
+ -7.8811	023.0921	 13	*	E2	 5	  2.5	 13.3	 14.0	      	      	      	      	5	 2.26	 2.44	 1.67	-1.66	S0  	                  	S0  	Asym-interacting with b (I)
+ -7.8811	023.0921	 13	*	E2	 5	  2.5	 13.3	 14.0	      	      	      	      	5	 2.26	 2.44	 1.67	-1.66	S0  	                  	E0  	n.c.i.-interacting with c emission-radio (I)
+ -7.8811	023.0921	 13	*	E2	 5	  2.5	 13.3	 14.0	      	      	      	      	5	 2.26	 2.44	 1.67	-1.66	S0  	                  	S0  	Asym-interacting with b (I)
+ -7.8811	023.0921	 13	*	E2	 5	  2.5	 13.3	 14.0	      	      	      	      	5	 2.26	 2.44	 1.67	-1.66	S0  	                  	E0  	n.c.i.-interacting with c emission-radio (I)
+ -7.8811	023.0921	 13	*	E2	 5	  2.5	 13.3	 14.0	      	      	      	      	5	 2.26	 2.44	 1.67	-1.66	S0  	                  	S0  	Asym-interacting with b (I)
+ -7.8811	023.0921	 13	*	E2	 5	  2.5	 13.3	 14.0	      	      	      	      	5	 2.26	 2.44	 1.67	-1.66	S0  	                  	E0  	n.c.i.-interacting with c emission-radio (I)
+ -7.0286	029.9484	 14	*	S3	 4	  6.7	 12.1	 13.0	      	      	      	      	3	 2.52	 2.76	 1.43	-2.22	Sb  	                  	Sbc 	Asym. morpho (I)
+ -7.0286	029.9484	 14	*	S3	 4	  6.7	 12.1	 13.0	      	      	      	      	3	 2.52	 2.76	 1.43	-2.22	Sb  	                  	E5  	Diffuse, extended galaxy-emission (I)
+ -7.0286	029.9484	 14	*	S3	 4	  6.7	 12.1	 13.0	      	      	      	      	3	 2.52	 2.76	 1.43	-2.22	Sb  	                  	Sb  	IR
+ -7.0286	029.9484	 14	*	S3	 4	  6.7	 12.1	 13.0	      	      	      	      	3	 2.52	 2.76	 1.43	-2.22	E5  	                  	Sbc 	Asym. morpho (I)
+ -7.0286	029.9484	 14	*	S3	 4	  6.7	 12.1	 13.0	      	      	      	      	3	 2.52	 2.76	 1.43	-2.22	E5  	                  	E5  	Diffuse, extended galaxy-emission (I)
+ -7.0286	029.9484	 14	*	S3	 4	  6.7	 12.1	 13.0	      	      	      	      	3	 2.52	 2.76	 1.43	-2.22	E5  	                  	Sb  	IR
+ -7.0286	029.9484	 14	*	S3	 4	  6.7	 12.1	 13.0	      	      	      	      	3	 2.52	 2.76	 1.43	-2.22	Sbc 	                  	Sbc 	Asym. morpho (I)
+ -7.0286	029.9484	 14	*	S3	 4	  6.7	 12.1	 13.0	      	      	      	      	3	 2.52	 2.76	 1.43	-2.22	Sbc 	                  	E5  	Diffuse, extended galaxy-emission (I)
+ -7.0286	029.9484	 14	*	S3	 4	  6.7	 12.1	 13.0	      	      	      	      	3	 2.52	 2.76	 1.43	-2.22	Sbc 	                  	Sb  	IR
+ -7.0286	029.9484	 14	*	S3	 4	  6.7	 12.1	 13.0	      	      	      	      	3	 2.52	 2.76	 1.43	-2.22	Sd  	                  	Sbc 	Asym. morpho (I)
+ -7.0286	029.9484	 14	*	S3	 4	  6.7	 12.1	 13.0	      	      	      	      	3	 2.52	 2.76	 1.43	-2.22	Sd  	                  	E5  	Diffuse, extended galaxy-emission (I)
+ -7.0286	029.9484	 14	*	S3	 4	  6.7	 12.1	 13.0	      	      	      	      	3	 2.52	 2.76	 1.43	-2.22	Sd  	                  	Sb  	IR
+ +2.1383	031.9124	 15	*	E3	 6	  7.7	 11.7	 13.3	U1624 	      	      	      	6	 2.63	 2.86	 1.89	-1.87	Sa  	U1624             	Sbc 	Disturbed morpho (I)
+ +2.1383	031.9124	 15	*	E3	 6	  7.7	 11.7	 13.3	U1624 	      	      	      	6	 2.63	 2.86	 1.89	-1.87	Sa  	U1624             	E2  	n.c.i.-weak radio (I)
+ +2.1383	031.9124	 15	*	E3	 6	  7.7	 11.7	 13.3	U1624 	      	      	      	6	 2.63	 2.86	 1.89	-1.87	Sa  	U1624             	E0  	Strong dust lane in the center
+ +2.1383	031.9124	 15	*	E3	 6	  7.7	 11.7	 13.3	U1624 	      	      	      	6	 2.63	 2.86	 1.89	-1.87	Sa  	U1624             	Sa  	Weak radio
+ +2.1383	031.9124	 15	*	E3	 6	  7.7	 11.7	 13.3	U1624 	      	      	      	6	 2.63	 2.86	 1.89	-1.87	E0  	U1617             	Sbc 	Disturbed morpho (I)
+ +2.1383	031.9124	 15	*	E3	 6	  7.7	 11.7	 13.3	U1624 	      	      	      	6	 2.63	 2.86	 1.89	-1.87	E0  	U1617             	E2  	n.c.i.-weak radio (I)
+ +2.1383	031.9124	 15	*	E3	 6	  7.7	 11.7	 13.3	U1624 	      	      	      	6	 2.63	 2.86	 1.89	-1.87	E0  	U1617             	E0  	Strong dust lane in the center
+ +2.1383	031.9124	 15	*	E3	 6	  7.7	 11.7	 13.3	U1624 	      	      	      	6	 2.63	 2.86	 1.89	-1.87	E0  	U1617             	Sa  	Weak radio
+ +2.1383	031.9124	 15	*	E3	 6	  7.7	 11.7	 13.3	U1624 	      	      	      	6	 2.63	 2.86	 1.89	-1.87	E0  	U1620             	Sbc 	Disturbed morpho (I)
+ +2.1383	031.9124	 15	*	E3	 6	  7.7	 11.7	 13.3	U1624 	      	      	      	6	 2.63	 2.86	 1.89	-1.87	E0  	U1620             	E2  	n.c.i.-weak radio (I)
+ +2.1383	031.9124	 15	*	E3	 6	  7.7	 11.7	 13.3	U1624 	      	      	      	6	 2.63	 2.86	 1.89	-1.87	E0  	U1620             	E0  	Strong dust lane in the center
+ +2.1383	031.9124	 15	*	E3	 6	  7.7	 11.7	 13.3	U1624 	      	      	      	6	 2.63	 2.86	 1.89	-1.87	E0  	U1620             	Sa  	Weak radio
+ +2.1383	031.9124	 15	*	E3	 6	  7.7	 11.7	 13.3	U1624 	      	      	      	6	 2.63	 2.86	 1.89	-1.87	E2  	U1618a            	Sbc 	Disturbed morpho (I)
+ +2.1383	031.9124	 15	*	E3	 6	  7.7	 11.7	 13.3	U1624 	      	      	      	6	 2.63	 2.86	 1.89	-1.87	E2  	U1618a            	E2  	n.c.i.-weak radio (I)
+ +2.1383	031.9124	 15	*	E3	 6	  7.7	 11.7	 13.3	U1624 	      	      	      	6	 2.63	 2.86	 1.89	-1.87	E2  	U1618a            	E0  	Strong dust lane in the center
+ +2.1383	031.9124	 15	*	E3	 6	  7.7	 11.7	 13.3	U1624 	      	      	      	6	 2.63	 2.86	 1.89	-1.87	E2  	U1618a            	Sa  	Weak radio
+ +2.1383	031.9124	 15	*	E3	 6	  7.7	 11.7	 13.3	U1624 	      	      	      	6	 2.63	 2.86	 1.89	-1.87	Sa  	U1617             	Sbc 	Disturbed morpho (I)
+ +2.1383	031.9124	 15	*	E3	 6	  7.7	 11.7	 13.3	U1624 	      	      	      	6	 2.63	 2.86	 1.89	-1.87	Sa  	U1617             	E2  	n.c.i.-weak radio (I)
+ +2.1383	031.9124	 15	*	E3	 6	  7.7	 11.7	 13.3	U1624 	      	      	      	6	 2.63	 2.86	 1.89	-1.87	Sa  	U1617             	E0  	Strong dust lane in the center
+ +2.1383	031.9124	 15	*	E3	 6	  7.7	 11.7	 13.3	U1624 	      	      	      	6	 2.63	 2.86	 1.89	-1.87	Sa  	U1617             	Sa  	Weak radio
+ +2.1383	031.9124	 15	*	E3	 6	  7.7	 11.7	 13.3	U1624 	      	      	      	6	 2.63	 2.86	 1.89	-1.87	Sbc 	U1618b            	Sbc 	Disturbed morpho (I)
+ +2.1383	031.9124	 15	*	E3	 6	  7.7	 11.7	 13.3	U1624 	      	      	      	6	 2.63	 2.86	 1.89	-1.87	Sbc 	U1618b            	E2  	n.c.i.-weak radio (I)
+ +2.1383	031.9124	 15	*	E3	 6	  7.7	 11.7	 13.3	U1624 	      	      	      	6	 2.63	 2.86	 1.89	-1.87	Sbc 	U1618b            	E0  	Strong dust lane in the center
+ +2.1383	031.9124	 15	*	E3	 6	  7.7	 11.7	 13.3	U1624 	      	      	      	6	 2.63	 2.86	 1.89	-1.87	Sbc 	U1618b            	Sa  	Weak radio
+-10.1630	032.3888	 16	*	S3	 4	  6.4	 10.2	 11.4	ARP318	N835  	      	      	4	 2.09	 2.31	 1.65	-1.56	SBab	N835 Mk1021       	Im  	Sinusoidal r.c.-radio-IR (M)
+-10.1630	032.3888	 16	*	S3	 4	  6.4	 10.2	 11.4	ARP318	N835  	      	      	4	 2.09	 2.31	 1.65	-1.56	SBab	N835 Mk1021       	Im  	Sinusoidal r.c.-radio-IR (M)
+-10.1630	032.3888	 16	*	S3	 4	  6.4	 10.2	 11.4	ARP318	N835  	      	      	4	 2.09	 2.31	 1.65	-1.56	SBab	N835 Mk1021       	Sab 	Tidal tails-peculiar r.c. (I)
+-10.1630	032.3888	 16	*	S3	 4	  6.4	 10.2	 11.4	ARP318	N835  	      	      	4	 2.09	 2.31	 1.65	-1.56	SBab	N835 Mk1021       	SBab	Disturbed morpho-lopsided r.c.-radio-IR (I)
+-10.1630	032.3888	 16	*	S3	 4	  6.4	 10.2	 11.4	ARP318	N835  	      	      	4	 2.09	 2.31	 1.65	-1.56	Sab 	N833              	Im  	Sinusoidal r.c.-radio-IR (M)
+-10.1630	032.3888	 16	*	S3	 4	  6.4	 10.2	 11.4	ARP318	N835  	      	      	4	 2.09	 2.31	 1.65	-1.56	Sab 	N833              	Im  	Sinusoidal r.c.-radio-IR (M)
+-10.1630	032.3888	 16	*	S3	 4	  6.4	 10.2	 11.4	ARP318	N835  	      	      	4	 2.09	 2.31	 1.65	-1.56	Sab 	N833              	Sab 	Tidal tails-peculiar r.c. (I)
+-10.1630	032.3888	 16	*	S3	 4	  6.4	 10.2	 11.4	ARP318	N835  	      	      	4	 2.09	 2.31	 1.65	-1.56	Sab 	N833              	SBab	Disturbed morpho-lopsided r.c.-radio-IR (I)
+-10.1630	032.3888	 16	*	S3	 4	  6.4	 10.2	 11.4	ARP318	N835  	      	      	4	 2.09	 2.31	 1.65	-1.56	Im  	N838 Mk1022       	Im  	Sinusoidal r.c.-radio-IR (M)
+-10.1630	032.3888	 16	*	S3	 4	  6.4	 10.2	 11.4	ARP318	N835  	      	      	4	 2.09	 2.31	 1.65	-1.56	Im  	N838 Mk1022       	Im  	Sinusoidal r.c.-radio-IR (M)
+-10.1630	032.3888	 16	*	S3	 4	  6.4	 10.2	 11.4	ARP318	N835  	      	      	4	 2.09	 2.31	 1.65	-1.56	Im  	N838 Mk1022       	Sab 	Tidal tails-peculiar r.c. (I)
+-10.1630	032.3888	 16	*	S3	 4	  6.4	 10.2	 11.4	ARP318	N835  	      	      	4	 2.09	 2.31	 1.65	-1.56	Im  	N838 Mk1022       	SBab	Disturbed morpho-lopsided r.c.-radio-IR (I)
+-10.1630	032.3888	 16	*	S3	 4	  6.4	 10.2	 11.4	ARP318	N835  	      	      	4	 2.09	 2.31	 1.65	-1.56	Im  	N839              	Im  	Sinusoidal r.c.-radio-IR (M)
+-10.1630	032.3888	 16	*	S3	 4	  6.4	 10.2	 11.4	ARP318	N835  	      	      	4	 2.09	 2.31	 1.65	-1.56	Im  	N839              	Im  	Sinusoidal r.c.-radio-IR (M)
+-10.1630	032.3888	 16	*	S3	 4	  6.4	 10.2	 11.4	ARP318	N835  	      	      	4	 2.09	 2.31	 1.65	-1.56	Im  	N839              	Sab 	Tidal tails-peculiar r.c. (I)
+-10.1630	032.3888	 16	*	S3	 4	  6.4	 10.2	 11.4	ARP318	N835  	      	      	4	 2.09	 2.31	 1.65	-1.56	Im  	N839              	SBab	Disturbed morpho-lopsided r.c.-radio-IR (I)
+-17.6194	041.3239	 21	*	S3	 5	 10.8	 10.1	 11.0	N1099 	      	      	      	3	 2.05	 2.27	 2.13	-1.03	Sc  	                  	Sc  	IR
+-17.6194	041.3239	 21	*	S3	 5	 10.8	 10.1	 11.0	N1099 	      	      	      	3	 2.05	 2.27	 2.13	-1.03	Sab 	                  	Sc  	IR
+-17.6194	041.3239	 21	*	S3	 5	 10.8	 10.1	 11.0	N1099 	      	      	      	3	 2.05	 2.27	 2.13	-1.03	E1  	                  	Sc  	IR
+-17.6194	041.3239	 21	*	S3	 5	 10.8	 10.1	 11.0	N1099 	      	      	      	3	 2.05	 2.27	 2.13	-1.03	E2  	                  	Sc  	IR
+-17.6194	041.3239	 21	*	S3	 5	 10.8	 10.1	 11.0	N1099 	      	      	      	3	 2.05	 2.27	 2.13	-1.03	SB0a	                  	Sc  	IR
+-15.6757	045.8803	 22	*	E1	 5	  5.0	 10.5	 11.1	N1199 	      	      	      	3	 1.64	 1.25	 1.43	-0.72	E2  	N1199             	E2  	Dust lane
+-15.6757	045.8803	 22	*	E1	 5	  5.0	 10.5	 11.1	N1199 	      	      	      	3	 1.64	 1.25	 1.43	-0.72	Sa  	                  	E2  	Dust lane
+-15.6757	045.8803	 22	*	E1	 5	  5.0	 10.5	 11.1	N1199 	      	      	      	3	 1.64	 1.25	 1.43	-0.72	SBcd	                  	E2  	Dust lane
+-15.6757	045.8803	 22	*	E1	 5	  5.0	 10.5	 11.1	N1199 	      	      	      	3	 1.64	 1.25	 1.43	-0.72	E3  	                  	E2  	Dust lane
+-15.6757	045.8803	 22	*	E1	 5	  5.0	 10.5	 11.1	N1199 	      	      	      	3	 1.64	 1.25	 1.43	-0.72	E5  	                  	E2  	Dust lane
+ -9.5855	046.7770	 23	*	S3	 5	  7.1	 11.2	 12.1	N1214 	      	      	      	4	 2.23	 2.44	 1.82	-1.52	Sab 	N1214             	Sd  	Peculiar morpho-IR (I)
+ -9.5855	046.7770	 23	*	S3	 5	  7.1	 11.2	 12.1	N1214 	      	      	      	4	 2.23	 2.44	 1.82	-1.52	Sab 	N1214             	S0  	Spindle counterrotating gas-[N II], H_alpha emission (I)
+ -9.5855	046.7770	 23	*	S3	 5	  7.1	 11.2	 12.1	N1214 	      	      	      	4	 2.23	 2.44	 1.82	-1.52	Sab 	N1214             	SBc 	Luminous cusps at end or bar-radio IR (I)
+ -9.5855	046.7770	 23	*	S3	 5	  7.1	 11.2	 12.1	N1214 	      	      	      	4	 2.23	 2.44	 1.82	-1.52	Sab 	N1214             	Sab 	Weak nuclear and disk emission
+ -9.5855	046.7770	 23	*	S3	 5	  7.1	 11.2	 12.1	N1214 	      	      	      	4	 2.23	 2.44	 1.82	-1.52	SBc 	N1215             	Sd  	Peculiar morpho-IR (I)
+ -9.5855	046.7770	 23	*	S3	 5	  7.1	 11.2	 12.1	N1214 	      	      	      	4	 2.23	 2.44	 1.82	-1.52	SBc 	N1215             	S0  	Spindle counterrotating gas-[N II], H_alpha emission (I)
+ -9.5855	046.7770	 23	*	S3	 5	  7.1	 11.2	 12.1	N1214 	      	      	      	4	 2.23	 2.44	 1.82	-1.52	SBc 	N1215             	SBc 	Luminous cusps at end or bar-radio IR (I)
+ -9.5855	046.7770	 23	*	S3	 5	  7.1	 11.2	 12.1	N1214 	      	      	      	4	 2.23	 2.44	 1.82	-1.52	SBc 	N1215             	Sab 	Weak nuclear and disk emission
+ -9.5855	046.7770	 23	*	S3	 5	  7.1	 11.2	 12.1	N1214 	      	      	      	4	 2.23	 2.44	 1.82	-1.52	S0  	N1216             	Sd  	Peculiar morpho-IR (I)
+ -9.5855	046.7770	 23	*	S3	 5	  7.1	 11.2	 12.1	N1214 	      	      	      	4	 2.23	 2.44	 1.82	-1.52	S0  	N1216             	S0  	Spindle counterrotating gas-[N II], H_alpha emission (I)
+ -9.5855	046.7770	 23	*	S3	 5	  7.1	 11.2	 12.1	N1214 	      	      	      	4	 2.23	 2.44	 1.82	-1.52	S0  	N1216             	SBc 	Luminous cusps at end or bar-radio IR (I)
+ -9.5855	046.7770	 23	*	S3	 5	  7.1	 11.2	 12.1	N1214 	      	      	      	4	 2.23	 2.44	 1.82	-1.52	S0  	N1216             	Sab 	Weak nuclear and disk emission
+ -9.5855	046.7770	 23	*	S3	 5	  7.1	 11.2	 12.1	N1214 	      	      	      	4	 2.23	 2.44	 1.82	-1.52	Sd  	                  	Sd  	Peculiar morpho-IR (I)
+ -9.5855	046.7770	 23	*	S3	 5	  7.1	 11.2	 12.1	N1214 	      	      	      	4	 2.23	 2.44	 1.82	-1.52	Sd  	                  	S0  	Spindle counterrotating gas-[N II], H_alpha emission (I)
+ -9.5855	046.7770	 23	*	S3	 5	  7.1	 11.2	 12.1	N1214 	      	      	      	4	 2.23	 2.44	 1.82	-1.52	Sd  	                  	SBc 	Luminous cusps at end or bar-radio IR (I)
+ -9.5855	046.7770	 23	*	S3	 5	  7.1	 11.2	 12.1	N1214 	      	      	      	4	 2.23	 2.44	 1.82	-1.52	Sd  	                  	Sab 	Weak nuclear and disk emission
+ -9.5855	046.7770	 23	*	S3	 5	  7.1	 11.2	 12.1	N1214 	      	      	      	4	 2.23	 2.44	 1.82	-1.52	Sm  	                  	Sd  	Peculiar morpho-IR (I)
+ -9.5855	046.7770	 23	*	S3	 5	  7.1	 11.2	 12.1	N1214 	      	      	      	4	 2.23	 2.44	 1.82	-1.52	Sm  	                  	S0  	Spindle counterrotating gas-[N II], H_alpha emission (I)
+ -9.5855	046.7770	 23	*	S3	 5	  7.1	 11.2	 12.1	N1214 	      	      	      	4	 2.23	 2.44	 1.82	-1.52	Sm  	                  	SBc 	Luminous cusps at end or bar-radio IR (I)
+ -9.5855	046.7770	 23	*	S3	 5	  7.1	 11.2	 12.1	N1214 	      	      	      	4	 2.23	 2.44	 1.82	-1.52	Sm  	                  	Sab 	Weak nuclear and disk emission
+-10.8646	050.0786	 24	*	E2	 4	  2.4	 12.7	 13.6	      	      	      	      	5	 2.30	 2.51	 1.47	-1.93	S0  	                  	SBa 	Peculiar morpho (I)
+-10.8646	050.0786	 24	*	E2	 4	  2.4	 12.7	 13.6	      	      	      	      	5	 2.30	 2.51	 1.47	-1.93	SBa 	                  	SBa 	Peculiar morpho (I)
+-10.8646	050.0786	 24	*	E2	 4	  2.4	 12.7	 13.6	      	      	      	      	5	 2.30	 2.51	 1.47	-1.93	SB0 	                  	SBa 	Peculiar morpho (I)
+-10.8646	050.0786	 24	*	E2	 4	  2.4	 12.7	 13.6	      	      	      	      	5	 2.30	 2.51	 1.47	-1.93	S0a 	                  	SBa 	Peculiar morpho (I)
+-10.8646	050.0786	 24	*	E2	 4	  2.4	 12.7	 13.6	      	      	      	      	5	 2.30	 2.51	 1.47	-1.93	E0  	                  	SBa 	Peculiar morpho (I)
+ -1.0519	050.1822	 25	*	S3	 7	  6.4	 11.8	 12.9	      	      	      	      	4	 1.79	 2.13	 1.68	-1.16	SBc 	U2690             	S0  	Extension toward 25b (I)
+ -1.0519	050.1822	 25	*	S3	 7	  6.4	 11.8	 12.9	      	      	      	      	4	 1.79	 2.13	 1.68	-1.16	SBc 	U2690             	S0  	Peculiar morpho may have warped disk (I)
+ -1.0519	050.1822	 25	*	S3	 7	  6.4	 11.8	 12.9	      	      	      	      	4	 1.79	 2.13	 1.68	-1.16	SBc 	U2690             	SBa 	Extension to the south towards 25f (I)
+ -1.0519	050.1822	 25	*	S3	 7	  6.4	 11.8	 12.9	      	      	      	      	4	 1.79	 2.13	 1.68	-1.16	SBc 	U2690             	SBc 	Weak radio IR
+ -1.0519	050.1822	 25	*	S3	 7	  6.4	 11.8	 12.9	      	      	      	      	4	 1.79	 2.13	 1.68	-1.16	SBa 	U2691a            	S0  	Extension toward 25b (I)
+ -1.0519	050.1822	 25	*	S3	 7	  6.4	 11.8	 12.9	      	      	      	      	4	 1.79	 2.13	 1.68	-1.16	SBa 	U2691a            	S0  	Peculiar morpho may have warped disk (I)
+ -1.0519	050.1822	 25	*	S3	 7	  6.4	 11.8	 12.9	      	      	      	      	4	 1.79	 2.13	 1.68	-1.16	SBa 	U2691a            	SBa 	Extension to the south towards 25f (I)
+ -1.0519	050.1822	 25	*	S3	 7	  6.4	 11.8	 12.9	      	      	      	      	4	 1.79	 2.13	 1.68	-1.16	SBa 	U2691a            	SBc 	Weak radio IR
+ -1.0519	050.1822	 25	*	S3	 7	  6.4	 11.8	 12.9	      	      	      	      	4	 1.79	 2.13	 1.68	-1.16	Sb  	                  	S0  	Extension toward 25b (I)
+ -1.0519	050.1822	 25	*	S3	 7	  6.4	 11.8	 12.9	      	      	      	      	4	 1.79	 2.13	 1.68	-1.16	Sb  	                  	S0  	Peculiar morpho may have warped disk (I)
+ -1.0519	050.1822	 25	*	S3	 7	  6.4	 11.8	 12.9	      	      	      	      	4	 1.79	 2.13	 1.68	-1.16	Sb  	                  	SBa 	Extension to the south towards 25f (I)
+ -1.0519	050.1822	 25	*	S3	 7	  6.4	 11.8	 12.9	      	      	      	      	4	 1.79	 2.13	 1.68	-1.16	Sb  	                  	SBc 	Weak radio IR
+ -1.0519	050.1822	 25	*	S3	 7	  6.4	 11.8	 12.9	      	      	      	      	4	 1.79	 2.13	 1.68	-1.16	S0  	                  	S0  	Extension toward 25b (I)
+ -1.0519	050.1822	 25	*	S3	 7	  6.4	 11.8	 12.9	      	      	      	      	4	 1.79	 2.13	 1.68	-1.16	S0  	                  	S0  	Peculiar morpho may have warped disk (I)
+ -1.0519	050.1822	 25	*	S3	 7	  6.4	 11.8	 12.9	      	      	      	      	4	 1.79	 2.13	 1.68	-1.16	S0  	                  	SBa 	Extension to the south towards 25f (I)
+ -1.0519	050.1822	 25	*	S3	 7	  6.4	 11.8	 12.9	      	      	      	      	4	 1.79	 2.13	 1.68	-1.16	S0  	                  	SBc 	Weak radio IR
+ -1.0519	050.1822	 25	*	S3	 7	  6.4	 11.8	 12.9	      	      	      	      	4	 1.79	 2.13	 1.68	-1.16	Sdm 	                  	S0  	Extension toward 25b (I)
+ -1.0519	050.1822	 25	*	S3	 7	  6.4	 11.8	 12.9	      	      	      	      	4	 1.79	 2.13	 1.68	-1.16	Sdm 	                  	S0  	Peculiar morpho may have warped disk (I)
+ -1.0519	050.1822	 25	*	S3	 7	  6.4	 11.8	 12.9	      	      	      	      	4	 1.79	 2.13	 1.68	-1.16	Sdm 	                  	SBa 	Extension to the south towards 25f (I)
+ -1.0519	050.1822	 25	*	S3	 7	  6.4	 11.8	 12.9	      	      	      	      	4	 1.79	 2.13	 1.68	-1.16	Sdm 	                  	SBc 	Weak radio IR
+ -1.0519	050.1822	 25	*	S3	 7	  6.4	 11.8	 12.9	      	      	      	      	4	 1.79	 2.13	 1.68	-1.16	S0  	U2691b            	S0  	Extension toward 25b (I)
+ -1.0519	050.1822	 25	*	S3	 7	  6.4	 11.8	 12.9	      	      	      	      	4	 1.79	 2.13	 1.68	-1.16	S0  	U2691b            	S0  	Peculiar morpho may have warped disk (I)
+ -1.0519	050.1822	 25	*	S3	 7	  6.4	 11.8	 12.9	      	      	      	      	4	 1.79	 2.13	 1.68	-1.16	S0  	U2691b            	SBa 	Extension to the south towards 25f (I)
+ -1.0519	050.1822	 25	*	S3	 7	  6.4	 11.8	 12.9	      	      	      	      	4	 1.79	 2.13	 1.68	-1.16	S0  	U2691b            	SBc 	Weak radio IR
+ -1.0519	050.1822	 25	*	S3	 7	  6.4	 11.8	 12.9	      	      	      	      	4	 1.79	 2.13	 1.68	-1.16	S0  	                  	S0  	Extension toward 25b (I)
+ -1.0519	050.1822	 25	*	S3	 7	  6.4	 11.8	 12.9	      	      	      	      	4	 1.79	 2.13	 1.68	-1.16	S0  	                  	S0  	Peculiar morpho may have warped disk (I)
+ -1.0519	050.1822	 25	*	S3	 7	  6.4	 11.8	 12.9	      	      	      	      	4	 1.79	 2.13	 1.68	-1.16	S0  	                  	SBa 	Extension to the south towards 25f (I)
+ -1.0519	050.1822	 25	*	S3	 7	  6.4	 11.8	 12.9	      	      	      	      	4	 1.79	 2.13	 1.68	-1.16	S0  	                  	SBc 	Weak radio IR
+-13.6459	050.4758	 26	*	S2	 4	  1.9	 12.7	 13.3	      	      	      	      	7	 2.30	 2.52	 1.50	-1.92	Scd 	                  	Im  	Disturbed morpho (I)
+-13.6459	050.4758	 26	*	S2	 4	  1.9	 12.7	 13.3	      	      	      	      	7	 2.30	 2.52	 1.50	-1.92	Scd 	                  	cI  	Extension to the south-possibly IR (I)
+-13.6459	050.4758	 26	*	S2	 4	  1.9	 12.7	 13.3	      	      	      	      	7	 2.30	 2.52	 1.50	-1.92	Scd 	                  	E0  	Tail-like features-weak radio (I)
+-13.6459	050.4758	 26	*	S2	 4	  1.9	 12.7	 13.3	      	      	      	      	7	 2.30	 2.52	 1.50	-1.92	Scd 	                  	Scd 	Asym. morpho weak radio-IR (I)
+-13.6459	050.4758	 26	*	S2	 4	  1.9	 12.7	 13.3	      	      	      	      	7	 2.30	 2.52	 1.50	-1.92	E0  	                  	Im  	Disturbed morpho (I)
+-13.6459	050.4758	 26	*	S2	 4	  1.9	 12.7	 13.3	      	      	      	      	7	 2.30	 2.52	 1.50	-1.92	E0  	                  	cI  	Extension to the south-possibly IR (I)
+-13.6459	050.4758	 26	*	S2	 4	  1.9	 12.7	 13.3	      	      	      	      	7	 2.30	 2.52	 1.50	-1.92	E0  	                  	E0  	Tail-like features-weak radio (I)
+-13.6459	050.4758	 26	*	S2	 4	  1.9	 12.7	 13.3	      	      	      	      	7	 2.30	 2.52	 1.50	-1.92	E0  	                  	Scd 	Asym. morpho weak radio-IR (I)
+-13.6459	050.4758	 26	*	S2	 4	  1.9	 12.7	 13.3	      	      	      	      	7	 2.30	 2.52	 1.50	-1.92	S0  	                  	Im  	Disturbed morpho (I)
+-13.6459	050.4758	 26	*	S2	 4	  1.9	 12.7	 13.3	      	      	      	      	7	 2.30	 2.52	 1.50	-1.92	S0  	                  	cI  	Extension to the south-possibly IR (I)
+-13.6459	050.4758	 26	*	S2	 4	  1.9	 12.7	 13.3	      	      	      	      	7	 2.30	 2.52	 1.50	-1.92	S0  	                  	E0  	Tail-like features-weak radio (I)
+-13.6459	050.4758	 26	*	S2	 4	  1.9	 12.7	 13.3	      	      	      	      	7	 2.30	 2.52	 1.50	-1.92	S0  	                  	Scd 	Asym. morpho weak radio-IR (I)
+-13.6459	050.4758	 26	*	S2	 4	  1.9	 12.7	 13.3	      	      	      	      	7	 2.30	 2.52	 1.50	-1.92	cI  	                  	Im  	Disturbed morpho (I)
+-13.6459	050.4758	 26	*	S2	 4	  1.9	 12.7	 13.3	      	      	      	      	7	 2.30	 2.52	 1.50	-1.92	cI  	                  	cI  	Extension to the south-possibly IR (I)
+-13.6459	050.4758	 26	*	S2	 4	  1.9	 12.7	 13.3	      	      	      	      	7	 2.30	 2.52	 1.50	-1.92	cI  	                  	E0  	Tail-like features-weak radio (I)
+-13.6459	050.4758	 26	*	S2	 4	  1.9	 12.7	 13.3	      	      	      	      	7	 2.30	 2.52	 1.50	-1.92	cI  	                  	Scd 	Asym. morpho weak radio-IR (I)
+-13.6459	050.4758	 26	*	S2	 4	  1.9	 12.7	 13.3	      	      	      	      	7	 2.30	 2.52	 1.50	-1.92	Im  	                  	Im  	Disturbed morpho (I)
+-13.6459	050.4758	 26	*	S2	 4	  1.9	 12.7	 13.3	      	      	      	      	7	 2.30	 2.52	 1.50	-1.92	Im  	                  	cI  	Extension to the south-possibly IR (I)
+-13.6459	050.4758	 26	*	S2	 4	  1.9	 12.7	 13.3	      	      	      	      	7	 2.30	 2.52	 1.50	-1.92	Im  	                  	E0  	Tail-like features-weak radio (I)
+-13.6459	050.4758	 26	*	S2	 4	  1.9	 12.7	 13.3	      	      	      	      	7	 2.30	 2.52	 1.50	-1.92	Im  	                  	Scd 	Asym. morpho weak radio-IR (I)
+-13.6459	050.4758	 26	*	S2	 4	  1.9	 12.7	 13.3	      	      	      	      	7	 2.30	 2.52	 1.50	-1.92	cI  	                  	Im  	Disturbed morpho (I)
+-13.6459	050.4758	 26	*	S2	 4	  1.9	 12.7	 13.3	      	      	      	      	7	 2.30	 2.52	 1.50	-1.92	cI  	                  	cI  	Extension to the south-possibly IR (I)
+-13.6459	050.4758	 26	*	S2	 4	  1.9	 12.7	 13.3	      	      	      	      	7	 2.30	 2.52	 1.50	-1.92	cI  	                  	E0  	Tail-like features-weak radio (I)
+-13.6459	050.4758	 26	*	S2	 4	  1.9	 12.7	 13.3	      	      	      	      	7	 2.30	 2.52	 1.50	-1.92	cI  	                  	Scd 	Asym. morpho weak radio-IR (I)
+-13.6459	050.4758	 26	*	S2	 4	  1.9	 12.7	 13.3	      	      	      	      	7	 2.30	 2.52	 1.50	-1.92	S0  	                  	Im  	Disturbed morpho (I)
+-13.6459	050.4758	 26	*	S2	 4	  1.9	 12.7	 13.3	      	      	      	      	7	 2.30	 2.52	 1.50	-1.92	S0  	                  	cI  	Extension to the south-possibly IR (I)
+-13.6459	050.4758	 26	*	S2	 4	  1.9	 12.7	 13.3	      	      	      	      	7	 2.30	 2.52	 1.50	-1.92	S0  	                  	E0  	Tail-like features-weak radio (I)
+-13.6459	050.4758	 26	*	S2	 4	  1.9	 12.7	 13.3	      	      	      	      	7	 2.30	 2.52	 1.50	-1.92	S0  	                  	Scd 	Asym. morpho weak radio-IR (I)
+-11.7098	064.8382	 27	*	S3	 5	  3.8	 14.0	 15.1	      	      	      	      	4	 2.09	 2.10	 2.03	-0.97	Sb  	                  	S0  	Radio
+-11.7098	064.8382	 27	*	S3	 5	  3.8	 14.0	 15.1	      	      	      	      	4	 2.09	 2.10	 2.03	-0.97	SBc 	                  	S0  	Radio
+-11.7098	064.8382	 27	*	S3	 5	  3.8	 14.0	 15.1	      	      	      	      	4	 2.09	 2.10	 2.03	-0.97	Sa  	                  	S0  	Radio
+-11.7098	064.8382	 27	*	S3	 5	  3.8	 14.0	 15.1	      	      	      	      	4	 2.09	 2.10	 2.03	-0.97	S0a 	                  	S0  	Radio
+-11.7098	064.8382	 27	*	S3	 5	  3.8	 14.0	 15.1	      	      	      	      	4	 2.09	 2.10	 2.03	-0.97	S0  	                  	S0  	Radio
+-11.7098	064.8382	 27	*	S3	 5	  3.8	 14.0	 15.1	      	      	      	      	4	 2.09	 2.10	 2.03	-0.97	S0  	                  	S0  	Radio
+-10.3166	066.8313	 28	*	S1	 4	  1.2	 13.2	 13.7	      	      	      	      	3	 1.93	     	 1.34	-1.70	Sb  	                  	S0  	Probably interacting with 28a (I)
+-10.3166	066.8313	 28	*	S1	 4	  1.2	 13.2	 13.7	      	      	      	      	3	 1.93	     	 1.34	-1.70	Sb  	                  	Sb  	Extension toward 28e dust lane (I)
+-10.3166	066.8313	 28	*	S1	 4	  1.2	 13.2	 13.7	      	      	      	      	3	 1.93	     	 1.34	-1.70	E5  	                  	S0  	Probably interacting with 28a (I)
+-10.3166	066.8313	 28	*	S1	 4	  1.2	 13.2	 13.7	      	      	      	      	3	 1.93	     	 1.34	-1.70	E5  	                  	Sb  	Extension toward 28e dust lane (I)
+-10.3166	066.8313	 28	*	S1	 4	  1.2	 13.2	 13.7	      	      	      	      	3	 1.93	     	 1.34	-1.70	S0  	                  	S0  	Probably interacting with 28a (I)
+-10.3166	066.8313	 28	*	S1	 4	  1.2	 13.2	 13.7	      	      	      	      	3	 1.93	     	 1.34	-1.70	S0  	                  	Sb  	Extension toward 28e dust lane (I)
+-10.3166	066.8313	 28	*	S1	 4	  1.2	 13.2	 13.7	      	      	      	      	3	 1.93	     	 1.34	-1.70	Sdm 	                  	S0  	Probably interacting with 28a (I)
+-10.3166	066.8313	 28	*	S1	 4	  1.2	 13.2	 13.7	      	      	      	      	3	 1.93	     	 1.34	-1.70	Sdm 	                  	Sb  	Extension toward 28e dust lane (I)
+ -2.8324	069.1192	 30	*	S3	 4	  4.5	 11.6	 12.4	      	      	      	      	4	 1.86	 2.04	 1.71	-1.22	SB- 	                  	S0  	Boxy isophotes
+ -2.8324	069.1192	 30	*	S3	 4	  4.5	 11.6	 12.4	      	      	      	      	4	 1.86	 2.04	 1.71	-1.22	SB- 	                  	SBbc	Peculiar morpho (I)
+ -2.8324	069.1192	 30	*	S3	 4	  4.5	 11.6	 12.4	      	      	      	      	4	 1.86	 2.04	 1.71	-1.22	SB- 	                  	Sa  	Dust lane
+ -2.8324	069.1192	 30	*	S3	 4	  4.5	 11.6	 12.4	      	      	      	      	4	 1.86	 2.04	 1.71	-1.22	Sa  	                  	S0  	Boxy isophotes
+ -2.8324	069.1192	 30	*	S3	 4	  4.5	 11.6	 12.4	      	      	      	      	4	 1.86	 2.04	 1.71	-1.22	Sa  	                  	SBbc	Peculiar morpho (I)
+ -2.8324	069.1192	 30	*	S3	 4	  4.5	 11.6	 12.4	      	      	      	      	4	 1.86	 2.04	 1.71	-1.22	Sa  	                  	Sa  	Dust lane
+ -2.8324	069.1192	 30	*	S3	 4	  4.5	 11.6	 12.4	      	      	      	      	4	 1.86	 2.04	 1.71	-1.22	SBbc	                  	S0  	Boxy isophotes
+ -2.8324	069.1192	 30	*	S3	 4	  4.5	 11.6	 12.4	      	      	      	      	4	 1.86	 2.04	 1.71	-1.22	SBbc	                  	SBbc	Peculiar morpho (I)
+ -2.8324	069.1192	 30	*	S3	 4	  4.5	 11.6	 12.4	      	      	      	      	4	 1.86	 2.04	 1.71	-1.22	SBbc	                  	Sa  	Dust lane
+ -2.8324	069.1192	 30	*	S3	 4	  4.5	 11.6	 12.4	      	      	      	      	4	 1.86	 2.04	 1.71	-1.22	S0  	                  	S0  	Boxy isophotes
+ -2.8324	069.1192	 30	*	S3	 4	  4.5	 11.6	 12.4	      	      	      	      	4	 1.86	 2.04	 1.71	-1.22	S0  	                  	SBbc	Peculiar morpho (I)
+ -2.8324	069.1192	 30	*	S3	 4	  4.5	 11.6	 12.4	      	      	      	      	4	 1.86	 2.04	 1.71	-1.22	S0  	                  	Sa  	Dust lane
+ -4.2567	075.4037	 31	*	S2	 4	  0.9	 13.5	 14.3	      	      	      	      	3	 1.75	 1.82	 0.91	-1.80	Sdm 	N1741             	Im  	Peculiar morpho and r.c.-IR (I,M)
+ -4.2567	075.4037	 31	*	S2	 4	  0.9	 13.5	 14.3	      	      	      	      	3	 1.75	 1.82	 0.91	-1.80	Sdm 	N1741             	Sm  	Peculiar morpho and r.c.-WR-possibly IR (I)
+ -4.2567	075.4037	 31	*	S2	 4	  0.9	 13.5	 14.3	      	      	      	      	3	 1.75	 1.82	 0.91	-1.80	Sdm 	N1741             	Sdm 	Sinusoidal r.c.-disturbed morpho-WR-possibly IR (I,M)
+ -4.2567	075.4037	 31	*	S2	 4	  0.9	 13.5	 14.3	      	      	      	      	3	 1.75	 1.82	 0.91	-1.80	Sm  	                  	Im  	Peculiar morpho and r.c.-IR (I,M)
+ -4.2567	075.4037	 31	*	S2	 4	  0.9	 13.5	 14.3	      	      	      	      	3	 1.75	 1.82	 0.91	-1.80	Sm  	                  	Sm  	Peculiar morpho and r.c.-WR-possibly IR (I)
+ -4.2567	075.4037	 31	*	S2	 4	  0.9	 13.5	 14.3	      	      	      	      	3	 1.75	 1.82	 0.91	-1.80	Sm  	                  	Sdm 	Sinusoidal r.c.-disturbed morpho-WR-possibly IR (I,M)
+ -4.2567	075.4037	 31	*	S2	 4	  0.9	 13.5	 14.3	      	      	      	      	3	 1.75	 1.82	 0.91	-1.80	Im  	Mk1089            	Im  	Peculiar morpho and r.c.-IR (I,M)
+ -4.2567	075.4037	 31	*	S2	 4	  0.9	 13.5	 14.3	      	      	      	      	3	 1.75	 1.82	 0.91	-1.80	Im  	Mk1089            	Sm  	Peculiar morpho and r.c.-WR-possibly IR (I)
+ -4.2567	075.4037	 31	*	S2	 4	  0.9	 13.5	 14.3	      	      	      	      	3	 1.75	 1.82	 0.91	-1.80	Im  	Mk1089            	Sdm 	Sinusoidal r.c.-disturbed morpho-WR-possibly IR (I,M)
+ -4.2567	075.4037	 31	*	S2	 4	  0.9	 13.5	 14.3	      	      	      	      	3	 1.75	 1.82	 0.91	-1.80	Sbc 	                  	Im  	Peculiar morpho and r.c.-IR (I,M)
+ -4.2567	075.4037	 31	*	S2	 4	  0.9	 13.5	 14.3	      	      	      	      	3	 1.75	 1.82	 0.91	-1.80	Sbc 	                  	Sm  	Peculiar morpho and r.c.-WR-possibly IR (I)
+ -4.2567	075.4037	 31	*	S2	 4	  0.9	 13.5	 14.3	      	      	      	      	3	 1.75	 1.82	 0.91	-1.80	Sbc 	                  	Sdm 	Sinusoidal r.c.-disturbed morpho-WR-possibly IR (I,M)
++18.0346	077.6997	 33	*	E3	 4	  2.1	 12.4	 13.5	      	      	      	      	4	 2.19	 2.42	 1.39	-1.92	E1  	                  	Sd  	In common envelope with a and b-radio-IR (I)
++18.0346	077.6997	 33	*	E3	 4	  2.1	 12.4	 13.5	      	      	      	      	4	 2.19	 2.42	 1.39	-1.92	E1  	                  	E4  	Distorted outer isophote emission (I)
++18.0346	077.6997	 33	*	E3	 4	  2.1	 12.4	 13.5	      	      	      	      	4	 2.19	 2.42	 1.39	-1.92	E1  	                  	E1  	Distorted outer isophote emission-radio (I)
++18.0346	077.6997	 33	*	E3	 4	  2.1	 12.4	 13.5	      	      	      	      	4	 2.19	 2.42	 1.39	-1.92	E4  	                  	Sd  	In common envelope with a and b-radio-IR (I)
++18.0346	077.6997	 33	*	E3	 4	  2.1	 12.4	 13.5	      	      	      	      	4	 2.19	 2.42	 1.39	-1.92	E4  	                  	E4  	Distorted outer isophote emission (I)
++18.0346	077.6997	 33	*	E3	 4	  2.1	 12.4	 13.5	      	      	      	      	4	 2.19	 2.42	 1.39	-1.92	E4  	                  	E1  	Distorted outer isophote emission-radio (I)
++18.0346	077.6997	 33	*	E3	 4	  2.1	 12.4	 13.5	      	      	      	      	4	 2.19	 2.42	 1.39	-1.92	Sd  	                  	Sd  	In common envelope with a and b-radio-IR (I)
++18.0346	077.6997	 33	*	E3	 4	  2.1	 12.4	 13.5	      	      	      	      	4	 2.19	 2.42	 1.39	-1.92	Sd  	                  	E4  	Distorted outer isophote emission (I)
++18.0346	077.6997	 33	*	E3	 4	  2.1	 12.4	 13.5	      	      	      	      	4	 2.19	 2.42	 1.39	-1.92	Sd  	                  	E1  	Distorted outer isophote emission-radio (I)
++18.0346	077.6997	 33	*	E3	 4	  2.1	 12.4	 13.5	      	      	      	      	4	 2.19	 2.42	 1.39	-1.92	E0  	                  	Sd  	In common envelope with a and b-radio-IR (I)
++18.0346	077.6997	 33	*	E3	 4	  2.1	 12.4	 13.5	      	      	      	      	4	 2.19	 2.42	 1.39	-1.92	E0  	                  	E4  	Distorted outer isophote emission (I)
++18.0346	077.6997	 33	*	E3	 4	  2.1	 12.4	 13.5	      	      	      	      	4	 2.19	 2.42	 1.39	-1.92	E0  	                  	E1  	Distorted outer isophote emission-radio (I)
+ +6.6770	080.4476	 34	*	E1	 4	  1.2	 12.7	 13.1	      	      	      	      	4	 2.50	 2.74	 1.19	-2.44	E2  	N1875             	SBd 	Weak radio-irregular vel. pattern-possibly IR (n
+ +6.6770	080.4476	 34	*	E1	 4	  1.2	 12.7	 13.1	      	      	      	      	4	 2.50	 2.74	 1.19	-2.44	E2  	N1875             	Sd  	Tail-like feature-radio-IR (I)
+ +6.6770	080.4476	 34	*	E1	 4	  1.2	 12.7	 13.1	      	      	      	      	4	 2.50	 2.74	 1.19	-2.44	E2  	N1875             	E2  	[N II], H_alpha emission-two emission peaks-radio (I)
+ +6.6770	080.4476	 34	*	E1	 4	  1.2	 12.7	 13.1	      	      	      	      	4	 2.50	 2.74	 1.19	-2.44	Sd  	                  	SBd 	Weak radio-irregular vel. pattern-possibly IR (n
+ +6.6770	080.4476	 34	*	E1	 4	  1.2	 12.7	 13.1	      	      	      	      	4	 2.50	 2.74	 1.19	-2.44	Sd  	                  	Sd  	Tail-like feature-radio-IR (I)
+ +6.6770	080.4476	 34	*	E1	 4	  1.2	 12.7	 13.1	      	      	      	      	4	 2.50	 2.74	 1.19	-2.44	Sd  	                  	E2  	[N II], H_alpha emission-two emission peaks-radio (I)
+ +6.6770	080.4476	 34	*	E1	 4	  1.2	 12.7	 13.1	      	      	      	      	4	 2.50	 2.74	 1.19	-2.44	SBd 	                  	SBd 	Weak radio-irregular vel. pattern-possibly IR (n
+ +6.6770	080.4476	 34	*	E1	 4	  1.2	 12.7	 13.1	      	      	      	      	4	 2.50	 2.74	 1.19	-2.44	SBd 	                  	Sd  	Tail-like feature-radio-IR (I)
+ +6.6770	080.4476	 34	*	E1	 4	  1.2	 12.7	 13.1	      	      	      	      	4	 2.50	 2.74	 1.19	-2.44	SBd 	                  	E2  	[N II], H_alpha emission-two emission peaks-radio (I)
+ +6.6770	080.4476	 34	*	E1	 4	  1.2	 12.7	 13.1	      	      	      	      	4	 2.50	 2.74	 1.19	-2.44	S0  	                  	SBd 	Weak radio-irregular vel. pattern-possibly IR (n
+ +6.6770	080.4476	 34	*	E1	 4	  1.2	 12.7	 13.1	      	      	      	      	4	 2.50	 2.74	 1.19	-2.44	S0  	                  	Sd  	Tail-like feature-radio-IR (I)
+ +6.6770	080.4476	 34	*	E1	 4	  1.2	 12.7	 13.1	      	      	      	      	4	 2.50	 2.74	 1.19	-2.44	S0  	                  	E2  	[N II], H_alpha emission-two emission peaks-radio (I)
++44.5216	131.3315	 35	*	S3	 6	  2.2	 12.4	 13.6	      	      	      	      	6	 2.50	 2.74	 1.65	-1.98	S0  	                  	S0  	Weak emission which extends beyond the nucleus
++44.5216	131.3315	 35	*	S3	 6	  2.2	 12.4	 13.6	      	      	      	      	6	 2.50	 2.74	 1.65	-1.98	E1  	                  	S0  	Weak emission which extends beyond the nucleus
++44.5216	131.3315	 35	*	S3	 6	  2.2	 12.4	 13.6	      	      	      	      	6	 2.50	 2.74	 1.65	-1.98	E1  	                  	S0  	Weak emission which extends beyond the nucleus
++44.5216	131.3315	 35	*	S3	 6	  2.2	 12.4	 13.6	      	      	      	      	6	 2.50	 2.74	 1.65	-1.98	Sb  	                  	S0  	Weak emission which extends beyond the nucleus
++44.5216	131.3315	 35	*	S3	 6	  2.2	 12.4	 13.6	      	      	      	      	6	 2.50	 2.74	 1.65	-1.98	S0  	                  	S0  	Weak emission which extends beyond the nucleus
++44.5216	131.3315	 35	*	S3	 6	  2.2	 12.4	 13.6	      	      	      	      	6	 2.50	 2.74	 1.65	-1.98	E1  	                  	S0  	Weak emission which extends beyond the nucleus
++30.0142	138.3986	 37	*	E2	 5	  3.2	 11.5	 12.1	      	      	      	      	5	 2.60	 2.84	 1.46	-2.27	E7  	N2783 U4859       	E0  	Blue (I)
++30.0142	138.3986	 37	*	E2	 5	  3.2	 11.5	 12.1	      	      	      	      	5	 2.60	 2.84	 1.46	-2.27	E7  	N2783 U4859       	SBdm	Weak radio
++30.0142	138.3986	 37	*	E2	 5	  3.2	 11.5	 12.1	      	      	      	      	5	 2.60	 2.84	 1.46	-2.27	E7  	N2783 U4859       	S0a 	Contains ionized gas-in the envelope of 37a
++30.0142	138.3986	 37	*	E2	 5	  3.2	 11.5	 12.1	      	      	      	      	5	 2.60	 2.84	 1.46	-2.27	E7  	N2783 U4859       	Sbc 	Asym. vel. pattern-dust lane-radio IR (I)
++30.0142	138.3986	 37	*	E2	 5	  3.2	 11.5	 12.1	      	      	      	      	5	 2.60	 2.84	 1.46	-2.27	E7  	N2783 U4859       	E7  	Rapidly rotating disk of ionized gas-blue-radio (I)
++30.0142	138.3986	 37	*	E2	 5	  3.2	 11.5	 12.1	      	      	      	      	5	 2.60	 2.84	 1.46	-2.27	Sbc 	U4856             	E0  	Blue (I)
++30.0142	138.3986	 37	*	E2	 5	  3.2	 11.5	 12.1	      	      	      	      	5	 2.60	 2.84	 1.46	-2.27	Sbc 	U4856             	SBdm	Weak radio
++30.0142	138.3986	 37	*	E2	 5	  3.2	 11.5	 12.1	      	      	      	      	5	 2.60	 2.84	 1.46	-2.27	Sbc 	U4856             	S0a 	Contains ionized gas-in the envelope of 37a
++30.0142	138.3986	 37	*	E2	 5	  3.2	 11.5	 12.1	      	      	      	      	5	 2.60	 2.84	 1.46	-2.27	Sbc 	U4856             	Sbc 	Asym. vel. pattern-dust lane-radio IR (I)
++30.0142	138.3986	 37	*	E2	 5	  3.2	 11.5	 12.1	      	      	      	      	5	 2.60	 2.84	 1.46	-2.27	Sbc 	U4856             	E7  	Rapidly rotating disk of ionized gas-blue-radio (I)
++30.0142	138.3986	 37	*	E2	 5	  3.2	 11.5	 12.1	      	      	      	      	5	 2.60	 2.84	 1.46	-2.27	S0a 	                  	E0  	Blue (I)
++30.0142	138.3986	 37	*	E2	 5	  3.2	 11.5	 12.1	      	      	      	      	5	 2.60	 2.84	 1.46	-2.27	S0a 	                  	SBdm	Weak radio
++30.0142	138.3986	 37	*	E2	 5	  3.2	 11.5	 12.1	      	      	      	      	5	 2.60	 2.84	 1.46	-2.27	S0a 	                  	S0a 	Contains ionized gas-in the envelope of 37a
++30.0142	138.3986	 37	*	E2	 5	  3.2	 11.5	 12.1	      	      	      	      	5	 2.60	 2.84	 1.46	-2.27	S0a 	                  	Sbc 	Asym. vel. pattern-dust lane-radio IR (I)
++30.0142	138.3986	 37	*	E2	 5	  3.2	 11.5	 12.1	      	      	      	      	5	 2.60	 2.84	 1.46	-2.27	S0a 	                  	E7  	Rapidly rotating disk of ionized gas-blue-radio (I)
++30.0142	138.3986	 37	*	E2	 5	  3.2	 11.5	 12.1	      	      	      	      	5	 2.60	 2.84	 1.46	-2.27	SBdm	                  	E0  	Blue (I)
++30.0142	138.3986	 37	*	E2	 5	  3.2	 11.5	 12.1	      	      	      	      	5	 2.60	 2.84	 1.46	-2.27	SBdm	                  	SBdm	Weak radio
++30.0142	138.3986	 37	*	E2	 5	  3.2	 11.5	 12.1	      	      	      	      	5	 2.60	 2.84	 1.46	-2.27	SBdm	                  	S0a 	Contains ionized gas-in the envelope of 37a
++30.0142	138.3986	 37	*	E2	 5	  3.2	 11.5	 12.1	      	      	      	      	5	 2.60	 2.84	 1.46	-2.27	SBdm	                  	Sbc 	Asym. vel. pattern-dust lane-radio IR (I)
++30.0142	138.3986	 37	*	E2	 5	  3.2	 11.5	 12.1	      	      	      	      	5	 2.60	 2.84	 1.46	-2.27	SBdm	                  	E7  	Rapidly rotating disk of ionized gas-blue-radio (I)
++30.0142	138.3986	 37	*	E2	 5	  3.2	 11.5	 12.1	      	      	      	      	5	 2.60	 2.84	 1.46	-2.27	E0  	                  	E0  	Blue (I)
++30.0142	138.3986	 37	*	E2	 5	  3.2	 11.5	 12.1	      	      	      	      	5	 2.60	 2.84	 1.46	-2.27	E0  	                  	SBdm	Weak radio
++30.0142	138.3986	 37	*	E2	 5	  3.2	 11.5	 12.1	      	      	      	      	5	 2.60	 2.84	 1.46	-2.27	E0  	                  	S0a 	Contains ionized gas-in the envelope of 37a
++30.0142	138.3986	 37	*	E2	 5	  3.2	 11.5	 12.1	      	      	      	      	5	 2.60	 2.84	 1.46	-2.27	E0  	                  	Sbc 	Asym. vel. pattern-dust lane-radio IR (I)
++30.0142	138.3986	 37	*	E2	 5	  3.2	 11.5	 12.1	      	      	      	      	5	 2.60	 2.84	 1.46	-2.27	E0  	                  	E7  	Rapidly rotating disk of ionized gas-blue-radio (I)
++12.2808	141.9119	 38	*	S3	 4	  2.9	 12.5	 13.8	      	      	      	      	3	 1.11	     	 1.77	 0.88	Sbc 	                  	Im  	Strongly disturbed morpho-possibly IR (I,M)
++12.2808	141.9119	 38	*	S3	 4	  2.9	 12.5	 13.8	      	      	      	      	3	 1.11	     	 1.77	 0.88	Sbc 	                  	SBd 	Tidal tail-strongly disturbed morpho (I,M) IR
++12.2808	141.9119	 38	*	S3	 4	  2.9	 12.5	 13.8	      	      	      	      	3	 1.11	     	 1.77	 0.88	Sbc 	                  	Sbc 	Peculiar morpho (I)
++12.2808	141.9119	 38	*	S3	 4	  2.9	 12.5	 13.8	      	      	      	      	3	 1.11	     	 1.77	 0.88	SBd 	U5044a            	Im  	Strongly disturbed morpho-possibly IR (I,M)
++12.2808	141.9119	 38	*	S3	 4	  2.9	 12.5	 13.8	      	      	      	      	3	 1.11	     	 1.77	 0.88	SBd 	U5044a            	SBd 	Tidal tail-strongly disturbed morpho (I,M) IR
++12.2808	141.9119	 38	*	S3	 4	  2.9	 12.5	 13.8	      	      	      	      	3	 1.11	     	 1.77	 0.88	SBd 	U5044a            	Sbc 	Peculiar morpho (I)
++12.2808	141.9119	 38	*	S3	 4	  2.9	 12.5	 13.8	      	      	      	      	3	 1.11	     	 1.77	 0.88	Im  	U5044b            	Im  	Strongly disturbed morpho-possibly IR (I,M)
++12.2808	141.9119	 38	*	S3	 4	  2.9	 12.5	 13.8	      	      	      	      	3	 1.11	     	 1.77	 0.88	Im  	U5044b            	SBd 	Tidal tail-strongly disturbed morpho (I,M) IR
++12.2808	141.9119	 38	*	S3	 4	  2.9	 12.5	 13.8	      	      	      	      	3	 1.11	     	 1.77	 0.88	Im  	U5044b            	Sbc 	Peculiar morpho (I)
++12.2808	141.9119	 38	*	S3	 4	  2.9	 12.5	 13.8	      	      	      	      	3	 1.11	     	 1.77	 0.88	SBa 	                  	Im  	Strongly disturbed morpho-possibly IR (I,M)
++12.2808	141.9119	 38	*	S3	 4	  2.9	 12.5	 13.8	      	      	      	      	3	 1.11	     	 1.77	 0.88	SBa 	                  	SBd 	Tidal tail-strongly disturbed morpho (I,M) IR
++12.2808	141.9119	 38	*	S3	 4	  2.9	 12.5	 13.8	      	      	      	      	3	 1.11	     	 1.77	 0.88	SBa 	                  	Sbc 	Peculiar morpho (I)
+ -4.8520	144.7272	 40	*	E2	 6	  1.7	 11.4	 12.5	      	      	      	      	5	 2.17	 2.40	 1.18	-2.12	E3  	                  	Sc  	IR
+ -4.8520	144.7272	 40	*	E2	 6	  1.7	 11.4	 12.5	      	      	      	      	5	 2.17	 2.40	 1.18	-2.12	E3  	                  	SBa 	Extension southeast-peculiar radio-possibly IR (I)
+ -4.8520	144.7272	 40	*	E2	 6	  1.7	 11.4	 12.5	      	      	      	      	5	 2.17	 2.40	 1.18	-2.12	E3  	                  	Sbc 	Asym. H_alpha distribution-peculiar morpho-dust-radio-possibly IR (I)
+ -4.8520	144.7272	 40	*	E2	 6	  1.7	 11.4	 12.5	      	      	      	      	5	 2.17	 2.40	 1.18	-2.12	E3  	                  	S0  	Boxy-P.A. twist-emission - extension (I)
+ -4.8520	144.7272	 40	*	E2	 6	  1.7	 11.4	 12.5	      	      	      	      	5	 2.17	 2.40	 1.18	-2.12	E3  	                  	E3  	Disky elliptical-radio
+ -4.8520	144.7272	 40	*	E2	 6	  1.7	 11.4	 12.5	      	      	      	      	5	 2.17	 2.40	 1.18	-2.12	S0  	                  	Sc  	IR
+ -4.8520	144.7272	 40	*	E2	 6	  1.7	 11.4	 12.5	      	      	      	      	5	 2.17	 2.40	 1.18	-2.12	S0  	                  	SBa 	Extension southeast-peculiar radio-possibly IR (I)
+ -4.8520	144.7272	 40	*	E2	 6	  1.7	 11.4	 12.5	      	      	      	      	5	 2.17	 2.40	 1.18	-2.12	S0  	                  	Sbc 	Asym. H_alpha distribution-peculiar morpho-dust-radio-possibly IR (I)
+ -4.8520	144.7272	 40	*	E2	 6	  1.7	 11.4	 12.5	      	      	      	      	5	 2.17	 2.40	 1.18	-2.12	S0  	                  	S0  	Boxy-P.A. twist-emission - extension (I)
+ -4.8520	144.7272	 40	*	E2	 6	  1.7	 11.4	 12.5	      	      	      	      	5	 2.17	 2.40	 1.18	-2.12	S0  	                  	E3  	Disky elliptical-radio
+ -4.8520	144.7272	 40	*	E2	 6	  1.7	 11.4	 12.5	      	      	      	      	5	 2.17	 2.40	 1.18	-2.12	Sbc 	                  	Sc  	IR
+ -4.8520	144.7272	 40	*	E2	 6	  1.7	 11.4	 12.5	      	      	      	      	5	 2.17	 2.40	 1.18	-2.12	Sbc 	                  	SBa 	Extension southeast-peculiar radio-possibly IR (I)
+ -4.8520	144.7272	 40	*	E2	 6	  1.7	 11.4	 12.5	      	      	      	      	5	 2.17	 2.40	 1.18	-2.12	Sbc 	                  	Sbc 	Asym. H_alpha distribution-peculiar morpho-dust-radio-possibly IR (I)
+ -4.8520	144.7272	 40	*	E2	 6	  1.7	 11.4	 12.5	      	      	      	      	5	 2.17	 2.40	 1.18	-2.12	Sbc 	                  	S0  	Boxy-P.A. twist-emission - extension (I)
+ -4.8520	144.7272	 40	*	E2	 6	  1.7	 11.4	 12.5	      	      	      	      	5	 2.17	 2.40	 1.18	-2.12	Sbc 	                  	E3  	Disky elliptical-radio
+ -4.8520	144.7272	 40	*	E2	 6	  1.7	 11.4	 12.5	      	      	      	      	5	 2.17	 2.40	 1.18	-2.12	SBa 	                  	Sc  	IR
+ -4.8520	144.7272	 40	*	E2	 6	  1.7	 11.4	 12.5	      	      	      	      	5	 2.17	 2.40	 1.18	-2.12	SBa 	                  	SBa 	Extension southeast-peculiar radio-possibly IR (I)
+ -4.8520	144.7272	 40	*	E2	 6	  1.7	 11.4	 12.5	      	      	      	      	5	 2.17	 2.40	 1.18	-2.12	SBa 	                  	Sbc 	Asym. H_alpha distribution-peculiar morpho-dust-radio-possibly IR (I)
+ -4.8520	144.7272	 40	*	E2	 6	  1.7	 11.4	 12.5	      	      	      	      	5	 2.17	 2.40	 1.18	-2.12	SBa 	                  	S0  	Boxy-P.A. twist-emission - extension (I)
+ -4.8520	144.7272	 40	*	E2	 6	  1.7	 11.4	 12.5	      	      	      	      	5	 2.17	 2.40	 1.18	-2.12	SBa 	                  	E3  	Disky elliptical-radio
+ -4.8520	144.7272	 40	*	E2	 6	  1.7	 11.4	 12.5	      	      	      	      	5	 2.17	 2.40	 1.18	-2.12	Sc  	                  	Sc  	IR
+ -4.8520	144.7272	 40	*	E2	 6	  1.7	 11.4	 12.5	      	      	      	      	5	 2.17	 2.40	 1.18	-2.12	Sc  	                  	SBa 	Extension southeast-peculiar radio-possibly IR (I)
+ -4.8520	144.7272	 40	*	E2	 6	  1.7	 11.4	 12.5	      	      	      	      	5	 2.17	 2.40	 1.18	-2.12	Sc  	                  	Sbc 	Asym. H_alpha distribution-peculiar morpho-dust-radio-possibly IR (I)
+ -4.8520	144.7272	 40	*	E2	 6	  1.7	 11.4	 12.5	      	      	      	      	5	 2.17	 2.40	 1.18	-2.12	Sc  	                  	S0  	Boxy-P.A. twist-emission - extension (I)
+ -4.8520	144.7272	 40	*	E2	 6	  1.7	 11.4	 12.5	      	      	      	      	5	 2.17	 2.40	 1.18	-2.12	Sc  	                  	E3  	Disky elliptical-radio
+-19.6492	150.0909	 42	*	E1	 4	  6.0	 10.6	 10.9	N3091 	      	      	      	4	 2.33	 2.56	 1.65	-1.81	E3  	N3091             	E3  	Radio-inner boxy isophotes
+-19.6492	150.0909	 42	*	E1	 4	  6.0	 10.6	 10.9	N3091 	      	      	      	4	 2.33	 2.56	 1.65	-1.81	SB0 	                  	E3  	Radio-inner boxy isophotes
+-19.6492	150.0909	 42	*	E1	 4	  6.0	 10.6	 10.9	N3091 	      	      	      	4	 2.33	 2.56	 1.65	-1.81	E2  	                  	E3  	Radio-inner boxy isophotes
+-19.6492	150.0909	 42	*	E1	 4	  6.0	 10.6	 10.9	N3091 	      	      	      	4	 2.33	 2.56	 1.65	-1.81	E2  	                  	E3  	Radio-inner boxy isophotes
+ -0.0316	152.8075	 43	*	S2	 5	  3.5	 12.4	 13.3	      	      	      	      	5	 2.35	 2.58	 1.77	-1.70	Sb  	                  	S0  	Weak radio
+ -0.0316	152.8075	 43	*	S2	 5	  3.5	 12.4	 13.3	      	      	      	      	5	 2.35	 2.58	 1.77	-1.70	Sb  	                  	SBcd	Asym. morpho tidal spiral arm-weak radio (I)
+ -0.0316	152.8075	 43	*	S2	 5	  3.5	 12.4	 13.3	      	      	      	      	5	 2.35	 2.58	 1.77	-1.70	SBcd	                  	S0  	Weak radio
+ -0.0316	152.8075	 43	*	S2	 5	  3.5	 12.4	 13.3	      	      	      	      	5	 2.35	 2.58	 1.77	-1.70	SBcd	                  	SBcd	Asym. morpho tidal spiral arm-weak radio (I)
+ -0.0316	152.8075	 43	*	S2	 5	  3.5	 12.4	 13.3	      	      	      	      	5	 2.35	 2.58	 1.77	-1.70	SB0 	                  	S0  	Weak radio
+ -0.0316	152.8075	 43	*	S2	 5	  3.5	 12.4	 13.3	      	      	      	      	5	 2.35	 2.58	 1.77	-1.70	SB0 	                  	SBcd	Asym. morpho tidal spiral arm-weak radio (I)
+ -0.0316	152.8075	 43	*	S2	 5	  3.5	 12.4	 13.3	      	      	      	      	5	 2.35	 2.58	 1.77	-1.70	Sc  	                  	S0  	Weak radio
+ -0.0316	152.8075	 43	*	S2	 5	  3.5	 12.4	 13.3	      	      	      	      	5	 2.35	 2.58	 1.77	-1.70	Sc  	                  	SBcd	Asym. morpho tidal spiral arm-weak radio (I)
+ -0.0316	152.8075	 43	*	S2	 5	  3.5	 12.4	 13.3	      	      	      	      	5	 2.35	 2.58	 1.77	-1.70	S0  	                  	S0  	Weak radio
+ -0.0316	152.8075	 43	*	S2	 5	  3.5	 12.4	 13.3	      	      	      	      	5	 2.35	 2.58	 1.77	-1.70	S0  	                  	SBcd	Asym. morpho tidal spiral arm-weak radio (I)
+ -0.0316	152.8075	 43	*	S2	 5	  3.5	 12.4	 13.3	      	      	      	      	5	 2.35	 2.58	 1.77	-1.70	Sbc 	                  	S0  	Weak radio
+ -0.0316	152.8075	 43	*	S2	 5	  3.5	 12.4	 13.3	      	      	      	      	5	 2.35	 2.58	 1.77	-1.70	Sbc 	                  	SBcd	Asym. morpho tidal spiral arm-weak radio (I)
++21.8123	154.5020	 44	*	S2	 4	 16.4	  9.3	 10.0	ARP316	      	      	      	4	 2.13	 2.34	 1.58	-1.65	Sa  	N3190 U5559       	Sd  	Peculiar r.c.-tidal tail-weak radio IR (I)
++21.8123	154.5020	 44	*	S2	 4	 16.4	  9.3	 10.0	ARP316	      	      	      	4	 2.13	 2.34	 1.58	-1.65	Sa  	N3190 U5559       	SBc 	Seyfert-knotty ring in H_alpha (I) weak radio IR
++21.8123	154.5020	 44	*	S2	 4	 16.4	  9.3	 10.0	ARP316	      	      	      	4	 2.13	 2.34	 1.58	-1.65	Sa  	N3190 U5559       	E2  	[N 1l], H_alpha emission-rotating core (I)
++21.8123	154.5020	 44	*	S2	 4	 16.4	  9.3	 10.0	ARP316	      	      	      	4	 2.13	 2.34	 1.58	-1.65	Sa  	N3190 U5559       	Sa  	Peculiar vel. pattern and morpho dust-boxy-radio IR (I)
++21.8123	154.5020	 44	*	S2	 4	 16.4	  9.3	 10.0	ARP316	      	      	      	4	 2.13	 2.34	 1.58	-1.65	E2  	N3193 U5562       	Sd  	Peculiar r.c.-tidal tail-weak radio IR (I)
++21.8123	154.5020	 44	*	S2	 4	 16.4	  9.3	 10.0	ARP316	      	      	      	4	 2.13	 2.34	 1.58	-1.65	E2  	N3193 U5562       	SBc 	Seyfert-knotty ring in H_alpha (I) weak radio IR
++21.8123	154.5020	 44	*	S2	 4	 16.4	  9.3	 10.0	ARP316	      	      	      	4	 2.13	 2.34	 1.58	-1.65	E2  	N3193 U5562       	E2  	[N 1l], H_alpha emission-rotating core (I)
++21.8123	154.5020	 44	*	S2	 4	 16.4	  9.3	 10.0	ARP316	      	      	      	4	 2.13	 2.34	 1.58	-1.65	E2  	N3193 U5562       	Sa  	Peculiar vel. pattern and morpho dust-boxy-radio IR (I)
++21.8123	154.5020	 44	*	S2	 4	 16.4	  9.3	 10.0	ARP316	      	      	      	4	 2.13	 2.34	 1.58	-1.65	SBc 	N3185 U5554       	Sd  	Peculiar r.c.-tidal tail-weak radio IR (I)
++21.8123	154.5020	 44	*	S2	 4	 16.4	  9.3	 10.0	ARP316	      	      	      	4	 2.13	 2.34	 1.58	-1.65	SBc 	N3185 U5554       	SBc 	Seyfert-knotty ring in H_alpha (I) weak radio IR
++21.8123	154.5020	 44	*	S2	 4	 16.4	  9.3	 10.0	ARP316	      	      	      	4	 2.13	 2.34	 1.58	-1.65	SBc 	N3185 U5554       	E2  	[N 1l], H_alpha emission-rotating core (I)
++21.8123	154.5020	 44	*	S2	 4	 16.4	  9.3	 10.0	ARP316	      	      	      	4	 2.13	 2.34	 1.58	-1.65	SBc 	N3185 U5554       	Sa  	Peculiar vel. pattern and morpho dust-boxy-radio IR (I)
++21.8123	154.5020	 44	*	S2	 4	 16.4	  9.3	 10.0	ARP316	      	      	      	4	 2.13	 2.34	 1.58	-1.65	Sd  	N3187 U5556       	Sd  	Peculiar r.c.-tidal tail-weak radio IR (I)
++21.8123	154.5020	 44	*	S2	 4	 16.4	  9.3	 10.0	ARP316	      	      	      	4	 2.13	 2.34	 1.58	-1.65	Sd  	N3187 U5556       	SBc 	Seyfert-knotty ring in H_alpha (I) weak radio IR
++21.8123	154.5020	 44	*	S2	 4	 16.4	  9.3	 10.0	ARP316	      	      	      	4	 2.13	 2.34	 1.58	-1.65	Sd  	N3187 U5556       	E2  	[N 1l], H_alpha emission-rotating core (I)
++21.8123	154.5020	 44	*	S2	 4	 16.4	  9.3	 10.0	ARP316	      	      	      	4	 2.13	 2.34	 1.58	-1.65	Sd  	N3187 U5556       	Sa  	Peculiar vel. pattern and morpho dust-boxy-radio IR (I)
++59.1096	154.7970	 45	*	S1	 4	  3.4	 13.5	 14.0	U5564 	      	      	      	3	 2.26	 2.49	 2.02	-1.36	Sa  	U5564             	Sa  	Dust lane across galaxy
++59.1096	154.7970	 45	*	S1	 4	  3.4	 13.5	 14.0	U5564 	      	      	      	3	 2.26	 2.49	 2.02	-1.36	S0a 	                  	Sa  	Dust lane across galaxy
++59.1096	154.7970	 45	*	S1	 4	  3.4	 13.5	 14.0	U5564 	      	      	      	3	 2.26	 2.49	 2.02	-1.36	Sc  	                  	Sa  	Dust lane across galaxy
++59.1096	154.7970	 45	*	S1	 4	  3.4	 13.5	 14.0	U5564 	      	      	      	3	 2.26	 2.49	 2.02	-1.36	S0  	                  	Sa  	Dust lane across galaxy
++17.8149	155.5076	 46	*	E3	 4	  3.6	 12.3	 13.8	      	      	      	      	4	 2.51	 2.75	 1.60	-2.04	E3  	                  	E3  	Radio
++17.8149	155.5076	 46	*	E3	 4	  3.6	 12.3	 13.8	      	      	      	      	4	 2.51	 2.75	 1.60	-2.04	S0  	                  	E3  	Radio
++17.8149	155.5076	 46	*	E3	 4	  3.6	 12.3	 13.8	      	      	      	      	4	 2.51	 2.75	 1.60	-2.04	E1  	                  	E3  	Radio
++17.8149	155.5076	 46	*	E3	 4	  3.6	 12.3	 13.8	      	      	      	      	4	 2.51	 2.75	 1.60	-2.04	SB0 	                  	E3  	Radio
++13.7316	156.4518	 47	*	S1	 4	  2.3	 12.5	 12.9	U5644 	      	      	      	4	 1.63	     	 1.56	 0.66	SBb 	U5644             	E3  	Spiral features-weak radio - interacting with a (I)
++13.7316	156.4518	 47	*	S1	 4	  2.3	 12.5	 12.9	U5644 	      	      	      	4	 1.63	     	 1.56	 0.66	SBb 	U5644             	SBb 	Tidal spiral arm-radio-IR (I)
++13.7316	156.4518	 47	*	S1	 4	  2.3	 12.5	 12.9	U5644 	      	      	      	4	 1.63	     	 1.56	 0.66	E3  	                  	E3  	Spiral features-weak radio - interacting with a (I)
++13.7316	156.4518	 47	*	S1	 4	  2.3	 12.5	 12.9	U5644 	      	      	      	4	 1.63	     	 1.56	 0.66	E3  	                  	SBb 	Tidal spiral arm-radio-IR (I)
++13.7316	156.4518	 47	*	S1	 4	  2.3	 12.5	 12.9	U5644 	      	      	      	4	 1.63	     	 1.56	 0.66	Sc  	                  	E3  	Spiral features-weak radio - interacting with a (I)
++13.7316	156.4518	 47	*	S1	 4	  2.3	 12.5	 12.9	U5644 	      	      	      	4	 1.63	     	 1.56	 0.66	Sc  	                  	SBb 	Tidal spiral arm-radio-IR (I)
++13.7316	156.4518	 47	*	S1	 4	  2.3	 12.5	 12.9	U5644 	      	      	      	4	 1.63	     	 1.56	 0.66	Sd  	                  	E3  	Spiral features-weak radio - interacting with a (I)
++13.7316	156.4518	 47	*	S1	 4	  2.3	 12.5	 12.9	U5644 	      	      	      	4	 1.63	     	 1.56	 0.66	Sd  	                  	SBb 	Tidal spiral arm-radio-IR (I)
+-27.0875	163.9508	 48	*	E1	 4	  5.0	 11.6	 12.1	      	      	      	      	3	 2.48	 2.70	 1.31	-2.29	E2  	I2597             	Sc  	Peculiar morpho IR (I)
+-27.0875	163.9508	 48	*	E1	 4	  5.0	 11.6	 12.1	      	      	      	      	3	 2.48	 2.70	 1.31	-2.29	E2  	I2597             	E2  	Small disk in the oenter
+-27.0875	163.9508	 48	*	E1	 4	  5.0	 11.6	 12.1	      	      	      	      	3	 2.48	 2.70	 1.31	-2.29	Sc  	                  	Sc  	Peculiar morpho IR (I)
+-27.0875	163.9508	 48	*	E1	 4	  5.0	 11.6	 12.1	      	      	      	      	3	 2.48	 2.70	 1.31	-2.29	Sc  	                  	E2  	Small disk in the oenter
+-27.0875	163.9508	 48	*	E1	 4	  5.0	 11.6	 12.1	      	      	      	      	3	 2.48	 2.70	 1.31	-2.29	S0a 	                  	Sc  	Peculiar morpho IR (I)
+-27.0875	163.9508	 48	*	E1	 4	  5.0	 11.6	 12.1	      	      	      	      	3	 2.48	 2.70	 1.31	-2.29	S0a 	                  	E2  	Small disk in the oenter
+-27.0875	163.9508	 48	*	E1	 4	  5.0	 11.6	 12.1	      	      	      	      	3	 2.48	 2.70	 1.31	-2.29	E1  	                  	Sc  	Peculiar morpho IR (I)
+-27.0875	163.9508	 48	*	E1	 4	  5.0	 11.6	 12.1	      	      	      	      	3	 2.48	 2.70	 1.31	-2.29	E1  	                  	E2  	Small disk in the oenter
++67.1792	164.1520	 49	*	E2	 4	  0.9	 14.4	 15.2	      	      	      	      	4	 1.53	     	 1.09	 0.19	Scd 	                  	E5  	Too blue for its lumimosity - disturbed morpho (I,M)
++67.1792	164.1520	 49	*	E2	 4	  0.9	 14.4	 15.2	      	      	      	      	4	 1.53	     	 1.09	 0.19	Scd 	                  	Im  	Disturbed morpho (I)
++67.1792	164.1520	 49	*	E2	 4	  0.9	 14.4	 15.2	      	      	      	      	4	 1.53	     	 1.09	 0.19	Scd 	                  	Sd  	Disturbed morpho (I)
++67.1792	164.1520	 49	*	E2	 4	  0.9	 14.4	 15.2	      	      	      	      	4	 1.53	     	 1.09	 0.19	Scd 	                  	Scd 	Disturbed morpho (I)
++67.1792	164.1520	 49	*	E2	 4	  0.9	 14.4	 15.2	      	      	      	      	4	 1.53	     	 1.09	 0.19	Sd  	                  	E5  	Too blue for its lumimosity - disturbed morpho (I,M)
++67.1792	164.1520	 49	*	E2	 4	  0.9	 14.4	 15.2	      	      	      	      	4	 1.53	     	 1.09	 0.19	Sd  	                  	Im  	Disturbed morpho (I)
++67.1792	164.1520	 49	*	E2	 4	  0.9	 14.4	 15.2	      	      	      	      	4	 1.53	     	 1.09	 0.19	Sd  	                  	Sd  	Disturbed morpho (I)
++67.1792	164.1520	 49	*	E2	 4	  0.9	 14.4	 15.2	      	      	      	      	4	 1.53	     	 1.09	 0.19	Sd  	                  	Scd 	Disturbed morpho (I)
++67.1792	164.1520	 49	*	E2	 4	  0.9	 14.4	 15.2	      	      	      	      	4	 1.53	     	 1.09	 0.19	Im  	                  	E5  	Too blue for its lumimosity - disturbed morpho (I,M)
++67.1792	164.1520	 49	*	E2	 4	  0.9	 14.4	 15.2	      	      	      	      	4	 1.53	     	 1.09	 0.19	Im  	                  	Im  	Disturbed morpho (I)
++67.1792	164.1520	 49	*	E2	 4	  0.9	 14.4	 15.2	      	      	      	      	4	 1.53	     	 1.09	 0.19	Im  	                  	Sd  	Disturbed morpho (I)
++67.1792	164.1520	 49	*	E2	 4	  0.9	 14.4	 15.2	      	      	      	      	4	 1.53	     	 1.09	 0.19	Im  	                  	Scd 	Disturbed morpho (I)
++67.1792	164.1520	 49	*	E2	 4	  0.9	 14.4	 15.2	      	      	      	      	4	 1.53	     	 1.09	 0.19	E5  	                  	E5  	Too blue for its lumimosity - disturbed morpho (I,M)
++67.1792	164.1520	 49	*	E2	 4	  0.9	 14.4	 15.2	      	      	      	      	4	 1.53	     	 1.09	 0.19	E5  	                  	Im  	Disturbed morpho (I)
++67.1792	164.1520	 49	*	E2	 4	  0.9	 14.4	 15.2	      	      	      	      	4	 1.53	     	 1.09	 0.19	E5  	                  	Sd  	Disturbed morpho (I)
++67.1792	164.1520	 49	*	E2	 4	  0.9	 14.4	 15.2	      	      	      	      	4	 1.53	     	 1.09	 0.19	E5  	                  	Scd 	Disturbed morpho (I)
++24.2932	170.5870	 51	*	E2	 6	  4.5	 11.5	 12.6	N3651 	U6388 	      	      	5	 2.38	 2.61	 1.77	-1.73	E1  	N3651 U6388       	E2  	Faint disk in the center
++24.2932	170.5870	 51	*	E2	 6	  4.5	 11.5	 12.6	N3651 	U6388 	      	      	5	 2.38	 2.61	 1.77	-1.73	SBbc	                  	E2  	Faint disk in the center
++24.2932	170.5870	 51	*	E2	 6	  4.5	 11.5	 12.6	N3651 	U6388 	      	      	5	 2.38	 2.61	 1.77	-1.73	S0  	N3653             	E2  	Faint disk in the center
++24.2932	170.5870	 51	*	E2	 6	  4.5	 11.5	 12.6	N3651 	U6388 	      	      	5	 2.38	 2.61	 1.77	-1.73	Sa  	                  	E2  	Faint disk in the center
++24.2932	170.5870	 51	*	E2	 6	  4.5	 11.5	 12.6	N3651 	U6388 	      	      	5	 2.38	 2.61	 1.77	-1.73	E2  	                  	E2  	Faint disk in the center
++24.2932	170.5870	 51	*	E2	 6	  4.5	 11.5	 12.6	N3651 	U6388 	      	      	5	 2.38	 2.61	 1.77	-1.73	S0  	                  	E2  	Faint disk in the center
++24.2932	170.5870	 51	*	E2	 6	  4.5	 11.5	 12.6	N3651 	U6388 	      	      	5	 2.38	 2.61	 1.77	-1.73	cI  	                  	E2  	Faint disk in the center
++20.7763	172.2431	 53	*	S1	 4	 12.9	 11.5	 12.2	N3697 	U6479 	      	      	3	 1.91	 2.00	 1.76	-1.14	SBbc	N3697 U6479       	SBd 	Peculiar morpho-tail-like feature toward 53b (I)
++20.7763	172.2431	 53	*	S1	 4	 12.9	 11.5	 12.2	N3697 	U6479 	      	      	3	 1.91	 2.00	 1.76	-1.14	SBbc	N3697 U6479       	S0  	Extension toward 53c (?)
++20.7763	172.2431	 53	*	S1	 4	 12.9	 11.5	 12.2	N3697 	U6479 	      	      	3	 1.91	 2.00	 1.76	-1.14	S0  	                  	SBd 	Peculiar morpho-tail-like feature toward 53b (I)
++20.7763	172.2431	 53	*	S1	 4	 12.9	 11.5	 12.2	N3697 	U6479 	      	      	3	 1.91	 2.00	 1.76	-1.14	S0  	                  	S0  	Extension toward 53c (?)
++20.7763	172.2431	 53	*	S1	 4	 12.9	 11.5	 12.2	N3697 	U6479 	      	      	3	 1.91	 2.00	 1.76	-1.14	SBd 	Mk1296            	SBd 	Peculiar morpho-tail-like feature toward 53b (I)
++20.7763	172.2431	 53	*	S1	 4	 12.9	 11.5	 12.2	N3697 	U6479 	      	      	3	 1.91	 2.00	 1.76	-1.14	SBd 	Mk1296            	S0  	Extension toward 53c (?)
++20.7763	172.2431	 53	*	S1	 4	 12.9	 11.5	 12.2	N3697 	U6479 	      	      	3	 1.91	 2.00	 1.76	-1.14	Sc  	                  	SBd 	Peculiar morpho-tail-like feature toward 53b (I)
++20.7763	172.2431	 53	*	S1	 4	 12.9	 11.5	 12.2	N3697 	U6479 	      	      	3	 1.91	 2.00	 1.76	-1.14	Sc  	                  	S0  	Extension toward 53c (?)
++20.5785	172.3136	 54	*	E2	 4	  0.7	 14.3	 15.0	ROSE27	I700  	U6487 	      	4	 2.05	 2.26	 0.20	-2.96	Sdm 	I700 U6487        	Im  	54abc may be a single galaxy
++20.5785	172.3136	 54	*	E2	 4	  0.7	 14.3	 15.0	ROSE27	I700  	U6487 	      	4	 2.05	 2.26	 0.20	-2.96	Sdm 	I700 U6487        	Im  	54abc may be a single galaxy
++20.5785	172.3136	 54	*	E2	 4	  0.7	 14.3	 15.0	ROSE27	I700  	U6487 	      	4	 2.05	 2.26	 0.20	-2.96	Sdm 	I700 U6487        	Sdm 	Strongly disturbed morpho (I)
++20.5785	172.3136	 54	*	E2	 4	  0.7	 14.3	 15.0	ROSE27	I700  	U6487 	      	4	 2.05	 2.26	 0.20	-2.96	Im  	                  	Im  	54abc may be a single galaxy
++20.5785	172.3136	 54	*	E2	 4	  0.7	 14.3	 15.0	ROSE27	I700  	U6487 	      	4	 2.05	 2.26	 0.20	-2.96	Im  	                  	Im  	54abc may be a single galaxy
++20.5785	172.3136	 54	*	E2	 4	  0.7	 14.3	 15.0	ROSE27	I700  	U6487 	      	4	 2.05	 2.26	 0.20	-2.96	Im  	                  	Sdm 	Strongly disturbed morpho (I)
++20.5785	172.3136	 54	*	E2	 4	  0.7	 14.3	 15.0	ROSE27	I700  	U6487 	      	4	 2.05	 2.26	 0.20	-2.96	Im  	                  	Im  	54abc may be a single galaxy
++20.5785	172.3136	 54	*	E2	 4	  0.7	 14.3	 15.0	ROSE27	I700  	U6487 	      	4	 2.05	 2.26	 0.20	-2.96	Im  	                  	Im  	54abc may be a single galaxy
++20.5785	172.3136	 54	*	E2	 4	  0.7	 14.3	 15.0	ROSE27	I700  	U6487 	      	4	 2.05	 2.26	 0.20	-2.96	Im  	                  	Sdm 	Strongly disturbed morpho (I)
++20.5785	172.3136	 54	*	E2	 4	  0.7	 14.3	 15.0	ROSE27	I700  	U6487 	      	4	 2.05	 2.26	 0.20	-2.96	Im  	                  	Im  	54abc may be a single galaxy
++20.5785	172.3136	 54	*	E2	 4	  0.7	 14.3	 15.0	ROSE27	I700  	U6487 	      	4	 2.05	 2.26	 0.20	-2.96	Im  	                  	Im  	54abc may be a single galaxy
++20.5785	172.3136	 54	*	E2	 4	  0.7	 14.3	 15.0	ROSE27	I700  	U6487 	      	4	 2.05	 2.26	 0.20	-2.96	Im  	                  	Sdm 	Strongly disturbed morpho (I)
++70.8120	173.0311	 55	*	E3	 5	  0.9	 13.4	 14.9	ARP329	VV172 	U6514 	      	4	 2.33	 2.52	 1.28	-2.13	E0  	U6514             	S0  	Disturbed-dust lane (?)
++70.8120	173.0311	 55	*	E3	 5	  0.9	 13.4	 14.9	ARP329	VV172 	U6514 	      	4	 2.33	 2.52	 1.28	-2.13	S0  	U6514             	S0  	Disturbed-dust lane (?)
++70.8120	173.0311	 55	*	E3	 5	  0.9	 13.4	 14.9	ARP329	VV172 	U6514 	      	4	 2.33	 2.52	 1.28	-2.13	E3  	U6514             	S0  	Disturbed-dust lane (?)
++70.8120	173.0311	 55	*	E3	 5	  0.9	 13.4	 14.9	ARP329	VV172 	U6514 	      	4	 2.33	 2.52	 1.28	-2.13	E2  	U6514             	S0  	Disturbed-dust lane (?)
++70.8120	173.0311	 55	*	E3	 5	  0.9	 13.4	 14.9	ARP329	VV172 	U6514 	      	4	 2.33	 2.52	 1.28	-2.13	Sc  	U6514             	S0  	Disturbed-dust lane (?)
++52.9486	173.1330	 56	*	S3	 5	  2.1	 12.2	 13.1	ARP322	VV150 	U6527 	      	5	 2.23	 2.45	 1.33	-2.02	Sc  	Mk176             	S0  	Boxy, too blue for its luminosity (I,M)
++52.9486	173.1330	 56	*	S3	 5	  2.1	 12.2	 13.1	ARP322	VV150 	U6527 	      	5	 2.23	 2.45	 1.33	-2.02	Sc  	Mk176             	S0  	Disturbed morpho-weak radio (I)
++52.9486	173.1330	 56	*	S3	 5	  2.1	 12.2	 13.1	ARP322	VV150 	U6527 	      	5	 2.23	 2.45	 1.33	-2.02	Sc  	Mk176             	S0  	Extension to the northeast and south-IR (I)
++52.9486	173.1330	 56	*	S3	 5	  2.1	 12.2	 13.1	ARP322	VV150 	U6527 	      	5	 2.23	 2.45	 1.33	-2.02	Sc  	Mk176             	SB0 	Warped disk extending toward c - radio (I)
++52.9486	173.1330	 56	*	S3	 5	  2.1	 12.2	 13.1	ARP322	VV150 	U6527 	      	5	 2.23	 2.45	 1.33	-2.02	Sc  	Mk176             	Sc  	Radio-Seyfert-type spectrum (I)
++52.9486	173.1330	 56	*	S3	 5	  2.1	 12.2	 13.1	ARP322	VV150 	U6527 	      	5	 2.23	 2.45	 1.33	-2.02	SB0 	U6257             	S0  	Boxy, too blue for its luminosity (I,M)
++52.9486	173.1330	 56	*	S3	 5	  2.1	 12.2	 13.1	ARP322	VV150 	U6527 	      	5	 2.23	 2.45	 1.33	-2.02	SB0 	U6257             	S0  	Disturbed morpho-weak radio (I)
++52.9486	173.1330	 56	*	S3	 5	  2.1	 12.2	 13.1	ARP322	VV150 	U6527 	      	5	 2.23	 2.45	 1.33	-2.02	SB0 	U6257             	S0  	Extension to the northeast and south-IR (I)
++52.9486	173.1330	 56	*	S3	 5	  2.1	 12.2	 13.1	ARP322	VV150 	U6527 	      	5	 2.23	 2.45	 1.33	-2.02	SB0 	U6257             	SB0 	Warped disk extending toward c - radio (I)
++52.9486	173.1330	 56	*	S3	 5	  2.1	 12.2	 13.1	ARP322	VV150 	U6527 	      	5	 2.23	 2.45	 1.33	-2.02	SB0 	U6257             	Sc  	Radio-Seyfert-type spectrum (I)
++52.9486	173.1330	 56	*	S3	 5	  2.1	 12.2	 13.1	ARP322	VV150 	U6527 	      	5	 2.23	 2.45	 1.33	-2.02	S0  	U6257             	S0  	Boxy, too blue for its luminosity (I,M)
++52.9486	173.1330	 56	*	S3	 5	  2.1	 12.2	 13.1	ARP322	VV150 	U6527 	      	5	 2.23	 2.45	 1.33	-2.02	S0  	U6257             	S0  	Disturbed morpho-weak radio (I)
++52.9486	173.1330	 56	*	S3	 5	  2.1	 12.2	 13.1	ARP322	VV150 	U6527 	      	5	 2.23	 2.45	 1.33	-2.02	S0  	U6257             	S0  	Extension to the northeast and south-IR (I)
++52.9486	173.1330	 56	*	S3	 5	  2.1	 12.2	 13.1	ARP322	VV150 	U6527 	      	5	 2.23	 2.45	 1.33	-2.02	S0  	U6257             	SB0 	Warped disk extending toward c - radio (I)
++52.9486	173.1330	 56	*	S3	 5	  2.1	 12.2	 13.1	ARP322	VV150 	U6527 	      	5	 2.23	 2.45	 1.33	-2.02	S0  	U6257             	Sc  	Radio-Seyfert-type spectrum (I)
++52.9486	173.1330	 56	*	S3	 5	  2.1	 12.2	 13.1	ARP322	VV150 	U6527 	      	5	 2.23	 2.45	 1.33	-2.02	S0  	U6257             	S0  	Boxy, too blue for its luminosity (I,M)
++52.9486	173.1330	 56	*	S3	 5	  2.1	 12.2	 13.1	ARP322	VV150 	U6527 	      	5	 2.23	 2.45	 1.33	-2.02	S0  	U6257             	S0  	Disturbed morpho-weak radio (I)
++52.9486	173.1330	 56	*	S3	 5	  2.1	 12.2	 13.1	ARP322	VV150 	U6527 	      	5	 2.23	 2.45	 1.33	-2.02	S0  	U6257             	S0  	Extension to the northeast and south-IR (I)
++52.9486	173.1330	 56	*	S3	 5	  2.1	 12.2	 13.1	ARP322	VV150 	U6527 	      	5	 2.23	 2.45	 1.33	-2.02	S0  	U6257             	SB0 	Warped disk extending toward c - radio (I)
++52.9486	173.1330	 56	*	S3	 5	  2.1	 12.2	 13.1	ARP322	VV150 	U6527 	      	5	 2.23	 2.45	 1.33	-2.02	S0  	U6257             	Sc  	Radio-Seyfert-type spectrum (I)
++52.9486	173.1330	 56	*	S3	 5	  2.1	 12.2	 13.1	ARP322	VV150 	U6527 	      	5	 2.23	 2.45	 1.33	-2.02	S0  	                  	S0  	Boxy, too blue for its luminosity (I,M)
++52.9486	173.1330	 56	*	S3	 5	  2.1	 12.2	 13.1	ARP322	VV150 	U6527 	      	5	 2.23	 2.45	 1.33	-2.02	S0  	                  	S0  	Disturbed morpho-weak radio (I)
++52.9486	173.1330	 56	*	S3	 5	  2.1	 12.2	 13.1	ARP322	VV150 	U6527 	      	5	 2.23	 2.45	 1.33	-2.02	S0  	                  	S0  	Extension to the northeast and south-IR (I)
++52.9486	173.1330	 56	*	S3	 5	  2.1	 12.2	 13.1	ARP322	VV150 	U6527 	      	5	 2.23	 2.45	 1.33	-2.02	S0  	                  	SB0 	Warped disk extending toward c - radio (I)
++52.9486	173.1330	 56	*	S3	 5	  2.1	 12.2	 13.1	ARP322	VV150 	U6527 	      	5	 2.23	 2.45	 1.33	-2.02	S0  	                  	Sc  	Radio-Seyfert-type spectrum (I)
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	Sb  	N3753 U6602a      	SB0 	Emission
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	Sb  	N3753 U6602a      	E4  	Faint disk-extended galaxy (I)
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	Sb  	N3753 U6602a      	S0a 	Peculiar r.c. dust-warped disk extended toward 57h (I)
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	Sb  	N3753 U6602a      	SBc 	Peculiar morpho radio IR (I)
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	Sb  	N3753 U6602a      	E3  	Faint disk
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	Sb  	N3753 U6602a      	SBb 	Asym. morpho-outer ring bright in H_alpha (I)
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	Sb  	N3753 U6602a      	Sb  	Peculiar morpho and r.c.-tidal tail dust-possibly IR (I)
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	SBb 	N3746 U6597       	SB0 	Emission
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	SBb 	N3746 U6597       	E4  	Faint disk-extended galaxy (I)
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	SBb 	N3746 U6597       	S0a 	Peculiar r.c. dust-warped disk extended toward 57h (I)
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	SBb 	N3746 U6597       	SBc 	Peculiar morpho radio IR (I)
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	SBb 	N3746 U6597       	E3  	Faint disk
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	SBb 	N3746 U6597       	SBb 	Asym. morpho-outer ring bright in H_alpha (I)
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	SBb 	N3746 U6597       	Sb  	Peculiar morpho and r.c.-tidal tail dust-possibly IR (I)
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	E3  	N3750             	SB0 	Emission
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	E3  	N3750             	E4  	Faint disk-extended galaxy (I)
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	E3  	N3750             	S0a 	Peculiar r.c. dust-warped disk extended toward 57h (I)
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	E3  	N3750             	SBc 	Peculiar morpho radio IR (I)
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	E3  	N3750             	E3  	Faint disk
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	E3  	N3750             	SBb 	Asym. morpho-outer ring bright in H_alpha (I)
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	E3  	N3750             	Sb  	Peculiar morpho and r.c.-tidal tail dust-possibly IR (I)
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	SBc 	N3754             	SB0 	Emission
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	SBc 	N3754             	E4  	Faint disk-extended galaxy (I)
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	SBc 	N3754             	S0a 	Peculiar r.c. dust-warped disk extended toward 57h (I)
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	SBc 	N3754             	SBc 	Peculiar morpho radio IR (I)
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	SBc 	N3754             	E3  	Faint disk
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	SBc 	N3754             	SBb 	Asym. morpho-outer ring bright in H_alpha (I)
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	SBc 	N3754             	Sb  	Peculiar morpho and r.c.-tidal tail dust-possibly IR (I)
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	S0a 	N3748             	SB0 	Emission
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	S0a 	N3748             	E4  	Faint disk-extended galaxy (I)
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	S0a 	N3748             	S0a 	Peculiar r.c. dust-warped disk extended toward 57h (I)
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	S0a 	N3748             	SBc 	Peculiar morpho radio IR (I)
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	S0a 	N3748             	E3  	Faint disk
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	S0a 	N3748             	SBb 	Asym. morpho-outer ring bright in H_alpha (I)
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	S0a 	N3748             	Sb  	Peculiar morpho and r.c.-tidal tail dust-possibly IR (I)
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	E4  	N3751             	SB0 	Emission
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	E4  	N3751             	E4  	Faint disk-extended galaxy (I)
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	E4  	N3751             	S0a 	Peculiar r.c. dust-warped disk extended toward 57h (I)
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	E4  	N3751             	SBc 	Peculiar morpho radio IR (I)
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	E4  	N3751             	E3  	Faint disk
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	E4  	N3751             	SBb 	Asym. morpho-outer ring bright in H_alpha (I)
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	E4  	N3751             	Sb  	Peculiar morpho and r.c.-tidal tail dust-possibly IR (I)
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	SB0 	N3745             	SB0 	Emission
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	SB0 	N3745             	E4  	Faint disk-extended galaxy (I)
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	SB0 	N3745             	S0a 	Peculiar r.c. dust-warped disk extended toward 57h (I)
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	SB0 	N3745             	SBc 	Peculiar morpho radio IR (I)
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	SB0 	N3745             	E3  	Faint disk
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	SB0 	N3745             	SBb 	Asym. morpho-outer ring bright in H_alpha (I)
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	SB0 	N3745             	Sb  	Peculiar morpho and r.c.-tidal tail dust-possibly IR (I)
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	SBb 	                  	SB0 	Emission
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	SBb 	                  	E4  	Faint disk-extended galaxy (I)
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	SBb 	                  	S0a 	Peculiar r.c. dust-warped disk extended toward 57h (I)
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	SBb 	                  	SBc 	Peculiar morpho radio IR (I)
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	SBb 	                  	E3  	Faint disk
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	SBb 	                  	SBb 	Asym. morpho-outer ring bright in H_alpha (I)
++21.9850	174.4605	 57	*	S2	 8	  5.5	 11.4	 12.6	ARP320	VV282 	U6602 	      	7	 2.43	 2.66	 1.86	-1.69	SBb 	                  	Sb  	Peculiar morpho and r.c.-tidal tail dust-possibly IR (I)
++10.3170	175.5491	 58	*	S3	 5	  8.8	 12.6	 13.5	N3825 	U6668 	      	      	5	 2.21	 2.44	 1.95	-1.39	Sb  	N3822 U6661       	Sbc 	Asym. morpho (I)
++10.3170	175.5491	 58	*	S3	 5	  8.8	 12.6	 13.5	N3825 	U6668 	      	      	5	 2.21	 2.44	 1.95	-1.39	Sb  	N3822 U6661       	E1  	Long straight jet south of the galaxy (I)
++10.3170	175.5491	 58	*	S3	 5	  8.8	 12.6	 13.5	N3825 	U6668 	      	      	5	 2.21	 2.44	 1.95	-1.39	Sb  	N3822 U6661       	SB0a	Weak radio
++10.3170	175.5491	 58	*	S3	 5	  8.8	 12.6	 13.5	N3825 	U6668 	      	      	5	 2.21	 2.44	 1.95	-1.39	Sb  	N3822 U6661       	Sb  	Two ansac 10 kpc from nucleus-radio-IR (I)
++10.3170	175.5491	 58	*	S3	 5	  8.8	 12.6	 13.5	N3825 	U6668 	      	      	5	 2.21	 2.44	 1.95	-1.39	SBab	N3825 U6668       	Sbc 	Asym. morpho (I)
++10.3170	175.5491	 58	*	S3	 5	  8.8	 12.6	 13.5	N3825 	U6668 	      	      	5	 2.21	 2.44	 1.95	-1.39	SBab	N3825 U6668       	E1  	Long straight jet south of the galaxy (I)
++10.3170	175.5491	 58	*	S3	 5	  8.8	 12.6	 13.5	N3825 	U6668 	      	      	5	 2.21	 2.44	 1.95	-1.39	SBab	N3825 U6668       	SB0a	Weak radio
++10.3170	175.5491	 58	*	S3	 5	  8.8	 12.6	 13.5	N3825 	U6668 	      	      	5	 2.21	 2.44	 1.95	-1.39	SBab	N3825 U6668       	Sb  	Two ansac 10 kpc from nucleus-radio-IR (I)
++10.3170	175.5491	 58	*	S3	 5	  8.8	 12.6	 13.5	N3825 	U6668 	      	      	5	 2.21	 2.44	 1.95	-1.39	SB0a	N3817 U6657       	Sbc 	Asym. morpho (I)
++10.3170	175.5491	 58	*	S3	 5	  8.8	 12.6	 13.5	N3825 	U6668 	      	      	5	 2.21	 2.44	 1.95	-1.39	SB0a	N3817 U6657       	E1  	Long straight jet south of the galaxy (I)
++10.3170	175.5491	 58	*	S3	 5	  8.8	 12.6	 13.5	N3825 	U6668 	      	      	5	 2.21	 2.44	 1.95	-1.39	SB0a	N3817 U6657       	SB0a	Weak radio
++10.3170	175.5491	 58	*	S3	 5	  8.8	 12.6	 13.5	N3825 	U6668 	      	      	5	 2.21	 2.44	 1.95	-1.39	SB0a	N3817 U6657       	Sb  	Two ansac 10 kpc from nucleus-radio-IR (I)
++10.3170	175.5491	 58	*	S3	 5	  8.8	 12.6	 13.5	N3825 	U6668 	      	      	5	 2.21	 2.44	 1.95	-1.39	E1  	N3819             	Sbc 	Asym. morpho (I)
++10.3170	175.5491	 58	*	S3	 5	  8.8	 12.6	 13.5	N3825 	U6668 	      	      	5	 2.21	 2.44	 1.95	-1.39	E1  	N3819             	E1  	Long straight jet south of the galaxy (I)
++10.3170	175.5491	 58	*	S3	 5	  8.8	 12.6	 13.5	N3825 	U6668 	      	      	5	 2.21	 2.44	 1.95	-1.39	E1  	N3819             	SB0a	Weak radio
++10.3170	175.5491	 58	*	S3	 5	  8.8	 12.6	 13.5	N3825 	U6668 	      	      	5	 2.21	 2.44	 1.95	-1.39	E1  	N3819             	Sb  	Two ansac 10 kpc from nucleus-radio-IR (I)
++10.3170	175.5491	 58	*	S3	 5	  8.8	 12.6	 13.5	N3825 	U6668 	      	      	5	 2.21	 2.44	 1.95	-1.39	Sbc 	N3820             	Sbc 	Asym. morpho (I)
++10.3170	175.5491	 58	*	S3	 5	  8.8	 12.6	 13.5	N3825 	U6668 	      	      	5	 2.21	 2.44	 1.95	-1.39	Sbc 	N3820             	E1  	Long straight jet south of the galaxy (I)
++10.3170	175.5491	 58	*	S3	 5	  8.8	 12.6	 13.5	N3825 	U6668 	      	      	5	 2.21	 2.44	 1.95	-1.39	Sbc 	N3820             	SB0a	Weak radio
++10.3170	175.5491	 58	*	S3	 5	  8.8	 12.6	 13.5	N3825 	U6668 	      	      	5	 2.21	 2.44	 1.95	-1.39	Sbc 	N3820             	Sb  	Two ansac 10 kpc from nucleus-radio-IR (I)
++12.7262	177.1067	 59	*	E3	 5	  2.1	 12.5	 13.5	ROSE7 	      	      	      	4	 2.28	 2.51	 1.33	-2.07	Sa  	I736              	Im  	Peculiar morpho-IR (I)
++12.7262	177.1067	 59	*	E3	 5	  2.1	 12.5	 13.5	ROSE7 	      	      	      	4	 2.28	 2.51	 1.33	-2.07	Sa  	I736              	E0  	Extended galaxy (I)
++12.7262	177.1067	 59	*	E3	 5	  2.1	 12.5	 13.5	ROSE7 	      	      	      	4	 2.28	 2.51	 1.33	-2.07	Sa  	I736              	Sa  	Radio-possibly IR
++12.7262	177.1067	 59	*	E3	 5	  2.1	 12.5	 13.5	ROSE7 	      	      	      	4	 2.28	 2.51	 1.33	-2.07	E0  	                  	Im  	Peculiar morpho-IR (I)
++12.7262	177.1067	 59	*	E3	 5	  2.1	 12.5	 13.5	ROSE7 	      	      	      	4	 2.28	 2.51	 1.33	-2.07	E0  	                  	E0  	Extended galaxy (I)
++12.7262	177.1067	 59	*	E3	 5	  2.1	 12.5	 13.5	ROSE7 	      	      	      	4	 2.28	 2.51	 1.33	-2.07	E0  	                  	Sa  	Radio-possibly IR
++12.7262	177.1067	 59	*	E3	 5	  2.1	 12.5	 13.5	ROSE7 	      	      	      	4	 2.28	 2.51	 1.33	-2.07	Sc  	                  	Im  	Peculiar morpho-IR (I)
++12.7262	177.1067	 59	*	E3	 5	  2.1	 12.5	 13.5	ROSE7 	      	      	      	4	 2.28	 2.51	 1.33	-2.07	Sc  	                  	E0  	Extended galaxy (I)
++12.7262	177.1067	 59	*	E3	 5	  2.1	 12.5	 13.5	ROSE7 	      	      	      	4	 2.28	 2.51	 1.33	-2.07	Sc  	                  	Sa  	Radio-possibly IR
++12.7262	177.1067	 59	*	E3	 5	  2.1	 12.5	 13.5	ROSE7 	      	      	      	4	 2.28	 2.51	 1.33	-2.07	Im  	1737              	Im  	Peculiar morpho-IR (I)
++12.7262	177.1067	 59	*	E3	 5	  2.1	 12.5	 13.5	ROSE7 	      	      	      	4	 2.28	 2.51	 1.33	-2.07	Im  	1737              	E0  	Extended galaxy (I)
++12.7262	177.1067	 59	*	E3	 5	  2.1	 12.5	 13.5	ROSE7 	      	      	      	4	 2.28	 2.51	 1.33	-2.07	Im  	1737              	Sa  	Radio-possibly IR
++12.7262	177.1067	 59	*	E3	 5	  2.1	 12.5	 13.5	ROSE7 	      	      	      	4	 2.28	 2.51	 1.33	-2.07	Scd 	                  	Im  	Peculiar morpho-IR (I)
++12.7262	177.1067	 59	*	E3	 5	  2.1	 12.5	 13.5	ROSE7 	      	      	      	4	 2.28	 2.51	 1.33	-2.07	Scd 	                  	E0  	Extended galaxy (I)
++12.7262	177.1067	 59	*	E3	 5	  2.1	 12.5	 13.5	ROSE7 	      	      	      	4	 2.28	 2.51	 1.33	-2.07	Scd 	                  	Sa  	Radio-possibly IR
++51.6931	180.7712	 60	*	E2	 4	  2.3	 13.4	 14.4	      	      	      	      	4	 2.63	 2.85	 1.75	-1.99	E2  	                  	E4  	Strongly disturbed morpho-dust (M)
++51.6931	180.7712	 60	*	E2	 4	  2.3	 13.4	 14.4	      	      	      	      	4	 2.63	 2.85	 1.75	-1.99	E4  	                  	E4  	Strongly disturbed morpho-dust (M)
++51.6931	180.7712	 60	*	E2	 4	  2.3	 13.4	 14.4	      	      	      	      	4	 2.63	 2.85	 1.75	-1.99	SBc 	                  	E4  	Strongly disturbed morpho-dust (M)
++51.6931	180.7712	 60	*	E2	 4	  2.3	 13.4	 14.4	      	      	      	      	4	 2.63	 2.85	 1.75	-1.99	S0  	                  	E4  	Strongly disturbed morpho-dust (M)
++29.1778	183.0997	 61	*	E3	 4	  3.8	  9.9	 11.1	ROSE10	N4169 	U7202 	      	3	 1.94	 2.16	 1.46	-1.60	S0a 	N4169 U7202       	S0  	Polar ring (I)
++29.1778	183.0997	 61	*	E3	 4	  3.8	  9.9	 11.1	ROSE10	N4169 	U7202 	      	3	 1.94	 2.16	 1.46	-1.60	S0a 	N4169 U7202       	Sbc 	Dust-intense extended H_alpha emission-IR (I)
++29.1778	183.0997	 61	*	E3	 4	  3.8	  9.9	 11.1	ROSE10	N4169 	U7202 	      	3	 1.94	 2.16	 1.46	-1.60	S0a 	N4169 U7202       	S0a 	Disturbed morpho in the center (dust?) outer n.c.i. (I)
++29.1778	183.0997	 61	*	E3	 4	  3.8	  9.9	 11.1	ROSE10	N4169 	U7202 	      	3	 1.94	 2.16	 1.46	-1.60	Im  	N4173 U7204       	S0  	Polar ring (I)
++29.1778	183.0997	 61	*	E3	 4	  3.8	  9.9	 11.1	ROSE10	N4169 	U7202 	      	3	 1.94	 2.16	 1.46	-1.60	Im  	N4173 U7204       	Sbc 	Dust-intense extended H_alpha emission-IR (I)
++29.1778	183.0997	 61	*	E3	 4	  3.8	  9.9	 11.1	ROSE10	N4169 	U7202 	      	3	 1.94	 2.16	 1.46	-1.60	Im  	N4173 U7204       	S0a 	Disturbed morpho in the center (dust?) outer n.c.i. (I)
++29.1778	183.0997	 61	*	E3	 4	  3.8	  9.9	 11.1	ROSE10	N4169 	U7202 	      	3	 1.94	 2.16	 1.46	-1.60	Sbc 	N4175 U7211       	S0  	Polar ring (I)
++29.1778	183.0997	 61	*	E3	 4	  3.8	  9.9	 11.1	ROSE10	N4169 	U7202 	      	3	 1.94	 2.16	 1.46	-1.60	Sbc 	N4175 U7211       	Sbc 	Dust-intense extended H_alpha emission-IR (I)
++29.1778	183.0997	 61	*	E3	 4	  3.8	  9.9	 11.1	ROSE10	N4169 	U7202 	      	3	 1.94	 2.16	 1.46	-1.60	Sbc 	N4175 U7211       	S0a 	Disturbed morpho in the center (dust?) outer n.c.i. (I)
++29.1778	183.0997	 61	*	E3	 4	  3.8	  9.9	 11.1	ROSE10	N4169 	U7202 	      	3	 1.94	 2.16	 1.46	-1.60	S0  	N4174 Mk761 U7206 	S0  	Polar ring (I)
++29.1778	183.0997	 61	*	E3	 4	  3.8	  9.9	 11.1	ROSE10	N4169 	U7202 	      	3	 1.94	 2.16	 1.46	-1.60	S0  	N4174 Mk761 U7206 	Sbc 	Dust-intense extended H_alpha emission-IR (I)
++29.1778	183.0997	 61	*	E3	 4	  3.8	  9.9	 11.1	ROSE10	N4169 	U7202 	      	3	 1.94	 2.16	 1.46	-1.60	S0  	N4174 Mk761 U7206 	S0a 	Disturbed morpho in the center (dust?) outer n.c.i. (I)
+ -9.2241	193.2840	 62	*	E3	 4	  3.7	 11.6	 12.4	      	      	      	      	4	 2.46	 2.69	 1.43	-2.16	E3  	                  	S0  	May be interacting with a (I)
+ -9.2241	193.2840	 62	*	E3	 4	  3.7	 11.6	 12.4	      	      	      	      	4	 2.46	 2.69	 1.43	-2.16	E3  	                  	E3  	n.c.i.-radio-large X-ray halo around group (I)
+ -9.2241	193.2840	 62	*	E3	 4	  3.7	 11.6	 12.4	      	      	      	      	4	 2.46	 2.69	 1.43	-2.16	S0  	                  	S0  	May be interacting with a (I)
+ -9.2241	193.2840	 62	*	E3	 4	  3.7	 11.6	 12.4	      	      	      	      	4	 2.46	 2.69	 1.43	-2.16	S0  	                  	E3  	n.c.i.-radio-large X-ray halo around group (I)
+ -9.2241	193.2840	 62	*	E3	 4	  3.7	 11.6	 12.4	      	      	      	      	4	 2.46	 2.69	 1.43	-2.16	S0  	                  	S0  	May be interacting with a (I)
+ -9.2241	193.2840	 62	*	E3	 4	  3.7	 11.6	 12.4	      	      	      	      	4	 2.46	 2.69	 1.43	-2.16	S0  	                  	E3  	n.c.i.-radio-large X-ray halo around group (I)
+ -9.2241	193.2840	 62	*	E3	 4	  3.7	 11.6	 12.4	      	      	      	      	4	 2.46	 2.69	 1.43	-2.16	E2  	                  	S0  	May be interacting with a (I)
+ -9.2241	193.2840	 62	*	E3	 4	  3.7	 11.6	 12.4	      	      	      	      	4	 2.46	 2.69	 1.43	-2.16	E2  	                  	E3  	n.c.i.-radio-large X-ray halo around group (I)
+-32.7682	195.5416	 63	*	S3	 4	  2.9	 13.1	 13.9	      	      	      	      	3	 2.12	 2.16	 1.65	-1.41	SBbc	                  	Sc  	IR
+-32.7682	195.5416	 63	*	S3	 4	  2.9	 13.1	 13.9	      	      	      	      	3	 2.12	 2.16	 1.65	-1.41	SBbc	                  	SBc 	Tidal spiral arm-possibly IR (I)
+-32.7682	195.5416	 63	*	S3	 4	  2.9	 13.1	 13.9	      	      	      	      	3	 2.12	 2.16	 1.65	-1.41	SBc 	                  	Sc  	IR
+-32.7682	195.5416	 63	*	S3	 4	  2.9	 13.1	 13.9	      	      	      	      	3	 2.12	 2.16	 1.65	-1.41	SBc 	                  	SBc 	Tidal spiral arm-possibly IR (I)
+-32.7682	195.5416	 63	*	S3	 4	  2.9	 13.1	 13.9	      	      	      	      	3	 2.12	 2.16	 1.65	-1.41	SBc 	                  	Sc  	IR
+-32.7682	195.5416	 63	*	S3	 4	  2.9	 13.1	 13.9	      	      	      	      	3	 2.12	 2.16	 1.65	-1.41	SBc 	                  	SBc 	Tidal spiral arm-possibly IR (I)
+-32.7682	195.5416	 63	*	S3	 4	  2.9	 13.1	 13.9	      	      	      	      	3	 2.12	 2.16	 1.65	-1.41	Sc  	                  	Sc  	IR
+-32.7682	195.5416	 63	*	S3	 4	  2.9	 13.1	 13.9	      	      	      	      	3	 2.12	 2.16	 1.65	-1.41	Sc  	                  	SBc 	Tidal spiral arm-possibly IR (I)
+ -3.8578	201.4305	 64	*	S2	 4	  1.7	 13.4	 14.4	      	      	      	      	3	 2.33	 2.55	 1.41	-2.03	SBc 	                  	Scd 	Disturbed morpho (I)
+ -3.8578	201.4305	 64	*	S2	 4	  1.7	 13.4	 14.4	      	      	      	      	3	 2.33	 2.55	 1.41	-2.03	SBc 	                  	SBc 	Disturbed morpho-tidal tail (I)
+ -3.8578	201.4305	 64	*	S2	 4	  1.7	 13.4	 14.4	      	      	      	      	3	 2.33	 2.55	 1.41	-2.03	Scd 	                  	Scd 	Disturbed morpho (I)
+ -3.8578	201.4305	 64	*	S2	 4	  1.7	 13.4	 14.4	      	      	      	      	3	 2.33	 2.55	 1.41	-2.03	Scd 	                  	SBc 	Disturbed morpho-tidal tail (I)
+ -3.8578	201.4305	 64	*	S2	 4	  1.7	 13.4	 14.4	      	      	      	      	3	 2.33	 2.55	 1.41	-2.03	Sd  	                  	Scd 	Disturbed morpho (I)
+ -3.8578	201.4305	 64	*	S2	 4	  1.7	 13.4	 14.4	      	      	      	      	3	 2.33	 2.55	 1.41	-2.03	Sd  	                  	SBc 	Disturbed morpho-tidal tail (I)
+ -3.8578	201.4305	 64	*	S2	 4	  1.7	 13.4	 14.4	      	      	      	      	3	 2.33	 2.55	 1.41	-2.03	S0  	                  	Scd 	Disturbed morpho (I)
+ -3.8578	201.4305	 64	*	S2	 4	  1.7	 13.4	 14.4	      	      	      	      	3	 2.33	 2.55	 1.41	-2.03	S0  	                  	SBc 	Disturbed morpho-tidal tail (I)
+-29.4996	202.4747	 65	*	E1	 5	  1.7	 12.7	 13.6	      	      	      	      	5	 2.51	 2.74	 1.66	-1.97	E3  	                  	E0  	Small-bright star nearby
+-29.4996	202.4747	 65	*	E1	 5	  1.7	 12.7	 13.6	      	      	      	      	5	 2.51	 2.74	 1.66	-1.97	E3  	                  	E3  	n.c.i. (I)
+-29.4996	202.4747	 65	*	E1	 5	  1.7	 12.7	 13.6	      	      	      	      	5	 2.51	 2.74	 1.66	-1.97	E3  	                  	E2  	n.c.i. (I)
+-29.4996	202.4747	 65	*	E1	 5	  1.7	 12.7	 13.6	      	      	      	      	5	 2.51	 2.74	 1.66	-1.97	E3  	                  	E3  	n.c.i. (I)
+-29.4996	202.4747	 65	*	E1	 5	  1.7	 12.7	 13.6	      	      	      	      	5	 2.51	 2.74	 1.66	-1.97	S0  	                  	E0  	Small-bright star nearby
+-29.4996	202.4747	 65	*	E1	 5	  1.7	 12.7	 13.6	      	      	      	      	5	 2.51	 2.74	 1.66	-1.97	S0  	                  	E3  	n.c.i. (I)
+-29.4996	202.4747	 65	*	E1	 5	  1.7	 12.7	 13.6	      	      	      	      	5	 2.51	 2.74	 1.66	-1.97	S0  	                  	E2  	n.c.i. (I)
+-29.4996	202.4747	 65	*	E1	 5	  1.7	 12.7	 13.6	      	      	      	      	5	 2.51	 2.74	 1.66	-1.97	S0  	                  	E3  	n.c.i. (I)
+-29.4996	202.4747	 65	*	E1	 5	  1.7	 12.7	 13.6	      	      	      	      	5	 2.51	 2.74	 1.66	-1.97	E2  	                  	E0  	Small-bright star nearby
+-29.4996	202.4747	 65	*	E1	 5	  1.7	 12.7	 13.6	      	      	      	      	5	 2.51	 2.74	 1.66	-1.97	E2  	                  	E3  	n.c.i. (I)
+-29.4996	202.4747	 65	*	E1	 5	  1.7	 12.7	 13.6	      	      	      	      	5	 2.51	 2.74	 1.66	-1.97	E2  	                  	E2  	n.c.i. (I)
+-29.4996	202.4747	 65	*	E1	 5	  1.7	 12.7	 13.6	      	      	      	      	5	 2.51	 2.74	 1.66	-1.97	E2  	                  	E3  	n.c.i. (I)
+-29.4996	202.4747	 65	*	E1	 5	  1.7	 12.7	 13.6	      	      	      	      	5	 2.51	 2.74	 1.66	-1.97	E3  	                  	E0  	Small-bright star nearby
+-29.4996	202.4747	 65	*	E1	 5	  1.7	 12.7	 13.6	      	      	      	      	5	 2.51	 2.74	 1.66	-1.97	E3  	                  	E3  	n.c.i. (I)
+-29.4996	202.4747	 65	*	E1	 5	  1.7	 12.7	 13.6	      	      	      	      	5	 2.51	 2.74	 1.66	-1.97	E3  	                  	E2  	n.c.i. (I)
+-29.4996	202.4747	 65	*	E1	 5	  1.7	 12.7	 13.6	      	      	      	      	5	 2.51	 2.74	 1.66	-1.97	E3  	                  	E3  	n.c.i. (I)
+-29.4996	202.4747	 65	*	E1	 5	  1.7	 12.7	 13.6	      	      	      	      	5	 2.51	 2.74	 1.66	-1.97	E0  	                  	E0  	Small-bright star nearby
+-29.4996	202.4747	 65	*	E1	 5	  1.7	 12.7	 13.6	      	      	      	      	5	 2.51	 2.74	 1.66	-1.97	E0  	                  	E3  	n.c.i. (I)
+-29.4996	202.4747	 65	*	E1	 5	  1.7	 12.7	 13.6	      	      	      	      	5	 2.51	 2.74	 1.66	-1.97	E0  	                  	E2  	n.c.i. (I)
+-29.4996	202.4747	 65	*	E1	 5	  1.7	 12.7	 13.6	      	      	      	      	5	 2.51	 2.74	 1.66	-1.97	E0  	                  	E3  	n.c.i. (I)
+ -7.2054	207.2647	 67	*	E3	 4	  3.3	 11.6	 12.5	      	      	      	      	4	 2.32	 2.56	 1.69	-1.76	E1  	                  	S0  	Galaxy 67a is too close by-may have n.c.i. (I)
+ -7.2054	207.2647	 67	*	E3	 4	  3.3	 11.6	 12.5	      	      	      	      	4	 2.32	 2.56	 1.69	-1.76	E1  	                  	Scd 	Asym. morpho-close companion-radio (I)
+ -7.2054	207.2647	 67	*	E3	 4	  3.3	 11.6	 12.5	      	      	      	      	4	 2.32	 2.56	 1.69	-1.76	E1  	                  	Sc  	Dust lane across galaxy-radio-IR
+ -7.2054	207.2647	 67	*	E3	 4	  3.3	 11.6	 12.5	      	      	      	      	4	 2.32	 2.56	 1.69	-1.76	E1  	                  	E1  	Two nuclei disturbed morpho (M)
+ -7.2054	207.2647	 67	*	E3	 4	  3.3	 11.6	 12.5	      	      	      	      	4	 2.32	 2.56	 1.69	-1.76	Sc  	                  	S0  	Galaxy 67a is too close by-may have n.c.i. (I)
+ -7.2054	207.2647	 67	*	E3	 4	  3.3	 11.6	 12.5	      	      	      	      	4	 2.32	 2.56	 1.69	-1.76	Sc  	                  	Scd 	Asym. morpho-close companion-radio (I)
+ -7.2054	207.2647	 67	*	E3	 4	  3.3	 11.6	 12.5	      	      	      	      	4	 2.32	 2.56	 1.69	-1.76	Sc  	                  	Sc  	Dust lane across galaxy-radio-IR
+ -7.2054	207.2647	 67	*	E3	 4	  3.3	 11.6	 12.5	      	      	      	      	4	 2.32	 2.56	 1.69	-1.76	Sc  	                  	E1  	Two nuclei disturbed morpho (M)
+ -7.2054	207.2647	 67	*	E3	 4	  3.3	 11.6	 12.5	      	      	      	      	4	 2.32	 2.56	 1.69	-1.76	Scd 	                  	S0  	Galaxy 67a is too close by-may have n.c.i. (I)
+ -7.2054	207.2647	 67	*	E3	 4	  3.3	 11.6	 12.5	      	      	      	      	4	 2.32	 2.56	 1.69	-1.76	Scd 	                  	Scd 	Asym. morpho-close companion-radio (I)
+ -7.2054	207.2647	 67	*	E3	 4	  3.3	 11.6	 12.5	      	      	      	      	4	 2.32	 2.56	 1.69	-1.76	Scd 	                  	Sc  	Dust lane across galaxy-radio-IR
+ -7.2054	207.2647	 67	*	E3	 4	  3.3	 11.6	 12.5	      	      	      	      	4	 2.32	 2.56	 1.69	-1.76	Scd 	                  	E1  	Two nuclei disturbed morpho (M)
+ -7.2054	207.2647	 67	*	E3	 4	  3.3	 11.6	 12.5	      	      	      	      	4	 2.32	 2.56	 1.69	-1.76	S0  	                  	S0  	Galaxy 67a is too close by-may have n.c.i. (I)
+ -7.2054	207.2647	 67	*	E3	 4	  3.3	 11.6	 12.5	      	      	      	      	4	 2.32	 2.56	 1.69	-1.76	S0  	                  	Scd 	Asym. morpho-close companion-radio (I)
+ -7.2054	207.2647	 67	*	E3	 4	  3.3	 11.6	 12.5	      	      	      	      	4	 2.32	 2.56	 1.69	-1.76	S0  	                  	Sc  	Dust lane across galaxy-radio-IR
+ -7.2054	207.2647	 67	*	E3	 4	  3.3	 11.6	 12.5	      	      	      	      	4	 2.32	 2.56	 1.69	-1.76	S0  	                  	E1  	Two nuclei disturbed morpho (M)
++40.3279	208.4204	 68	*	E3	 5	  9.2	  9.5	 10.5	N5353 	      	      	      	5	 2.19	 2.42	 1.52	-1.79	S0  	N5353 U8813       	E3  	Boxyisophote-shells (?)
++40.3279	208.4204	 68	*	E3	 5	  9.2	  9.5	 10.5	N5353 	      	      	      	5	 2.19	 2.42	 1.52	-1.79	S0  	N5353 U8813       	SBbc	Peculiar morpho radio-lR (I)
++40.3279	208.4204	 68	*	E3	 5	  9.2	  9.5	 10.5	N5353 	      	      	      	5	 2.19	 2.42	 1.52	-1.79	S0  	N5353 U8813       	E2  	Strong dust lane radio
++40.3279	208.4204	 68	*	E3	 5	  9.2	  9.5	 10.5	N5353 	      	      	      	5	 2.19	 2.42	 1.52	-1.79	S0  	N5353 U8813       	S0  	Radio
++40.3279	208.4204	 68	*	E3	 5	  9.2	  9.5	 10.5	N5353 	      	      	      	5	 2.19	 2.42	 1.52	-1.79	E2  	N5354 U8814       	E3  	Boxyisophote-shells (?)
++40.3279	208.4204	 68	*	E3	 5	  9.2	  9.5	 10.5	N5353 	      	      	      	5	 2.19	 2.42	 1.52	-1.79	E2  	N5354 U8814       	SBbc	Peculiar morpho radio-lR (I)
++40.3279	208.4204	 68	*	E3	 5	  9.2	  9.5	 10.5	N5353 	      	      	      	5	 2.19	 2.42	 1.52	-1.79	E2  	N5354 U8814       	E2  	Strong dust lane radio
++40.3279	208.4204	 68	*	E3	 5	  9.2	  9.5	 10.5	N5353 	      	      	      	5	 2.19	 2.42	 1.52	-1.79	E2  	N5354 U8814       	S0  	Radio
++40.3279	208.4204	 68	*	E3	 5	  9.2	  9.5	 10.5	N5353 	      	      	      	5	 2.19	 2.42	 1.52	-1.79	SBbc	N5350 Mk1485 U8810	E3  	Boxyisophote-shells (?)
++40.3279	208.4204	 68	*	E3	 5	  9.2	  9.5	 10.5	N5353 	      	      	      	5	 2.19	 2.42	 1.52	-1.79	SBbc	N5350 Mk1485 U8810	SBbc	Peculiar morpho radio-lR (I)
++40.3279	208.4204	 68	*	E3	 5	  9.2	  9.5	 10.5	N5353 	      	      	      	5	 2.19	 2.42	 1.52	-1.79	SBbc	N5350 Mk1485 U8810	E2  	Strong dust lane radio
++40.3279	208.4204	 68	*	E3	 5	  9.2	  9.5	 10.5	N5353 	      	      	      	5	 2.19	 2.42	 1.52	-1.79	SBbc	N5350 Mk1485 U8810	S0  	Radio
++40.3279	208.4204	 68	*	E3	 5	  9.2	  9.5	 10.5	N5353 	      	      	      	5	 2.19	 2.42	 1.52	-1.79	E3  	N5355 U8819       	E3  	Boxyisophote-shells (?)
++40.3279	208.4204	 68	*	E3	 5	  9.2	  9.5	 10.5	N5353 	      	      	      	5	 2.19	 2.42	 1.52	-1.79	E3  	N5355 U8819       	SBbc	Peculiar morpho radio-lR (I)
++40.3279	208.4204	 68	*	E3	 5	  9.2	  9.5	 10.5	N5353 	      	      	      	5	 2.19	 2.42	 1.52	-1.79	E3  	N5355 U8819       	E2  	Strong dust lane radio
++40.3279	208.4204	 68	*	E3	 5	  9.2	  9.5	 10.5	N5353 	      	      	      	5	 2.19	 2.42	 1.52	-1.79	E3  	N5355 U8819       	S0  	Radio
++40.3279	208.4204	 68	*	E3	 5	  9.2	  9.5	 10.5	N5353 	      	      	      	5	 2.19	 2.42	 1.52	-1.79	S0  	N5358 U8826       	E3  	Boxyisophote-shells (?)
++40.3279	208.4204	 68	*	E3	 5	  9.2	  9.5	 10.5	N5353 	      	      	      	5	 2.19	 2.42	 1.52	-1.79	S0  	N5358 U8826       	SBbc	Peculiar morpho radio-lR (I)
++40.3279	208.4204	 68	*	E3	 5	  9.2	  9.5	 10.5	N5353 	      	      	      	5	 2.19	 2.42	 1.52	-1.79	S0  	N5358 U8826       	E2  	Strong dust lane radio
++40.3279	208.4204	 68	*	E3	 5	  9.2	  9.5	 10.5	N5353 	      	      	      	5	 2.19	 2.42	 1.52	-1.79	S0  	N5358 U8826       	S0  	Radio
++25.0628	208.8780	 69	*	S2	 4	  1.9	 12.2	 13.1	VV281 	U8842 	      	      	4	 2.35	 2.58	 1.48	-1.99	Sc  	U8842             	SBb 	Radio-IR
++25.0628	208.8780	 69	*	S2	 4	  1.9	 12.2	 13.1	VV281 	U8842 	      	      	4	 2.35	 2.58	 1.48	-1.99	Sc  	U8842             	Sc  	Asym. morpho dust or two nuclei-weak radio (I?)
++25.0628	208.8780	 69	*	S2	 4	  1.9	 12.2	 13.1	VV281 	U8842 	      	      	4	 2.35	 2.58	 1.48	-1.99	SBb 	                  	SBb 	Radio-IR
++25.0628	208.8780	 69	*	S2	 4	  1.9	 12.2	 13.1	VV281 	U8842 	      	      	4	 2.35	 2.58	 1.48	-1.99	SBb 	                  	Sc  	Asym. morpho dust or two nuclei-weak radio (I?)
++25.0628	208.8780	 69	*	S2	 4	  1.9	 12.2	 13.1	VV281 	U8842 	      	      	4	 2.35	 2.58	 1.48	-1.99	S0  	U8842             	SBb 	Radio-IR
++25.0628	208.8780	 69	*	S2	 4	  1.9	 12.2	 13.1	VV281 	U8842 	      	      	4	 2.35	 2.58	 1.48	-1.99	S0  	U8842             	Sc  	Asym. morpho dust or two nuclei-weak radio (I?)
++25.0628	208.8780	 69	*	S2	 4	  1.9	 12.2	 13.1	VV281 	U8842 	      	      	4	 2.35	 2.58	 1.48	-1.99	SB0 	U8842             	SBb 	Radio-IR
++25.0628	208.8780	 69	*	S2	 4	  1.9	 12.2	 13.1	VV281 	U8842 	      	      	4	 2.35	 2.58	 1.48	-1.99	SB0 	U8842             	Sc  	Asym. morpho dust or two nuclei-weak radio (I?)
++25.4849	212.7691	 71	*	S1	 4	  5.0	 12.8	 13.3	I4381 	U9073 	      	      	3	 2.62	 2.85	 1.70	-2.04	SBc 	I4381 U9073       	Sb  	IR
++25.4849	212.7691	 71	*	S1	 4	  5.0	 12.8	 13.3	I4381 	U9073 	      	      	3	 2.62	 2.85	 1.70	-2.04	Sb  	14382             	Sb  	IR
++25.4849	212.7691	 71	*	S1	 4	  5.0	 12.8	 13.3	I4381 	U9073 	      	      	3	 2.62	 2.85	 1.70	-2.04	SBc 	                  	Sb  	IR
++25.4849	212.7691	 71	*	S1	 4	  5.0	 12.8	 13.3	I4381 	U9073 	      	      	3	 2.62	 2.85	 1.70	-2.04	S0  	                  	Sb  	IR
++19.0594	221.9805	 72	*	E3	 5	  1.8	 11.9	 13.2	ARP328	VV165 	U9532 	      	4	 2.42	 2.66	 1.55	-2.00	Sa  	                  	SB0 	Asym. envelope interacting with b (I)
++19.0594	221.9805	 72	*	E3	 5	  1.8	 11.9	 13.2	ARP328	VV165 	U9532 	      	4	 2.42	 2.66	 1.55	-2.00	Sa  	                  	E2  	Boxy outer isophote
++19.0594	221.9805	 72	*	E3	 5	  1.8	 11.9	 13.2	ARP328	VV165 	U9532 	      	4	 2.42	 2.66	 1.55	-2.00	Sa  	                  	S0  	Asym. envelope interacting with d (I)
++19.0594	221.9805	 72	*	E3	 5	  1.8	 11.9	 13.2	ARP328	VV165 	U9532 	      	4	 2.42	 2.66	 1.55	-2.00	S0  	U9532             	SB0 	Asym. envelope interacting with b (I)
++19.0594	221.9805	 72	*	E3	 5	  1.8	 11.9	 13.2	ARP328	VV165 	U9532 	      	4	 2.42	 2.66	 1.55	-2.00	S0  	U9532             	E2  	Boxy outer isophote
++19.0594	221.9805	 72	*	E3	 5	  1.8	 11.9	 13.2	ARP328	VV165 	U9532 	      	4	 2.42	 2.66	 1.55	-2.00	S0  	U9532             	S0  	Asym. envelope interacting with d (I)
++19.0594	221.9805	 72	*	E3	 5	  1.8	 11.9	 13.2	ARP328	VV165 	U9532 	      	4	 2.42	 2.66	 1.55	-2.00	E2  	                  	SB0 	Asym. envelope interacting with b (I)
++19.0594	221.9805	 72	*	E3	 5	  1.8	 11.9	 13.2	ARP328	VV165 	U9532 	      	4	 2.42	 2.66	 1.55	-2.00	E2  	                  	E2  	Boxy outer isophote
++19.0594	221.9805	 72	*	E3	 5	  1.8	 11.9	 13.2	ARP328	VV165 	U9532 	      	4	 2.42	 2.66	 1.55	-2.00	E2  	                  	S0  	Asym. envelope interacting with d (I)
++19.0594	221.9805	 72	*	E3	 5	  1.8	 11.9	 13.2	ARP328	VV165 	U9532 	      	4	 2.42	 2.66	 1.55	-2.00	SB0 	                  	SB0 	Asym. envelope interacting with b (I)
++19.0594	221.9805	 72	*	E3	 5	  1.8	 11.9	 13.2	ARP328	VV165 	U9532 	      	4	 2.42	 2.66	 1.55	-2.00	SB0 	                  	E2  	Boxy outer isophote
++19.0594	221.9805	 72	*	E3	 5	  1.8	 11.9	 13.2	ARP328	VV165 	U9532 	      	4	 2.42	 2.66	 1.55	-2.00	SB0 	                  	S0  	Asym. envelope interacting with d (I)
++19.0594	221.9805	 72	*	E3	 5	  1.8	 11.9	 13.2	ARP328	VV165 	U9532 	      	4	 2.42	 2.66	 1.55	-2.00	Scd 	                  	SB0 	Asym. envelope interacting with b (I)
++19.0594	221.9805	 72	*	E3	 5	  1.8	 11.9	 13.2	ARP328	VV165 	U9532 	      	4	 2.42	 2.66	 1.55	-2.00	Scd 	                  	E2  	Boxy outer isophote
++19.0594	221.9805	 72	*	E3	 5	  1.8	 11.9	 13.2	ARP328	VV165 	U9532 	      	4	 2.42	 2.66	 1.55	-2.00	Scd 	                  	S0  	Asym. envelope interacting with d (I)
++19.0594	221.9805	 72	*	E3	 5	  1.8	 11.9	 13.2	ARP328	VV165 	U9532 	      	4	 2.42	 2.66	 1.55	-2.00	S0  	                  	SB0 	Asym. envelope interacting with b (I)
++19.0594	221.9805	 72	*	E3	 5	  1.8	 11.9	 13.2	ARP328	VV165 	U9532 	      	4	 2.42	 2.66	 1.55	-2.00	S0  	                  	E2  	Boxy outer isophote
++19.0594	221.9805	 72	*	E3	 5	  1.8	 11.9	 13.2	ARP328	VV165 	U9532 	      	4	 2.42	 2.66	 1.55	-2.00	S0  	                  	S0  	Asym. envelope interacting with d (I)
++23.3537	225.6672	 73	*	S1	 5	  4.8	 12.5	 13.0	ARP42 	VV7   	N5829 	U9673 	3	 2.09	 2.13	 2.00	-1.02	Scd 	N5829 U9673       	Im  	Peculiar morpho (I)
++23.3537	225.6672	 73	*	S1	 5	  4.8	 12.5	 13.0	ARP42 	VV7   	N5829 	U9673 	3	 2.09	 2.13	 2.00	-1.02	Im  	                  	Im  	Peculiar morpho (I)
++23.3537	225.6672	 73	*	S1	 5	  4.8	 12.5	 13.0	ARP42 	VV7   	N5829 	U9673 	3	 2.09	 2.13	 2.00	-1.02	S0  	                  	Im  	Peculiar morpho (I)
++23.3537	225.6672	 73	*	S1	 5	  4.8	 12.5	 13.0	ARP42 	VV7   	N5829 	U9673 	3	 2.09	 2.13	 2.00	-1.02	Sb  	                  	Im  	Peculiar morpho (I)
++23.3537	225.6672	 73	*	S1	 5	  4.8	 12.5	 13.0	ARP42 	VV7   	N5829 	U9673 	3	 2.09	 2.13	 2.00	-1.02	Sd  	                  	Im  	Peculiar morpho (I)
++20.8937	229.8678	 74	*	E2	 5	  1.9	 12.1	 12.9	VV139 	      	      	      	5	 2.50	 2.73	 1.59	-2.03	E1  	                  	E1  	Double nudeus-n c.i. toward east-radio (M)
++20.8937	229.8678	 74	*	E2	 5	  1.9	 12.1	 12.9	VV139 	      	      	      	5	 2.50	 2.73	 1.59	-2.03	E3  	                  	E1  	Double nudeus-n c.i. toward east-radio (M)
++20.8937	229.8678	 74	*	E2	 5	  1.9	 12.1	 12.9	VV139 	      	      	      	5	 2.50	 2.73	 1.59	-2.03	S0  	                  	E1  	Double nudeus-n c.i. toward east-radio (M)
++20.8937	229.8678	 74	*	E2	 5	  1.9	 12.1	 12.9	VV139 	      	      	      	5	 2.50	 2.73	 1.59	-2.03	E2  	                  	E1  	Double nudeus-n c.i. toward east-radio (M)
++20.8937	229.8678	 74	*	E2	 5	  1.9	 12.1	 12.9	VV139 	      	      	      	5	 2.50	 2.73	 1.59	-2.03	S0  	                  	E1  	Double nudeus-n c.i. toward east-radio (M)
++21.1834	230.3909	 75	*	E3	 6	  2.2	 12.4	 13.5	      	      	      	      	6	 2.47	 2.66	 1.57	-1.98	E4  	                  	S0  	Isophotes become boxy at outer isophotes
++21.1834	230.3909	 75	*	E3	 6	  2.2	 12.4	 13.5	      	      	      	      	6	 2.47	 2.66	 1.57	-1.98	E4  	                  	Sa  	IR
++21.1834	230.3909	 75	*	E3	 6	  2.2	 12.4	 13.5	      	      	      	      	6	 2.47	 2.66	 1.57	-1.98	E4  	                  	Sd  	Possibly IR
++21.1834	230.3909	 75	*	E3	 6	  2.2	 12.4	 13.5	      	      	      	      	6	 2.47	 2.66	 1.57	-1.98	E4  	                  	Sb  	Asym. morpho-extension-weak radio (I)
++21.1834	230.3909	 75	*	E3	 6	  2.2	 12.4	 13.5	      	      	      	      	6	 2.47	 2.66	 1.57	-1.98	E4  	                  	E4  	Boxy at outer isophotes-tail-like features (I)
++21.1834	230.3909	 75	*	E3	 6	  2.2	 12.4	 13.5	      	      	      	      	6	 2.47	 2.66	 1.57	-1.98	Sb  	                  	S0  	Isophotes become boxy at outer isophotes
++21.1834	230.3909	 75	*	E3	 6	  2.2	 12.4	 13.5	      	      	      	      	6	 2.47	 2.66	 1.57	-1.98	Sb  	                  	Sa  	IR
++21.1834	230.3909	 75	*	E3	 6	  2.2	 12.4	 13.5	      	      	      	      	6	 2.47	 2.66	 1.57	-1.98	Sb  	                  	Sd  	Possibly IR
++21.1834	230.3909	 75	*	E3	 6	  2.2	 12.4	 13.5	      	      	      	      	6	 2.47	 2.66	 1.57	-1.98	Sb  	                  	Sb  	Asym. morpho-extension-weak radio (I)
++21.1834	230.3909	 75	*	E3	 6	  2.2	 12.4	 13.5	      	      	      	      	6	 2.47	 2.66	 1.57	-1.98	Sb  	                  	E4  	Boxy at outer isophotes-tail-like features (I)
++21.1834	230.3909	 75	*	E3	 6	  2.2	 12.4	 13.5	      	      	      	      	6	 2.47	 2.66	 1.57	-1.98	S0  	                  	S0  	Isophotes become boxy at outer isophotes
++21.1834	230.3909	 75	*	E3	 6	  2.2	 12.4	 13.5	      	      	      	      	6	 2.47	 2.66	 1.57	-1.98	S0  	                  	Sa  	IR
++21.1834	230.3909	 75	*	E3	 6	  2.2	 12.4	 13.5	      	      	      	      	6	 2.47	 2.66	 1.57	-1.98	S0  	                  	Sd  	Possibly IR
++21.1834	230.3909	 75	*	E3	 6	  2.2	 12.4	 13.5	      	      	      	      	6	 2.47	 2.66	 1.57	-1.98	S0  	                  	Sb  	Asym. morpho-extension-weak radio (I)
++21.1834	230.3909	 75	*	E3	 6	  2.2	 12.4	 13.5	      	      	      	      	6	 2.47	 2.66	 1.57	-1.98	S0  	                  	E4  	Boxy at outer isophotes-tail-like features (I)
++21.1834	230.3909	 75	*	E3	 6	  2.2	 12.4	 13.5	      	      	      	      	6	 2.47	 2.66	 1.57	-1.98	Sd  	                  	S0  	Isophotes become boxy at outer isophotes
++21.1834	230.3909	 75	*	E3	 6	  2.2	 12.4	 13.5	      	      	      	      	6	 2.47	 2.66	 1.57	-1.98	Sd  	                  	Sa  	IR
++21.1834	230.3909	 75	*	E3	 6	  2.2	 12.4	 13.5	      	      	      	      	6	 2.47	 2.66	 1.57	-1.98	Sd  	                  	Sd  	Possibly IR
++21.1834	230.3909	 75	*	E3	 6	  2.2	 12.4	 13.5	      	      	      	      	6	 2.47	 2.66	 1.57	-1.98	Sd  	                  	Sb  	Asym. morpho-extension-weak radio (I)
++21.1834	230.3909	 75	*	E3	 6	  2.2	 12.4	 13.5	      	      	      	      	6	 2.47	 2.66	 1.57	-1.98	Sd  	                  	E4  	Boxy at outer isophotes-tail-like features (I)
++21.1834	230.3909	 75	*	E3	 6	  2.2	 12.4	 13.5	      	      	      	      	6	 2.47	 2.66	 1.57	-1.98	Sa  	                  	S0  	Isophotes become boxy at outer isophotes
++21.1834	230.3909	 75	*	E3	 6	  2.2	 12.4	 13.5	      	      	      	      	6	 2.47	 2.66	 1.57	-1.98	Sa  	                  	Sa  	IR
++21.1834	230.3909	 75	*	E3	 6	  2.2	 12.4	 13.5	      	      	      	      	6	 2.47	 2.66	 1.57	-1.98	Sa  	                  	Sd  	Possibly IR
++21.1834	230.3909	 75	*	E3	 6	  2.2	 12.4	 13.5	      	      	      	      	6	 2.47	 2.66	 1.57	-1.98	Sa  	                  	Sb  	Asym. morpho-extension-weak radio (I)
++21.1834	230.3909	 75	*	E3	 6	  2.2	 12.4	 13.5	      	      	      	      	6	 2.47	 2.66	 1.57	-1.98	Sa  	                  	E4  	Boxy at outer isophotes-tail-like features (I)
++21.1834	230.3909	 75	*	E3	 6	  2.2	 12.4	 13.5	      	      	      	      	6	 2.47	 2.66	 1.57	-1.98	S0  	                  	S0  	Isophotes become boxy at outer isophotes
++21.1834	230.3909	 75	*	E3	 6	  2.2	 12.4	 13.5	      	      	      	      	6	 2.47	 2.66	 1.57	-1.98	S0  	                  	Sa  	IR
++21.1834	230.3909	 75	*	E3	 6	  2.2	 12.4	 13.5	      	      	      	      	6	 2.47	 2.66	 1.57	-1.98	S0  	                  	Sd  	Possibly IR
++21.1834	230.3909	 75	*	E3	 6	  2.2	 12.4	 13.5	      	      	      	      	6	 2.47	 2.66	 1.57	-1.98	S0  	                  	Sb  	Asym. morpho-extension-weak radio (I)
++21.1834	230.3909	 75	*	E3	 6	  2.2	 12.4	 13.5	      	      	      	      	6	 2.47	 2.66	 1.57	-1.98	S0  	                  	E4  	Boxy at outer isophotes-tail-like features (I)
+ +7.3079	232.9245	 76	*	S3	 5	  3.3	 12.3	 13.6	      	      	      	      	7	 2.39	 2.62	 1.86	-1.65	Sa  	N5944             	S0  	Disk is tilted toward 76b (I)
+ +7.3079	232.9245	 76	*	S3	 5	  3.3	 12.3	 13.6	      	      	      	      	7	 2.39	 2.62	 1.86	-1.65	Sa  	N5944             	E2  	Extension toward 76f (?) (I)
+ +7.3079	232.9245	 76	*	S3	 5	  3.3	 12.3	 13.6	      	      	      	      	7	 2.39	 2.62	 1.86	-1.65	E2  	                  	S0  	Disk is tilted toward 76b (I)
+ +7.3079	232.9245	 76	*	S3	 5	  3.3	 12.3	 13.6	      	      	      	      	7	 2.39	 2.62	 1.86	-1.65	E2  	                  	E2  	Extension toward 76f (?) (I)
+ +7.3079	232.9245	 76	*	S3	 5	  3.3	 12.3	 13.6	      	      	      	      	7	 2.39	 2.62	 1.86	-1.65	E0  	N5941             	S0  	Disk is tilted toward 76b (I)
+ +7.3079	232.9245	 76	*	S3	 5	  3.3	 12.3	 13.6	      	      	      	      	7	 2.39	 2.62	 1.86	-1.65	E0  	N5941             	E2  	Extension toward 76f (?) (I)
+ +7.3079	232.9245	 76	*	S3	 5	  3.3	 12.3	 13.6	      	      	      	      	7	 2.39	 2.62	 1.86	-1.65	E1  	N5942             	S0  	Disk is tilted toward 76b (I)
+ +7.3079	232.9245	 76	*	S3	 5	  3.3	 12.3	 13.6	      	      	      	      	7	 2.39	 2.62	 1.86	-1.65	E1  	N5942             	E2  	Extension toward 76f (?) (I)
+ +7.3079	232.9245	 76	*	S3	 5	  3.3	 12.3	 13.6	      	      	      	      	7	 2.39	 2.62	 1.86	-1.65	SB0 	                  	S0  	Disk is tilted toward 76b (I)
+ +7.3079	232.9245	 76	*	S3	 5	  3.3	 12.3	 13.6	      	      	      	      	7	 2.39	 2.62	 1.86	-1.65	SB0 	                  	E2  	Extension toward 76f (?) (I)
+ +7.3079	232.9245	 76	*	S3	 5	  3.3	 12.3	 13.6	      	      	      	      	7	 2.39	 2.62	 1.86	-1.65	S0  	                  	S0  	Disk is tilted toward 76b (I)
+ +7.3079	232.9245	 76	*	S3	 5	  3.3	 12.3	 13.6	      	      	      	      	7	 2.39	 2.62	 1.86	-1.65	S0  	                  	E2  	Extension toward 76f (?) (I)
+ +7.3079	232.9245	 76	*	S3	 5	  3.3	 12.3	 13.6	      	      	      	      	7	 2.39	 2.62	 1.86	-1.65	Sc  	                  	S0  	Disk is tilted toward 76b (I)
+ +7.3079	232.9245	 76	*	S3	 5	  3.3	 12.3	 13.6	      	      	      	      	7	 2.39	 2.62	 1.86	-1.65	Sc  	                  	E2  	Extension toward 76f (?) (I)
++20.7516	239.8037	 79	*	E3	 5	  1.3	 11.3	 12.6	VV115 	N6027 	U10116	      	4	 2.14	 2.36	 0.83	-2.43	E0  	N6027 U10116      	Sdm 	Asym. disk-tidal tail toward 79a (I)
++20.7516	239.8037	 79	*	E3	 5	  1.3	 11.3	 12.6	VV115 	N6027 	U10116	      	4	 2.14	 2.36	 0.83	-2.43	E0  	N6027 U10116      	S0  	Extended envelope toward 79b (I)
++20.7516	239.8037	 79	*	E3	 5	  1.3	 11.3	 12.6	VV115 	N6027 	U10116	      	4	 2.14	 2.36	 0.83	-2.43	E0  	N6027 U10116      	S0  	Strong bar[N II], H_alpha emission-tidal tail (I)
++20.7516	239.8037	 79	*	E3	 5	  1.3	 11.3	 12.6	VV115 	N6027 	U10116	      	4	 2.14	 2.36	 0.83	-2.43	E0  	N6027 U10116      	E0  	Strong dust-[N II], H_alpha emission-radio-IR (I)
++20.7516	239.8037	 79	*	E3	 5	  1.3	 11.3	 12.6	VV115 	N6027 	U10116	      	4	 2.14	 2.36	 0.83	-2.43	S0  	N6027 U10116      	Sdm 	Asym. disk-tidal tail toward 79a (I)
++20.7516	239.8037	 79	*	E3	 5	  1.3	 11.3	 12.6	VV115 	N6027 	U10116	      	4	 2.14	 2.36	 0.83	-2.43	S0  	N6027 U10116      	S0  	Extended envelope toward 79b (I)
++20.7516	239.8037	 79	*	E3	 5	  1.3	 11.3	 12.6	VV115 	N6027 	U10116	      	4	 2.14	 2.36	 0.83	-2.43	S0  	N6027 U10116      	S0  	Strong bar[N II], H_alpha emission-tidal tail (I)
++20.7516	239.8037	 79	*	E3	 5	  1.3	 11.3	 12.6	VV115 	N6027 	U10116	      	4	 2.14	 2.36	 0.83	-2.43	S0  	N6027 U10116      	E0  	Strong dust-[N II], H_alpha emission-radio-IR (I)
++20.7516	239.8037	 79	*	E3	 5	  1.3	 11.3	 12.6	VV115 	N6027 	U10116	      	4	 2.14	 2.36	 0.83	-2.43	S0  	N6027 U10116      	Sdm 	Asym. disk-tidal tail toward 79a (I)
++20.7516	239.8037	 79	*	E3	 5	  1.3	 11.3	 12.6	VV115 	N6027 	U10116	      	4	 2.14	 2.36	 0.83	-2.43	S0  	N6027 U10116      	S0  	Extended envelope toward 79b (I)
++20.7516	239.8037	 79	*	E3	 5	  1.3	 11.3	 12.6	VV115 	N6027 	U10116	      	4	 2.14	 2.36	 0.83	-2.43	S0  	N6027 U10116      	S0  	Strong bar[N II], H_alpha emission-tidal tail (I)
++20.7516	239.8037	 79	*	E3	 5	  1.3	 11.3	 12.6	VV115 	N6027 	U10116	      	4	 2.14	 2.36	 0.83	-2.43	S0  	N6027 U10116      	E0  	Strong dust-[N II], H_alpha emission-radio-IR (I)
++20.7516	239.8037	 79	*	E3	 5	  1.3	 11.3	 12.6	VV115 	N6027 	U10116	      	4	 2.14	 2.36	 0.83	-2.43	Sdm 	N6027 U10116      	Sdm 	Asym. disk-tidal tail toward 79a (I)
++20.7516	239.8037	 79	*	E3	 5	  1.3	 11.3	 12.6	VV115 	N6027 	U10116	      	4	 2.14	 2.36	 0.83	-2.43	Sdm 	N6027 U10116      	S0  	Extended envelope toward 79b (I)
++20.7516	239.8037	 79	*	E3	 5	  1.3	 11.3	 12.6	VV115 	N6027 	U10116	      	4	 2.14	 2.36	 0.83	-2.43	Sdm 	N6027 U10116      	S0  	Strong bar[N II], H_alpha emission-tidal tail (I)
++20.7516	239.8037	 79	*	E3	 5	  1.3	 11.3	 12.6	VV115 	N6027 	U10116	      	4	 2.14	 2.36	 0.83	-2.43	Sdm 	N6027 U10116      	E0  	Strong dust-[N II], H_alpha emission-radio-IR (I)
++20.7516	239.8037	 79	*	E3	 5	  1.3	 11.3	 12.6	VV115 	N6027 	U10116	      	4	 2.14	 2.36	 0.83	-2.43	Scd 	N6027 U10116      	Sdm 	Asym. disk-tidal tail toward 79a (I)
++20.7516	239.8037	 79	*	E3	 5	  1.3	 11.3	 12.6	VV115 	N6027 	U10116	      	4	 2.14	 2.36	 0.83	-2.43	Scd 	N6027 U10116      	S0  	Extended envelope toward 79b (I)
++20.7516	239.8037	 79	*	E3	 5	  1.3	 11.3	 12.6	VV115 	N6027 	U10116	      	4	 2.14	 2.36	 0.83	-2.43	Scd 	N6027 U10116      	S0  	Strong bar[N II], H_alpha emission-tidal tail (I)
++20.7516	239.8037	 79	*	E3	 5	  1.3	 11.3	 12.6	VV115 	N6027 	U10116	      	4	 2.14	 2.36	 0.83	-2.43	Scd 	N6027 U10116      	E0  	Strong dust-[N II], H_alpha emission-radio-IR (I)
++65.2259	239.8014	 80	*	E2	 4	  1.7	 12.6	 13.3	      	      	      	      	4	 2.43	 2.67	 1.40	-2.16	Sd  	                  	Im  	Peculiar morpho (I)
++65.2259	239.8014	 80	*	E2	 4	  1.7	 12.6	 13.3	      	      	      	      	4	 2.43	 2.67	 1.40	-2.16	Sd  	                  	Sd  	Radio IR
++65.2259	239.8014	 80	*	E2	 4	  1.7	 12.6	 13.3	      	      	      	      	4	 2.43	 2.67	 1.40	-2.16	Sa  	                  	Im  	Peculiar morpho (I)
++65.2259	239.8014	 80	*	E2	 4	  1.7	 12.6	 13.3	      	      	      	      	4	 2.43	 2.67	 1.40	-2.16	Sa  	                  	Sd  	Radio IR
++65.2259	239.8014	 80	*	E2	 4	  1.7	 12.6	 13.3	      	      	      	      	4	 2.43	 2.67	 1.40	-2.16	Im  	                  	Im  	Peculiar morpho (I)
++65.2259	239.8014	 80	*	E2	 4	  1.7	 12.6	 13.3	      	      	      	      	4	 2.43	 2.67	 1.40	-2.16	Im  	                  	Sd  	Radio IR
++65.2259	239.8014	 80	*	E2	 4	  1.7	 12.6	 13.3	      	      	      	      	4	 2.43	 2.67	 1.40	-2.16	Im  	                  	Im  	Peculiar morpho (I)
++65.2259	239.8014	 80	*	E2	 4	  1.7	 12.6	 13.3	      	      	      	      	4	 2.43	 2.67	 1.40	-2.16	Im  	                  	Sd  	Radio IR
++12.7941	244.5543	 81	*	E3	 4	  0.9	 13.3	 14.5	U10319	      	      	      	4	 2.25	 2.43	 1.26	-2.06	Sc  	U10319            	S0a 	Tail-like features to the north of the galaxy (I)
++12.7941	244.5543	 81	*	E3	 4	  0.9	 13.3	 14.5	U10319	      	      	      	4	 2.25	 2.43	 1.26	-2.06	Sc  	U10319            	S0  	Dust-lane-n.c.i. (I)
++12.7941	244.5543	 81	*	E3	 4	  0.9	 13.3	 14.5	U10319	      	      	      	4	 2.25	 2.43	 1.26	-2.06	S0  	U10319            	S0a 	Tail-like features to the north of the galaxy (I)
++12.7941	244.5543	 81	*	E3	 4	  0.9	 13.3	 14.5	U10319	      	      	      	4	 2.25	 2.43	 1.26	-2.06	S0  	U10319            	S0  	Dust-lane-n.c.i. (I)
++12.7941	244.5543	 81	*	E3	 4	  0.9	 13.3	 14.5	U10319	      	      	      	4	 2.25	 2.43	 1.26	-2.06	S0  	U10319            	S0a 	Tail-like features to the north of the galaxy (I)
++12.7941	244.5543	 81	*	E3	 4	  0.9	 13.3	 14.5	U10319	      	      	      	4	 2.25	 2.43	 1.26	-2.06	S0  	U10319            	S0  	Dust-lane-n.c.i. (I)
++12.7941	244.5543	 81	*	E3	 4	  0.9	 13.3	 14.5	U10319	      	      	      	4	 2.25	 2.43	 1.26	-2.06	S0a 	U10319            	S0a 	Tail-like features to the north of the galaxy (I)
++12.7941	244.5543	 81	*	E3	 4	  0.9	 13.3	 14.5	U10319	      	      	      	4	 2.25	 2.43	 1.26	-2.06	S0a 	U10319            	S0  	Dust-lane-n.c.i. (I)
++32.8237	247.0920	 82	*	E2	 4	  3.1	 12.2	 13.1	N6162 	U10403	      	      	4	 2.79	 3.03	 1.85	-2.07	E3  	N6162 U10403      	Im  	Tail-like-dust or double nucleus-radio-IR (M?)
++32.8237	247.0920	 82	*	E2	 4	  3.1	 12.2	 13.1	N6162 	U10403	      	      	4	 2.79	 3.03	 1.85	-2.07	E3  	N6162 U10403      	SBa 	Large P.A. twist
++32.8237	247.0920	 82	*	E2	 4	  3.1	 12.2	 13.1	N6162 	U10403	      	      	4	 2.79	 3.03	 1.85	-2.07	E3  	N6162 U10403      	E3  	Faint disk
++32.8237	247.0920	 82	*	E2	 4	  3.1	 12.2	 13.1	N6162 	U10403	      	      	4	 2.79	 3.03	 1.85	-2.07	SBa 	N6163             	Im  	Tail-like-dust or double nucleus-radio-IR (M?)
++32.8237	247.0920	 82	*	E2	 4	  3.1	 12.2	 13.1	N6162 	U10403	      	      	4	 2.79	 3.03	 1.85	-2.07	SBa 	N6163             	SBa 	Large P.A. twist
++32.8237	247.0920	 82	*	E2	 4	  3.1	 12.2	 13.1	N6162 	U10403	      	      	4	 2.79	 3.03	 1.85	-2.07	SBa 	N6163             	E3  	Faint disk
++32.8237	247.0920	 82	*	E2	 4	  3.1	 12.2	 13.1	N6162 	U10403	      	      	4	 2.79	 3.03	 1.85	-2.07	Im  	N6161             	Im  	Tail-like-dust or double nucleus-radio-IR (M?)
++32.8237	247.0920	 82	*	E2	 4	  3.1	 12.2	 13.1	N6162 	U10403	      	      	4	 2.79	 3.03	 1.85	-2.07	Im  	N6161             	SBa 	Large P.A. twist
++32.8237	247.0920	 82	*	E2	 4	  3.1	 12.2	 13.1	N6162 	U10403	      	      	4	 2.79	 3.03	 1.85	-2.07	Im  	N6161             	E3  	Faint disk
++32.8237	247.0920	 82	*	E2	 4	  3.1	 12.2	 13.1	N6162 	U10403	      	      	4	 2.79	 3.03	 1.85	-2.07	S0a 	                  	Im  	Tail-like-dust or double nucleus-radio-IR (M?)
++32.8237	247.0920	 82	*	E2	 4	  3.1	 12.2	 13.1	N6162 	U10403	      	      	4	 2.79	 3.03	 1.85	-2.07	S0a 	                  	SBa 	Large P.A. twist
++32.8237	247.0920	 82	*	E2	 4	  3.1	 12.2	 13.1	N6162 	U10403	      	      	4	 2.79	 3.03	 1.85	-2.07	S0a 	                  	E3  	Faint disk
++77.8362	251.0336	 84	*	E3	 6	  2.4	 13.5	 14.7	      	      	      	      	5	 2.31	 2.52	 1.77	-1.64	E2  	                  	E2  	Radio
++77.8362	251.0336	 84	*	E3	 6	  2.4	 13.5	 14.7	      	      	      	      	5	 2.31	 2.52	 1.77	-1.64	S0  	                  	E2  	Radio
++77.8362	251.0336	 84	*	E3	 6	  2.4	 13.5	 14.7	      	      	      	      	5	 2.31	 2.52	 1.77	-1.64	Sa  	                  	E2  	Radio
++77.8362	251.0336	 84	*	E3	 6	  2.4	 13.5	 14.7	      	      	      	      	5	 2.31	 2.52	 1.77	-1.64	S0  	                  	E2  	Radio
++77.8362	251.0336	 84	*	E3	 6	  2.4	 13.5	 14.7	      	      	      	      	5	 2.31	 2.52	 1.77	-1.64	E0  	                  	E2  	Radio
++77.8362	251.0336	 84	*	E3	 6	  2.4	 13.5	 14.7	      	      	      	      	5	 2.31	 2.52	 1.77	-1.64	E0  	                  	E2  	Radio
++73.3499	282.5930	 85	*	E3	 4	  1.3	 12.8	 13.6	      	      	      	      	4	 2.56	 2.80	 1.39	-2.30	E1  	                  	E1  	Radio
++73.3499	282.5930	 85	*	E3	 4	  1.3	 12.8	 13.6	      	      	      	      	4	 2.56	 2.80	 1.39	-2.30	E1  	                  	E1  	Radio
++73.3499	282.5930	 85	*	E3	 4	  1.3	 12.8	 13.6	      	      	      	      	4	 2.56	 2.80	 1.39	-2.30	S0  	                  	E1  	Radio
++73.3499	282.5930	 85	*	E3	 4	  1.3	 12.8	 13.6	      	      	      	      	4	 2.56	 2.80	 1.39	-2.30	E0  	                  	E1  	Radio
+-30.8260	297.9967	 86	*	E2	 4	  4.0	 12.3	 13.2	      	      	      	      	4	 2.43	 2.66	 1.67	-1.89	E2  	                  	E2  	Dust?
+-30.8260	297.9967	 86	*	E2	 4	  4.0	 12.3	 13.2	      	      	      	      	4	 2.43	 2.66	 1.67	-1.89	E2  	                  	E2  	Contains faint disk
+-30.8260	297.9967	 86	*	E2	 4	  4.0	 12.3	 13.2	      	      	      	      	4	 2.43	 2.66	 1.67	-1.89	E2  	                  	E2  	Dust?
+-30.8260	297.9967	 86	*	E2	 4	  4.0	 12.3	 13.2	      	      	      	      	4	 2.43	 2.66	 1.67	-1.89	E2  	                  	E2  	Contains faint disk
+-30.8260	297.9967	 86	*	E2	 4	  4.0	 12.3	 13.2	      	      	      	      	4	 2.43	 2.66	 1.67	-1.89	SB0 	                  	E2  	Dust?
+-30.8260	297.9967	 86	*	E2	 4	  4.0	 12.3	 13.2	      	      	      	      	4	 2.43	 2.66	 1.67	-1.89	SB0 	                  	E2  	Contains faint disk
+-30.8260	297.9967	 86	*	E2	 4	  4.0	 12.3	 13.2	      	      	      	      	4	 2.43	 2.66	 1.67	-1.89	S0  	                  	E2  	Dust?
+-30.8260	297.9967	 86	*	E2	 4	  4.0	 12.3	 13.2	      	      	      	      	4	 2.43	 2.66	 1.67	-1.89	S0  	                  	E2  	Contains faint disk
+-19.8406	312.0495	 87	*	S1	 4	  1.5	 12.4	 12.9	      	      	      	      	3	 2.08	 2.16	 1.49	-1.56	Sbc 	                  	S0  	Boxy isophotes
+-19.8406	312.0495	 87	*	S1	 4	  1.5	 12.4	 12.9	      	      	      	      	3	 2.08	 2.16	 1.49	-1.56	Sbc 	                  	Sbc 	Three dust lanes (I)
+-19.8406	312.0495	 87	*	S1	 4	  1.5	 12.4	 12.9	      	      	      	      	3	 2.08	 2.16	 1.49	-1.56	S0  	                  	S0  	Boxy isophotes
+-19.8406	312.0495	 87	*	S1	 4	  1.5	 12.4	 12.9	      	      	      	      	3	 2.08	 2.16	 1.49	-1.56	S0  	                  	Sbc 	Three dust lanes (I)
+-19.8406	312.0495	 87	*	S1	 4	  1.5	 12.4	 12.9	      	      	      	      	3	 2.08	 2.16	 1.49	-1.56	Sd  	                  	S0  	Boxy isophotes
+-19.8406	312.0495	 87	*	S1	 4	  1.5	 12.4	 12.9	      	      	      	      	3	 2.08	 2.16	 1.49	-1.56	Sd  	                  	Sbc 	Three dust lanes (I)
+-19.8406	312.0495	 87	*	S1	 4	  1.5	 12.4	 12.9	      	      	      	      	3	 2.08	 2.16	 1.49	-1.56	Sd  	                  	S0  	Boxy isophotes
+-19.8406	312.0495	 87	*	S1	 4	  1.5	 12.4	 12.9	      	      	      	      	3	 2.08	 2.16	 1.49	-1.56	Sd  	                  	Sbc 	Three dust lanes (I)
+ -5.7579	313.0950	 88	*	S3	 4	  5.2	 11.3	 12.2	N6978 	      	      	      	4	 1.43	     	 1.83	 0.94	Sb  	N6978             	Sc  	Weak radio
+ -5.7579	313.0950	 88	*	S3	 4	  5.2	 11.3	 12.2	N6978 	      	      	      	4	 1.43	     	 1.83	 0.94	Sb  	N6978             	SBb 	Low-luminosity extension-ring in H_alpha (I)
+ -5.7579	313.0950	 88	*	S3	 4	  5.2	 11.3	 12.2	N6978 	      	      	      	4	 1.43	     	 1.83	 0.94	Sb  	N6978             	Sb  	Lopsided r.c.-weak radio-IR (I)
+ -5.7579	313.0950	 88	*	S3	 4	  5.2	 11.3	 12.2	N6978 	      	      	      	4	 1.43	     	 1.83	 0.94	SBb 	N6977             	Sc  	Weak radio
+ -5.7579	313.0950	 88	*	S3	 4	  5.2	 11.3	 12.2	N6978 	      	      	      	4	 1.43	     	 1.83	 0.94	SBb 	N6977             	SBb 	Low-luminosity extension-ring in H_alpha (I)
+ -5.7579	313.0950	 88	*	S3	 4	  5.2	 11.3	 12.2	N6978 	      	      	      	4	 1.43	     	 1.83	 0.94	SBb 	N6977             	Sb  	Lopsided r.c.-weak radio-IR (I)
+ -5.7579	313.0950	 88	*	S3	 4	  5.2	 11.3	 12.2	N6978 	      	      	      	4	 1.43	     	 1.83	 0.94	Sc  	N6976             	Sc  	Weak radio
+ -5.7579	313.0950	 88	*	S3	 4	  5.2	 11.3	 12.2	N6978 	      	      	      	4	 1.43	     	 1.83	 0.94	Sc  	N6976             	SBb 	Low-luminosity extension-ring in H_alpha (I)
+ -5.7579	313.0950	 88	*	S3	 4	  5.2	 11.3	 12.2	N6978 	      	      	      	4	 1.43	     	 1.83	 0.94	Sc  	N6976             	Sb  	Lopsided r.c.-weak radio-IR (I)
+ -5.7579	313.0950	 88	*	S3	 4	  5.2	 11.3	 12.2	N6978 	      	      	      	4	 1.43	     	 1.83	 0.94	Sc  	N6975             	Sc  	Weak radio
+ -5.7579	313.0950	 88	*	S3	 4	  5.2	 11.3	 12.2	N6978 	      	      	      	4	 1.43	     	 1.83	 0.94	Sc  	N6975             	SBb 	Low-luminosity extension-ring in H_alpha (I)
+ -5.7579	313.0950	 88	*	S3	 4	  5.2	 11.3	 12.2	N6978 	      	      	      	4	 1.43	     	 1.83	 0.94	Sc  	N6975             	Sb  	Lopsided r.c.-weak radio-IR (I)
+ -3.9090	320.0450	 89	*	S2	 4	  4.8	 13.7	 14.6	      	      	      	      	4	 1.74	 1.72	 1.77	-0.84	Sc  	                  	SBc 	r.c. is linear
+ -3.9090	320.0450	 89	*	S2	 4	  4.8	 13.7	 14.6	      	      	      	      	4	 1.74	 1.72	 1.77	-0.84	SBc 	                  	SBc 	r.c. is linear
+ -3.9090	320.0450	 89	*	S2	 4	  4.8	 13.7	 14.6	      	      	      	      	4	 1.74	 1.72	 1.77	-0.84	Scd 	                  	SBc 	r.c. is linear
+ -3.9090	320.0450	 89	*	S2	 4	  4.8	 13.7	 14.6	      	      	      	      	4	 1.74	 1.72	 1.77	-0.84	Sm  	                  	SBc 	r.c. is linear
+-31.9668	330.5234	 90	*	E3	 4	  7.4	  9.1	 10.1	N7172 	      	      	      	4	 2.00	 2.22	 1.47	-1.65	Sa  	N7172             	Im  	Tail-like features to the north of the galaxy-IR (I)
+-31.9668	330.5234	 90	*	E3	 4	  7.4	  9.1	 10.1	N7172 	      	      	      	4	 2.00	 2.22	 1.47	-1.65	Sa  	N7172             	E0  	n.c.i. toward b and d (I)
+-31.9668	330.5234	 90	*	E3	 4	  7.4	  9.1	 10.1	N7172 	      	      	      	4	 2.00	 2.22	 1.47	-1.65	Sa  	N7172             	Sa  	Strong dust lane across galaxy-IR
+-31.9668	330.5234	 90	*	E3	 4	  7.4	  9.1	 10.1	N7172 	      	      	      	4	 2.00	 2.22	 1.47	-1.65	E0  	N7176             	Im  	Tail-like features to the north of the galaxy-IR (I)
+-31.9668	330.5234	 90	*	E3	 4	  7.4	  9.1	 10.1	N7172 	      	      	      	4	 2.00	 2.22	 1.47	-1.65	E0  	N7176             	E0  	n.c.i. toward b and d (I)
+-31.9668	330.5234	 90	*	E3	 4	  7.4	  9.1	 10.1	N7172 	      	      	      	4	 2.00	 2.22	 1.47	-1.65	E0  	N7176             	Sa  	Strong dust lane across galaxy-IR
+-31.9668	330.5234	 90	*	E3	 4	  7.4	  9.1	 10.1	N7172 	      	      	      	4	 2.00	 2.22	 1.47	-1.65	E0  	N7173             	Im  	Tail-like features to the north of the galaxy-IR (I)
+-31.9668	330.5234	 90	*	E3	 4	  7.4	  9.1	 10.1	N7172 	      	      	      	4	 2.00	 2.22	 1.47	-1.65	E0  	N7173             	E0  	n.c.i. toward b and d (I)
+-31.9668	330.5234	 90	*	E3	 4	  7.4	  9.1	 10.1	N7172 	      	      	      	4	 2.00	 2.22	 1.47	-1.65	E0  	N7173             	Sa  	Strong dust lane across galaxy-IR
+-31.9668	330.5234	 90	*	E3	 4	  7.4	  9.1	 10.1	N7172 	      	      	      	4	 2.00	 2.22	 1.47	-1.65	Im  	N7174             	Im  	Tail-like features to the north of the galaxy-IR (I)
+-31.9668	330.5234	 90	*	E3	 4	  7.4	  9.1	 10.1	N7172 	      	      	      	4	 2.00	 2.22	 1.47	-1.65	Im  	N7174             	E0  	n.c.i. toward b and d (I)
+-31.9668	330.5234	 90	*	E3	 4	  7.4	  9.1	 10.1	N7172 	      	      	      	4	 2.00	 2.22	 1.47	-1.65	Im  	N7174             	Sa  	Strong dust lane across galaxy-IR
+-27.7759	332.3017	 91	*	S1	 4	  5.2	 11.7	 12.3	      	      	      	      	4	 2.26	 2.48	 1.72	-1.66	SBc 	N7214             	SB0 	Tidal tail-like feature (I)
+-27.7759	332.3017	 91	*	S1	 4	  5.2	 11.7	 12.3	      	      	      	      	4	 2.26	 2.48	 1.72	-1.66	SBc 	N7214             	Sc  	IR
+-27.7759	332.3017	 91	*	S1	 4	  5.2	 11.7	 12.3	      	      	      	      	4	 2.26	 2.48	 1.72	-1.66	SBc 	N7214             	SBc 	Asym. morpho-IR (I)
+-27.7759	332.3017	 91	*	S1	 4	  5.2	 11.7	 12.3	      	      	      	      	4	 2.26	 2.48	 1.72	-1.66	Sc  	                  	SB0 	Tidal tail-like feature (I)
+-27.7759	332.3017	 91	*	S1	 4	  5.2	 11.7	 12.3	      	      	      	      	4	 2.26	 2.48	 1.72	-1.66	Sc  	                  	Sc  	IR
+-27.7759	332.3017	 91	*	S1	 4	  5.2	 11.7	 12.3	      	      	      	      	4	 2.26	 2.48	 1.72	-1.66	Sc  	                  	SBc 	Asym. morpho-IR (I)
+-27.7759	332.3017	 91	*	S1	 4	  5.2	 11.7	 12.3	      	      	      	      	4	 2.26	 2.48	 1.72	-1.66	Sc  	                  	SB0 	Tidal tail-like feature (I)
+-27.7759	332.3017	 91	*	S1	 4	  5.2	 11.7	 12.3	      	      	      	      	4	 2.26	 2.48	 1.72	-1.66	Sc  	                  	Sc  	IR
+-27.7759	332.3017	 91	*	S1	 4	  5.2	 11.7	 12.3	      	      	      	      	4	 2.26	 2.48	 1.72	-1.66	Sc  	                  	SBc 	Asym. morpho-IR (I)
+-27.7759	332.3017	 91	*	S1	 4	  5.2	 11.7	 12.3	      	      	      	      	4	 2.26	 2.48	 1.72	-1.66	SB0 	                  	SB0 	Tidal tail-like feature (I)
+-27.7759	332.3017	 91	*	S1	 4	  5.2	 11.7	 12.3	      	      	      	      	4	 2.26	 2.48	 1.72	-1.66	SB0 	                  	Sc  	IR
+-27.7759	332.3017	 91	*	S1	 4	  5.2	 11.7	 12.3	      	      	      	      	4	 2.26	 2.48	 1.72	-1.66	SB0 	                  	SBc 	Asym. morpho-IR (I)
++33.9658	339.0021	 92	*	S2	 5	  3.2	 11.1	 12.0	ARP319	VV288 	N7320 	U12101	4	 2.59	 2.83	 1.45	-2.27	Sd  	N7320 U12101      	Sc  	Tidal arm-weak radio (I,M)
++33.9658	339.0021	 92	*	S2	 5	  3.2	 11.1	 12.0	ARP319	VV288 	N7320 	U12101	4	 2.59	 2.83	 1.45	-2.27	Sd  	N7320 U12101      	SBc 	Tidal arm-Seyfert galaxy-radio-IR (I,M)
++33.9658	339.0021	 92	*	S2	 5	  3.2	 11.1	 12.0	ARP319	VV288 	N7320 	U12101	4	 2.59	 2.83	 1.45	-2.27	Sd  	N7320 U12101      	Sbc 	Tidal arm (I)
++33.9658	339.0021	 92	*	S2	 5	  3.2	 11.1	 12.0	ARP319	VV288 	N7320 	U12101	4	 2.59	 2.83	 1.45	-2.27	Sbc 	N7318B U12100     	Sc  	Tidal arm-weak radio (I,M)
++33.9658	339.0021	 92	*	S2	 5	  3.2	 11.1	 12.0	ARP319	VV288 	N7320 	U12101	4	 2.59	 2.83	 1.45	-2.27	Sbc 	N7318B U12100     	SBc 	Tidal arm-Seyfert galaxy-radio-IR (I,M)
++33.9658	339.0021	 92	*	S2	 5	  3.2	 11.1	 12.0	ARP319	VV288 	N7320 	U12101	4	 2.59	 2.83	 1.45	-2.27	Sbc 	N7318B U12100     	Sbc 	Tidal arm (I)
++33.9658	339.0021	 92	*	S2	 5	  3.2	 11.1	 12.0	ARP319	VV288 	N7320 	U12101	4	 2.59	 2.83	 1.45	-2.27	SBc 	N7319 U12102      	Sc  	Tidal arm-weak radio (I,M)
++33.9658	339.0021	 92	*	S2	 5	  3.2	 11.1	 12.0	ARP319	VV288 	N7320 	U12101	4	 2.59	 2.83	 1.45	-2.27	SBc 	N7319 U12102      	SBc 	Tidal arm-Seyfert galaxy-radio-IR (I,M)
++33.9658	339.0021	 92	*	S2	 5	  3.2	 11.1	 12.0	ARP319	VV288 	N7320 	U12101	4	 2.59	 2.83	 1.45	-2.27	SBc 	N7319 U12102      	Sbc 	Tidal arm (I)
++33.9658	339.0021	 92	*	S2	 5	  3.2	 11.1	 12.0	ARP319	VV288 	N7320 	U12101	4	 2.59	 2.83	 1.45	-2.27	Sc  	N7318A U12099     	Sc  	Tidal arm-weak radio (I,M)
++33.9658	339.0021	 92	*	S2	 5	  3.2	 11.1	 12.0	ARP319	VV288 	N7320 	U12101	4	 2.59	 2.83	 1.45	-2.27	Sc  	N7318A U12099     	SBc 	Tidal arm-Seyfert galaxy-radio-IR (I,M)
++33.9658	339.0021	 92	*	S2	 5	  3.2	 11.1	 12.0	ARP319	VV288 	N7320 	U12101	4	 2.59	 2.83	 1.45	-2.27	Sc  	N7318A U12099     	Sbc 	Tidal arm (I)
++33.9658	339.0021	 92	*	S2	 5	  3.2	 11.1	 12.0	ARP319	VV288 	N7320 	U12101	4	 2.59	 2.83	 1.45	-2.27	E1  	N7317             	Sc  	Tidal arm-weak radio (I,M)
++33.9658	339.0021	 92	*	S2	 5	  3.2	 11.1	 12.0	ARP319	VV288 	N7320 	U12101	4	 2.59	 2.83	 1.45	-2.27	E1  	N7317             	SBc 	Tidal arm-Seyfert galaxy-radio-IR (I,M)
++33.9658	339.0021	 92	*	S2	 5	  3.2	 11.1	 12.0	ARP319	VV288 	N7320 	U12101	4	 2.59	 2.83	 1.45	-2.27	E1  	N7317             	Sbc 	Tidal arm (I)
++18.9831	348.8510	 93	*	E3	 5	  9.0	 10.9	 12.0	ARP99 	N7550 	U12456	      	4	 2.32	 2.55	 1.85	-1.59	E1  	N7550 U12456      	SBa 	Dust lane-extension toward a (I)
++18.9831	348.8510	 93	*	E3	 5	  9.0	 10.9	 12.0	ARP99 	N7550 	U12456	      	4	 2.32	 2.55	 1.85	-1.59	E1  	N7550 U12456      	SBd 	Open tidal arm to the north-radio IR (I)
++18.9831	348.8510	 93	*	E3	 5	  9.0	 10.9	 12.0	ARP99 	N7550 	U12456	      	4	 2.32	 2.55	 1.85	-1.59	E1  	N7550 U12456      	E1  	Strongly n.c.i. (dust?) emission-radio (I,M?)
++18.9831	348.8510	 93	*	E3	 5	  9.0	 10.9	 12.0	ARP99 	N7550 	U12456	      	4	 2.32	 2.55	 1.85	-1.59	SBd 	N7594 U12457      	SBa 	Dust lane-extension toward a (I)
++18.9831	348.8510	 93	*	E3	 5	  9.0	 10.9	 12.0	ARP99 	N7550 	U12456	      	4	 2.32	 2.55	 1.85	-1.59	SBd 	N7594 U12457      	SBd 	Open tidal arm to the north-radio IR (I)
++18.9831	348.8510	 93	*	E3	 5	  9.0	 10.9	 12.0	ARP99 	N7550 	U12456	      	4	 2.32	 2.55	 1.85	-1.59	SBd 	N7594 U12457      	E1  	Strongly n.c.i. (dust?) emission-radio (I,M?)
++18.9831	348.8510	 93	*	E3	 5	  9.0	 10.9	 12.0	ARP99 	N7550 	U12456	      	4	 2.32	 2.55	 1.85	-1.59	SBa 	N7547 U12453      	SBa 	Dust lane-extension toward a (I)
++18.9831	348.8510	 93	*	E3	 5	  9.0	 10.9	 12.0	ARP99 	N7550 	U12456	      	4	 2.32	 2.55	 1.85	-1.59	SBa 	N7547 U12453      	SBd 	Open tidal arm to the north-radio IR (I)
++18.9831	348.8510	 93	*	E3	 5	  9.0	 10.9	 12.0	ARP99 	N7550 	U12456	      	4	 2.32	 2.55	 1.85	-1.59	SBa 	N7547 U12453      	E1  	Strongly n.c.i. (dust?) emission-radio (I,M?)
++18.9831	348.8510	 93	*	E3	 5	  9.0	 10.9	 12.0	ARP99 	N7550 	U12456	      	4	 2.32	 2.55	 1.85	-1.59	SB0 	                  	SBa 	Dust lane-extension toward a (I)
++18.9831	348.8510	 93	*	E3	 5	  9.0	 10.9	 12.0	ARP99 	N7550 	U12456	      	4	 2.32	 2.55	 1.85	-1.59	SB0 	                  	SBd 	Open tidal arm to the north-radio IR (I)
++18.9831	348.8510	 93	*	E3	 5	  9.0	 10.9	 12.0	ARP99 	N7550 	U12456	      	4	 2.32	 2.55	 1.85	-1.59	SB0 	                  	E1  	Strongly n.c.i. (dust?) emission-radio (I,M?)
++18.9831	348.8510	 93	*	E3	 5	  9.0	 10.9	 12.0	ARP99 	N7550 	U12456	      	4	 2.32	 2.55	 1.85	-1.59	Sa  	                  	SBa 	Dust lane-extension toward a (I)
++18.9831	348.8510	 93	*	E3	 5	  9.0	 10.9	 12.0	ARP99 	N7550 	U12456	      	4	 2.32	 2.55	 1.85	-1.59	Sa  	                  	SBd 	Open tidal arm to the north-radio IR (I)
++18.9831	348.8510	 93	*	E3	 5	  9.0	 10.9	 12.0	ARP99 	N7550 	U12456	      	4	 2.32	 2.55	 1.85	-1.59	Sa  	                  	E1  	Strongly n.c.i. (dust?) emission-radio (I,M?)
++18.7197	349.3187	 94	*	E1	 7	  2.8	 12.3	 13.1	ARP170	N7578 	U12478	      	7	 2.68	 2.92	 1.76	-2.05	E1  	N7578B U12477     	Sd  	Weak radio
++18.7197	349.3187	 94	*	E1	 7	  2.8	 12.3	 13.1	ARP170	N7578 	U12478	      	7	 2.68	 2.92	 1.76	-2.05	E1  	N7578B U12477     	S0  	In common envelope with a and b
++18.7197	349.3187	 94	*	E1	 7	  2.8	 12.3	 13.1	ARP170	N7578 	U12478	      	7	 2.68	 2.92	 1.76	-2.05	E1  	N7578B U12477     	S0  	Ring (?) (I)
++18.7197	349.3187	 94	*	E1	 7	  2.8	 12.3	 13.1	ARP170	N7578 	U12478	      	7	 2.68	 2.92	 1.76	-2.05	E1  	N7578B U12477     	E3  	Common envelope with a-n.c.i.-weak radio (I)
++18.7197	349.3187	 94	*	E1	 7	  2.8	 12.3	 13.1	ARP170	N7578 	U12478	      	7	 2.68	 2.92	 1.76	-2.05	E1  	N7578B U12477     	E1  	Common envelope with b-peculiar radio (I,M)
++18.7197	349.3187	 94	*	E1	 7	  2.8	 12.3	 13.1	ARP170	N7578 	U12478	      	7	 2.68	 2.92	 1.76	-2.05	E3  	N7578A U12478     	Sd  	Weak radio
++18.7197	349.3187	 94	*	E1	 7	  2.8	 12.3	 13.1	ARP170	N7578 	U12478	      	7	 2.68	 2.92	 1.76	-2.05	E3  	N7578A U12478     	S0  	In common envelope with a and b
++18.7197	349.3187	 94	*	E1	 7	  2.8	 12.3	 13.1	ARP170	N7578 	U12478	      	7	 2.68	 2.92	 1.76	-2.05	E3  	N7578A U12478     	S0  	Ring (?) (I)
++18.7197	349.3187	 94	*	E1	 7	  2.8	 12.3	 13.1	ARP170	N7578 	U12478	      	7	 2.68	 2.92	 1.76	-2.05	E3  	N7578A U12478     	E3  	Common envelope with a-n.c.i.-weak radio (I)
++18.7197	349.3187	 94	*	E1	 7	  2.8	 12.3	 13.1	ARP170	N7578 	U12478	      	7	 2.68	 2.92	 1.76	-2.05	E3  	N7578A U12478     	E1  	Common envelope with b-peculiar radio (I,M)
++18.7197	349.3187	 94	*	E1	 7	  2.8	 12.3	 13.1	ARP170	N7578 	U12478	      	7	 2.68	 2.92	 1.76	-2.05	S0  	                  	Sd  	Weak radio
++18.7197	349.3187	 94	*	E1	 7	  2.8	 12.3	 13.1	ARP170	N7578 	U12478	      	7	 2.68	 2.92	 1.76	-2.05	S0  	                  	S0  	In common envelope with a and b
++18.7197	349.3187	 94	*	E1	 7	  2.8	 12.3	 13.1	ARP170	N7578 	U12478	      	7	 2.68	 2.92	 1.76	-2.05	S0  	                  	S0  	Ring (?) (I)
++18.7197	349.3187	 94	*	E1	 7	  2.8	 12.3	 13.1	ARP170	N7578 	U12478	      	7	 2.68	 2.92	 1.76	-2.05	S0  	                  	E3  	Common envelope with a-n.c.i.-weak radio (I)
++18.7197	349.3187	 94	*	E1	 7	  2.8	 12.3	 13.1	ARP170	N7578 	U12478	      	7	 2.68	 2.92	 1.76	-2.05	S0  	                  	E1  	Common envelope with b-peculiar radio (I,M)
++18.7197	349.3187	 94	*	E1	 7	  2.8	 12.3	 13.1	ARP170	N7578 	U12478	      	7	 2.68	 2.92	 1.76	-2.05	S0  	                  	Sd  	Weak radio
++18.7197	349.3187	 94	*	E1	 7	  2.8	 12.3	 13.1	ARP170	N7578 	U12478	      	7	 2.68	 2.92	 1.76	-2.05	S0  	                  	S0  	In common envelope with a and b
++18.7197	349.3187	 94	*	E1	 7	  2.8	 12.3	 13.1	ARP170	N7578 	U12478	      	7	 2.68	 2.92	 1.76	-2.05	S0  	                  	S0  	Ring (?) (I)
++18.7197	349.3187	 94	*	E1	 7	  2.8	 12.3	 13.1	ARP170	N7578 	U12478	      	7	 2.68	 2.92	 1.76	-2.05	S0  	                  	E3  	Common envelope with a-n.c.i.-weak radio (I)
++18.7197	349.3187	 94	*	E1	 7	  2.8	 12.3	 13.1	ARP170	N7578 	U12478	      	7	 2.68	 2.92	 1.76	-2.05	S0  	                  	E1  	Common envelope with b-peculiar radio (I,M)
++18.7197	349.3187	 94	*	E1	 7	  2.8	 12.3	 13.1	ARP170	N7578 	U12478	      	7	 2.68	 2.92	 1.76	-2.05	Sd  	                  	Sd  	Weak radio
++18.7197	349.3187	 94	*	E1	 7	  2.8	 12.3	 13.1	ARP170	N7578 	U12478	      	7	 2.68	 2.92	 1.76	-2.05	Sd  	                  	S0  	In common envelope with a and b
++18.7197	349.3187	 94	*	E1	 7	  2.8	 12.3	 13.1	ARP170	N7578 	U12478	      	7	 2.68	 2.92	 1.76	-2.05	Sd  	                  	S0  	Ring (?) (I)
++18.7197	349.3187	 94	*	E1	 7	  2.8	 12.3	 13.1	ARP170	N7578 	U12478	      	7	 2.68	 2.92	 1.76	-2.05	Sd  	                  	E3  	Common envelope with a-n.c.i.-weak radio (I)
++18.7197	349.3187	 94	*	E1	 7	  2.8	 12.3	 13.1	ARP170	N7578 	U12478	      	7	 2.68	 2.92	 1.76	-2.05	Sd  	                  	E1  	Common envelope with b-peculiar radio (I,M)
++18.7197	349.3187	 94	*	E1	 7	  2.8	 12.3	 13.1	ARP170	N7578 	U12478	      	7	 2.68	 2.92	 1.76	-2.05	S0  	                  	Sd  	Weak radio
++18.7197	349.3187	 94	*	E1	 7	  2.8	 12.3	 13.1	ARP170	N7578 	U12478	      	7	 2.68	 2.92	 1.76	-2.05	S0  	                  	S0  	In common envelope with a and b
++18.7197	349.3187	 94	*	E1	 7	  2.8	 12.3	 13.1	ARP170	N7578 	U12478	      	7	 2.68	 2.92	 1.76	-2.05	S0  	                  	S0  	Ring (?) (I)
++18.7197	349.3187	 94	*	E1	 7	  2.8	 12.3	 13.1	ARP170	N7578 	U12478	      	7	 2.68	 2.92	 1.76	-2.05	S0  	                  	E3  	Common envelope with a-n.c.i.-weak radio (I)
++18.7197	349.3187	 94	*	E1	 7	  2.8	 12.3	 13.1	ARP170	N7578 	U12478	      	7	 2.68	 2.92	 1.76	-2.05	S0  	                  	E1  	Common envelope with b-peculiar radio (I,M)
++18.7197	349.3187	 94	*	E1	 7	  2.8	 12.3	 13.1	ARP170	N7578 	U12478	      	7	 2.68	 2.92	 1.76	-2.05	S0  	                  	Sd  	Weak radio
++18.7197	349.3187	 94	*	E1	 7	  2.8	 12.3	 13.1	ARP170	N7578 	U12478	      	7	 2.68	 2.92	 1.76	-2.05	S0  	                  	S0  	In common envelope with a and b
++18.7197	349.3187	 94	*	E1	 7	  2.8	 12.3	 13.1	ARP170	N7578 	U12478	      	7	 2.68	 2.92	 1.76	-2.05	S0  	                  	S0  	Ring (?) (I)
++18.7197	349.3187	 94	*	E1	 7	  2.8	 12.3	 13.1	ARP170	N7578 	U12478	      	7	 2.68	 2.92	 1.76	-2.05	S0  	                  	E3  	Common envelope with a-n.c.i.-weak radio (I)
++18.7197	349.3187	 94	*	E1	 7	  2.8	 12.3	 13.1	ARP170	N7578 	U12478	      	7	 2.68	 2.92	 1.76	-2.05	S0  	                  	E1  	Common envelope with b-peculiar radio (I,M)
+ +9.4919	349.8824	 95	*	E3	 4	  1.5	 11.9	 13.1	ARP150	VV20  	N7609 	      	4	 2.49	 2.72	 1.48	-2.13	E3  	N7609             	Sc  	Radio-IR
+ +9.4919	349.8824	 95	*	E3	 4	  1.5	 11.9	 13.1	ARP150	VV20  	N7609 	      	4	 2.49	 2.72	 1.48	-2.13	E3  	N7609             	Sm  	Two nuclei-tidal arms and tails (I,M)
+ +9.4919	349.8824	 95	*	E3	 4	  1.5	 11.9	 13.1	ARP150	VV20  	N7609 	      	4	 2.49	 2.72	 1.48	-2.13	E3  	N7609             	Scd 	Tail-like features-weak radio possibly IR (I)
+ +9.4919	349.8824	 95	*	E3	 4	  1.5	 11.9	 13.1	ARP150	VV20  	N7609 	      	4	 2.49	 2.72	 1.48	-2.13	E3  	N7609             	E3  	Disturbed morpho (I)
+ +9.4919	349.8824	 95	*	E3	 4	  1.5	 11.9	 13.1	ARP150	VV20  	N7609 	      	4	 2.49	 2.72	 1.48	-2.13	Scd 	                  	Sc  	Radio-IR
+ +9.4919	349.8824	 95	*	E3	 4	  1.5	 11.9	 13.1	ARP150	VV20  	N7609 	      	4	 2.49	 2.72	 1.48	-2.13	Scd 	                  	Sm  	Two nuclei-tidal arms and tails (I,M)
+ +9.4919	349.8824	 95	*	E3	 4	  1.5	 11.9	 13.1	ARP150	VV20  	N7609 	      	4	 2.49	 2.72	 1.48	-2.13	Scd 	                  	Scd 	Tail-like features-weak radio possibly IR (I)
+ +9.4919	349.8824	 95	*	E3	 4	  1.5	 11.9	 13.1	ARP150	VV20  	N7609 	      	4	 2.49	 2.72	 1.48	-2.13	Scd 	                  	E3  	Disturbed morpho (I)
+ +9.4919	349.8824	 95	*	E3	 4	  1.5	 11.9	 13.1	ARP150	VV20  	N7609 	      	4	 2.49	 2.72	 1.48	-2.13	Sm  	                  	Sc  	Radio-IR
+ +9.4919	349.8824	 95	*	E3	 4	  1.5	 11.9	 13.1	ARP150	VV20  	N7609 	      	4	 2.49	 2.72	 1.48	-2.13	Sm  	                  	Sm  	Two nuclei-tidal arms and tails (I,M)
+ +9.4919	349.8824	 95	*	E3	 4	  1.5	 11.9	 13.1	ARP150	VV20  	N7609 	      	4	 2.49	 2.72	 1.48	-2.13	Sm  	                  	Scd 	Tail-like features-weak radio possibly IR (I)
+ +9.4919	349.8824	 95	*	E3	 4	  1.5	 11.9	 13.1	ARP150	VV20  	N7609 	      	4	 2.49	 2.72	 1.48	-2.13	Sm  	                  	E3  	Disturbed morpho (I)
+ +9.4919	349.8824	 95	*	E3	 4	  1.5	 11.9	 13.1	ARP150	VV20  	N7609 	      	4	 2.49	 2.72	 1.48	-2.13	Sc  	                  	Sc  	Radio-IR
+ +9.4919	349.8824	 95	*	E3	 4	  1.5	 11.9	 13.1	ARP150	VV20  	N7609 	      	4	 2.49	 2.72	 1.48	-2.13	Sc  	                  	Sm  	Two nuclei-tidal arms and tails (I,M)
+ +9.4919	349.8824	 95	*	E3	 4	  1.5	 11.9	 13.1	ARP150	VV20  	N7609 	      	4	 2.49	 2.72	 1.48	-2.13	Sc  	                  	Scd 	Tail-like features-weak radio possibly IR (I)
+ +9.4919	349.8824	 95	*	E3	 4	  1.5	 11.9	 13.1	ARP150	VV20  	N7609 	      	4	 2.49	 2.72	 1.48	-2.13	Sc  	                  	E3  	Disturbed morpho (I)
+ +8.7741	351.9929	 96	*	S2	 4	  2.3	 11.5	 12.0	ARP182	VV343 	N7674 	U12608	4	 2.12	 2.34	 1.48	-1.76	Sc  	N7674 Mk533 U12608	Im  	Peculiar morpho (I)
+ +8.7741	351.9929	 96	*	S2	 4	  2.3	 11.5	 12.0	ARP182	VV343 	N7674 	U12608	4	 2.12	 2.34	 1.48	-1.76	Sc  	N7674 Mk533 U12608	Sa  	Extension along semimajor axis-radio-possibly IR (I)
+ +8.7741	351.9929	 96	*	S2	 4	  2.3	 11.5	 12.0	ARP182	VV343 	N7674 	U12608	4	 2.12	 2.34	 1.48	-1.76	Sc  	N7674 Mk533 U12608	E2  	Contains faint disk
+ +8.7741	351.9929	 96	*	S2	 4	  2.3	 11.5	 12.0	ARP182	VV343 	N7674 	U12608	4	 2.12	 2.34	 1.48	-1.76	Sc  	N7674 Mk533 U12608	Sc  	Tail-like-Seyfert strong radio-IR (I)
+ +8.7741	351.9929	 96	*	S2	 4	  2.3	 11.5	 12.0	ARP182	VV343 	N7674 	U12608	4	 2.12	 2.34	 1.48	-1.76	E2  	                  	Im  	Peculiar morpho (I)
+ +8.7741	351.9929	 96	*	S2	 4	  2.3	 11.5	 12.0	ARP182	VV343 	N7674 	U12608	4	 2.12	 2.34	 1.48	-1.76	E2  	                  	Sa  	Extension along semimajor axis-radio-possibly IR (I)
+ +8.7741	351.9929	 96	*	S2	 4	  2.3	 11.5	 12.0	ARP182	VV343 	N7674 	U12608	4	 2.12	 2.34	 1.48	-1.76	E2  	                  	E2  	Contains faint disk
+ +8.7741	351.9929	 96	*	S2	 4	  2.3	 11.5	 12.0	ARP182	VV343 	N7674 	U12608	4	 2.12	 2.34	 1.48	-1.76	E2  	                  	Sc  	Tail-like-Seyfert strong radio-IR (I)
+ +8.7741	351.9929	 96	*	S2	 4	  2.3	 11.5	 12.0	ARP182	VV343 	N7674 	U12608	4	 2.12	 2.34	 1.48	-1.76	Sa  	                  	Im  	Peculiar morpho (I)
+ +8.7741	351.9929	 96	*	S2	 4	  2.3	 11.5	 12.0	ARP182	VV343 	N7674 	U12608	4	 2.12	 2.34	 1.48	-1.76	Sa  	                  	Sa  	Extension along semimajor axis-radio-possibly IR (I)
+ +8.7741	351.9929	 96	*	S2	 4	  2.3	 11.5	 12.0	ARP182	VV343 	N7674 	U12608	4	 2.12	 2.34	 1.48	-1.76	Sa  	                  	E2  	Contains faint disk
+ +8.7741	351.9929	 96	*	S2	 4	  2.3	 11.5	 12.0	ARP182	VV343 	N7674 	U12608	4	 2.12	 2.34	 1.48	-1.76	Sa  	                  	Sc  	Tail-like-Seyfert strong radio-IR (I)
+ +8.7741	351.9929	 96	*	S2	 4	  2.3	 11.5	 12.0	ARP182	VV343 	N7674 	U12608	4	 2.12	 2.34	 1.48	-1.76	Im  	                  	Im  	Peculiar morpho (I)
+ +8.7741	351.9929	 96	*	S2	 4	  2.3	 11.5	 12.0	ARP182	VV343 	N7674 	U12608	4	 2.12	 2.34	 1.48	-1.76	Im  	                  	Sa  	Extension along semimajor axis-radio-possibly IR (I)
+ +8.7741	351.9929	 96	*	S2	 4	  2.3	 11.5	 12.0	ARP182	VV343 	N7674 	U12608	4	 2.12	 2.34	 1.48	-1.76	Im  	                  	E2  	Contains faint disk
+ +8.7741	351.9929	 96	*	S2	 4	  2.3	 11.5	 12.0	ARP182	VV343 	N7674 	U12608	4	 2.12	 2.34	 1.48	-1.76	Im  	                  	Sc  	Tail-like-Seyfert strong radio-IR (I)
+ -2.3054	356.8622	 97	*	E2	 5	  5.2	 11.5	 12.4	      	      	      	      	5	 2.57	 2.80	 1.80	-1.90	E5  	I5357             	E5  	Extended galaxy (I)
+ -2.3054	356.8622	 97	*	E2	 5	  5.2	 11.5	 12.4	      	      	      	      	5	 2.57	 2.80	 1.80	-1.90	Sc  	I5359             	E5  	Extended galaxy (I)
+ -2.3054	356.8622	 97	*	E2	 5	  5.2	 11.5	 12.4	      	      	      	      	5	 2.57	 2.80	 1.80	-1.90	Sa  	I5356             	E5  	Extended galaxy (I)
+ -2.3054	356.8622	 97	*	E2	 5	  5.2	 11.5	 12.4	      	      	      	      	5	 2.57	 2.80	 1.80	-1.90	E1  	I5351             	E5  	Extended galaxy (I)
+ -2.3054	356.8622	 97	*	E2	 5	  5.2	 11.5	 12.4	      	      	      	      	5	 2.57	 2.80	 1.80	-1.90	S0a 	                  	E5  	Extended galaxy (I)
+ +0.3733	358.5532	 98	*	E2	 4	  2.4	 11.5	 12.2	ARP323	VV208 	N7783 	U12837	3	 2.08	 2.31	 1.44	-1.76	SB0 	N7783A U12837a    	S0  	n.c.i. (I)
+ +0.3733	358.5532	 98	*	E2	 4	  2.4	 11.5	 12.2	ARP323	VV208 	N7783 	U12837	3	 2.08	 2.31	 1.44	-1.76	SB0 	N7783A U12837a    	SB0 	Asym. morpho-extension toward 98b (I)
+ +0.3733	358.5532	 98	*	E2	 4	  2.4	 11.5	 12.2	ARP323	VV208 	N7783 	U12837	3	 2.08	 2.31	 1.44	-1.76	S0  	N7783B U12837b    	S0  	n.c.i. (I)
+ +0.3733	358.5532	 98	*	E2	 4	  2.4	 11.5	 12.2	ARP323	VV208 	N7783 	U12837	3	 2.08	 2.31	 1.44	-1.76	S0  	N7783B U12837b    	SB0 	Asym. morpho-extension toward 98b (I)
+ +0.3733	358.5532	 98	*	E2	 4	  2.4	 11.5	 12.2	ARP323	VV208 	N7783 	U12837	3	 2.08	 2.31	 1.44	-1.76	E2  	                  	S0  	n.c.i. (I)
+ +0.3733	358.5532	 98	*	E2	 4	  2.4	 11.5	 12.2	ARP323	VV208 	N7783 	U12837	3	 2.08	 2.31	 1.44	-1.76	E2  	                  	SB0 	Asym. morpho-extension toward 98b (I)
+ +0.3733	358.5532	 98	*	E2	 4	  2.4	 11.5	 12.2	ARP323	VV208 	N7783 	U12837	3	 2.08	 2.31	 1.44	-1.76	Sc  	                  	S0  	n.c.i. (I)
+ +0.3733	358.5532	 98	*	E2	 4	  2.4	 11.5	 12.2	ARP323	VV208 	N7783 	U12837	3	 2.08	 2.31	 1.44	-1.76	Sc  	                  	SB0 	Asym. morpho-extension toward 98b (I)
++13.1326	000.3365	100	*	S1	 4	  3.6	 11.5	 12.1	N7803 	U12906	      	      	3	 1.95	 2.15	 1.58	-1.46	Sb  	N7803 U12906      	Scd 	Asym. morpho-low-luminosity extension (I)
++13.1326	000.3365	100	*	S1	 4	  3.6	 11.5	 12.1	N7803 	U12906	      	      	3	 1.95	 2.15	 1.58	-1.46	Sb  	N7803 U12906      	SBc 	Peculiar r.c.-strong nuclear emission (I)
++13.1326	000.3365	100	*	S1	 4	  3.6	 11.5	 12.1	N7803 	U12906	      	      	3	 1.95	 2.15	 1.58	-1.46	Sb  	N7803 U12906      	Sm  	Peculiar morpho extended to southeast-weak radio (I)
++13.1326	000.3365	100	*	S1	 4	  3.6	 11.5	 12.1	N7803 	U12906	      	      	3	 1.95	 2.15	 1.58	-1.46	Sb  	N7803 U12906      	Sb  	Lopsided r.c.-boy isophotes-radio-IR (I)
++13.1326	000.3365	100	*	S1	 4	  3.6	 11.5	 12.1	N7803 	U12906	      	      	3	 1.95	 2.15	 1.58	-1.46	Sm  	Mk0934            	Scd 	Asym. morpho-low-luminosity extension (I)
++13.1326	000.3365	100	*	S1	 4	  3.6	 11.5	 12.1	N7803 	U12906	      	      	3	 1.95	 2.15	 1.58	-1.46	Sm  	Mk0934            	SBc 	Peculiar r.c.-strong nuclear emission (I)
++13.1326	000.3365	100	*	S1	 4	  3.6	 11.5	 12.1	N7803 	U12906	      	      	3	 1.95	 2.15	 1.58	-1.46	Sm  	Mk0934            	Sm  	Peculiar morpho extended to southeast-weak radio (I)
++13.1326	000.3365	100	*	S1	 4	  3.6	 11.5	 12.1	N7803 	U12906	      	      	3	 1.95	 2.15	 1.58	-1.46	Sm  	Mk0934            	Sb  	Lopsided r.c.-boy isophotes-radio-IR (I)
++13.1326	000.3365	100	*	S1	 4	  3.6	 11.5	 12.1	N7803 	U12906	      	      	3	 1.95	 2.15	 1.58	-1.46	SBc 	                  	Scd 	Asym. morpho-low-luminosity extension (I)
++13.1326	000.3365	100	*	S1	 4	  3.6	 11.5	 12.1	N7803 	U12906	      	      	3	 1.95	 2.15	 1.58	-1.46	SBc 	                  	SBc 	Peculiar r.c.-strong nuclear emission (I)
++13.1326	000.3365	100	*	S1	 4	  3.6	 11.5	 12.1	N7803 	U12906	      	      	3	 1.95	 2.15	 1.58	-1.46	SBc 	                  	Sm  	Peculiar morpho extended to southeast-weak radio (I)
++13.1326	000.3365	100	*	S1	 4	  3.6	 11.5	 12.1	N7803 	U12906	      	      	3	 1.95	 2.15	 1.58	-1.46	SBc 	                  	Sb  	Lopsided r.c.-boy isophotes-radio-IR (I)
++13.1326	000.3365	100	*	S1	 4	  3.6	 11.5	 12.1	N7803 	U12906	      	      	3	 1.95	 2.15	 1.58	-1.46	Scd 	                  	Scd 	Asym. morpho-low-luminosity extension (I)
++13.1326	000.3365	100	*	S1	 4	  3.6	 11.5	 12.1	N7803 	U12906	      	      	3	 1.95	 2.15	 1.58	-1.46	Scd 	                  	SBc 	Peculiar r.c.-strong nuclear emission (I)
++13.1326	000.3365	100	*	S1	 4	  3.6	 11.5	 12.1	N7803 	U12906	      	      	3	 1.95	 2.15	 1.58	-1.46	Scd 	                  	Sm  	Peculiar morpho extended to southeast-weak radio (I)
++13.1326	000.3365	100	*	S1	 4	  3.6	 11.5	 12.1	N7803 	U12906	      	      	3	 1.95	 2.15	 1.58	-1.46	Scd 	                  	Sb  	Lopsided r.c.-boy isophotes-radio-IR (I)
+

@@ -58,7 +58,8 @@ void Session::Private::init(const string &connectionString, Session::Provider pr
 #endif
   q->setConnection(*connection);
   string show_queries = "false";
-  WServer::instance()->readConfigurationProperty("show-queries", show_queries);
+  if(WServer::instance())
+    WServer::instance()->readConfigurationProperty("show-queries", show_queries);
   connection->setProperty("show-queries", show_queries);
   q->mapClass<Catalogue>("catalogues");
   q->mapClass<NgcObject>("objects");
