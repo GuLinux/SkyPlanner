@@ -36,6 +36,14 @@ class DSSImage::Private
       private:
       void resize(const boost::filesystem::path &destination, const DSSImage::ImageOptions &imageOptions);
     };
+    struct Format {
+      Format(const std::string &extension, const std::string &magickName, const std::string &mime, int quality = -1)
+        : extension(extension), magickName(magickName), mime(mime), quality(quality) {}
+      const std::string extension;
+      const std::string magickName;
+      const std::string mime;
+      const int quality;
+    };
     
     class DialogControl {
     public:
@@ -98,6 +106,7 @@ class DSSImage::Private
     Wt::WLink negate(const boost::filesystem::path &file);
     static Magick::Image &apply_common_options(Magick::Image &image);
     Size imageSize;
+    static Format imageFormat;
   private:
     class DSSImage *const q;
 };

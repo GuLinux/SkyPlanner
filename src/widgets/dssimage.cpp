@@ -49,6 +49,8 @@ using namespace WtCommons;
 using namespace std;
 namespace fs = boost::filesystem;
 
+DSSImage::Private::Format DSSImage::Private::imageFormat {"jpg", "JPEG", "image/jpeg", 80};
+//DSSImage::Private::Format DSSImage::Private::imageFormat {"PNG", "PNG", "image/png"};
 
 DSSImage::Private::Private( const DSSImage::ImageOptions &imageOptions, const shared_ptr<mutex> &downloadMutex, DSSImage *q )
   : imageOptions(imageOptions), downloadMutex(downloadMutex), q( q )
@@ -142,7 +144,7 @@ boost::filesystem::path DSSImage::ImageOptions::file(const boost::filesystem::pa
 {
   string arSignFix = coordinates.rightAscension.degrees() < 0 ? "-" : "";
   string decSignFix = coordinates.declination.degrees() < 0 ? "-" : "";
-  string cacheKey = format("%s%s-ar_%s%d-%d-%.1f_dec_%s%d-%d-%.1f_size_%d-%d-%.1f.jpg")
+  string cacheKey = format("%s%s-ar_%s%d-%d-%.1f_dec_%s%d-%d-%.1f_size_%d-%d-%.1f.%s")
   % prefix
   % DSS::imageVersion(imageVersion)
   % (coordinates.rightAscension.sexagesimalHours().hours == 0 ? arSignFix : "")
@@ -155,7 +157,8 @@ boost::filesystem::path DSSImage::ImageOptions::file(const boost::filesystem::pa
   % coordinates.declination.sexagesimal().seconds
   % size.sexagesimal().degrees
   % size.sexagesimal().minutes
-  % size.sexagesimal().seconds;
+  % size.sexagesimal().seconds
+  % DSSImage::Private::imageFormat.extension;
 
   return cache_dir / cacheKey;
 }
@@ -219,12 +222,12 @@ Wt::WLink DSSImage::Private::negate(const boost::filesystem::path &file)
     apply_common_options(image);
     image.negate();
     Magick::Blob blob;
-    image.write(&blob, "JPEG");
+    image.write(&blob, imageFormat.magickName);
     spLog("notice") << "negating image, wrote " << blob.length() << " bytes";
     vector<uint8_t> data(blob.length());
     const uint8_t *data_c = reinterpret_cast<const uint8_t*>(blob.data());
     copy(data_c, data_c + blob.length(), begin(data));
-    return new WMemoryResource("image/jpeg", data, q);
+    return new WMemoryResource(imageFormat.mime, data, q);
   } catch(exception &e) {
     spLog("error") << "Error negating dss image: " << e.what();
     return linkFor(file);
@@ -550,7 +553,7 @@ void DSSImage::startDownload()
 Magick::Image& DSSImage::Private::apply_common_options(Magick::Image& image)
 {
   image.colorSpace(Magick::GRAYColorspace);
-  image.quality(0);
+  image.quality(imageFormat.quality != -1 ? imageFormat.quality : 0);
   return image;
 }
 
