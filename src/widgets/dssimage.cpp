@@ -142,7 +142,7 @@ boost::filesystem::path DSSImage::ImageOptions::file(const boost::filesystem::pa
 {
   string arSignFix = coordinates.rightAscension.degrees() < 0 ? "-" : "";
   string decSignFix = coordinates.declination.degrees() < 0 ? "-" : "";
-  string cacheKey = format("%s%s-ar_%s%d-%d-%.1f_dec_%s%d-%d-%.1f_size_%d-%d-%.1f.png")
+  string cacheKey = format("%s%s-ar_%s%d-%d-%.1f_dec_%s%d-%d-%.1f_size_%d-%d-%.1f.jpg")
   % prefix
   % DSS::imageVersion(imageVersion)
   % (coordinates.rightAscension.sexagesimalHours().hours == 0 ? arSignFix : "")
@@ -219,7 +219,7 @@ Wt::WLink DSSImage::Private::negate(const boost::filesystem::path &file)
     apply_common_options(image);
     image.negate();
     Magick::Blob blob;
-    image.write(&blob, "PNG");
+    image.write(&blob, "JPEG");
     spLog("notice") << "negating image, wrote " << blob.length() << " bytes";
     vector<uint8_t> data(blob.length());
     const uint8_t *data_c = reinterpret_cast<const uint8_t*>(blob.data());
