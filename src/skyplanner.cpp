@@ -60,6 +60,7 @@
 #include <Wt/WMemoryResource>
 #include <Wt/WFileResource>
 #include "astrosessionpreview.h"
+#include "Wt-Commons/cookieslawdisclaimer.h"
 
 using namespace std;
 using namespace Wt;
@@ -120,8 +121,6 @@ void AuthWidget::registerNewUser(const Auth::Identity& oauth)
 SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
   : WApplication( environment ), d( this, onQuit )
 {
-
-  
   d->initialInternalPath = internalPath();
   d->agentIsBot = environment.agentIsSpiderBot() || environment.userAgent().find("Baiduspider") != string::npos || environment.userAgent().find("YandexBot") != string::npos;
   if(!d->agentIsBot)
@@ -134,28 +133,8 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
   d->sessionInfo.referrer = environment.referer();
   d->sessionInfo.sessionId = sessionId();
 
-
-  string googleAnalytics_ua, googleAnalytics_domain;
-  if(readConfigurationProperty("google-analytics-ua", googleAnalytics_ua) && readConfigurationProperty("google-analytics-domain", googleAnalytics_domain)) {
-    vector<uint8_t> data;
-    ::Utils::copy((format(R"(
-       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-       (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-       m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-       })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-       ga('create', '%s', '%s');
-       ga('require', 'linkid', 'linkid.js');
-       ga('require', 'displayfeatures');
-       ga('send', 'pageview');
-       )") % googleAnalytics_ua % googleAnalytics_domain).str(), back_inserter(data));
-    WMemoryResource *analyticsScriptResource = new WMemoryResource("application/javascript", data, this);
-    require(analyticsScriptResource->url(), "googleAnalytics");
-  }
-
   string stringsDirectory = (boost::filesystem::current_path() / "strings").string();
   readConfigurationProperty("strings_directory", stringsDirectory);
-  log("notice") << "Using strings directlry: " << stringsDirectory;
 
   WCombinedLocalizedStrings *combinedLocalization = new WCombinedLocalizedStrings();
   WMessageResourceBundle *bundle = new WMessageResourceBundle();
@@ -179,9 +158,32 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
     useStyleSheet( themeCssPath );
   }
   useStyleSheet( styleCssPath );
+  
+  CookiesLawDisclaimer::checkOrCreate(root(), [=] {
+      string googleAnalytics_ua, googleAnalytics_domain;
+  if(readConfigurationProperty("google-analytics-ua", googleAnalytics_ua) && readConfigurationProperty("google-analytics-domain", googleAnalytics_domain)) {
+    vector<uint8_t> data;
+    ::Utils::copy((format(R"(
+       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+       (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+       m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+       })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+       ga('create', '%s', '%s');
+       ga('require', 'linkid', 'linkid.js');
+       ga('require', 'displayfeatures');
+       ga('send', 'pageview');
+       )") % googleAnalytics_ua % googleAnalytics_domain).str(), back_inserter(data));
+    WMemoryResource *analyticsScriptResource = new WMemoryResource("application/javascript", data, this);
+    require(analyticsScriptResource->url(), "googleAnalytics");
+  }
+
+
   //requireJQuery("https://code.jquery.com/jquery-1.11.1.min.js");
   requireJQuery("https://code.jquery.com/jquery-2.1.1.min.js");
   require("http://s7.addthis.com/js/300/addthis_widget.js#pubid=ra-53db62c0246c3a25");
+  });
+  
   {
     Dbo::Transaction t(d->session);
     long objectsWithoutConstellationSize = d->session.query<long>("select count(*) from objects where constellation_abbrev is null").resultValue();
@@ -428,7 +430,6 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
     
   )", XHTMLUnsafeText);
   footer->bindString("share-url", wApp->makeAbsoluteUrl(wApp->bookmarkUrl(HOME_PATH)));
-
   root()->addWidget(footer);
 }
 

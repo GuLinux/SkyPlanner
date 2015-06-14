@@ -385,4 +385,25 @@ After you added a session, click it to add new objects.
 <message id="printable_version_deprecated_use_preview"><strong>This section is deprecated</strong>: you can get a much better printable version of 
   your planned session by clicking the <em>Preview with images</em> button, customize the page (inverting images, collapsing items, and so on)
   and then clicking <em>Print</em>.<hr /></message>
+
+<message id="cookies_law_disclaimer">This website uses cookies (including 3rd party cookies) to improve your navigation experience. If you don't agree with this, you may close this page.</message>
+<message id="cookies_law_readmore">Read more</message>
+<message id="cookies_law_readmore_caption">About Cookies usage</message>
+<message id="cookies_law_readmore_text">SkyPlanner uses cookies for authenticating users, storing some preferences and share content to external websites.<br />
+It also uses cookies for collecting statistics, such as Google Analytics platform.<br />
+<h2>Internal Cookies</h2>
+We use cookies to store username and other session parameterers. These are called "technical cookies", and they're mandatory for a proper navigation experience.
+<h2>Third Party Cookies</h2>
+We use third party cookies to allow SkyPlanner to interact with other websites.
+<h3>Google Analytics</h3>
+Google analytics platform uses cookies to profile some details about your navigation experience. Using SkyPlanner you agree with this cookies usage.
+<h3>Social Platform Cookies</h3>
+SkyPlanner uses 3rd party cookies for social sharing of user content.<br />
+This includes Google+, Facebook and Twitter share buttons.
+<h2>How to delete cookies</h2>
+Each browser uses different ways to handle and delete cookies.<br />
+Usually you have to go to preferences, privacy tab.<br />
+For a more complete explanation, refer to your browser documentation to learn how to delete cookies.
+  </message>
+<message id="cookies_law_agree">Agree</message>
 </messages>
