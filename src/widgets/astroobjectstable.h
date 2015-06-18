@@ -64,11 +64,11 @@ public:
     std::map<std::string, Wt::WWidget*> actions;
   };
   struct Selection {
-    Selection() = default;
-    Selection(const NgcObjectPtr &object, const std::string &css, std::function<void(Row)> onSelectionFound) : object(object), css(css), onSelectionFound(onSelectionFound) {}
+    typedef std::function<void(Row)> OnSelectionFound;
+    Selection(const NgcObjectPtr &object = {}, const std::string &css = {}, OnSelectionFound onSelectionFound = [](Row){}) : object(object), css(css), onSelectionFound(onSelectionFound) {}
     NgcObjectPtr object;
     std::string css;
-    std::function<void(Row)> onSelectionFound = [](Row) {};
+    OnSelectionFound onSelectionFound;
     operator bool() const { return object && !css.empty(); }
   };
   struct Action {
@@ -95,9 +95,11 @@ public:
     Angle maximumAngularSize;
   };
   struct Page {
-    long current = -1;
-    long total = -1;
-    std::size_t pageSize = 15;
+    typedef std::function<void(long)> Change;
+    Page(long current = -1, long total = -1, std::size_t pageSize = 15, Change change = [](long){}) : current(current), total(total), pageSize(pageSize), change(change) {}
+    long current;
+    long total;
+    std::size_t pageSize;
     std::function<void(long)> change;
     operator bool() const;
     static Page fromCount(long pageNumber, long count, std::function<void(long)> onChange, std::size_t pageSize = 15);
