@@ -31,6 +31,7 @@
 #include "utils/format.h"
 #include "utils/utils.h"
 #include "skyplanner.h"
+#include "Wt-Commons/wt_utils.h"
 
 using namespace Wt;
 using namespace WtCommons;
@@ -53,7 +54,7 @@ AstroSessionsPage::AstroSessionsPage(Session &session, WContainerWidget* parent)
     d->removeTab(astroSession);
   });
 
-  WMenuItem *listMenuItem = d->tabWidget->addTab(d->astroSessionsListTab, WString::tr("astrosessionspage_sessions_list"));
+  WMenuItem *listMenuItem = d->tabWidget->addTab(d->astroSessionsListTab, "astrosessionspage_sessions_list"_wtr);
   listMenuItem->addStyleClass("hidden-print");
   listMenuItem->setPathComponent("list/");
   d->tabWidget->tabClosed().connect([=](int tabNumber, _n5){
@@ -66,7 +67,7 @@ AstroSessionsPage::AstroSessionsPage(Session &session, WContainerWidget* parent)
     auto internalPath = d->tabs[index].path;
     spLog("notice") << "index= " << index << "path: " << internalPath;
     wApp->setInternalPath(d->tabs[index].path);
-    wApp->setTitle( d->sessionsNamesCache.count(internalPath) ? WString::tr("session-application_title").arg( d->sessionsNamesCache[internalPath] ) : WString::tr("application_title") );
+    wApp->setTitle( d->sessionsNamesCache.count(internalPath) ? "session-application_title"_wtr % d->sessionsNamesCache[internalPath] : "application_title"_wtr );
   });
 }
 
@@ -105,7 +106,7 @@ void AstroSessionsPage::open(const string &tabName)
   string internalPath = AstroSessionTab::pathComponent(astroSession, t);
   d->sessionsNamesCache[internalPath] = astroSession->name();
   auto setSessionTitle = [=] {
-    wApp->setTitle(WString::tr("session-application_title").arg( d->sessionsNamesCache[internalPath] ));
+    wApp->setTitle("session-application_title"_wtr % d->sessionsNamesCache[internalPath]);
   };
   setSessionTitle();
   spLog("notice") << "Setting internal path to " << internalPath;

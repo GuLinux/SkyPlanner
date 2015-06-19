@@ -83,6 +83,7 @@
 #include "widgets/instrumentstable.h"
 #include "astrosessionpreview.h"
 #include "Wt-Commons/wglyphicon.h"
+#include "Wt-Commons/wt_utils.h"
 
 using namespace Wt;
 using namespace WtCommons;
@@ -115,7 +116,7 @@ AstroSessionObjectPtr AstroSessionTab::add(const NgcObjectPtr &ngcObject, const 
   Dbo::Transaction t(session);
   int existing = session.query<int>("select count(*) from astro_session_object where astro_session_id = ? AND objects_id = ? ").bind(astroSession.id() ).bind(ngcObject.id() );
   if(existing>0) {
-    SkyPlanner::instance()->notification(WString::tr("notification_warning_title"), WString::tr("notification_object_already_added"), SkyPlanner::Notification::Alert, 10);
+    SkyPlanner::instance()->notification("notification_warning_title"_wtr, "notification_object_already_added"_wtr, SkyPlanner::Notification::Alert, 10);
     return {};
   }
   astroSession.modify()->astroSessionObjects().insert(new AstroSessionObject(ngcObject));
@@ -168,8 +169,8 @@ void AstroSessionTab::Private::load()
 
   PlaceWidget *placeWidget = new PlaceWidget(astroSession, session);
 
-  auto locationPanel = WW<WPanel>(addPanel(WString::tr("position_title"), placeWidget, false, true, sessionContainer )).addCss("hidden-print").get();
-  addPanel(WString::tr("astrosessiontab_information_panel"), sessionInfoWidget, true, true, sessionContainer)->addStyleClass("hidden-print");
+  auto locationPanel = WW<WPanel>(addPanel("position_title"_wtr, placeWidget, false, true, sessionContainer )).addCss("hidden-print").get();
+  addPanel("astrosessiontab_information_panel"_wtr, sessionInfoWidget, true, true, sessionContainer)->addStyleClass("hidden-print");
   shared_ptr<SkyPlanner::Notification> placeWidgetInstructions;
   if(astroSession->position()) {
     placeWidget->mapReady().connect([=](_n6){ WTimer::singleShot(1500, [=](WMouseEvent){
@@ -177,7 +178,7 @@ void AstroSessionTab::Private::load()
       });
     });
   } else {
-    placeWidgetInstructions = SkyPlanner::instance()->notification(WString::tr("notification_suggestion_title"), WString::tr("placewidget_instructions_notification"), SkyPlanner::Notification::Information);
+    placeWidgetInstructions = SkyPlanner::instance()->notification("notification_suggestion_title"_wtr, "placewidget_instructions_notification"_wtr, SkyPlanner::Notification::Information);
   }
   updateTimezone();
 
@@ -192,7 +193,7 @@ void AstroSessionTab::Private::load()
     updateTimezone();
     if(placeWidgetInstructions)
       placeWidgetInstructions->close();
-    SkyPlanner::instance()->notification(WString::tr("notification_success_title"), WString::tr("placewidget_place_set_notification"), SkyPlanner::Notification::Success, 5);
+    SkyPlanner::instance()->notification("notification_success_title"_wtr, "placewidget_place_set_notification"_wtr, SkyPlanner::Notification::Success, 5);
     populate();
     addObjectsTabWidget->populateFor(selectedTelescope, timezone);
     updatePosition();
@@ -200,20 +201,20 @@ void AstroSessionTab::Private::load()
     if(weatherWidget)
         weatherWidget->reload(astroSession->position(), geoCoderPlace, astroSession->when());
   });
-  addPanel(WString::tr("astrosessiontab_add_observable_object"), addObjectsTabWidget, true, true, sessionContainer)->addStyleClass("hidden-print");
-  addPanel(WString::tr("astrosessiontab_planets_panel"), planetsTable, true, true, sessionContainer)->addStyleClass("hidden-print");
+  addPanel("astrosessiontab_add_observable_object"_wtr, addObjectsTabWidget, true, true, sessionContainer)->addStyleClass("hidden-print");
+  addPanel("astrosessiontab_planets_panel"_wtr, planetsTable, true, true, sessionContainer)->addStyleClass("hidden-print");
   if(session.user()->instruments_ok()) {
     WContainerWidget *instrumentsPanel = WW<WContainerWidget>().addCss("container");
     
     auto instrumentsTable = new InstrumentsTable(session.user(), session);
-    addPanel(WString::tr("astrosessiontab_instruments_panel"), instrumentsTable, true, true, sessionContainer);
+    addPanel("astrosessiontab_instruments_panel"_wtr, instrumentsTable, true, true, sessionContainer);
   }
   auto isPastSession = [=](int slackHours = 0) {
     return (astroSession->when() + boost::posix_time::hours(slackHours)) < boost::posix_time::second_clock().local_time();
   };
   if(!isPastSession(72)) {
       weatherWidget = new WeatherWidget(astroSession->position(), geoCoderPlace, astroSession->when(), WeatherWidget::Full);
-      addPanel(WString::tr("weather-panel"), weatherWidget, true, true, sessionContainer)->addStyleClass("hidden-print");
+      addPanel("weather-panel"_wtr, weatherWidget, true, true, sessionContainer)->addStyleClass("hidden-print");
   } else
     weatherWidget = nullptr;
   addObjectsTabWidget->objectsListChanged().connect( [=](const AstroSessionObjectPtr &o, _n5) { populate(o); } );
@@ -224,7 +225,7 @@ void AstroSessionTab::Private::load()
 
 
   if(timezone)
-    sessionContainer->addWidget(  new WText(WString::tr("printable_timezone_info").arg(WString::fromUTF8(timezone.timeZoneName))));
+    sessionContainer->addWidget(  new WText("printable_timezone_info"_wtr % WString::fromUTF8(timezone.timeZoneName)));
 
   vector<AstroObjectsTable::Action> actions = {
     {"buttons_extended_info", [](const AstroObjectsTable::Row &r, WWidget*) { r.toggleMoreInfo(); } },
@@ -242,7 +243,7 @@ void AstroSessionTab::Private::load()
   if(isPastSession(12)) {
     auto toggleObservedStyle = [=](const AstroObjectsTable::Row &r, bool observed) {
       WPushButton *b = reinterpret_cast<WPushButton*>(r.actions.at("astrosessiontab_object_observed_menu"));
-      b->setText(observed ? WString::tr("astrosessiontab_object_observed") : WString::tr("astrosessiontab_object_not_observed"));
+      b->setText(observed ? "astrosessiontab_object_observed"_wtr : "astrosessiontab_object_not_observed"_wtr);
       b->toggleStyleClass("btn-success", observed);
       r.actions.at("buttons_remove")->setHidden(observed);
       r.actions.at("report")->setHidden(!observed);
@@ -274,7 +275,7 @@ void AstroSessionTab::Private::load()
 
   sessionContainer->addWidget(astroObjectsTable = new AstroObjectsTable(session, actions, AstroObjectsTable::FiltersButtonExternal, NgcObject::allNebulaTypes(), columns ));
   title->bindWidget("filters-button", WW<WPushButton>(astroObjectsTable->filtersButton()).addCss("btn-sm btn-primary"));
-  title->bindWidget("expand-button", WW<WPushButton>(WString::tr("btn-expand-all")).css("btn-sm").onClick([=](WMouseEvent){
+  title->bindWidget("expand-button", WW<WPushButton>("btn-expand-all"_wtr).css("btn-sm").onClick([=](WMouseEvent){
     for(auto row: astroObjectsTable->rows())
       row.toggleMoreInfo();
   }));
@@ -285,7 +286,7 @@ void AstroSessionTab::Private::load()
   WComboBox *telescopeCombo = WW<WComboBox>().css("input-sm");
   WStandardItemModel *telescopesModel = new WStandardItemModel(sessionContainer);
   telescopeCombo->setModel(telescopesModel);
-  WLabel *telescopeComboLabel = WW<WLabel>(WString::tr("astrosessiontab__telescope_label")).setMargin(10);
+  WLabel *telescopeComboLabel = WW<WLabel>("astrosessiontab__telescope_label"_wtr).setMargin(10);
   telescopeComboLabel->setBuddy(telescopeCombo);
   telescopeComboContainer = actionsContainer->addControl(telescopeCombo, "astrosessiontab__telescope_label");
   
@@ -321,8 +322,8 @@ void AstroSessionTab::Private::load()
     
     } else {
       telescopeComboContainer->setHidden(true);
-      WAnchor *telescopeLink =  WW<WAnchor>("", WString::tr("mainmenu_my_telescopes")).css("link alert-link").onClick([=](WMouseEvent){ SkyPlanner::instance()->clearNotifications(); wApp->setInternalPath("/telescopes", true); });
-      SkyPlanner::instance()->notification(WString::tr("notification_suggestion_title"), WW<WTemplate>(WString::tr("astrosessiontab_no_telescopes_message")).bindWidget("my_telescopes_link", telescopeLink), SkyPlanner::Notification::Information);
+      WAnchor *telescopeLink =  WW<WAnchor>("", "mainmenu_my_telescopes"_wtr).css("link alert-link").onClick([=](WMouseEvent){ SkyPlanner::instance()->clearNotifications(); wApp->setInternalPath("/telescopes", true); });
+      SkyPlanner::instance()->notification("notification_suggestion_title"_wtr, WW<WTemplate>("astrosessiontab_no_telescopes_message"_wtr).bindWidget("my_telescopes_link", telescopeLink), SkyPlanner::Notification::Information);
     }
   };
   updateTelescopes(t);
@@ -363,7 +364,7 @@ void AstroSessionTab::Private::updatePosition()
 string AstroSessionTab::pathComponent(const AstroSessionPtr &astroSession, Dbo::Transaction &transaction)
 {
   string nameForMenu = boost::regex_replace(astroSession->name(), boost::regex{"[^a-zA-Z0-9]+"}, "-");
-  return format("/sessions/%x/%s") % astroSession.id() % nameForMenu;
+  return "/sessions/%x/%s"_fmt % astroSession.id() % nameForMenu;
 }
 
 Wt::Signal<std::string> &AstroSessionTab::nameChanged() const
@@ -379,7 +380,7 @@ Wt::Signal<> &AstroSessionTab::sessionsChanged() const
 
 WToolBar *AstroSessionTab::Private::actionsToolbar()
 {
-  auto reportButton = WW<WPushButton>(WString::tr("Report")).css("btn-primary btn-xs").onClick([=](WMouseEvent){
+  auto reportButton = WW<WPushButton>("Report"_wtr).css("btn-primary btn-xs").onClick([=](WMouseEvent){
     sessionPreviewContainer->clear();
     auto preview = new AstroSessionPreview{{astroSession, selectedTelescope, timezone}, geoCoderPlace, session, {}, AstroSessionPreview::Report};
     preview->sessionsChanged().connect([=](_n6){sessionsChanged.emit(); });
@@ -395,12 +396,12 @@ WToolBar *AstroSessionTab::Private::actionsToolbar()
     reportButton->setHidden( astroSession->wDateWhen() >= WDateTime::currentDateTime() );
   };
 
-  auto changeNameOrDateButton = WW<WPushButton>(WString::tr("astrosessiontab_change_name_or_date")).css("btn btn-xs").onClick([=](WMouseEvent){
-    WDialog *changeNameOrDateDialog = new WDialog(WString::tr("astrosessiontab_change_name_or_date"));
+  auto changeNameOrDateButton = WW<WPushButton>("astrosessiontab_change_name_or_date"_wtr).css("btn btn-xs").onClick([=](WMouseEvent){
+    WDialog *changeNameOrDateDialog = new WDialog("astrosessiontab_change_name_or_date"_wtr);
     WLineEdit *sessionName = WW<WLineEdit>(astroSession->name()).css("input-block-level");
     WDateEdit *sessionDate = WW<WDateEdit>().css("input-block-level form-control-dateedit");
     sessionDate->setDate(astroSession->wDateWhen().date());
-    changeNameOrDateDialog->footer()->addWidget(WW<WPushButton>(WString::tr("Wt.WMessageBox.Ok")).css("btn btn-primary").onClick([=](WMouseEvent){
+    changeNameOrDateDialog->footer()->addWidget(WW<WPushButton>("Wt.WMessageBox.Ok"_wtr).css("btn btn-primary").onClick([=](WMouseEvent){
       Dbo::Transaction t(session);
       astroSession.modify()->setName(sessionName->text().toUTF8());
       astroSession.modify()->setDateTime(WDateTime{sessionDate->date()});
@@ -417,7 +418,7 @@ WToolBar *AstroSessionTab::Private::actionsToolbar()
     changeNameOrDateDialog->show();
   });
   
-  auto previewVersionButton = WW<WPushButton>(WString::tr("astrosessiontab_preview_version")).css("btn-primary btn-xs").onClick([=](WMouseEvent){
+  auto previewVersionButton = WW<WPushButton>("astrosessiontab_preview_version"_wtr).css("btn-primary btn-xs").onClick([=](WMouseEvent){
     sessionPreviewContainer->clear();
     auto preview = new AstroSessionPreview{{astroSession, selectedTelescope, timezone}, geoCoderPlace, session, {{"astroobject_remove_from_session", "btn-danger", [=](const AstroSessionObjectPtr &o, AstroObjectWidget* w){
       remove(o, [=] { delete w; });
@@ -431,9 +432,9 @@ WToolBar *AstroSessionTab::Private::actionsToolbar()
     });
   });
 
-  auto printableVersionButton = WW<WPushButton>(WString::tr("astrosessiontab_printable_version")).css("btn btn-info btn-xs").onClick( [=](WMouseEvent){ printableVersion(); } );
+  auto printableVersionButton = WW<WPushButton>("astrosessiontab_printable_version"_wtr).css("btn btn-info btn-xs").onClick( [=](WMouseEvent){ printableVersion(); } );
 
-  WPushButton *exportButton = WW<WPushButton>(WString::tr("astrosessiontab_export")).css("btn btn-xs btn-info");
+  WPushButton *exportButton = WW<WPushButton>("astrosessiontab_export"_wtr).css("btn btn-xs btn-info");
   WPopupMenu *exportMenu = new WPopupMenu;
   exportButton->setMenu(exportMenu);
   for(auto exportType: map<string, ExportAstroSessionResource::ReportType>{
@@ -452,11 +453,11 @@ WToolBar *AstroSessionTab::Private::actionsToolbar()
     exportMenuItem->setLinkTarget(TargetNewWindow);
     if(exportType.second == ExportAstroSessionResource::KStars) {
       exportMenuItem->triggered().connect([=](WMenuItem*, _n5) {
-        SkyPlanner::instance()->notification(WString::tr("notification_suggestion_title"), WString::tr("kstars_suggestion"), SkyPlanner::Notification::Information);
+        SkyPlanner::instance()->notification("notification_suggestion_title"_wtr, "kstars_suggestion"_wtr, SkyPlanner::Notification::Information);
       });
     }
   }
-  auto closeButton = WW<WPushButton>(WString::tr("buttons_close")).css("btn btn-warning btn-xs").onClick( [=](WMouseEvent){ close.emit(); } );
+  auto closeButton = WW<WPushButton>("buttons_close"_wtr).css("btn btn-warning btn-xs").onClick( [=](WMouseEvent){ close.emit(); } );
 
   WToolBar *actionsToolbar = WW<WToolBar>().addCss("hidden-print");
   actionsToolbar->addButton(changeNameOrDateButton);
@@ -484,10 +485,10 @@ void AstroSessionTab::Private::updateTimezone()
 
 void AstroSessionTab::Private::printableVersion()
 {
-  WDialog *printableDialog = new WDialog(WString::tr("astrosessiontab_printable_version"));
+  WDialog *printableDialog = new WDialog("astrosessiontab_printable_version"_wtr);
   WPushButton *okButton;
-  printableDialog->footer()->addWidget(okButton = WW<WPushButton>(WString::tr("Wt.WMessageBox.Ok")).css("btn btn-primary").onClick([=](WMouseEvent){ printableDialog->accept(); }));
-  printableDialog->footer()->addWidget(WW<WPushButton>(WString::tr("Wt.WMessageBox.Cancel")).css("btn btn-danger").onClick([=](WMouseEvent){ printableDialog->reject(); }));
+  printableDialog->footer()->addWidget(okButton = WW<WPushButton>("Wt.WMessageBox.Ok"_wtr).css("btn btn-primary").onClick([=](WMouseEvent){ printableDialog->accept(); }));
+  printableDialog->footer()->addWidget(WW<WPushButton>("Wt.WMessageBox.Cancel"_wtr).css("btn btn-danger").onClick([=](WMouseEvent){ printableDialog->reject(); }));
   auto printableResource = new ExportAstroSessionResource(astroSession, session, timezone, q);
   printableResource->setPlace(geoCoderPlace);
 #ifdef DISABLE_LIBHARU
@@ -501,9 +502,9 @@ void AstroSessionTab::Private::printableVersion()
   // TODO printableResource->setNamesLimit(1);
   okButton->setLink(printableResource);
   okButton->setLinkTarget(TargetNewWindow);
-  printableDialog->contents()->addWidget(new WText(WString::tr("printable_version_deprecated_use_preview")));
+  printableDialog->contents()->addWidget(new WText("printable_version_deprecated_use_preview"_wtr));
   printableDialog->contents()->addWidget(new WBreak);
-  printableDialog->contents()->addWidget(new WLabel(WString::tr("printable_version_dialog_spacing_between_objects")));
+  printableDialog->contents()->addWidget(new WLabel("printable_version_dialog_spacing_between_objects"_wtr));
   printableDialog->contents()->addWidget(new WBreak);
   WSlider *emptyRowsSlider = new WSlider();
   emptyRowsSlider->setWidth(500);
@@ -524,7 +525,7 @@ void AstroSessionTab::Private::printableVersion()
     printableResource->setReportType(r==PDF_INDEX ? ExportAstroSessionResource::PDF : ExportAstroSessionResource::HTML);
     fontScalingSlider->setEnabled(r==PDF_INDEX);
   });
-  printableDialog->contents()->addWidget(WW<WContainerWidget>().add(new WLabel{WString::tr("astrosessiontab_printable_version_dialog_export_as")}).add(formatCombo).add(new WBreak));
+  printableDialog->contents()->addWidget(WW<WContainerWidget>().add(new WLabel{"astrosessiontab_printable_version_dialog_export_as"_wtr}).add(formatCombo).add(new WBreak));
   fontScalingSlider->setWidth(500);
   fontScalingSlider->setMaximum(40);
   fontScalingSlider->setValue(20);
@@ -532,32 +533,32 @@ void AstroSessionTab::Private::printableVersion()
   fontScalingSlider->valueChanged().connect([=](int v, _n5){
     double value = 2. / 40. * static_cast<double>(v);
     printableResource->setFontScale( value );
-    fontScalingValue->setText(format("%d%%") % static_cast<int>(value*100));
+    fontScalingValue->setText("%d%%"_wfmt % static_cast<int>(value*100));
   });
-  printableDialog->contents()->addWidget(new WLabel(WString::tr("printable_version_dialog_fonts_size")));
+  printableDialog->contents()->addWidget(new WLabel("printable_version_dialog_fonts_size"_wtr));
   printableDialog->contents()->addWidget(new WBreak);
   printableDialog->contents()->addWidget(WW<WContainerWidget>().add(fontScalingSlider).add(fontScalingValue));
   printableDialog->contents()->addWidget(new WBreak);
   
   WComboBox *maxNamesCombo = new WComboBox;
-  maxNamesCombo->addItem(WString::tr("max_names_no_limit"));
+  maxNamesCombo->addItem("max_names_no_limit"_wtr);
   for(int i=1; i<11; i++)
-    maxNamesCombo->addItem(WString("{1}").arg(i));
+    maxNamesCombo->addItem("{1}"_ws  % i);
   maxNamesCombo->activated().connect([=](int index, _n5){ printableResource->setNamesLimit(index); });
-  printableDialog->contents()->addWidget(WW<WContainerWidget>().add(new WLabel{WString::tr("astrosessiontab_printable_version_max_names")}).add(maxNamesCombo).add(new WBreak));
+  printableDialog->contents()->addWidget(WW<WContainerWidget>().add(new WLabel{"astrosessiontab_printable_version_max_names"_wtr}).add(maxNamesCombo).add(new WBreak));
   Dbo::Transaction t(session);
   auto telescopes = session.user()->telescopes();
   switch(telescopes.size()) {
     case 0:
-      printableDialog->contents()->addWidget(new WText{WString::tr("printable_version_dialog_add_telescope_suggestion")});
+      printableDialog->contents()->addWidget(new WText{"printable_version_dialog_add_telescope_suggestion"_wtr});
       break;
     case 1:
       printableResource->setTelescope(telescopes.front());
-      printableDialog->contents()->addWidget(new WText{WString(WString::tr("printable_version_dialog_using_telescope")).arg(telescopes.front()->name()) });
+      printableDialog->contents()->addWidget(new WText{"printable_version_dialog_using_telescope"_wtr % telescopes.front()->name() });
       break;
     default:
       printableResource->setTelescope(selectedTelescope);
-      printableDialog->contents()->addWidget(new WLabel{WString::tr("printable_version_dialog_telescope_combo_label")});
+      printableDialog->contents()->addWidget(new WLabel{"printable_version_dialog_telescope_combo_label"_wtr});
       WComboBox *telescopesCombo = WW<WComboBox>(printableDialog->contents()).addCss("input-sm");
       WStandardItemModel *telescopesModel = new WStandardItemModel(printableDialog);
       telescopesCombo->setModel(telescopesModel);
@@ -579,7 +580,7 @@ void AstroSessionTab::Private::printableVersion()
 
 void AstroSessionTab::Private::remove(const AstroSessionObjectPtr &sessionObject, function<void()> runAfterRemove)
 {
-      WMessageBox *confirmation = new WMessageBox(WString::tr("messagebox_confirm_removal_title"), WString::tr("messagebox_confirm_removal_message"), Wt::Question, Wt::Ok | Wt::Cancel);
+      WMessageBox *confirmation = new WMessageBox("messagebox_confirm_removal_title"_wtr, "messagebox_confirm_removal_message"_wtr, Wt::Question, Wt::Ok | Wt::Cancel);
       confirmation->buttonClicked().connect([=](StandardButton b, _n5) {
         if(b != Wt::Ok) {
           confirmation->reject();
@@ -638,20 +639,21 @@ void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject
     return AstroObjectsTable::AstroObject{o->astroSession(), o->ngcObject(), o->bestAltitude(ephemeris, timezone)};
   });
   
-  objectsCounter->setText(format("%d") % objectsCount);
+  objectsCounter->setText("%d"_wfmt % objectsCount);
 
   astroObjectsTable->populate(astroObjects, selectedTelescope, timezone, page,
     addedObject ? AstroObjectsTable::Selection{addedObject->ngcObject(), "success", [=](const AstroObjectsTable::Row &r) {
-      SkyPlanner::instance()->notification(WString::tr("notification_success_title"), WString::tr("notification_object_added").arg(r.tableRow->id()), SkyPlanner::Notification::Information, 5, nullptr, "astrosession_object_added");
+      SkyPlanner::instance()->notification("notification_success_title"_wtr, "notification_object_added"_wtr % r.tableRow->id()
+      , SkyPlanner::Notification::Information, 5, nullptr, "astrosession_object_added");
     }} : AstroObjectsTable::Selection{} );
   if(page.total > 1) {
     if(page) {
-      astroObjectsTable->tableFooter()->addWidget(WW<WPushButton>(WString::tr("astrosessiontab_list_no_pagination")).addCss("btn-link hidden-print").onClick([=](WMouseEvent){ populate({}, -1); }));
-      astroObjectsTable->tableFooter()->addWidget(WW<WText>(WString::tr("printable-version-pagination-warning")).addCss("visible-print"));
+      astroObjectsTable->tableFooter()->addWidget(WW<WPushButton>("astrosessiontab_list_no_pagination"_wtr).addCss("btn-link hidden-print").onClick([=](WMouseEvent){ populate({}, -1); }));
+      astroObjectsTable->tableFooter()->addWidget(WW<WText>("printable-version-pagination-warning"_wtr).addCss("visible-print"));
     }
   }
   if(pageNumber == -1 && astroObjects.size() > page.pageSize)
-    astroObjectsTable->tableFooter()->addWidget(WW<WPushButton>(WString::tr("astrosessiontab_list_pagination")).addCss("btn-link hidden-print").onClick([=](WMouseEvent){ populate({}); }));
+    astroObjectsTable->tableFooter()->addWidget(WW<WPushButton>("astrosessiontab_list_pagination"_wtr).addCss("btn-link hidden-print").onClick([=](WMouseEvent){ populate({}); }));
 }
 
 

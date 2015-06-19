@@ -36,6 +36,7 @@
 #include "skyplanner.h"
 #include "utils/format.h"
 #include "Wt-Commons/wform.h"
+#include "Wt-Commons/wt_utils.h"
 
 using namespace Wt;
 using namespace WtCommons;
@@ -61,27 +62,27 @@ AstroSessionsListTab::AstroSessionsListTab(Session &session, Wt::WContainerWidge
     if(User::Setting::value<bool>(t, "astrosessionlisttab_firstintro_shown", d->session.user(), false))
       return;
     helpContainer->clear();
-    SkyPlanner::instance()->notification(WString::tr("help_notification"), WString::tr("help_astrosessionlisttab_1"), SkyPlanner::Notification::Information, 0, helpContainer);
+    SkyPlanner::instance()->notification("help_notification"_wtr, "help_astrosessionlisttab_1"_wtr, SkyPlanner::Notification::Information, 0, helpContainer);
     User::Setting::setValue(t, "astrosessionlisttab_firstintro_shown", d->session.user(), true);
   };
   displayFirstLoginHelp();
   wApp->internalPathChanged().connect([=](const string &, ...){ displayFirstLoginHelp(); });
   WLineEdit *newSessionName = WW<WLineEdit>();
   newSessionName->setWidth(300);
-//  newSessionName->setEmptyText(WString::tr("astrosessionslisttab_name"));
+//  newSessionName->setEmptyText("astrosessionslisttab_name"_wtr);
   WDateEdit *newSessionDate = WW<WDateEdit>().css("form-control-dateedit");
-//  newSessionDate->setEmptyText(WString::tr("astrosessionslisttab_when"));
+//  newSessionDate->setEmptyText("astrosessionslisttab_when"_wtr);
   newSessionDate->setDate(WDate::currentDate());
   setMinimumSize(WLength::Auto, 500);
   
-  WPushButton *newSessionAdd = WW<WPushButton>(WString::tr("buttons_add")).css("btn btn-primary").onClick([=](WMouseEvent){
+  WPushButton *newSessionAdd = WW<WPushButton>("buttons_add"_wtr).css("btn btn-primary").onClick([=](WMouseEvent){
     if(!d->session.login().loggedIn() || ! d->session.user() ) return;
     if( newSessionName->text().empty() ) {
-      SkyPlanner::instance()->notification(WString::tr("notification_error_title"), WString::tr("astrosessionslisttab_add_new_name_empty"), SkyPlanner::Notification::Error, 10  );
+      SkyPlanner::instance()->notification("notification_error_title"_wtr, "astrosessionslisttab_add_new_name_empty"_wtr, SkyPlanner::Notification::Error, 10  );
       return;
     }
     if( ! newSessionDate->date().isValid() ) {
-      SkyPlanner::instance()->notification(WString::tr("notification_error_title"), WString::tr("astrosessionslisttab_add_new_date_invalid"), SkyPlanner::Notification::Error, 10  );
+      SkyPlanner::instance()->notification("notification_error_title"_wtr, "astrosessionslisttab_add_new_date_invalid"_wtr, SkyPlanner::Notification::Error, 10  );
       return;
     }
     d->addNew(newSessionName->text(), newSessionDate->date());
@@ -89,7 +90,7 @@ AstroSessionsListTab::AstroSessionsListTab(Session &session, Wt::WContainerWidge
     newSessionName->setText("");
   }).setEnabled(true);
 //  newSessionName->keyWentUp().connect([=](WKeyEvent){ newSessionAdd->setEnabled(!newSessionName->text().empty() );});
-//  addWidget(WW<WContainerWidget>().css("form-inline").add(new WLabel{WString::tr("astrosessionslisttab_add_new_label")}).add(newSessionName).add(newSessionDate).add(newSessionAdd));
+//  addWidget(WW<WContainerWidget>().css("form-inline").add(new WLabel{"astrosessionslisttab_add_new_label"_wtr}).add(newSessionName).add(newSessionDate).add(newSessionAdd));
   addWidget(WW<WForm>(WForm::Inline).get()->add(newSessionName, "astrosessionslisttab_add_new_label")->add(newSessionDate)->addButton(newSessionAdd));
   
   vector<pair<Ephemeris::LunarPhase,boost::posix_time::ptime>> newMoons;
@@ -100,7 +101,7 @@ AstroSessionsListTab::AstroSessionsListTab(Session &session, Wt::WContainerWidge
     if(phase.illuminated_fraction < 0.15)
       newMoons.push_back({phase, day});
   }
-  addWidget(new WText{WString::tr("astrosessionslisttab_next_nights_without_moon")});
+  addWidget(new WText{"astrosessionslisttab_next_nights_without_moon"_wtr});
   string separator;
   for(uint64_t i=0; i<min(newMoons.size(), static_cast<std::size_t>(5)); i++) {
     if(i>0)
@@ -133,8 +134,8 @@ void AstroSessionsListTab::Private::populateSessions()
 {
     Dbo::Transaction t(session);
     sessionsTable->clear();
-    sessionsTable->elementAt(0,0)->addWidget(new WText{WString::tr("astrosessionslisttab_name")});
-    sessionsTable->elementAt(0,1)->addWidget(new WText{WString::tr("astrosessionslisttab_when")});
+    sessionsTable->elementAt(0,0)->addWidget(new WText{"astrosessionslisttab_name"_wtr});
+    sessionsTable->elementAt(0,1)->addWidget(new WText{"astrosessionslisttab_when"_wtr});
      if(!session.login().loggedIn() || ! session.user()) return;
      for(auto astroSession: session.find<AstroSession>().where("user_id = ?").bind(session.user().id()).orderBy("\"when\" DESC").resultList() ) {
        WTableRow *row = sessionsTable->insertRow(sessionsTable->rowCount());
@@ -142,8 +143,8 @@ void AstroSessionsListTab::Private::populateSessions()
               WLink(WLink::InternalPath, AstroSessionTab::pathComponent(astroSession, t)), WString::fromUTF8(astroSession->name()))
              .css("link"));
        row->elementAt(1)->addWidget(new WText{WLocalDateTime(astroSession->wDateWhen().date(), astroSession->wDateWhen().time()).toString("dddd, dd MMMM yyyy")});
-       row->elementAt(2)->addWidget(WW<WPushButton>(WString::tr("buttons_remove")).css("btn btn-danger btn-xs").onClick([=](WMouseEvent){
-	 WMessageBox *confirm = new WMessageBox(WString::tr("messagebox_confirm_removal_title"), WString::tr("messagebox_confirm_removal_message"), Wt::Question, Ok | Cancel);
+       row->elementAt(2)->addWidget(WW<WPushButton>("buttons_remove"_wtr).css("btn btn-danger btn-xs").onClick([=](WMouseEvent){
+	 WMessageBox *confirm = new WMessageBox("messagebox_confirm_removal_title"_wtr, "messagebox_confirm_removal_message"_wtr, Wt::Question, Ok | Cancel);
 	 confirm->show();
 	 confirm->buttonClicked().connect([=](StandardButton b, _n5) {
 	   if(b != Wt::Ok) {
