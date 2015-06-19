@@ -51,6 +51,8 @@
 
 #include "widgets/astroobjectstable.h"
 #include "skyplanner.h"
+#include "Wt-Commons/wt_utils.h"
+
 
 using namespace Wt;
 using namespace std;
@@ -106,7 +108,7 @@ void ExportAstroSessionResource::setPlace(const GeoCoder::Place &place)
 #ifndef DISABLE_LIBHARU
 namespace {
     void error_handler(HPDF_STATUS error_no, HPDF_STATUS detail_no, void *user_data) {
-      WServer::instance()->log("error") << (format("libharu error: error_no=%04X, detail_no=%d\n") % (unsigned int) error_no % (int) detail_no).str();
+      WServer::instance()->log("error") << "libharu error: error_no=%04X, detail_no=%d\n"_ws % (unsigned int) error_no % (int) detail_no;
     }
 }
 #endif
@@ -121,7 +123,7 @@ void ExportAstroSessionResource::handleRequest(const Wt::Http::Request &request,
 
   if(d->reportType == CSV) {
     setDispositionType(Attachment);
-    suggestFileName(format("%s.csv") % d->astroSession->name());
+    suggestFileName("%s.csv"_ws % d->astroSession->name());
     response.setMimeType("text/csv");
     vector<string> headers{"object_column_names", "object_column_ar", "object_column_dec", "object_column_constellation", "object_column_angular_size", "object_column_magnitude", "object_column_type"};
     if(d->astroSession->position()) {
@@ -136,16 +138,16 @@ void ExportAstroSessionResource::handleRequest(const Wt::Http::Request &request,
       vector<string> fields;
       auto add = [&fields, &t](const string &field) { fields.push_back(::Utils::csv(field)); };
       add(boost::algorithm::join(NgcObject::namesByCatalogueImportance(t, object->ngcObject()), ", "));
-      add(format("%.3f") % object->coordinates().rightAscension.hours());
-      add(format("%.3f") % object->coordinates().declination.degrees());
+      add("%.3f"_s % object->coordinates().rightAscension.hours());
+      add("%.3f"_s % object->coordinates().declination.degrees());
       add(ConstellationFinder::getName(object->ngcObject()->coordinates()).name);
-      add(format("%.3f") % object->ngcObject()->angularSize());
-      add(format("%.3f") % object->ngcObject()->magnitude());
+      add("%.3f"_s % object->ngcObject()->angularSize());
+      add("%.3f"_s % object->ngcObject()->magnitude());
       add(object->ngcObject()->typeDescription().toUTF8());
       if(d->astroSession->position()) {
         auto bestAltitude = object->bestAltitude(ephemeris, d->timezone);
         add(bestAltitude.when.str());
-        add(format("%.3f") % bestAltitude.coordinates.altitude.degrees());
+        add("%.3f"_s % bestAltitude.coordinates.altitude.degrees());
       }
       response.out() << boost::algorithm::join(fields, ",") << endl;
     }
@@ -153,7 +155,7 @@ void ExportAstroSessionResource::handleRequest(const Wt::Http::Request &request,
   }
 
   if(d->reportType == CartesDuCiel) {
-    suggestFileName(format("%s.txt") % d->astroSession->name() );
+    suggestFileName("%s.txt"_ws % d->astroSession->name() );
     response.out() << d->astroSession->name() << '\n';
     response.setMimeType("text/plain");
 
@@ -169,8 +171,8 @@ void ExportAstroSessionResource::handleRequest(const Wt::Http::Request &request,
       }
       string description = boost::algorithm::join(names, ", ");
       if(! object->description().empty() && object->description().size() + description.size() < 32)
-       description += format("%s%s") % (description.empty() ? "" : ", ")  % object->description();
-      response.out() << format("%-32s%9.5f %9.5f %-32s%-32s\n") % objectName % object->coordinates().rightAscension.degrees() % object->coordinates().declination.degrees() %objectName % description;
+       description += "%s%s"_s % (description.empty() ? "" : ", ")  % object->description();
+      response.out() << "%-32s%9.5f %9.5f %-32s%-32s\n"_ws % objectName % object->coordinates().rightAscension.degrees() % object->coordinates().declination.degrees() %objectName % description;
     }
     return;
   }
@@ -208,8 +210,8 @@ void ExportAstroSessionResource::handleRequest(const Wt::Http::Request &request,
       }
     };
     response.setMimeType("text/xml");
-    suggestFileName(format("%s.obslist") % d->astroSession->name());
-    response.out() << WString(R"(<?xml version="1.0"?>
+    suggestFileName("%s.obslist"_ws % d->astroSession->name());
+    response.out() << (R"(<?xml version="1.0"?>
     <oal:observations xmlns:oal="http://observation.sourceforge.net/openastronomylog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:schemaLocation="http://observation.sourceforge.net/openastronomylog oal20.xsd" version="2.0">
     <geodate>
         <name><![CDATA[{1}]]></name>
@@ -228,13 +230,10 @@ void ExportAstroSessionResource::handleRequest(const Wt::Http::Request &request,
     <observers/>
     <sessions/>
     <targets>
-    )").arg(d->place.city).arg(d->place.province).arg(d->place.country).arg(d->astroSession->wDateWhen().toString("ddMMyyyy") )
-     .arg(d->place.city).arg(d->astroSession->position().longitude.degrees())
-     .arg(d->astroSession->position().latitude.degrees())
-     .arg(d->timezone.rawOffset/60) 
-    .toUTF8();
+    )"_ws | d->place.city | d->place.province | d->place.country | d->astroSession->wDateWhen().toString("ddMMyyyy") | d->place.city
+      | d->astroSession->position().longitude.degrees() | d->astroSession->position().latitude.degrees() | d->timezone.rawOffset/60).toUTF8();
     for(AstroSessionObjectPtr object: sessionObjects) {
-      response.out() << WString(R"(
+      response.out() << (R"(
 	  <target id="{1}" type="{2}">
             <datasource><![CDATA[SkyPlanner]]></datasource>
             <name><![CDATA[{3}]]></name>
@@ -245,15 +244,15 @@ void ExportAstroSessionResource::handleRequest(const Wt::Http::Request &request,
             <constellation><![CDATA[{6}]]></constellation>
             <notes><![CDATA[{7}]]></notes>
         </target>
-      )")
-      .arg(*object->ngcObject()->objectId())
-      .arg(kStarsName(object->ngcObject()->type()))
-      .arg(WString::fromUTF8(boost::algorithm::join(NgcObject::namesByCatalogueImportance(t, object->ngcObject()), ", ")))
-      .arg(object->coordinates().rightAscension.radians())
-      .arg(object->coordinates().declination.radians())
-      .arg(WString::fromUTF8(object->ngcObject()->constellation().name))
-      .arg(WString::fromUTF8(object->description()))
-      .toUTF8()
+      )"_ws
+      | *object->ngcObject()->objectId()
+      | kStarsName(object->ngcObject()->type())
+      | WString::fromUTF8(boost::algorithm::join(NgcObject::namesByCatalogueImportance(t, object->ngcObject()), ", "))
+      | object->coordinates().rightAscension.radians()
+      | object->coordinates().declination.radians()
+      | WString::fromUTF8(object->ngcObject()->constellation().name)
+      | WString::fromUTF8(object->description())
+      ).toUTF8()
       ;
     };
     
@@ -270,7 +269,7 @@ void ExportAstroSessionResource::handleRequest(const Wt::Http::Request &request,
   }
   WTemplate printable;
   printable.addFunction("tr", &WTemplate::Functions::tr);
-  printable.setTemplateText(WString::tr("printable-session"), XHTMLUnsafeText);
+  printable.setTemplateText("printable-session"_wtr, XHTMLUnsafeText);
   printable.setCondition("render-type-html", d->reportType == HTML);
   printable.setCondition("render-type-pdf", d->reportType == PDF);
   printable.bindString("title", WString::fromUTF8(d->astroSession->name()));
@@ -279,11 +278,7 @@ void ExportAstroSessionResource::handleRequest(const Wt::Http::Request &request,
   printable.bindString("place-geocoding", d->place.formattedAddress );
   printable.setCondition("have-telescope", static_cast<bool>(d->telescope));
   if(d->telescope) {
-    printable.bindString("printable_telescope_info", WString::tr("printable_telescope_info")
-                         .arg(d->telescope->name())
-                         .arg(d->telescope->diameter())
-                         .arg(d->telescope->focalLength())
-                         );
+    printable.bindString("printable_telescope_info", "printable_telescope_info"_wtr | d->telescope->name() | d->telescope->diameter() | d->telescope->focalLength() );
   }
 
   printable.setCondition("have-planets", true);
@@ -301,35 +296,34 @@ void ExportAstroSessionResource::handleRequest(const Wt::Http::Request &request,
 
  
 
-  printable.bindString("moonPhase", WString::tr("astrosessiontab_moon_phase").arg(static_cast<int>(ephemeris.moonPhase(d->astroSession->date()).illuminated_fraction*100.)));
+  printable.bindString("moonPhase", "astrosessiontab_moon_phase"_wtr | static_cast<int>(ephemeris.moonPhase(d->astroSession->date()).illuminated_fraction*100.));
   printable.bindString("sessionDate", d->astroSession->wDateWhen().toString("dddd dd MMMM yyyy"));
-  printable.bindString("timezone_info", d->timezone ?  WString::tr("printable_timezone_info").arg(WString::fromUTF8(d->timezone.timeZoneName)) : WString());
+  printable.bindString("timezone_info", d->timezone ?  "printable_timezone_info"_wtr | WString::fromUTF8(d->timezone.timeZoneName) : WString());
   if(d->astroSession->position()) {
-    printable.bindString("place-coordinates", WString::tr("astrosession_coordinates")
-    .arg(WString::fromUTF8(d->astroSession->position().latitude.printable()) )
-    .arg(WString::fromUTF8(d->astroSession->position().longitude.printable() ) )
-	      );
+    printable.bindString("place-coordinates", "astrosession_coordinates"_wtr
+    | WString::fromUTF8(d->astroSession->position().latitude.printable())
+    | WString::fromUTF8(d->astroSession->position().longitude.printable()) );
     auto sun = ephemeris.sun(d->astroSession->date());
     auto twilight = ephemeris.astronomicalTwilight(d->astroSession->date());
     auto moon = ephemeris.moon(d->astroSession->date());
     auto darkness = ephemeris.darknessHours(d->astroSession->date() );
 
-    printable.bindString("astrosessiontab_sun_info", WString::tr("astrosessiontab_sun_info").arg(sun.rise.str(DateTime::DateShort)).arg(sun.set.str(DateTime::DateShort)));
-    printable.bindString("astrosessiontab_astro_twilight_info", WString::tr("astrosessiontab_astro_twilight_info").arg(twilight.rise.str(DateTime::DateShort)).arg(twilight.set.str(DateTime::DateShort)));
-    printable.bindString("astrosessiontab_moon_info", WString::tr("astrosessiontab_moon_info").arg(moon.rise.str(DateTime::DateShort)).arg(moon.set.str(DateTime::DateShort)));
-    printable.bindString("astrosessiontab_darkness_hours", WString::tr("astrosessiontab_darkness_hours").arg(darkness.begin.str(DateTime::DateShort)).arg(darkness.end.str(DateTime::DateShort)).arg(boost::posix_time::to_simple_string(darkness.duration)));
+    printable.bindString("astrosessiontab_sun_info", "astrosessiontab_sun_info"_wtr | sun.rise.str(DateTime::DateShort) | sun.set.str(DateTime::DateShort));
+    printable.bindString("astrosessiontab_astro_twilight_info", "astrosessiontab_astro_twilight_info"_wtr | twilight.rise.str(DateTime::DateShort) | twilight.set.str(DateTime::DateShort));
+    printable.bindString("astrosessiontab_moon_info", "astrosessiontab_moon_info"_wtr | moon.rise.str(DateTime::DateShort) | moon.set.str(DateTime::DateShort));
+    printable.bindString("astrosessiontab_darkness_hours", "astrosessiontab_darkness_hours"_wtr | darkness.begin.str(DateTime::DateShort) | darkness.end.str(DateTime::DateShort) | boost::posix_time::to_simple_string(darkness.duration));
   }
   stringstream tableRows;
-  printable.bindString("objects-number", WString::tr("objects_number_label").arg(sessionObjects.size()));
+  printable.bindString("objects-number", "objects_number_label"_wtr | sessionObjects.size());
   for(auto sessionObject: sessionObjects) {
     WTemplate rowTemplate;
-    rowTemplate.setTemplateText(WString::tr("printable-session-row"), XHTMLUnsafeText);
+    rowTemplate.setTemplateText("printable-session-row"_wtr, XHTMLUnsafeText);
     rowTemplate.bindWidget("namesWidget", new ObjectNamesWidget{sessionObject->ngcObject(), d->session, nullptr , ObjectNamesWidget::Printable, d->namesLimit});
     rowTemplate.bindString("ar", sessionObject->coordinates().rightAscension.printable(Angle::Hourly));
     rowTemplate.bindWidget("dec", new WText{WString::fromUTF8( sessionObject->coordinates().declination.printable(Angle::Degrees, Angle::HTML) ) } );
     rowTemplate.bindString("constellation", WString::fromUTF8(ConstellationFinder::getName(sessionObject->coordinates()).name));
     rowTemplate.bindString("size", WString::fromUTF8( Angle::degrees(sessionObject->ngcObject()->angularSize()).printable(Angle::Degrees, Angle::HTML) ));
-    rowTemplate.bindString("magnitude", format("%.1f") % sessionObject->ngcObject()->magnitude() );
+    rowTemplate.bindString("magnitude", "%.1f"_ws % sessionObject->ngcObject()->magnitude() );
     rowTemplate.bindString("type", sessionObject->ngcObject()->typeDescription());
     rowTemplate.setCondition("have-place", d->astroSession->position());
     rowTemplate.setCondition("have-telescope", static_cast<bool>(d->telescope));
@@ -343,7 +337,7 @@ void ExportAstroSessionResource::handleRequest(const Wt::Http::Request &request,
     rowTemplate.setCondition("have-description",  !sessionObject->description().empty());
     rowTemplate.bindString("description", Utils::htmlEncode(WString::fromUTF8(sessionObject->description())));
     rowTemplate.setCondition("have-rows-spacing", d->rowsSpacing > 0);
-    rowTemplate.bindString("rows-spacing", format("%.1f") % (static_cast<double>(d->rowsSpacing) * 1.3) );
+    rowTemplate.bindString("rows-spacing", "%.1f"_ws % (static_cast<double>(d->rowsSpacing) * 1.3) );
 
 
     auto dbDescriptions = sessionObject->ngcObject()->descriptions();
@@ -360,7 +354,7 @@ void ExportAstroSessionResource::handleRequest(const Wt::Http::Request &request,
     return;
   }
 #ifndef DISABLE_LIBHARU
-  suggestFileName(format("%s.pdf") % d->astroSession->name());
+  suggestFileName("%s.pdf"_ws % d->astroSession->name());
   response.setMimeType("application/pdf");
   HPDF_Doc pdf = HPDF_New(error_handler, 0);
 #ifdef HAVE_LIBHARU_UTF8
