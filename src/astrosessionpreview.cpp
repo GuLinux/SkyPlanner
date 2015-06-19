@@ -64,13 +64,13 @@ AstroSessionPreview::AstroSessionPreview(const AstroGroup& astroGroup, const Geo
   setImplementation(sessionPreviewContainer);
   sessionPreviewContainer->setStyleClass("astroobjects-list");
   sessionPreviewContainer->addWidget(WW<WText>("<h3>{1}</h3><h4>{2}</h4>"_ws
-    % Utils::htmlEncode(WString::fromUTF8(d->astroGroup.astroSession()->name())) 
-    % WLocalDateTime(astroGroup.astroSession()->wDateWhen().date(), astroGroup.astroSession()->wDateWhen().time()).toString("dddd dd MMMM yyyy")
+    | Utils::htmlEncode(WString::fromUTF8(d->astroGroup.astroSession()->name())) 
+    | WLocalDateTime(astroGroup.astroSession()->wDateWhen().date(), astroGroup.astroSession()->wDateWhen().time()).toString("dddd dd MMMM yyyy")
   ).css("text-center") );
   if(type == PublicReport || type == PublicPreview) {
     Dbo::Transaction t(session);
     auto user = astroGroup.astroSession()->user()->loginName();
-    sessionPreviewContainer->addWidget(WW<WText>("<h5 class='text-right'>{1}</h5>"_ws % WString::tr("share-%s-username"_fmt % typeString ) % user));
+    sessionPreviewContainer->addWidget(WW<WText>("<h5 class='text-right'>{1}</h5>"_ws | WString::tr("share-%s-username"_s % typeString ) | user));
   }
   WPushButton *printButton = WW<WPushButton>("buttons_print"_wtr).css("btn-info btn-sm");
   printButton->clicked().connect([=](WMouseEvent){
@@ -85,9 +85,9 @@ AstroSessionPreview::AstroSessionPreview(const AstroGroup& astroGroup, const Geo
   WPushButton *shareButton = WW<WPushButton>("buttons_share"_wtr).css("btn-success btn-sm").onClick([=](WMouseEvent){
     WDialog *dialog = new WDialog{"buttons_share"_wtr};
     dialog->setMinimumSize(700, WLength::Auto);
-    WCheckBox *shareCheckBox = WW<WCheckBox>(WString::tr("share-%s-enable"_fmt % typeString));
+    WCheckBox *shareCheckBox = WW<WCheckBox>(WString::tr("share-%s-enable"_s % typeString));
     dialog->contents()->addWidget(WW<WContainerWidget>().add(shareCheckBox));
-    auto internalUrl = wApp->bookmarkUrl("/%s/%x/%s"_fmt % typeString % astroGroup.astroSession().id() % ::Utils::sanitizeForURL(astroGroup.astroSession()->name()) );
+    auto internalUrl = wApp->bookmarkUrl("/%s/%x/%s"_s % typeString % astroGroup.astroSession().id() % ::Utils::sanitizeForURL(astroGroup.astroSession()->name()) );
     
     
     WTemplate *shareToolbox = WW<WTemplate>();
@@ -110,7 +110,7 @@ AstroSessionPreview::AstroSessionPreview(const AstroGroup& astroGroup, const Geo
     shareToolbox->bindString("page-url", wApp->makeAbsoluteUrl(internalUrl));
     shareToolbox->bindString("page-title", astroGroup.astroSession()->name() );
     
-    WContainerWidget *shareText = WW<WContainerWidget>().add(new WText{WString::tr("share-%s-message"_fmt % typeString) % wApp->makeAbsoluteUrl(internalUrl)}).add(shareToolbox);
+    WContainerWidget *shareText = WW<WContainerWidget>().add(new WText{WString::tr("share-%s-message"_s % typeString) | wApp->makeAbsoluteUrl(internalUrl)}).add(shareToolbox);
 
     dialog->contents()->addWidget(shareText);
     
@@ -142,7 +142,7 @@ AstroSessionPreview::AstroSessionPreview(const AstroGroup& astroGroup, const Geo
   WPushButton *copyButton = WW<WPushButton>("buttons_copy"_wtr).css("btn-sm").onClick([=,&session](WMouseEvent){
     Dbo::Transaction t(session);
     auto dialog = new WMessageBox("buttons_copy"_wtr, "copy_session_name"_wtr, Question, Ok | Cancel, this);
-    auto sessionName = new WLineEdit( "session_copy_of"_wtr % astroGroup.astroSession()->name());
+    auto sessionName = new WLineEdit( "session_copy_of"_wtr | astroGroup.astroSession()->name());
     dialog->contents()->addWidget(sessionName);
     dialog->button(Ok)->clicked().connect([=](WMouseEvent){ dialog->accept();});
     dialog->button(Ok)->setEnabled(!sessionName->text().empty());
@@ -162,7 +162,7 @@ AstroSessionPreview::AstroSessionPreview(const AstroGroup& astroGroup, const Geo
       for(auto o: query.resultList()) {
 	newSession->astroSessionObjects().insert(new AstroSessionObject{o->ngcObject()});
       }
-      WMessageBox::show("session_copied"_wtr, "session_copied_text"_wtr % newSession->name(), Ok);
+      WMessageBox::show("session_copied"_wtr, "session_copied_text"_wtr | newSession->name(), Ok);
       d->sessionsChanged.emit();
     });
     dialog->show();
@@ -180,7 +180,7 @@ AstroSessionPreview::AstroSessionPreview(const AstroGroup& astroGroup, const Geo
     instrumentsPanel->setCollapsible(true);
     instrumentsPanel->setCollapsed(true);
     instrumentsPanel->titleBarWidget()->addStyleClass("hidden-print");
-    instrumentsPanel->setCentralWidget(WW<WContainerWidget>().add(WW<WText>("<h5>{1}</h5>"_ws % "astrosessiontab_instruments_panel"_wtr).css("visible-print") ).add(instrumentsTable));
+    instrumentsPanel->setCentralWidget(WW<WContainerWidget>().add(WW<WText>("<h5>{1}</h5>"_ws | "astrosessiontab_instruments_panel"_wtr).css("visible-print") ).add(instrumentsTable));
     sessionPreviewContainer->addWidget(instrumentsPanel);
   }
 
@@ -193,7 +193,7 @@ AstroSessionPreview::AstroSessionPreview(const AstroGroup& astroGroup, const Geo
     planetsPanel->setCollapsible(true);
     planetsPanel->setCollapsed(true);
     planetsPanel->titleBarWidget()->addStyleClass("hidden-print");
-    planetsPanel->setCentralWidget(WW<WContainerWidget>().add(WW<WText>("<h5>{1}</h5>"_ws % "astrosessiontab_planets_panel"_wtr).css("visible-print") ).add(planetsTable));
+    planetsPanel->setCentralWidget(WW<WContainerWidget>().add(WW<WText>("<h5>{1}</h5>"_ws | "astrosessiontab_planets_panel"_wtr).css("visible-print") ).add(planetsTable));
     sessionPreviewContainer->addWidget(planetsPanel);
     planetsTable->planets(astroGroup.astroSession(), astroGroup.timezone);
   } else {

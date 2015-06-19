@@ -225,7 +225,7 @@ void AstroSessionTab::Private::load()
 
 
   if(timezone)
-    sessionContainer->addWidget(  new WText("printable_timezone_info"_wtr % WString::fromUTF8(timezone.timeZoneName)));
+    sessionContainer->addWidget(  new WText("printable_timezone_info"_wtr | WString::fromUTF8(timezone.timeZoneName)));
 
   vector<AstroObjectsTable::Action> actions = {
     {"buttons_extended_info", [](const AstroObjectsTable::Row &r, WWidget*) { r.toggleMoreInfo(); } },
@@ -364,7 +364,7 @@ void AstroSessionTab::Private::updatePosition()
 string AstroSessionTab::pathComponent(const AstroSessionPtr &astroSession, Dbo::Transaction &transaction)
 {
   string nameForMenu = boost::regex_replace(astroSession->name(), boost::regex{"[^a-zA-Z0-9]+"}, "-");
-  return "/sessions/%x/%s"_fmt % astroSession.id() % nameForMenu;
+  return "/sessions/%x/%s"_s % astroSession.id() % nameForMenu;
 }
 
 Wt::Signal<std::string> &AstroSessionTab::nameChanged() const
@@ -533,7 +533,7 @@ void AstroSessionTab::Private::printableVersion()
   fontScalingSlider->valueChanged().connect([=](int v, _n5){
     double value = 2. / 40. * static_cast<double>(v);
     printableResource->setFontScale( value );
-    fontScalingValue->setText("%d%%"_wfmt % static_cast<int>(value*100));
+    fontScalingValue->setText("%d%%"_ws % static_cast<int>(value*100));
   });
   printableDialog->contents()->addWidget(new WLabel("printable_version_dialog_fonts_size"_wtr));
   printableDialog->contents()->addWidget(new WBreak);
@@ -543,7 +543,7 @@ void AstroSessionTab::Private::printableVersion()
   WComboBox *maxNamesCombo = new WComboBox;
   maxNamesCombo->addItem("max_names_no_limit"_wtr);
   for(int i=1; i<11; i++)
-    maxNamesCombo->addItem("{1}"_ws  % i);
+    maxNamesCombo->addItem("{1}"_ws  | i);
   maxNamesCombo->activated().connect([=](int index, _n5){ printableResource->setNamesLimit(index); });
   printableDialog->contents()->addWidget(WW<WContainerWidget>().add(new WLabel{"astrosessiontab_printable_version_max_names"_wtr}).add(maxNamesCombo).add(new WBreak));
   Dbo::Transaction t(session);
@@ -554,7 +554,7 @@ void AstroSessionTab::Private::printableVersion()
       break;
     case 1:
       printableResource->setTelescope(telescopes.front());
-      printableDialog->contents()->addWidget(new WText{"printable_version_dialog_using_telescope"_wtr % telescopes.front()->name() });
+      printableDialog->contents()->addWidget(new WText{"printable_version_dialog_using_telescope"_wtr | telescopes.front()->name() });
       break;
     default:
       printableResource->setTelescope(selectedTelescope);
@@ -639,11 +639,11 @@ void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject
     return AstroObjectsTable::AstroObject{o->astroSession(), o->ngcObject(), o->bestAltitude(ephemeris, timezone)};
   });
   
-  objectsCounter->setText("%d"_wfmt % objectsCount);
+  objectsCounter->setText("%d"_ws % objectsCount);
 
   astroObjectsTable->populate(astroObjects, selectedTelescope, timezone, page,
     addedObject ? AstroObjectsTable::Selection{addedObject->ngcObject(), "success", [=](const AstroObjectsTable::Row &r) {
-      SkyPlanner::instance()->notification("notification_success_title"_wtr, "notification_object_added"_wtr % r.tableRow->id()
+      SkyPlanner::instance()->notification("notification_success_title"_wtr, "notification_object_added"_wtr | r.tableRow->id()
       , SkyPlanner::Notification::Information, 5, nullptr, "astrosession_object_added");
     }} : AstroObjectsTable::Selection{} );
   if(page.total > 1) {

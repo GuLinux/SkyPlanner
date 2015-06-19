@@ -67,7 +67,7 @@ AstroSessionsPage::AstroSessionsPage(Session &session, WContainerWidget* parent)
     auto internalPath = d->tabs[index].path;
     spLog("notice") << "index= " << index << "path: " << internalPath;
     wApp->setInternalPath(d->tabs[index].path);
-    wApp->setTitle( d->sessionsNamesCache.count(internalPath) ? "session-application_title"_wtr % d->sessionsNamesCache[internalPath] : "application_title"_wtr );
+    wApp->setTitle( d->sessionsNamesCache.count(internalPath) ? "session-application_title"_wtr | d->sessionsNamesCache[internalPath] : "application_title"_wtr );
   });
 }
 
@@ -106,7 +106,7 @@ void AstroSessionsPage::open(const string &tabName)
   string internalPath = AstroSessionTab::pathComponent(astroSession, t);
   d->sessionsNamesCache[internalPath] = astroSession->name();
   auto setSessionTitle = [=] {
-    wApp->setTitle("session-application_title"_wtr % d->sessionsNamesCache[internalPath]);
+    wApp->setTitle("session-application_title"_wtr | d->sessionsNamesCache[internalPath]);
   };
   setSessionTitle();
   spLog("notice") << "Setting internal path to " << internalPath;
