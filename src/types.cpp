@@ -188,7 +188,12 @@ string DateTime::str(DateTime::PrintFormat format, DateTime::TZone tzone) const
 #ifdef TESTS_NO_WT
     {DateShort, [this](const boost::posix_time::ptime &t){return (::format("%d %s, %02d:%02d") % t.date().day() % t.date().month().as_short_string() % t.time_of_day().hours() % t.time_of_day().minutes()).str(); }},
 #else
-    {DateShort, [this](const boost::posix_time::ptime &t){return (WDateTime::fromPosixTime(t).toString("d MMM hh:mm")).toUTF8(); }},
+    {DateShort, [this](const boost::posix_time::ptime &t){ 
+      auto date = WDateTime::fromPosixTime(t);
+      if(date.isValid())
+        return (date.toString("d MMM hh:mm")).toUTF8(); 
+      else return string{"invalid date"};
+    }},
 #endif
   };
 

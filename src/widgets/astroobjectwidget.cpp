@@ -160,10 +160,10 @@ void AstroObjectWidget::Private::init()
     int index = 0;
     for(auto description: astroSessionObjectsWithDescription) {
       rowsTemplate->bindWidget(format("object-description-header-%d") % index, new WHTMLTxt{WString("{1}").arg(description->astroSession()->user()->loginName())});
-      rowsTemplate->bindWidget(format("object-description-%d") % index++, new WHTMLTxt{WString("<b>{1}, {2}</b><br />{3}")
+      rowsTemplate->bindWidget(format("object-description-%d") % index++, new WText{WString("<b>{1}, {2}</b><br />{3}")
         .arg(WString::fromUTF8(description->astroSession()->name()))
         .arg(description->astroSession()->wDateWhen().toString("dddd, d MMM, yyyy"))
-        .arg(WString::fromUTF8(description->description()) ) } );
+        .arg( Utils::htmlEncode(WString::fromUTF8(description->description()) ) ) } );
     }
     info->bindWidget("other-descriptions", rowsTemplate);
     } else {
