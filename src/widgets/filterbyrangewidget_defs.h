@@ -21,7 +21,7 @@
 #include <Wt/WCompositeWidget>
 #include <Wt/WContainerWidget>
 #include "utils/format.h"
-#include "Wt-Commons/wt_helpers.h"
+#include "wt_helpers.h"
 #include <types.h>
 
 #include <Wt/WPushButton>

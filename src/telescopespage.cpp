@@ -20,7 +20,7 @@
 #include "utils/d_ptr_implementation.h"
 #include "utils/format.h"
 #include "session.h"
-#include "Wt-Commons/wt_helpers.h"
+#include "wt_helpers.h"
 #include "Models"
 #include <Wt/Auth/Login>
 #include <Wt/WTable>
@@ -33,7 +33,7 @@
 #include <Wt/WToolBar>
 #include <Wt/WGroupBox>
 #include <Wt/WDoubleSpinBox>
-#include <Wt-Commons/wform.h>
+#include <wform.h>
 #include <boost/format.hpp>
 
 using namespace Wt;

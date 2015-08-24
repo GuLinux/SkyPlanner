@@ -26,7 +26,7 @@
 #include <Wt/Utils>
 #include <Wt/WPushButton>
 
-#include "Wt-Commons/wt_helpers.h"
+#include "wt_helpers.h"
 #include <boost/algorithm/string/join.hpp>
 #include "widgets/astroobjectwidget.h"
 #include "types.h"

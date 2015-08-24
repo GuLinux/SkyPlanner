@@ -26,7 +26,7 @@
 #include "constellationfinder.h"
 #include "types.h"
 #include "ptr_defs.h"
-#include <Wt-Commons/json_object.h>
+#include <json_object.h>
 
 class Telescope;
 class AstroSessionObject;

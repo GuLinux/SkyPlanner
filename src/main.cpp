@@ -27,7 +27,7 @@
 #include "curl/curl.h"
 #include <boost/filesystem.hpp>
 #include <Magick++.h>
-#include "Wt-Commons/quitresource.h"
+#include "quitresource.h"
 #include <Wt/Http/Response>
 #include "webservice/activesessionsresource.h"
 #include "webservice/dbo_restresource.h"

@@ -21,7 +21,7 @@
 #include <utils/d_ptr_implementation.h>
 #include "session.h"
 #include <Wt/WContainerWidget>
-#include "Wt-Commons/wt_helpers.h"
+#include "wt_helpers.h"
 #include <Wt/WGroupBox>
 #include <Wt/WLabel>
 #include <Wt/WLineEdit>
@@ -34,7 +34,7 @@
 #include "Models"
 #include <Wt/WToolBar>
 #include <Wt/Auth/AuthService>
-#include "Wt-Commons/wform.h"
+#include "wform.h"
 
 
 using namespace Wt;

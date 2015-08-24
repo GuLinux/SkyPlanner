@@ -25,7 +25,7 @@
 #include <Wt/Json/Parser>
 #include <Wt/Json/Object>
 #include <Wt/Json/Array>
-#include "Wt-Commons/wt_helpers.h"
+#include "wt_helpers.h"
 
 using namespace std;
 using namespace Wt;

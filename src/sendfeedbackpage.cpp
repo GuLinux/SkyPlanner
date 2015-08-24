@@ -19,7 +19,7 @@
 #include "private/sendfeedbackpage_p.hpp"
 
 #include <utils/d_ptr_implementation.h>
-#include <Wt-Commons/wt_helpers.h>
+#include <wt_helpers.h>
 #include <Wt/WContainerWidget>
 #include <Wt/WText>
 #include <Wt/WTextArea>

@@ -24,7 +24,7 @@
 #include <Wt/WStackedWidget>
 #include <Wt/Auth/AuthWidget>
 #include <Wt/WMenu>
-#include "Wt-Commons/wt_helpers.h"
+#include "wt_helpers.h"
 #include "telescopespage.h"
 #include "astrosessionspage.h"
 #include <Wt/Auth/PasswordService>
@@ -42,7 +42,7 @@
 #include <Wt/WCombinedLocalizedStrings>
 #include <Wt/WMessageResourceBundle>
 #include <Wt/Dbo/QueryModel>
-#include <Wt-Commons/whtmltemplateslocalizedstrings.h>
+#include <whtmltemplateslocalizedstrings.h>
 #include "homepage.h"
 #include <mutex>
 #include <Wt/WProgressBar>
@@ -60,7 +60,7 @@
 #include <Wt/WMemoryResource>
 #include <Wt/WFileResource>
 #include "astrosessionpreview.h"
-#include "Wt-Commons/cookieslawdisclaimer.h"
+#include "cookieslawdisclaimer.h"
 
 using namespace std;
 using namespace Wt;

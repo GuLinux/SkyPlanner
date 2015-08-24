@@ -18,7 +18,7 @@
 
 #include "Models"
 #include "objectdifficultywidget.h"
-#include "Wt-Commons/wt_helpers.h"
+#include "wt_helpers.h"
 #include "utils/format.h"
 #include <Wt/WText>
 #include "utils/d_ptr_implementation.h"

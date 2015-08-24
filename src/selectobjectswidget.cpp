@@ -22,7 +22,7 @@
 #include "utils/utils.h"
 #include "utils/format.h"
 #include "session.h"
-#include "Wt-Commons/wt_helpers.h"
+#include "wt_helpers.h"
 #include <Wt/WTableRow>
 #include <Wt/WComboBox>
 #include <Wt/WLineEdit>

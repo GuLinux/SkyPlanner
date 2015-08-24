@@ -27,7 +27,7 @@
 #include <Wt/WComboBox>
 #include <Wt/WLabel>
 #include <Wt/WToolBar>
-#include <Wt-Commons/wt_helpers.h>
+#include <wt_helpers.h>
 #include "models/Models"
 #include "widgets/astroobjectwidget.h"
 #include "widgets/objectnameswidget.h"

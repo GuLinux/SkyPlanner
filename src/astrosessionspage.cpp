@@ -19,7 +19,7 @@
 #include "astrosessionspage.h"
 #include "private/astrosessionspage_p.h"
 #include "utils/d_ptr_implementation.h"
-#include "Wt-Commons/wt_helpers.h"
+#include "wt_helpers.h"
 #include "session.h"
 #include "astrosessionslisttab.h"
 #include "astrosessiontab.h"
@@ -31,7 +31,7 @@
 #include "utils/format.h"
 #include "utils/utils.h"
 #include "skyplanner.h"
-#include "Wt-Commons/wt_utils.h"
+#include "wt_utils.h"
 
 using namespace Wt;
 using namespace WtCommons;

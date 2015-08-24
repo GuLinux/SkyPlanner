@@ -17,7 +17,7 @@
  */
 #include "weatherwidget.h"
 #include "openweather/openweather.h"
-#include <Wt-Commons/wt_helpers.h>
+#include <wt_helpers.h>
 #include <Wt/WText>
 #include <Wt/WTemplate>
 #include <Wt/WDateTime>

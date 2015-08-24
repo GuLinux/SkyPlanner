@@ -35,6 +35,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11 -fstack-protector-all")
 set(HAVE_WT_JSON_SERIALIZE On CACHE STRING "" FORCE)
 
 #add_subdirectory(lib)
+add_subdirectory(GuLinux-Commons/Wt)
+include_directories(GuLinux-Commons/Wt GuLinux-Commons/c++)
 include_directories(src)
 add_subdirectory(src)
 add_subdirectory(resources)

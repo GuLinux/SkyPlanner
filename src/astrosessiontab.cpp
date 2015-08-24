@@ -21,8 +21,8 @@
 #include "utils/d_ptr_implementation.h"
 #include "utils/format.h"
 #include "utils/curl.h"
-#include "Wt-Commons/wt_helpers.h"
-#include "Wt-Commons/wform.h"
+#include "wt_helpers.h"
+#include "wform.h"
 #include "session.h"
 #include "placewidget.h"
 #include <Wt/WText>
@@ -82,8 +82,8 @@
 #include "widgets/texteditordialog.h"
 #include "widgets/instrumentstable.h"
 #include "astrosessionpreview.h"
-#include "Wt-Commons/wglyphicon.h"
-#include "Wt-Commons/wt_utils.h"
+#include "wglyphicon.h"
+#include "wt_utils.h"
 
 using namespace Wt;
 using namespace WtCommons;

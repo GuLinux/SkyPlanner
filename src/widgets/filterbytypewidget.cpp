@@ -20,7 +20,7 @@
 
 #include <utils/d_ptr_implementation.h>
 #include <Wt/WCheckBox>
-#include "Wt-Commons/wt_helpers.h"
+#include "wt_helpers.h"
 #include <Wt/WPopupMenu>
 #include <Wt/WPushButton>
 #include <Wt/WDialog>

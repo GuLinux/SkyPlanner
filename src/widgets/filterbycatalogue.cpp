@@ -24,8 +24,8 @@
 #include <Wt/WStandardItemModel>
 #include <Wt/WStandardItem>
 #include <Wt/WLabel>
-#include "Wt-Commons/wt_helpers.h"
-#include <Wt-Commons/wform.h>
+#include "wt_helpers.h"
+#include <wform.h>
 #include "models/Models"
 
 using namespace Wt;

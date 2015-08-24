@@ -22,7 +22,7 @@
 #include "utils/format.h"
 #include "utils/utils.h"
 #include <Wt/WApplication>
-#include <Wt-Commons/wt_helpers.h>
+#include <wt_helpers.h>
 #include "models/Models"
 #include <Wt/WComboBox>
 #include <Wt/WText>

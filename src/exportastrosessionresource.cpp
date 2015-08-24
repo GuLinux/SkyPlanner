@@ -51,7 +51,7 @@
 
 #include "widgets/astroobjectstable.h"
 #include "skyplanner.h"
-#include "Wt-Commons/wt_utils.h"
+#include "wt_utils.h"
 
 
 using namespace Wt;

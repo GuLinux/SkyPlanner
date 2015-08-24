@@ -42,7 +42,6 @@ add_custom_command(OUTPUT style.css.cpp COMMAND ${CMAKE_SOURCE_DIR}/scripts/crea
                                               DEPENDS ${CMAKE_SOURCE_DIR}/src/style.css.cpp.in ${CMAKE_SOURCE_DIR}/resources/style.css 
                                               )
 add_library(SkyPlanner_CORE STATIC ${SkyPlanner_CORE_SRCS})
-add_subdirectory(Wt-Commons)
 add_subdirectory(webservice)
 add_executable(SkyPlanner ${SkyPlanner_SRCS} ${Wt_Commons_Library_SRCS} ${openweather_SRCS} ${Widgets_SRCS} )
 target_link_libraries(SkyPlanner SkyPlanner_CORE SkyPlanner_WebService Wt_Commons_Library ${Wt_LIBRARIES} ${Boost_LIBRARIES} ${HARU_LIBRARY} ${WIN32_LIBS} curl ${GRAPHICSMAGICK_LDFLAGS} nova)

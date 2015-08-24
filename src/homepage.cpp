@@ -18,7 +18,7 @@
 #include "homepage.h"
 #include "private/homepage_p.h"
 #include "utils/d_ptr_implementation.h"
-#include "Wt-Commons/wt_helpers.h"
+#include "wt_helpers.h"
 #include "session.h"
 #include <Wt/WText>
 #include <Wt/WTemplate>

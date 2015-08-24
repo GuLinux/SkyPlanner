@@ -21,7 +21,7 @@
 #include "utils/d_ptr_implementation.h"
 #include "utils/format.h"
 #include "session.h"
-#include "Wt-Commons/wt_helpers.h"
+#include "wt_helpers.h"
 #include <Wt/WApplication>
 #include <Wt/WPushButton>
 #include <Wt/WLineEdit>

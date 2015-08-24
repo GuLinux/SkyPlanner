@@ -29,7 +29,7 @@
 #include <utils/utils.h>
 #include <boost/filesystem.hpp>
 #include "skyplanner.h"
-#include <Wt-Commons/wt_helpers.h>
+#include <wt_helpers.h>
 #include "utils/curl.h"
 #include <boost/thread.hpp>
 #include <Wt/WSlider>

@@ -17,7 +17,7 @@
  */
 #include "Models"
 #include "private/astrosessionpreview_p.h"
-#include "Wt-Commons/wt_helpers.h"
+#include "wt_helpers.h"
 #include "utils/d_ptr_implementation.h"
 #include "skyplanner.h"
 #include <Wt/Utils>
@@ -42,7 +42,7 @@
 #include <Wt/WLocalDateTime>
 #include <Wt/WLineEdit>
 #include <Wt/WMessageBox>
-#include "Wt-Commons/wt_utils.h"
+#include "wt_utils.h"
 using namespace Wt;
 using namespace WtCommons;
 using namespace std;

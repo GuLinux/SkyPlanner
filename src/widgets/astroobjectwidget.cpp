@@ -17,8 +17,8 @@
  */
 #include "astroobjectwidget.h"
 #include "private/astroobjectwidget_p.h"
-#include "Wt-Commons/wt_helpers.h"
-#include <Wt-Commons/whtmltxt.h>
+#include "wt_helpers.h"
+#include <whtmltxt.h>
 
 #include <utils/d_ptr_implementation.h>
 #include "utils/format.h"

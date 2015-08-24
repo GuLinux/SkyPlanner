@@ -23,8 +23,8 @@
 #include <Wt/WTableRow>
 #include <Wt/WText>
 #include "session.h"
-#include "Wt-Commons/wt_helpers.h"
-#include <Wt-Commons/wglyphicon.h>
+#include "wt_helpers.h"
+#include <wglyphicon.h>
 #include "utils/format.h"
 #include "Models"
 

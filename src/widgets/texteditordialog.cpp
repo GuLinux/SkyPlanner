@@ -16,7 +16,7 @@
  * 
  */
 #include "texteditordialog.h"
-#include "Wt-Commons/wt_helpers.h"
+#include "wt_helpers.h"
 #include "skyplanner.h"
 #include <Wt/WText>
 #include <Wt/WLink>
