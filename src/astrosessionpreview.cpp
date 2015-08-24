@@ -245,7 +245,6 @@ AstroSessionPreview::AstroSessionPreview(const AstroGroup& astroGroup, const Geo
       return AstroSessionObjectElement{o, o->bestAltitude(ephemeris, d->astroGroup.timezone)};
     });
   }
-  shared_ptr<set<AstroObjectWidget*>> astroObjectWidgets(new set<AstroObjectWidget*>());
   AstroObjectWidget *astroObjectWidget = nullptr;
   for(auto objectelement: sessionObjects) {
     WPushButton *hideButton = WW<WPushButton>("buttons_hide"_wtr).css("btn-xs btn-warning");
@@ -269,7 +268,7 @@ AstroSessionPreview::AstroSessionPreview(const AstroGroup& astroGroup, const Geo
     for(auto o: objectActionButtons) {
       o.second->clicked().connect([=](WMouseEvent){ o.first.clicked(objectelement.first, astroObjectWidget); });
     }
-    hideButton->clicked().connect([=](WMouseEvent){astroObjectWidgets->erase(astroObjectWidget); delete astroObjectWidget; });
+    hideButton->clicked().connect([=](WMouseEvent){ delete astroObjectWidget; });
     hideDSSButton->clicked().connect([=](WMouseEvent){ astroObjectWidget->setDSSVisible(!astroObjectWidget->isDSSVisible()); hideDSSButton->setText(WString::tr( astroObjectWidget->isDSSVisible() ? "buttons_hide_dss" : "buttons_show_dss" ));  });
     collapseButton->clicked().connect([=](WMouseEvent) { astroObjectWidget->setCollapsed(!astroObjectWidget->isCollapsed()); });
     editDescriptionButton->clicked().connect([=,&session](WMouseEvent) {
@@ -280,12 +279,11 @@ AstroSessionPreview::AstroSessionPreview(const AstroGroup& astroGroup, const Geo
      Dbo::Transaction t(d->session);
      TextEditorDialog::report(d->session, objectelement.first, [=] { astroObjectWidget->reload(); })->show();
     });
-    astroObjectWidgets->insert(astroObjectWidget);
     sessionPreviewContainer->addWidget(astroObjectWidget);
+    invertAllButton->clicked().connect(astroObjectWidget, &AstroObjectWidget::toggleInvert);
   }
   if(astroObjectWidget)
     astroObjectWidget->addStyleClass("astroobject-last-list-item");
-  invertAllButton->clicked().connect([=](WMouseEvent){ for(auto a: *astroObjectWidgets) a->toggleInvert(); } );
 }
 
 Signal<> &AstroSessionPreview::backClicked() const

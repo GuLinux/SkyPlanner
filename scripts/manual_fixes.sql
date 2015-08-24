@@ -32,6 +32,14 @@ insert into denominations
        (number, name      , objects_id                                                    , other_catalogues, comment                 , catalogues_id) 
 VALUES (3181  , 'NGC 3181', (select objects_id from denominations where name = 'NGC 3184'), 'NGC 3184'      , 'HII region of NGC 3184', (select id from catalogues WHERE name = 'NGC') )
 
+
+
+insert into denominations
+       (name      , objects_id                                                    , other_catalogues,  catalogues_id)
+VALUES ('The Grasshopper', (select objects_id from denominations where name = 'Arp 55' group by objects_id), 'UGC 04881'      , (select id from catalogues WHERE code = 'proper_name') )
+
+
+
 -- remove multiple spaces
 update denominations set name = regexp_replace(name, '\s{2,}', ' ') where name like '%  %'
 
@@ -48,6 +56,9 @@ select d.id
 -- Cleanup orphan objects
 delete from astro_session_object where objects_id in (select objects.id from objects left join denominations ON objects.id = denominations.objects_id where denominations.id is null);
 delete from objects where id in (select objects.id from objects left join denominations ON objects.id = denominations.objects_id where denominations.id is null)
+
+
+
 
 
 END TRANSACTION;

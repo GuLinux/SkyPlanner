@@ -158,7 +158,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
     useStyleSheet( themeCssPath );
   }
   useStyleSheet( styleCssPath );
-  
+  requireJQuery("https://code.jquery.com/jquery-2.1.1.min.js");
   CookiesLawDisclaimer::checkOrCreate(root(), [=] {
       string googleAnalytics_ua, googleAnalytics_domain;
   if(readConfigurationProperty("google-analytics-ua", googleAnalytics_ua) && readConfigurationProperty("google-analytics-domain", googleAnalytics_domain)) {
@@ -178,9 +178,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
     require(analyticsScriptResource->url(), "googleAnalytics");
   }
 
-
   //requireJQuery("https://code.jquery.com/jquery-1.11.1.min.js");
-  requireJQuery("https://code.jquery.com/jquery-2.1.1.min.js");
   require("http://s7.addthis.com/js/300/addthis_widget.js#pubid=ra-53db62c0246c3a25");
   });
   
