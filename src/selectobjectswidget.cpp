@@ -55,6 +55,7 @@
 #include <Wt/WImage>
 #include "astrosessiontab.h"
 #include "dbohelper.h"
+#include "urls.h"
 
 using namespace Wt;
 using namespace WtCommons;
@@ -182,7 +183,7 @@ void SelectObjectsWidget::populateFor(const Dbo::ptr< Telescope > &telescope , T
   d->selectedTelescope = telescope;
   d->timezone = timezone;
   if(!d->astroSession->position()) return;
-  d->suggestedObjectsTable->tableFooter()->addWidget(WW<WImage>(SkyPlanner::LoadingIndicator).addCss("loading center-block"));
+  d->suggestedObjectsTable->tableFooter()->addWidget(WW<WImage>(URLs::loading_indicator).addCss("loading center-block"));
 
   auto astroSessionId = d->astroSession.id();
   WApplication *app = wApp;

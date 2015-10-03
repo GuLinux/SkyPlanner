@@ -31,6 +31,7 @@
 #include <Wt/Http/Response>
 #include "webservice/activesessionsresource.h"
 #include "webservice/dbo_restresource.h"
+#include "urls.h"
 
 using namespace std;
 using namespace Wt;
@@ -80,7 +81,7 @@ int main(int argc, char **argv) {
           server.addResource(new WFileResource(resource_path.string()), deployPath);
         };
         addStaticResource("logo_350.png", "/skyplanner_logo.png");
-        addStaticResource("loading-64.png", SkyPlanner::LoadingIndicator);
+        addStaticResource("loading-64.png", URLs::loading_indicator);
 
         server.addEntryPoint(Wt::Application, newSkyPlanner);
         Session::configureAuth();

@@ -103,7 +103,7 @@ void DSSPage::Private::setImageType(DSS::ImageVersion version, const shared_ptr<
     menu->addMenu(WString::tr("dss_change_type_menu"), imageTypeSubmenu);
     menu->addItem(WString::tr("imagecontrol-menu"))->triggered().connect([=](WMenuItem*, _n5){ if(dssImage) dssImage->showImageControls(); });
     Dbo::Transaction t(session);
-    if(session.user()->telescopes().size() && session.user()->eyepieces().size()) {
+    if(session.user() && session.user()->telescopes().size() && session.user()->eyepieces().size()) {
       WMenu *circles = new WPopupMenu;
       menu->addMenu(WString::tr("fov_menu"), circles);
       for(auto telescope: session.user()->telescopes()) {

@@ -40,8 +40,10 @@
 #include <mutex>
 #include <Magick++.h>
 #include "models/Models"
+#include <urls.h>
 #include <Wt/WDoubleSpinBox>
 #include <Wt/WMemoryResource>
+#include <opencv2/opencv.hpp>
 
 
 using namespace Wt;
@@ -422,7 +424,7 @@ void DSSImage::Private::download()
   content->clear();
   content->addWidget(new WText(WString::tr("dss_downloading_message")));
   content->addWidget(new WBreak);
-  content->addWidget(WW<WImage>(SkyPlanner::LoadingIndicator).addCss("loading center-block"));
+  content->addWidget(WW<WImage>(URLs::loading_indicator).addCss("loading center-block"));
 
   wtDownload();
 }

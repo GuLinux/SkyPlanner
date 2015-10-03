@@ -5,6 +5,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/" ${CMAKE_
 
 enable_testing()
 find_package(Wt 3.3.1 REQUIRED)
+find_package(OpenCV REQUIRED)
 find_package(GraphicsMagick REQUIRED)
 include_directories(${GraphicsMagick_INCLUDE_DIR})
 
