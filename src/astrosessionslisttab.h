@@ -19,7 +19,7 @@
 #define ASTROSESSIONSLISTTAB_H
 
 #include <Wt/WContainerWidget>
-#include "utils/d_ptr.h"
+#include "c++/dptr.h"
 #include "ptr_defs.h"
 
 class AstroSession;

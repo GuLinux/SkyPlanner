@@ -19,7 +19,7 @@
 #ifndef CURL_H
 #define CURL_H
 
-#include "utils/d_ptr.h"
+#include "c++/dptr.h"
 #include <functional>
 #include <map>
 

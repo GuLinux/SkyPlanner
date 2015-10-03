@@ -17,7 +17,6 @@
  */
 #include "forecast.h"
 #include "private/forecast_p.h"
-#include "utils/d_ptr_implementation.h"
 #include "utils/format.h"
 #include <Wt/Http/Client>
 #include <boost/format.hpp>
@@ -59,7 +58,7 @@ Forecast::Private::Private(Forecast* q) : q(q)
 }
 
 Forecast::Forecast()
-    : d(this)
+    : dptr(this)
 {
 }
 

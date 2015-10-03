@@ -18,7 +18,6 @@
 
 #include "widgets/filterbycatalogue.h"
 #include "private/filterbycatalogue_p.h"
-#include "utils/d_ptr_implementation.h"
 #include <utils/format.h>
 #include <Wt/WComboBox>
 #include <Wt/WStandardItemModel>
@@ -36,7 +35,7 @@ FilterByCatalogue::Private::Private( Session &session, FilterByCatalogue *q ) : 
 {
 }
 
-FilterByCatalogue::FilterByCatalogue( Session &session, Wt::WContainerWidget *parent ): WCompositeWidget( parent ), d(session, this)
+FilterByCatalogue::FilterByCatalogue( Session &session, Wt::WContainerWidget *parent ): WCompositeWidget( parent ), dptr(session, this)
 {
   d->cataloguesCombo = WW<WComboBox>().css("input-sm");
   d->model = new WStandardItemModel(d->cataloguesCombo);

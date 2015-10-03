@@ -18,7 +18,6 @@
 #include "Models"
 #include "astrosessionspage.h"
 #include "private/astrosessionspage_p.h"
-#include "utils/d_ptr_implementation.h"
 #include "wt_helpers.h"
 #include "session.h"
 #include "astrosessionslisttab.h"
@@ -45,7 +44,7 @@ AstroSessionsPage::~AstroSessionsPage()
 }
 
 AstroSessionsPage::AstroSessionsPage(Session &session, WContainerWidget* parent)
-  : WContainerWidget(parent), d(session, this)
+  : WContainerWidget(parent), dptr(session, this)
 {
   d->tabWidget = new WTabWidget(this);
 //  d->tabWidget->setInternalPathEnabled("sessions/");

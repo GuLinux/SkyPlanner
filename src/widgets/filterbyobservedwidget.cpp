@@ -18,7 +18,6 @@
 #include "filterbyobservedwidget.h"
 #include "private/filterbyobservedwidget_p.h"
 
-#include <utils/d_ptr_implementation.h>
 #include "wt_helpers.h"
 #include <Wt/WLabel>
 
@@ -31,7 +30,7 @@ FilterByObservedWidget::Private::Private(FilterByObservedWidget *q): q(q)
 }
 
 FilterByObservedWidget::FilterByObservedWidget(const Wt::WString &label, Wt::WContainerWidget *parent)
-  : WCompositeWidget(parent), d(this)
+  : WCompositeWidget(parent), dptr(this)
 {
   d->combo = WW<WComboBox>().css("input-sm");
   d->combo->addItem(WString::tr("observed_any"));

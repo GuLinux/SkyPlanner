@@ -18,7 +18,7 @@
 #ifndef EPHEMERIS_H
 #define EPHEMERIS_H
 
-#include "utils/d_ptr.h"
+#include "c++/dptr.h"
 #include <boost/date_time.hpp>
 #include "types.h"
 

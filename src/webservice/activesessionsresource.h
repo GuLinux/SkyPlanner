@@ -18,7 +18,7 @@
 #ifndef ACTIVESESSIONSRESOURCE_H
 #define ACTIVESESSIONSRESOURCE_H
 
-#include <utils/d_ptr.h>
+#include <c++/dptr.h>
 #include <Wt/WResource>
 
 class SkyPlanner;

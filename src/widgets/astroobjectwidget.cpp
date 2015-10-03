@@ -20,7 +20,6 @@
 #include "wt_helpers.h"
 #include <whtmltxt.h>
 
-#include <utils/d_ptr_implementation.h>
 #include "utils/format.h"
 #include <boost/algorithm/string.hpp>
 #include <Wt/WText>
@@ -44,7 +43,7 @@ AstroObjectWidget::Private::Private(const AstroGroup &astroGroup, Session &sessi
 }
 
 AstroObjectWidget::AstroObjectWidget(const AstroGroup &astroGroup, Session &session, const shared_ptr<mutex> &downloadMutex, const vector<Wt::WPushButton*> &actionButtons, WContainerWidget *parent)
-  : WCompositeWidget(parent), d(astroGroup, session, downloadMutex, actionButtons, this)
+  : WCompositeWidget(parent), dptr(astroGroup, session, downloadMutex, actionButtons, this)
 {
   setImplementation(d->content = WW<WContainerWidget>());
   d->init();

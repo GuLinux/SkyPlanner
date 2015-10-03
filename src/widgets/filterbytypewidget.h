@@ -18,7 +18,7 @@
 #ifndef FILTERBYTYPEWIDGET_H
 #define FILTERBYTYPEWIDGET_H
 
-#include <utils/d_ptr.h>
+#include <c++/dptr.h>
 #include <Wt/WCompositeWidget>
 #include <set>
 #include "models/ngcobject.h"

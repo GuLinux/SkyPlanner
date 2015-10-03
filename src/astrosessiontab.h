@@ -19,7 +19,7 @@
 #define ASTROSESSIONTAB_H
 
 #include <Wt/WContainerWidget>
-#include "utils/d_ptr.h"
+#include "c++/dptr.h"
 #include "models/ptr_defs.h"
 class Session;
 class AstroSessionTab : public Wt::WContainerWidget

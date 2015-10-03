@@ -19,7 +19,6 @@
 #include "astrosessionslisttab.h"
 #include "astrosessiontab.h"
 #include "private/astrosessionslisttab_p.h"
-#include "utils/d_ptr_implementation.h"
 #include "session.h"
 #include "wt_helpers.h"
 #include "Models"
@@ -51,7 +50,7 @@ AstroSessionsListTab::~AstroSessionsListTab()
 }
 
 AstroSessionsListTab::AstroSessionsListTab(Session &session, Wt::WContainerWidget* parent)
-    : d(session, this)
+    : dptr(session, this)
 {
 
   WContainerWidget *helpContainer = new WContainerWidget(this);

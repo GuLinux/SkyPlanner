@@ -18,7 +18,7 @@
 #ifndef GEOCODER_H
 #define GEOCODER_H
 #include "types.h"
-#include "utils/d_ptr.h"
+#include "c++/dptr.h"
 
 class GeoCoder {
 public:
@@ -42,7 +42,7 @@ public:
   };
   static PlaceInformation placeInformation(const Coordinates::LatLng &coordinates, const boost::posix_time::ptime &when);
   private:
-    D_PTR;
+    D_PTR
 };
 
 std::ostream &operator<<(std::ostream&, const GeoCoder::Place &);

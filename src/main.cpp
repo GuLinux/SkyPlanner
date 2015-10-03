@@ -32,6 +32,7 @@
 #include "webservice/activesessionsresource.h"
 #include "webservice/dbo_restresource.h"
 #include "urls.h"
+#include "settings.h"
 
 using namespace std;
 using namespace Wt;
@@ -62,8 +63,7 @@ int main(int argc, char **argv) {
     try {
         WServer server(argv[0]);
         server.setServerConfiguration(argc, argv, WTHTTP_CONFIGURATION);
-        string noop;
-        if(! server.readConfigurationProperty("style-css-path", noop))
+	if(!Settings::instance().google_api_key())
               server.addResource(new WMemoryResource("text/css", SkyPlannerStyle::css()), "/skyplanner_style.css");
         string quitResourcePassword;
         if(server.readConfigurationProperty("quit-password", quitResourcePassword)) {

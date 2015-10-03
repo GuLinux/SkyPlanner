@@ -19,7 +19,7 @@
 #define PLACEWIDGET_H
 
 #include <Wt/WContainerWidget>
-#include "utils/d_ptr.h"
+#include "c++/dptr.h"
 
 class AstroSession;
 class Session;

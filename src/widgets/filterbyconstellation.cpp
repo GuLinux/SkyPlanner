@@ -18,7 +18,6 @@
 
 #include "widgets/filterbyconstellation.h"
 #include "private/filterbyconstellation_p.h"
-#include "utils/d_ptr_implementation.h"
 #include <utils/format.h>
 #include <Wt/WComboBox>
 #include <Wt/WStandardItemModel>
@@ -36,7 +35,7 @@ FilterByConstellation::Private::Private( FilterByConstellation *q ) : q( q )
 {
 }
 
-FilterByConstellation::FilterByConstellation( Wt::WContainerWidget *parent ): WCompositeWidget( parent ), d(this)
+FilterByConstellation::FilterByConstellation( Wt::WContainerWidget *parent ): WCompositeWidget( parent ), dptr(this)
 {
   d->constellationsCombo = WW<WComboBox>().css("input-sm");
   d->model = new WStandardItemModel(d->constellationsCombo);

@@ -18,7 +18,6 @@
 #include "sendfeedbackpage.hpp"
 #include "private/sendfeedbackpage_p.hpp"
 
-#include <utils/d_ptr_implementation.h>
 #include <wt_helpers.h>
 #include <Wt/WContainerWidget>
 #include <Wt/WText>
@@ -46,7 +45,7 @@ SendFeedbackPage::Private::Private(Session &session, SendFeedbackPage *q): sessi
 }
 
 SendFeedbackPage::SendFeedbackPage(Session &session, Wt::WContainerWidget *parent)
-  : WCompositeWidget(parent), d(session, this)
+  : WCompositeWidget(parent), dptr(session, this)
 {
   d->content = new WContainerWidget;
   setImplementation(d->content);

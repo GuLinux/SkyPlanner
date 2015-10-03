@@ -46,7 +46,7 @@ Vizier::Private::Private(Vizier *q): q(q)
 }
 
 Vizier::Vizier(const po::variables_map &variables_map)
-  : d(new Private(this))
+  : dptr(this)
 {
   auto checkOption = [=](const string &optionName, function<bool(const po::variable_value &)> isValid, const string &errorMessage){
     if( ! variables_map.count(optionName) || ! isValid(variables_map[optionName]) )

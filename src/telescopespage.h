@@ -19,7 +19,7 @@
 #define TELESCOPESPAGE_H
 
 #include <Wt/WContainerWidget>
-#include "utils/d_ptr.h"
+#include "c++/dptr.h"
 
 class Session;
 class TelescopesPage : public Wt::WContainerWidget

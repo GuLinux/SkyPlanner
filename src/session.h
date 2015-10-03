@@ -19,7 +19,7 @@
 #define SESSION_H
 
 #include <Wt/Dbo/Session>
-#include "utils/d_ptr.h"
+#include "c++/dptr.h"
 
 class User;
 namespace Wt

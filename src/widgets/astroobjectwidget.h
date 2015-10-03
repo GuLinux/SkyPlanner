@@ -18,7 +18,7 @@
 #ifndef ASTROOBJECTWIDGET_H
 #define ASTROOBJECTWIDGET_H
 
-#include <utils/d_ptr.h>
+#include <c++/dptr.h>
 #include <Wt/WCompositeWidget>
 #include <mutex>
 #include "astro_group.h"

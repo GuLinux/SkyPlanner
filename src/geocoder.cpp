@@ -19,7 +19,7 @@
 #include "utils/format.h"
 #include "utils/curl.h"
 #include "skyplanner.h"
-#include "utils/d_ptr_implementation.h"
+#include "settings.h"
 #include <Wt/Json/Array>
 #include <Wt/Json/Object>
 #include <Wt/Json/Parser>
@@ -38,7 +38,7 @@ private:
   GeoCoder *const q;
 };
 
-GeoCoder::GeoCoder(const string &apiKey) : d(apiKey, this)
+GeoCoder::GeoCoder(const string &apiKey) : dptr(apiKey, this)
 {
 }
 
@@ -100,9 +100,11 @@ GeoCoder::Place GeoCoder::reverse(const Coordinates::LatLng &latlng) const
 
 GeoCoder::PlaceInformation GeoCoder::placeInformation(const Coordinates::LatLng &coordinates, const boost::posix_time::ptime &when)
 {
-  static string googleApiKey;
-  if(googleApiKey.empty())
-    wApp->readConfigurationProperty("google_api_server_key", googleApiKey);
+  if(!Settings::instance().google_api_key()) {
+    wApp->log("warning") << "No google api key defined, unable to query place information";
+    return {};
+  }
+  static string googleApiKey = *Settings::instance().google_api_key();
   PlaceInformation placeInformation;
   static map<string,Timezone> timezonesCache;
   if(coordinates){

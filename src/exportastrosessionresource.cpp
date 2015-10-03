@@ -18,7 +18,6 @@
 
 #include "exportastrosessionresource.h"
 #include "private/exportastrosessionresource_p.h"
-#include "utils/d_ptr_implementation.h"
 #include "Models"
 #include "session.h"
 #include <Wt/Http/Response>
@@ -63,7 +62,7 @@ ExportAstroSessionResource::Private::Private(const AstroSessionPtr &astroSession
 }
 
 ExportAstroSessionResource::ExportAstroSessionResource(const AstroSessionPtr &astroSession, Session &session, Timezone timezone, WObject* parent)
-  : WResource(parent), d(astroSession, session, timezone, this)
+  : WResource(parent), dptr(astroSession, session, timezone, this)
 {
 }
 

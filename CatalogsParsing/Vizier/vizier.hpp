@@ -7,6 +7,7 @@
 #include "Models"
 #include <functional>
 #include <map>
+#include "c++/dptr.h"
 
 class Session;
 

@@ -18,7 +18,6 @@
 
 #include "curl.h"
 #include "private/curl_p.h"
-#include "utils/d_ptr_implementation.h"
 #include <iostream>
 #include <boost/algorithm/string.hpp>
 
@@ -30,7 +29,7 @@ Curl::Private::Private( ostream &output, Curl *q ) : output(output), q( q )
 }
 
 Curl::Curl( ostream &output )
-  : d( output, this )
+  : dptr( output, this )
 {
   d->curl_handle = curl_easy_init();
   curl_easy_setopt(d->curl_handle, CURLOPT_WRITEFUNCTION, Private::WriteToFileCallback);

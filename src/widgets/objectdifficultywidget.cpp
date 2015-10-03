@@ -21,7 +21,6 @@
 #include "wt_helpers.h"
 #include "utils/format.h"
 #include <Wt/WText>
-#include "utils/d_ptr_implementation.h"
 
 
 using namespace WtCommons;
@@ -42,7 +41,7 @@ ObjectDifficultyWidget::~ObjectDifficultyWidget()
 }
 
 ObjectDifficultyWidget::ObjectDifficultyWidget( const Wt::Dbo::ptr< NgcObject > &object, const Wt::Dbo::ptr< Telescope > &telescope, double maxAltitudeInDegrees, Wt::WContainerWidget *parent )
-  : WContainerWidget(parent), d(this)
+  : WContainerWidget(parent), dptr(this)
 {
   setInline(true);
   int difficulty = object->difficulty(telescope);

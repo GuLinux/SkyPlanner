@@ -22,7 +22,6 @@
 #include "utils/format.h"
 #include <Wt/WText>
 #include <Wt/Utils>
-#include "utils/d_ptr_implementation.h"
 #include <Wt/WPopupMenu>
 #include <Wt/WAnchor>
 #include "session.h"

@@ -18,7 +18,6 @@
 #include "Models"
 #include "selectobjectswidget.h"
 #include "private/selectobjectswidget_p.h"
-#include "utils/d_ptr_implementation.h"
 #include "utils/utils.h"
 #include "utils/format.h"
 #include "session.h"
@@ -82,7 +81,7 @@ Signal< AstroSessionObjectPtr >& SelectObjectsWidget::objectsListChanged() const
 
 
 SelectObjectsWidget::SelectObjectsWidget(const Dbo::ptr< AstroSession >& astroSession, Session& session, WContainerWidget* parent)
-    : WTabWidget(parent), d(astroSession, session, this)
+    : WTabWidget(parent), dptr(astroSession, session, this)
 {
     WTabWidget *addObjectsTabWidget = this;
     Dbo::Transaction t(session);

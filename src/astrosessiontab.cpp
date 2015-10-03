@@ -18,7 +18,6 @@
 #include "Models"
 #include "astrosessiontab.h"
 #include "private/astrosessiontab_p.h"
-#include "utils/d_ptr_implementation.h"
 #include "utils/format.h"
 #include "utils/curl.h"
 #include "wt_helpers.h"
@@ -99,7 +98,7 @@ AstroSessionTab::~AstroSessionTab()
 }
 
 AstroSessionTab::AstroSessionTab(const AstroSessionPtr& astroSession, Session& session, WContainerWidget* parent)
-    : WContainerWidget(parent), d(astroSession, session, this)
+    : WContainerWidget(parent), dptr(astroSession, session, this)
 {
   spLog("notice") << "astroSession: " << astroSession.id() << ", id=" << id();
   d->load();

@@ -17,7 +17,6 @@
  */
 #include "telescopespage.h"
 #include "private/telescopespage_p.h"
-#include "utils/d_ptr_implementation.h"
 #include "utils/format.h"
 #include "session.h"
 #include "wt_helpers.h"
@@ -49,7 +48,7 @@ TelescopesPage::~TelescopesPage()
 }
 
 TelescopesPage::TelescopesPage( Session &session, WContainerWidget *parent )
-  : WContainerWidget(parent), d( session, this )
+  : WContainerWidget(parent), dptr( session, this )
 {
   d->setupTelescopesTable();
   d->setupEyepiecesTable();

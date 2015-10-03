@@ -18,7 +18,6 @@
 #include "activesessionsresource.h"
 #include "activesessionsresource_p.h"
 
-#include <utils/d_ptr_implementation.h>
 #include <Wt/Http/Response>
 #include <Wt/Json/Object>
 #include <Wt/Json/Array>
@@ -33,7 +32,7 @@ ActiveSessionsResource::Private::Private(std::vector<SkyPlanner *> &sessions, co
 }
 
 ActiveSessionsResource::ActiveSessionsResource(vector<SkyPlanner *> &sessions, const string &password, WObject *parent)
-    : WResource(parent), d(sessions, password, this)
+    : WResource(parent), dptr(sessions, password, this)
 {
 }
 

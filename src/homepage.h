@@ -19,7 +19,7 @@
 #define HOMEPAGE_H
 
 #include <Wt/WCompositeWidget>
-#include "utils/d_ptr.h"
+#include "c++/dptr.h"
 
 class Session;
 class HomePage : public Wt::WCompositeWidget

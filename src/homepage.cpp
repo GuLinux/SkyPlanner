@@ -17,7 +17,6 @@
  */
 #include "homepage.h"
 #include "private/homepage_p.h"
-#include "utils/d_ptr_implementation.h"
 #include "wt_helpers.h"
 #include "session.h"
 #include <Wt/WText>
@@ -38,7 +37,7 @@ HomePage::~HomePage()
 }
 
 HomePage::HomePage( Session &session, Wt::WContainerWidget *parent )
-  : WCompositeWidget(parent), d( session, this )
+  : WCompositeWidget(parent), dptr( session, this )
 {
   setImplementation(d->content = new WTemplate(WString::tr("home")));
   d->populate();

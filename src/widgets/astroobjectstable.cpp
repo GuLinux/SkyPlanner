@@ -18,7 +18,6 @@
 
 #include "astroobjectstable.h"
 #include "private/astroobjectstable_p.h"
-#include "utils/d_ptr_implementation.h"
 #include <Wt/WContainerWidget>
 #include <Wt/WText>
 #include <Wt/WPushButton>
@@ -58,7 +57,7 @@ AstroObjectsTable::AstroObjectsTable(Session &session,
 				     FiltersButtonDisplay showFilters,
 				     const set<NgcObject::NebulaType> &initialTypes,
 				     const std::list<Column> &columns, WContainerWidget *parent)
-  : WCompositeWidget(parent), d(session, actions, columns, this)
+  : WCompositeWidget(parent), dptr(session, actions, columns, this)
 {
   d->objectsTable = WW<WTable>().addCss("table table-hover table-condensed astroobjects-table");
   d->objectsTable->setHeaderCount(1);

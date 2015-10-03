@@ -18,7 +18,6 @@
 
 #include "dssimage.h"
 #include "private/dssimage_p.h"
-#include "utils/d_ptr_implementation.h"
 #include <Wt/WContainerWidget>
 #include <Wt/WAnchor>
 #include <Wt/WApplication>
@@ -504,7 +503,7 @@ DSS::ImageVersion DSSImage::imageVersion() const
 }
 
 DSSImage::DSSImage(const ImageOptions &imageOptions, const shared_ptr<mutex> &downloadMutex, bool anchor, bool showDSSLink, WContainerWidget *parent )
-  : WCompositeWidget(parent), d( imageOptions, downloadMutex, this )
+  : WCompositeWidget(parent), dptr( imageOptions, downloadMutex, this )
 {
   d->container = WW<WContainerWidget>();
   d->showAnchor = anchor;

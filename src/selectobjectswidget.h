@@ -19,7 +19,7 @@
 #define SELECTOBJECTSWIDGET_H
 
 #include <Wt/WTabWidget>
-#include "utils/d_ptr.h"
+#include "c++/dptr.h"
 #include <Wt/Dbo/ptr>
 #include "types.h"
 

@@ -18,7 +18,6 @@
 #include "usersettingspage.h"
 #include "private/usersettingspage_p.h"
 
-#include <utils/d_ptr_implementation.h>
 #include "session.h"
 #include <Wt/WContainerWidget>
 #include "wt_helpers.h"
@@ -46,7 +45,7 @@ UserSettingsPage::Private::Private(Session &session, UserSettingsPage *q): sessi
 }
 
 UserSettingsPage::UserSettingsPage(Session &session, Wt::WContainerWidget *parent)
-  : WCompositeWidget(parent), d(session, this)
+  : WCompositeWidget(parent), dptr(session, this)
 {
   d->content = WW<WContainerWidget>();
   setImplementation(d->content);

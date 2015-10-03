@@ -39,6 +39,7 @@ set(SkyPlanner_CORE_SRCS
     session.cpp
     urls.cpp
     findneighbour.cpp
+    settings.cpp
 )
 file(GLOB openweather_SRCS openweather/*cpp)
 add_custom_command(OUTPUT style.css.cpp COMMAND ${CMAKE_SOURCE_DIR}/scripts/create-style-css

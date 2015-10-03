@@ -35,7 +35,6 @@
 #include <Wt/WServer>
 #include "ngcobject.h"
 #include "nebuladenomination.h"
-#include "utils/d_ptr_implementation.h"
 
 using namespace std;
 using namespace Wt;
@@ -97,7 +96,7 @@ void Session::Private::init(const string &connectionString, Session::Provider pr
   }
 }
 
-Session::Session() : d(this)
+Session::Session() : dptr(this)
 {
   Provider provider = Sqlite3;
   string connectionString = "SkyPlanner.sqlite";
@@ -108,7 +107,7 @@ Session::Session() : d(this)
   d->init(connectionString, provider);
 }
 
-Session::Session(const string &connection, Provider provider) : d(this)
+Session::Session(const string &connection, Provider provider) : dptr(this)
 {
   d->init(connection, provider);
 }

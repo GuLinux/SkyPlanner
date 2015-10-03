@@ -20,7 +20,7 @@
 #define OBJECTNAMESWIDGET_H
 
 #include <Wt/WContainerWidget>
-#include "utils/d_ptr.h"
+#include "c++/dptr.h"
 class NgcObject;
 class Session;
 class ObjectNamesWidget : public Wt::WContainerWidget {

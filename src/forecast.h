@@ -19,7 +19,7 @@
 #ifndef FORECAST_H
 #define FORECAST_H
 
-#include "utils/d_ptr.h"
+#include "c++/dptr.h"
 #include <Wt/WDateTime>
 
 class Forecast

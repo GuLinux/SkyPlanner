@@ -18,7 +18,7 @@
 #ifndef USERSETTINGSPAGE_H
 #define USERSETTINGSPAGE_H
 
-#include <utils/d_ptr.h>
+#include <c++/dptr.h>
 #include <Wt/WCompositeWidget>
 class Session;
 

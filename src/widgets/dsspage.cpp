@@ -18,7 +18,6 @@
 
 #include "dsspage.h"
 #include "private/dsspage_p.h"
-#include "utils/d_ptr_implementation.h"
 #include "utils/format.h"
 #include "utils/utils.h"
 #include <Wt/WApplication>
@@ -198,7 +197,7 @@ DSSPage::Options DSSPage::Options::standalone(function<void()> runOnClose)
 
 
 DSSPage::DSSPage(const NgcObjectPtr &object, Session &session, const DSSPage::Options &options, WContainerWidget *parent )
-  : WContainerWidget(parent), d( object, session, options, this )
+  : WContainerWidget(parent), dptr( object, session, options, this )
 {
   Dbo::Transaction t(session);
   if(options.setPath) {

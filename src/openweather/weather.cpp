@@ -16,7 +16,6 @@
  * 
  */
 #include "weather.h"
-#include "utils/d_ptr_implementation.h"
 #include <Wt/Json/Array>
 
 /*

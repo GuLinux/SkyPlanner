@@ -18,7 +18,6 @@
 #include "Models"
 #include "placewidget.h"
 #include "private/placewidget_p.h"
-#include "utils/d_ptr_implementation.h"
 #include "utils/format.h"
 #include "session.h"
 #include "wt_helpers.h"
@@ -108,7 +107,7 @@ PlaceWidget::~PlaceWidget()
 }
 
 PlaceWidget::PlaceWidget(const Wt::Dbo::ptr< AstroSession >& astroSession, Session& session, Wt::WContainerWidget* parent)
-    : d(astroSession, session, this)
+    : dptr(astroSession, session, this)
 {
 //  addWidget(new WText(WString::tr("placewidget_maps_instructions")));
   WContainerWidget *googleMapsLinkContainer = new WContainerWidget;

@@ -19,7 +19,7 @@
 #define PRINTABLEASTROSESSIONRESOURCE_H
 
 #include <Wt/WResource>
-#include "utils/d_ptr.h"
+#include "c++/dptr.h"
 #include "types.h"
 #include "geocoder.h"
 #include "ptr_defs.h"

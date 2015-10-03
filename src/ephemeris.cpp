@@ -17,7 +17,6 @@
  */
 #include "ephemeris.h"
 #include "private/ephemeris_p.h"
-#include "utils/d_ptr_implementation.h"
 #include <libnova/libnova.h>
 
 using namespace std;
@@ -27,7 +26,7 @@ Ephemeris::Private::Private( const Coordinates::LatLng &geoPosition, const Timez
 }
 
 Ephemeris::Ephemeris( const Coordinates::LatLng &geoPosition, const Timezone &timezone )
-  : d( geoPosition, timezone, this )
+  : dptr( geoPosition, timezone, this )
 {
 }
 

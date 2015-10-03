@@ -18,7 +18,7 @@
 #ifndef FILTERBYOBSERVEDWIDGET_H
 #define FILTERBYOBSERVEDWIDGET_H
 
-#include <utils/d_ptr.h>
+#include <c++/dptr.h>
 #include <Wt/WCompositeWidget>
 #include <boost/logic/tribool.hpp>
 class FilterByObservedWidget : public Wt::WCompositeWidget {

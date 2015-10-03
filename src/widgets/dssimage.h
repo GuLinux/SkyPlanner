@@ -20,7 +20,7 @@
 #define DSSIMAGE_H
 
 #include <Wt/WCompositeWidget>
-#include "utils/d_ptr.h"
+#include "c++/dptr.h"
 #include <types.h>
 #include <mutex>
 #include <memory>

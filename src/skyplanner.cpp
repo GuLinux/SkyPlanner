@@ -17,7 +17,6 @@
  */
 #include "skyplanner.h"
 #include "private/skyplanner_p.h"
-#include "utils/d_ptr_implementation.h"
 #include "utils/utils.h"
 #include <Wt/WNavigationBar>
 #include <Wt/WBootstrapTheme>
@@ -60,6 +59,7 @@
 #include <Wt/WMemoryResource>
 #include <Wt/WFileResource>
 #include "astrosessionpreview.h"
+#include "settings.h"
 #include "cookieslawdisclaimer.h"
 
 using namespace std;
@@ -119,7 +119,7 @@ void AuthWidget::registerNewUser(const Auth::Identity& oauth)
 
 
 SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
-  : WApplication( environment ), d( this, onQuit )
+  : WApplication( environment ), dptr( this, onQuit )
 {
   d->initialInternalPath = internalPath();
   d->agentIsBot = environment.agentIsSpiderBot() || environment.userAgent().find("Baiduspider") != string::npos || environment.userAgent().find("YandexBot") != string::npos;
@@ -151,9 +151,8 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
   auto theme = new WBootstrapTheme(this);
   theme->setVersion(WBootstrapTheme::Version3);
   setTheme( theme );
-  string styleCssPath = "/skyplanner_style.css";
+  string styleCssPath = Settings::instance().style_css_path();
   string themeCssPath;
-  readConfigurationProperty("style-css-path", styleCssPath);
   useStyleSheet("http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css");
   if(readConfigurationProperty("theme-css-path", themeCssPath)) {
     useStyleSheet( themeCssPath );
@@ -595,7 +594,7 @@ bool SkyPlanner::Notification::valid() const
 }
 
 SkyPlanner::Notification::Notification(const WString& title, WWidget* content, SkyPlanner::Notification::Type type, bool addCloseButton, const string& categoryTag, WContainerWidget* parent)
-  : d()
+  : dptr()
 {
   d->categoryTag = categoryTag;
   static map<Type,string> notificationStyles {

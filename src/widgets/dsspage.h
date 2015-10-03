@@ -20,7 +20,7 @@
 #define DSSPAGE_H
 
 #include <Wt/WContainerWidget>
-#include "utils/d_ptr.h"
+#include "c++/dptr.h"
 #include "dssimage.h"
 #include <functional>
 #include <mutex>

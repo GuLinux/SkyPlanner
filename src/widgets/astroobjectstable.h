@@ -20,7 +20,7 @@
 #define ASTROOBJECTSTABLE_H
 
 #include <Wt/WCompositeWidget>
-#include "utils/d_ptr.h"
+#include "c++/dptr.h"
 #include "models/Models"
 #include "widgets/filterbyrangewidget.h"
 #include <functional>

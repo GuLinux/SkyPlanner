@@ -20,7 +20,7 @@
 #define FILTERBYCATALOGUE_H
 
 #include <Wt/WCompositeWidget>
-#include "utils/d_ptr.h"
+#include "c++/dptr.h"
 #include <functional>
 #include "models/catalogue.h"
 

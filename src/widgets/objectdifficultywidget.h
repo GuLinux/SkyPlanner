@@ -20,7 +20,7 @@
 #define OBJECTDIFFICULTYWIDGET_H
 
 #include <Wt/WContainerWidget>
-#include "utils/d_ptr.h"
+#include "c++/dptr.h"
 
 struct NgcObject;
 class Telescope;

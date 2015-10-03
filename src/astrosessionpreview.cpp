@@ -18,7 +18,6 @@
 #include "Models"
 #include "private/astrosessionpreview_p.h"
 #include "wt_helpers.h"
-#include "utils/d_ptr_implementation.h"
 #include "skyplanner.h"
 #include <Wt/Utils>
 #include <Wt/WText>
@@ -53,7 +52,7 @@ AstroSessionPreview::Private::Private(const AstroGroup& astroGroup, Session& ses
 }
 
 AstroSessionPreview::AstroSessionPreview(const AstroGroup& astroGroup, const GeoCoder::Place &geoCoderPlace, Session& session, list<ObjectAction> actions, Type type, Wt::WContainerWidget* parent)
-  : WCompositeWidget(parent), d(astroGroup, session, this)
+  : WCompositeWidget(parent), dptr(astroGroup, session, this)
 {
   Dbo::Transaction t(session);
   spLog("notice") << "Switching to preview version..";

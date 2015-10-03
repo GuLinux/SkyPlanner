@@ -19,7 +19,7 @@
 #define ASTROSESSIONPREVIEW_H
 
 #include <Wt/WCompositeWidget>
-#include "utils/d_ptr.h"
+#include "c++/dptr.h"
 #include "models/ptr_defs.h"
 #include "geocoder.h"
 
