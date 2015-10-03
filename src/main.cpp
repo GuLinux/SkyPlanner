@@ -83,7 +83,7 @@ int main(int argc, char **argv) {
 	server.addResource((new DboRestsResource<NebulaDenomination>())->handleAll()->handleById(), "/rest/skyobjects-names");
         
         auto addStaticResource = [&server] (const boost::filesystem::path &relPath, const std::string &deployPath) {
-          auto resource_path = boost::filesystem::path(SHARED_PREFIX) / relPath;
+          auto resource_path = boost::filesystem::path{Settings::instance().resources_path()} / relPath;
           server.addResource(new WFileResource(resource_path.string()), deployPath);
         };
         addStaticResource("logo_350.png", "/skyplanner_logo.png");

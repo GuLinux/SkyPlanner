@@ -97,6 +97,12 @@ Settings::optional<string> Settings::admin_email() const
   return {d->reader->value("admin-email"), "root@localhost"};
 }
 
+
+Settings::optional< string > Settings::resources_path() const
+{
+  return {d->reader->value("resources_path"), (boost::filesystem::path(SHARED_PREFIX) / "strings").string()};
+}
+
 Settings::optional< string > Settings::strings_dir() const
 {
   return {d->reader->value("strings_directory"), (boost::filesystem::path(SHARED_PREFIX) / "strings").string()};
@@ -122,6 +128,8 @@ Settings::optional< string > Settings::dss_cache_path() const
 {
   return {d->reader->value("dss-cache-dir"), (boost::filesystem::path(DATA_DIR) / "cache" / "SkyPlanner" / "dss").string()};
 }
+
+
 
 boost::optional< string > Settings::dss_cache_url() const
 {

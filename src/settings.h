@@ -60,6 +60,7 @@ public:
     boost::optional<std::string> theme_css() const;
     boost::optional<std::string> google_analytics_ua() const;
     boost::optional<std::string> google_analytics_domain() const;
+    optional<std::string> resources_path() const;
     optional<std::string> dss_cache_path() const;
     boost::optional<std::string> dss_cache_url() const;
 private:
