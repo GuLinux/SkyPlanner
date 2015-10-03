@@ -77,7 +77,7 @@ int main(int argc, char **argv) {
 	server.addResource((new DboRestsResource<NgcObject>())->handleAll()->handleById(), "/SkyPlanner/api/skyobjects");
         
         auto addStaticResource = [&server] (const boost::filesystem::path &relPath, const std::string &deployPath) {
-          auto resource_path = boost::filesystem::path(RESOURCES_DIRECTORY) / relPath;
+          auto resource_path = boost::filesystem::path(SHARED_PREFIX) / relPath;
           server.addResource(new WFileResource(resource_path.string()), deployPath);
         };
         addStaticResource("logo_350.png", "/skyplanner_logo.png");

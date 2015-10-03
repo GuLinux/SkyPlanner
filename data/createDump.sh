@@ -1,4 +1,6 @@
 #!/bin/bash
-HOST="${1-localhost}"
+HOST="${1-postgres}"
 PORT="${2-5432}"
-pg_dump -h $HOST -p $PORT -U SkyPlanner SkyPlanner -t objects -t denominations -t catalogues -a --column-inserts --inserts | bzip2 > objects_dump.sql.bz2
+DB_USER="${DB_USER-postgres}"
+DB_NAME=${DB_NAME-skyplanner}"
+pg_dump -h $HOST -p $PORT -U ${DB_USER} ${DB_NAME} -t objects -t denominations -t catalogues -a --column-inserts --inserts | xz -9e > objects_dump.sql.xz

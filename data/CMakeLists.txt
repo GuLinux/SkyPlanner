@@ -1,0 +1,1 @@
+install(FILES objects_dump.sql.xz DESTINATION share/${CMAKE_PROJECT_NAME})
