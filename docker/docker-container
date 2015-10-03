@@ -38,7 +38,7 @@ CONTAINER_NAME="skyplanner-${ENV_NAME}"
 
 [[ "$CREATE_DB" == true ]] && ( remove_container "$DB_CONTAINER_NAME";  docker create --name "$DB_CONTAINER_NAME" -e POSTGRES_PASSWORD=skyplanner -v /var/lib/postgresql-${ENV_NAME}/:/var/lib/postgresql mdillon/postgis )
 remove_container "$CONTAINER_NAME"
-docker inspect -f "{{.State.Running}}" "$1" 2>/dev/null && db_link="--link ${DB_CONTAINER_NAME}:postgres"
+docker inspect -f "{{.Name}}" "$DB_CONTAINER_NAME" 2>/dev/null && db_link="--link ${DB_CONTAINER_NAME}:postgres"
 docker create -p 127.0.0.1:${EXPOSE_PORT}:8080 --name "$CONTAINER_NAME" -v "$WT_CONFIG_FILE:/wt_config.xml:ro" $db_link  "skyplanner_ubuntu_run_img"
 
 
