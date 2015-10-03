@@ -210,3 +210,17 @@ ConstellationFinder::Constellation NgcObject::constellation() const
   if(!_constellationAbbrev) return ConstellationFinder::Constellation{};
   return ConstellationFinder::byAbbrev(*_constellationAbbrev);
 }
+
+NgcObject::operator Wt::Json::Object()
+{
+  Wt::Json::Object object;
+  object["object-id"] = {_objectId ? *_objectId : ""};
+  object["angular-size"] = {_angularSize};
+  object["magnitude"] = {_magnitude};
+  object["right-ascension"] = {_rightAscension};
+  object["declination"] = {_declination};
+  object["type"] = {_type};
+  object["extra-data"] = {_extraData ? *_extraData : ""};
+  return object;
+}
+

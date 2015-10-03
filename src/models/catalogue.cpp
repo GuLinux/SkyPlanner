@@ -57,4 +57,16 @@ Catalogue::SearchMode Catalogue::searchMode() const
   return _searchMode;
 }
 
+Catalogue::operator Json::Object()
+{
+  Json::Object object;
+  object["name"] = {_name};
+  object["code"] = {_code};
+  object["hidden-mode"] = {_hidden};
+  object["priority"] = {_priority};
+  object["search-mode"] = {_searchMode};
+  return object;
+}
+
+
 

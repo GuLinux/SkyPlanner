@@ -70,3 +70,15 @@ void NebulaDenomination::setComment(const string &comment)
 {
   _comment.reset(comment);
 }
+
+NebulaDenomination::operator Json::Object()
+{
+  Json::Object object;
+  object["catalogue"] = _catalogue.id();
+  object["object"] = _ngcObject.id();
+  object["name"] = {_name};
+  object["number"] = {_number ? *_number : ""};
+  object["comment"] = {_comment ? *_comment : ""};
+  object["other-catalogues"] =  {_otherCatalogues ? *_otherCatalogues : ""};
+  return object;
+}

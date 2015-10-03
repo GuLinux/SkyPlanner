@@ -54,6 +54,14 @@ WApplication *newSkyPlanner(const WEnvironment &env)
    return newApp;
 }
 
+
+template<typename T> Json::Object obj2json(const Dbo::ptr<T> &p) {
+  Json::object o = *p;
+  o["id"] = p.id();
+  return o;
+}
+
+
 int main(int argc, char **argv) {
     Magick::InitializeMagick(*argv);
     curl_global_init(CURL_GLOBAL_ALL);

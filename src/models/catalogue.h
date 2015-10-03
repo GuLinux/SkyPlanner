@@ -24,6 +24,7 @@
 #include <Wt/WString>
 #include <string>
 #include "types.h"
+#include <Wt/Json/Object>
 
 class NebulaDenomination;
 namespace dbo = Wt::Dbo;
@@ -50,6 +51,7 @@ public:
         dbo::field(a, _hidden, "hidden");
         dbo::hasMany(a, _nebulae, dbo::ManyToOne);
     }
+    operator Wt::Json::Object();
 private:
   std::string _name;
   std::string _code;

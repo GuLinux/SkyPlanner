@@ -48,6 +48,8 @@ public:
 
   bool isNgcIc() const;
   std::string search() const;
+  
+  operator Wt::Json::Object();
 
 private:
   dbo::ptr<Catalogue> _catalogue;

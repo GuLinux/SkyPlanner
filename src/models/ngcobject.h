@@ -110,13 +110,14 @@ public:
               const boost::optional<std::string> &constellationAbbrev = boost::optional<std::string>(),
               const boost::optional<std::string> &extraData = boost::optional<std::string>());
     virtual void add_to_json(Wt::Json::Object& object) const;
+    
+    operator Wt::Json::Object();
 private:
     boost::optional<std::string> _objectId;
     double _rightAscension, _declination, _magnitude, _angularSize;
     NebulaType _type;
     dbo::collection<NebulaDenominationPtr> _nebulae;
     dbo::collection<NebulaDenominationPtr> _astroSessionObjects;
-    dbo::dbo_traits<NgcObject>::IdType _id;
     boost::optional<std::string> _constellationAbbrev;
     boost::optional<std::string> _extraData;
     void mapJsonFields();
