@@ -51,7 +51,7 @@ public:
         dbo::field(a, _hidden, "hidden");
         dbo::hasMany(a, _nebulae, dbo::ManyToOne);
     }
-    operator Wt::Json::Object();
+    operator Wt::Json::Object() const;
 private:
   std::string _name;
   std::string _code;

@@ -71,7 +71,7 @@ void NebulaDenomination::setComment(const string &comment)
   _comment.reset(comment);
 }
 
-NebulaDenomination::operator Json::Object()
+NebulaDenomination::operator Json::Object() const
 {
   Json::Object object;
   object["catalogue"] = _catalogue.id();

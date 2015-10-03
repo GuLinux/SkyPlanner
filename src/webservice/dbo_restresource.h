@@ -66,12 +66,20 @@ private:
   std::list<Find> handlers;
 };
 
+template<typename T> Wt::Json::Object obj2json(const Wt::Dbo::ptr<T> &p) {
+  Wt::Json::Object o = *p;
+  o["id"] = p.id();
+  return o;
+}
+
+
 template<typename T> void DboRestsResource<T>::handleRequest(const Wt::Http::Request& request, Wt::Http::Response& response) {
   Session session;
   Wt::Dbo::Transaction t(session);
   auto query = session.find<T>();
   for(auto handler: handlers) {
     if(handler.matches(query, request)) {
+      std::cerr << "query matches handler: " << handler.pathinfo_regex << std::endl;
       if(handler.type == Find::Single) {
 	auto result = query.resultValue();
 	if(!result) {
@@ -79,13 +87,19 @@ template<typename T> void DboRestsResource<T>::handleRequest(const Wt::Http::Req
 	  return;
 	}
 	response.setStatus(200);
-	response.out() << result->toJson();
+	response.out() << Wt::Json::serialize(obj2json<T>(result));
 	return;
       }
       response.setStatus(200);
       auto objects = query.resultList();
-      WtCommons::Json::Array<type_ptr, Wt::Dbo::collection, WtCommons::Json::PointerObjectConverter<T, Wt::Dbo::ptr>> jsonArray(objects);
-      response.out() << jsonArray.toJson();
+      Wt::Json::Array json_array;
+      std::transform(std::begin(objects), std::end(objects), std::back_inserter(json_array), [=](const Wt::Dbo::ptr<T> &obj){
+	Wt::Json::Value v(Wt::Json::ObjectType);
+	Wt::Json::Object &o = v;
+	o = obj2json<T>(obj);
+	return v;
+      });
+      response.out() << Wt::Json::serialize(json_array);
       return;
     }
   }

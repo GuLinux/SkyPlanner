@@ -111,7 +111,7 @@ public:
               const boost::optional<std::string> &extraData = boost::optional<std::string>());
     virtual void add_to_json(Wt::Json::Object& object) const;
     
-    operator Wt::Json::Object();
+    operator Wt::Json::Object() const;
 private:
     boost::optional<std::string> _objectId;
     double _rightAscension, _declination, _magnitude, _angularSize;

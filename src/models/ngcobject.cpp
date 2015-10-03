@@ -211,7 +211,7 @@ ConstellationFinder::Constellation NgcObject::constellation() const
   return ConstellationFinder::byAbbrev(*_constellationAbbrev);
 }
 
-NgcObject::operator Wt::Json::Object()
+NgcObject::operator Wt::Json::Object() const
 {
   Wt::Json::Object object;
   object["object-id"] = {_objectId ? *_objectId : ""};

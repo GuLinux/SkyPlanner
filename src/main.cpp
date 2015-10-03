@@ -55,13 +55,6 @@ WApplication *newSkyPlanner(const WEnvironment &env)
 }
 
 
-template<typename T> Json::Object obj2json(const Dbo::ptr<T> &p) {
-  Json::object o = *p;
-  o["id"] = p.id();
-  return o;
-}
-
-
 int main(int argc, char **argv) {
     Magick::InitializeMagick(*argv);
     curl_global_init(CURL_GLOBAL_ALL);
@@ -82,7 +75,9 @@ int main(int argc, char **argv) {
             server.addResource(new ActiveSessionsResource(activeSessions, quitResourcePassword), "/active-sessions");
         }
         
-	server.addResource((new DboRestsResource<NgcObject>())->handleAll()->handleById(), "/SkyPlanner/api/skyobjects");
+	server.addResource((new DboRestsResource<NgcObject>())->handleAll()->handleById(), "/rest/skyobjects");
+	server.addResource((new DboRestsResource<Catalogue>())->handleAll()->handleById(), "/rest/catalogues");
+	server.addResource((new DboRestsResource<NebulaDenomination>())->handleAll()->handleById(), "/rest/skyobjects-names");
         
         auto addStaticResource = [&server] (const boost::filesystem::path &relPath, const std::string &deployPath) {
           auto resource_path = boost::filesystem::path(SHARED_PREFIX) / relPath;

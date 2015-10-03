@@ -57,7 +57,7 @@ Catalogue::SearchMode Catalogue::searchMode() const
   return _searchMode;
 }
 
-Catalogue::operator Json::Object()
+Catalogue::operator Json::Object() const
 {
   Json::Object object;
   object["name"] = {_name};
