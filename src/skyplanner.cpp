@@ -133,7 +133,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
   d->sessionInfo.referrer = environment.referer();
   d->sessionInfo.sessionId = sessionId();
 
-  string stringsDirectory = (boost::filesystem::current_path() / "strings").string();
+  string stringsDirectory = (boost::filesystem::path(SHARED_PREFIX) / "strings").string();
   readConfigurationProperty("strings_directory", stringsDirectory);
 
   WCombinedLocalizedStrings *combinedLocalization = new WCombinedLocalizedStrings();

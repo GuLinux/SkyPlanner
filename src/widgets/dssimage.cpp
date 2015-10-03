@@ -124,7 +124,7 @@ map<DSSImage::ImageSize,DSSImage::Private::Image> DSSImage::Private::imageSizeMa
 
 boost::filesystem::path DSSImage::Private::Image::file(const DSSImage::ImageOptions &imageOptions)
 {
-  static string cacheDir("dss-cache");
+  static string cacheDir((boost::filesystem::path(DATA_DIR) / "cache" / "SkyPlanner" / "dss").string());
   wApp->readConfigurationProperty("dss-cache-dir", cacheDir);
   try {
     fs::create_directories(cacheDir);
@@ -273,8 +273,10 @@ void DSSImage::Private::setImage(const Wt::WLink& link)
 Wt::WLink DSSImage::Private::linkFor(const boost::filesystem::path &file) const
 {
   WLink link;
-  string deployPath;
-  if(wApp->readConfigurationProperty("dsscache_deploy_path", deployPath )) {
+  static string has_external_deploy_dir{"false"};
+  string deployPath("/DSS-Images");
+  wApp->readConfigurationProperty("dsscache_deploy_external", has_external_deploy_dir );
+  if(has_external_deploy_dir == "true" &&  wApp->readConfigurationProperty("dsscache_deploy_path", deployPath )) {
     link.setUrl(format("%s/%s") % deployPath % file.filename().string());
   } else
     link.setResource(new WFileResource(file.string(), q));

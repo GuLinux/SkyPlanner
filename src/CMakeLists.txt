@@ -1,6 +1,7 @@
 include_directories(models)
+add_definitions(-DSHARED_PREFIX="${CMAKE_INSTALL_PREFIX}/share")
 
-include(widgets/source_files.cmake)
+
 set(LIBHARU_PREFIX /usr CACHE PATH "LibHaru path prefix")
 include_directories(${LIBHARU_PREFIX}/include/)
 set(SkyPlanner_SRCS
@@ -25,6 +26,10 @@ set(SkyPlanner_SRCS
   ${CMAKE_CURRENT_BINARY_DIR}/style.css.cpp
 )
 include(models/source_files.cmake)
+
+file(GLOB Widgets_SRCS widgets/*.C widgets/*.cpp)
+
+
 
 set(SkyPlanner_CORE_SRCS
   ${SkyPlanner_MODELS_SRCS}
