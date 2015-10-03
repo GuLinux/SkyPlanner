@@ -46,7 +46,7 @@ else(DOCKER_ONLY)
 
   #add_subdirectory(lib)
   add_subdirectory(GuLinux-Commons/Wt)
-  include_directories(GuLinux-Commons/Wt GuLinux-Commons/c++)
+  include_directories(GuLinux-Commons/Wt GuLinux-Commons/c++ GuLinux-Commons)
   include_directories(src)
   add_subdirectory(src)
   add_subdirectory(resources)

@@ -273,7 +273,7 @@ void DSSImage::Private::setImage(const Wt::WLink& link)
 Wt::WLink DSSImage::Private::linkFor(const boost::filesystem::path &file) const
 {
   WLink link;
-  string deployPath("/DSS-Images");
+  string deployPath;
   bool has_deploy_path = wApp->readConfigurationProperty("dsscache_deploy_path", deployPath );
   static string has_external_deploy_dir{has_deploy_path ? "true" : "false"};
   wApp->readConfigurationProperty("dsscache_deploy_external", has_external_deploy_dir );

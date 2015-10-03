@@ -17,7 +17,6 @@
  */
 
 #include "widgets/private/objectpopupmenu_p.h"
-#include "utils/d_ptr_implementation.h"
 
 #include <Wt/WLink>
 #include <Wt/WApplication>
@@ -36,6 +35,7 @@
 #include "skyplanner.h"
 #include "sendfeedbackpage.hpp"
 #include "astrosessiontab.h"
+#include <findneighbour.h>
 
 using namespace std;
 using namespace Wt;
@@ -51,7 +51,7 @@ ObjectPopupMenu::~ObjectPopupMenu()
 
 
 ObjectPopupMenu::ObjectPopupMenu(const AstroGroup &astroGroup, Session &session)
-  : WPopupMenu(nullptr), d(this)
+  : WPopupMenu(nullptr), dptr(this)
 {
   auto astroSession = astroGroup.astroSession();
   auto object = astroGroup.object();
@@ -67,65 +67,60 @@ ObjectPopupMenu::ObjectPopupMenu(const AstroGroup &astroGroup, Session &session)
         menuItem->setLinkTarget( TargetNewWindow );
     };
     addSectionHeader( WString::tr( "objectnames_more_info" ) )->addStyleClass("dropdown-header");
-    string haveGis;
-    if( wApp->readConfigurationProperty("have-gis", haveGis) && haveGis == "true" ) {
-      addItem(WString::tr("objectnames_nearby_objects"))->triggered().connect([=,&session](WMenuItem*, _n5){
+    addItem(WString::tr("objectnames_nearby_objects"))->triggered().connect([=,&session](WMenuItem*, _n5){
+      Dbo::Transaction t( session );
+      WDialog *dialog = new WDialog{ WString::tr("objectnames_nearby_objects_caption").arg( WString::fromUTF8(NgcObject::namesByCatalogueImportance(t, object)[0]) ) };
+      dialog->setClosable(true); 
+      dialog->setWidth(1200);
+      dialog->setResizable(true); 
+      WMenu *namesList = WW<WMenu>();
+      WContainerWidget *namesListContainer = WW<WContainerWidget>().css("col-xs-3").add(namesList);
+      WContainerWidget *preview = WW<WContainerWidget>().css("col-xs-9");
+      dialog->contents()->addStyleClass("nearby-object-modal-body");
+      dialog->contents()->addWidget(WW<WContainerWidget>().css("container-fluid nearby-object-container").add(namesListContainer).add(preview));
+      auto populateNearbyObjects = [=,&session] (int pageSize, int pageNumber) {
 	Dbo::Transaction t( session );
-	WDialog *dialog = new WDialog{ WString::tr("objectnames_nearby_objects_caption").arg( WString::fromUTF8(NgcObject::namesByCatalogueImportance(t, object)[0]) ) };
-	dialog->setClosable(true); 
-	dialog->setWidth(1200);
-	dialog->setResizable(true); 
-	WMenu *namesList = WW<WMenu>();
-	WContainerWidget *namesListContainer = WW<WContainerWidget>().css("col-xs-3").add(namesList);
-	WContainerWidget *preview = WW<WContainerWidget>().css("col-xs-9");
-	dialog->contents()->addStyleClass("nearby-object-modal-body");
-	dialog->contents()->addWidget(WW<WContainerWidget>().css("container-fluid nearby-object-container").add(namesListContainer).add(preview));
-	auto populateNearbyObjects = [=,&session] (int pageSize, int pageNumber) {
-	  Dbo::Transaction t( session );
-	  string query = R"( select o from objects o where o.id <> ?
-	  order by ST_Distance(coordinates_geom, (select coordinates_geom FROM objects where id = ? ) ) asc )";
-	  for(auto item: namesList->items()) delete item;
-          preview->clear();
-	  auto objectsDbo = session.query<NgcObjectPtr>(query).bind(object.id()).bind(object.id()).limit(pageSize).offset(pageSize*pageNumber).resultList();
-	  for(auto objectDbo: objectsDbo) {
-	    auto names = NgcObject::namesByCatalogueImportance(t, objectDbo);
-	    names.resize(min(names.size(), size_t{3}));
-	    auto item = namesList->addItem(WString::fromUTF8(boost::algorithm::join(names, ", ")));
-	    item->addStyleClass("nearby-object-names");
-	    item->clicked().connect([=,&session](WMouseEvent){
-	      preview->clear();
-	      vector<WPushButton*> actions{ WW<WPushButton>(WString::tr("buttons_close")).css("btn-xs").onClick([=](WMouseEvent){ preview->clear(); }).get() };
-	      
-	      Dbo::Transaction t( session );
-	      if(astroSession && astroSession->astroSessionObjects().find().where("objects_id = ?").bind(objectDbo.id()).resultList().size() == 0 ) {
-		WPushButton *addToSessionButton = WW<WPushButton>(WString::tr("buttons_add")).css("btn-xs btn-success");
-		addToSessionButton->clicked().connect([=,&session](WMouseEvent){
-		  auto astroSessionObject = AstroSessionTab::add(objectDbo, astroSession, session, item);
-		  if(astroSessionObject) {
-		    d->objectsListChanged.emit(astroSessionObject);
-		    delete addToSessionButton;
-		  }
-		});
-		actions.insert(actions.begin(), addToSessionButton);
-	      }
-	      preview->addWidget(new AstroObjectWidget{{astroGroup.astroSession(), objectDbo, astroGroup.telescope, astroGroup.timezone}, session, {}, actions});
-	    });
-	  }
-	};
-	auto pagination = WW<WMenu>(Horizontal).css("pagination pagination-sm").get();
-	int pagesize = 15;
-	for(int i=0; i<7; i++) {
-	  auto item = pagination->addItem(format("%d") % (i+1) );
-	  if(i == 0) pagination->select(item);
-	  item->triggered().connect([=] (WMenuItem*, _n5) {
-	    populateNearbyObjects(pagesize, i);
+	auto objectsDbo = FindNeighbour::instance(session).neighbours(object, t, pageSize, pageNumber);
+	for(auto item: namesList->items()) delete item;
+	preview->clear();
+	for(auto objectDbo: objectsDbo) {
+	  auto names = NgcObject::namesByCatalogueImportance(t, objectDbo.object);
+	  names.resize(min(names.size(), size_t{3}));
+	  auto item = namesList->addItem(WString::fromUTF8(boost::algorithm::join(names, ", ")));
+	  item->addStyleClass("nearby-object-names");
+	  item->clicked().connect([=,&session](WMouseEvent){
+	    preview->clear();
+	    vector<WPushButton*> actions{ WW<WPushButton>(WString::tr("buttons_close")).css("btn-xs").onClick([=](WMouseEvent){ preview->clear(); }).get() };
+	    
+	    Dbo::Transaction t( session );
+	    if(astroSession && astroSession->astroSessionObjects().find().where("objects_id = ?").bind(objectDbo.object.id()).resultList().size() == 0 ) {
+	      WPushButton *addToSessionButton = WW<WPushButton>(WString::tr("buttons_add")).css("btn-xs btn-success");
+	      addToSessionButton->clicked().connect([=,&session](WMouseEvent){
+		auto astroSessionObject = AstroSessionTab::add(objectDbo.object, astroSession, session, item);
+		if(astroSessionObject) {
+		  d->objectsListChanged.emit(astroSessionObject);
+		  delete addToSessionButton;
+		}
+	      });
+	      actions.insert(actions.begin(), addToSessionButton);
+	    }
+	    preview->addWidget(new AstroObjectWidget{{astroGroup.astroSession(), objectDbo.object, astroGroup.telescope, astroGroup.timezone}, session, {}, actions});
 	  });
 	}
-	namesListContainer->addWidget(pagination);
-	populateNearbyObjects(pagesize, 0);
-	dialog->show();
-      });
-    }
+      };
+      auto pagination = WW<WMenu>(Horizontal).css("pagination pagination-sm").get();
+      int pagesize = 15;
+      for(int i=0; i<7; i++) {
+	auto item = pagination->addItem(format("%d") % (i+1) );
+	if(i == 0) pagination->select(item);
+	item->triggered().connect([=] (WMenuItem*, _n5) {
+	  populateNearbyObjects(pagesize, i);
+	});
+      }
+      namesListContainer->addWidget(pagination);
+      populateNearbyObjects(pagesize, 0);
+      dialog->show();
+    });
     WMenuItem *imagesMenuItem = addItem( WString::tr( "objectnames_digitalized_sky_survey_menu" ) );
     imagesMenuItem->setLink(WLink(WLink::InternalPath, DSSPage::internalPath(object, t)));
 

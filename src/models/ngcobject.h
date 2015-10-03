@@ -69,8 +69,8 @@ public:
     ~NgcObject();
     boost::optional<std::string> objectId() const;
     dbo::collection<NebulaDenominationPtr> nebulae() const;
-    double rightAscension() const;
-    double declination() const;
+    Angle rightAscension() const;
+    Angle declination() const;
     Coordinates::Equatorial coordinates() const;
     double magnitude() const;
     double angularSize() const;

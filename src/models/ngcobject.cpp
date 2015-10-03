@@ -60,9 +60,9 @@ double NgcObject::angularSize() const
   return _angularSize;
 }
 
-double NgcObject::declination() const
+Angle NgcObject::declination() const
 {
-  return _declination;
+  return Angle::radians(_declination);
 }
 
 double NgcObject::magnitude() const
@@ -77,14 +77,14 @@ boost::optional<string> NgcObject::objectId() const
 {
   return _objectId;
 }
-double NgcObject::rightAscension() const
+Angle NgcObject::rightAscension() const
 {
-  return _rightAscension;
+  return Angle::radians(_rightAscension);
 }
 
 Coordinates::Equatorial NgcObject::coordinates() const
 {
-  return { Angle::radians( rightAscension() ), Angle::radians( declination() ) };
+  return { rightAscension(), declination() };
 }
 
 int32_t NgcObject::difficulty( const Wt::Dbo::ptr< Telescope > &telescope ) const
