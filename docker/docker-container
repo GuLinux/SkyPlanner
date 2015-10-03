@@ -1,0 +1,43 @@
+#!/bin/bash
+EXPOSE_PORT=8080
+ENV_NAME="testing"
+CREATE_DB="false"
+WT_CONFIG_FILE="/etc/wt/wt_config.xml"
+
+while [[ -n "$1" ]]; do
+  case "$1" in
+    -e|--environment)
+      ENV_NAME="$2"; shift
+      ;;
+    -p|--port)
+      EXPOSE_PORT="$2"; shift
+      ;;
+    -d|--create-database-container)
+      CREATE_DB="true"
+      ;;
+    -c|--configuration-file)
+      WT_CONFIG_FILE="$2"; shift
+      ;;
+    *)
+      echo "Usage: $0 [-e|--environment environment-name] [-p|--port port] [-d|--create-database-container] [-c|--configuration-file file]" >&2
+      exit 1
+      ;;
+  esac
+  shift
+done
+
+remove_container() {
+  is_running="$( docker inspect -f "{{.State.Running}}" "$1" 2>/dev/null )"
+  [[ "$?" != "0" ]] && return
+  [[ "$is_running" == "true" ]] && docker stop "$1"
+  docker rm -f "$1"
+}
+
+DB_CONTAINER_NAME="skyplanner-${ENV_NAME}-postgres"
+CONTAINER_NAME="skyplanner-${ENV_NAME}"
+
+[[ "$CREATE_DB" == true ]] && ( remove_container "$DB_CONTAINER_NAME";  docker create --name "$DB_CONTAINER_NAME" -e POSTGRES_PASSWORD=skyplanner -v /var/lib/postgresql-${ENV_NAME}/:/var/lib/postgresql mdillon/postgis )
+remove_container "$CONTAINER_NAME"
+docker create -p 127.0.0.1:${EXPOSE_PORT}:8080 --name "$CONTAINER_NAME" -v "$WT_CONFIG_FILE:/wt_config.xml:ro" --link "${DB_CONTAINER_NAME}:postgres" "skyplanner_ubuntu_run_img"
+
+

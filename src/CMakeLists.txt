@@ -1,5 +1,5 @@
 include_directories(models)
-add_definitions(-DSHARED_PREFIX="${CMAKE_INSTALL_PREFIX}/share")
+add_definitions(-DSHARED_PREFIX="${CMAKE_INSTALL_PREFIX}/share/SkyPlanner")
 
 
 set(LIBHARU_PREFIX /usr CACHE PATH "LibHaru path prefix")
