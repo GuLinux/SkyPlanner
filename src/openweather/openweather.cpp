@@ -28,6 +28,7 @@
 using namespace Wt;
 using namespace std;
 #include <utils/cache.h>
+#include <settings.h>
 
 OpenWeather::OpenWeather()
 {
@@ -47,14 +48,15 @@ struct WeatherCacheEntry {
 
 shared_ptr<WeatherForecast> OpenWeather::forecast(const Coordinates::LatLng &coordinates, const std::string &cityName, int days)
 {
-    string apiKey;
-    wApp->readConfigurationProperty("openweather_api_key", apiKey);
+    static auto openweather_api_key = Settings::instance().openweather_api_key();
+    if(! openweather_api_key )
+      return {};
     days = std::min(days, 16);
     static Cache<WeatherCacheEntry, string> weatherCache(boost::posix_time::hours(6));
     spLog("notice") << "Coordinates: " << coordinates << ", city name: " << cityName << ", days: " << days << ", locale: " << wApp->locale().name();
     string language = wApp->locale().name();
-    string cityUrl = format("http://api.openweathermap.org/data/2.5/forecast/daily?q=%s&mode=json&units=metric&cnt=%d&type=like&lang=%s&APPID=%s") % Wt::Utils::urlEncode(cityName) % days % language % apiKey;
-    string coordinatesUrl = format("http://api.openweathermap.org/data/2.5/forecast/daily?lat=%f&lon=%f=json&units=metric&cnt=%d&type=like&lang=%sAPPID=%s") % coordinates.latitude.degrees() % coordinates.longitude.degrees() % days % language % apiKey;
+    string cityUrl = format("http://api.openweathermap.org/data/2.5/forecast/daily?q=%s&mode=json&units=metric&cnt=%d&type=like&lang=%s&APPID=%s") % Wt::Utils::urlEncode(cityName) % days % language % *openweather_api_key;
+    string coordinatesUrl = format("http://api.openweathermap.org/data/2.5/forecast/daily?lat=%f&lon=%f=json&units=metric&cnt=%d&type=like&lang=%sAPPID=%s") % coordinates.latitude.degrees() % coordinates.longitude.degrees() % days % language % *openweather_api_key;
     string cityCacheKey = WeatherCacheEntry::byName(cityName, days, language);
     string coordinatesCacheKey = WeatherCacheEntry::byCoordinates(coordinates, days, language);
     stringstream out;

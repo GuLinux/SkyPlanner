@@ -22,3 +22,4 @@
 using namespace std;
 
 const string URLs::loading_indicator = {"/skyplanner_loading_indicator.png"};
+const string URLs::bootstrap_url = {"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"};

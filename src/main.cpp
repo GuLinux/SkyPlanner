@@ -63,16 +63,19 @@ int main(int argc, char **argv) {
     try {
         WServer server(argv[0]);
         server.setServerConfiguration(argc, argv, WTHTTP_CONFIGURATION);
-	if(!Settings::instance().google_api_key())
-              server.addResource(new WMemoryResource("text/css", SkyPlannerStyle::css()), "/skyplanner_style.css");
-        string quitResourcePassword;
-        if(server.readConfigurationProperty("quit-password", quitResourcePassword)) {
-            server.addResource(new QuitResource(quitResourcePassword), "/quit-forced");
-            server.addResource(new QuitResource(quitResourcePassword, [] { 
+	if(!Settings::instance().style_css_path().is_set()) {
+	  server.addResource(new WMemoryResource("text/css", SkyPlannerStyle::css()), "/skyplanner_style.css");
+	  server.log("notice") << "Missing skyplanner stylecsspath, using default WMemoryResource";
+	}
+	
+	auto admin_password = Settings::instance().admin_password();
+        if(admin_password) {
+            server.addResource(new QuitResource(*admin_password), "/quit-forced");
+            server.addResource(new QuitResource(*admin_password, [] { 
               std::cerr << "quit-resource called with waiting mode, active sessions: " << activeSessions.size() << std::endl;
               return activeSessions.size() == 0; 
             }), "/quit-waiting");
-            server.addResource(new ActiveSessionsResource(activeSessions, quitResourcePassword), "/active-sessions");
+            server.addResource(new ActiveSessionsResource(activeSessions, *admin_password), "/active-sessions");
         }
         
 	server.addResource((new DboRestsResource<NgcObject>())->handleAll()->handleById(), "/rest/skyobjects");

@@ -9,6 +9,7 @@
  */
 
 #include "WGoogleMap"
+#include <settings.h>
 #include <Wt/WApplication>
 #include <Wt/WContainerWidget>
 
@@ -81,8 +82,7 @@ void WGoogleMapMod::render(WFlags<RenderFlag> flags)
   if (flags & RenderFull) {
     WApplication *app = WApplication::instance();
 
-    std::string googlekey = localhost_key;
-    Wt::WApplication::readConfigurationProperty("google_api_key", googlekey);
+    std::string googlekey = Settings::instance().google_api_key() ? *Settings::instance().google_api_key() : localhost_key;
       
     // init the google javascript api
     const std::string gmuri = "http://www.google.com/jsapi?key=" + googlekey;

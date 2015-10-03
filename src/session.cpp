@@ -35,6 +35,7 @@
 #include <Wt/WServer>
 #include "ngcobject.h"
 #include "nebuladenomination.h"
+#include "settings.h"
 
 using namespace std;
 using namespace Wt;
@@ -58,7 +59,7 @@ void Session::Private::init(const string &connectionString, Session::Provider pr
   q->setConnection(*connection);
   string show_queries = "false";
   if(WServer::instance())
-    WServer::instance()->readConfigurationProperty("show-queries", show_queries);
+    show_queries = Settings::instance().show_sql_queries();
   connection->setProperty("show-queries", show_queries);
   q->mapClass<Catalogue>("catalogues");
   q->mapClass<NgcObject>("objects");
@@ -99,10 +100,12 @@ void Session::Private::init(const string &connectionString, Session::Provider pr
 Session::Session() : dptr(this)
 {
   Provider provider = Sqlite3;
-  string connectionString = "SkyPlanner.sqlite";
+  string connectionString = Settings::instance().sqlite_database();
 #ifdef HAVE_WT_POSTGRES
-  if(WServer::instance()->readConfigurationProperty("psql-connection", connectionString))
+  if(Settings::instance().psql_connection()) {
     provider = Postgres;
+    connectionString = *Settings::instance().psql_connection();
+  }
 #endif
   d->init(connectionString, provider);
 }

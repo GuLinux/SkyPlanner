@@ -25,6 +25,7 @@ class URLs
 {
 public:
   static const std::string loading_indicator;
+  static const std::string bootstrap_url;
 };
 
 #endif // URLS_H

@@ -60,6 +60,7 @@
 #include <Wt/WFileResource>
 #include "astrosessionpreview.h"
 #include "settings.h"
+#include "urls.h"
 #include "cookieslawdisclaimer.h"
 
 using namespace std;
@@ -133,8 +134,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
   d->sessionInfo.referrer = environment.referer();
   d->sessionInfo.sessionId = sessionId();
 
-  string stringsDirectory = (boost::filesystem::path(SHARED_PREFIX) / "strings").string();
-  readConfigurationProperty("strings_directory", stringsDirectory);
+  string stringsDirectory = Settings::instance().strings_dir();
   log("notice") << "Using strings resources directory: " << stringsDirectory;
 
   WCombinedLocalizedStrings *combinedLocalization = new WCombinedLocalizedStrings();
@@ -151,17 +151,14 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
   auto theme = new WBootstrapTheme(this);
   theme->setVersion(WBootstrapTheme::Version3);
   setTheme( theme );
-  string styleCssPath = Settings::instance().style_css_path();
-  string themeCssPath;
-  useStyleSheet("http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css");
-  if(readConfigurationProperty("theme-css-path", themeCssPath)) {
-    useStyleSheet( themeCssPath );
+  useStyleSheet(URLs::bootstrap_url);
+  if(Settings::instance().theme_css()) {
+    useStyleSheet( *Settings::instance().theme_css() );
   }
-  useStyleSheet( styleCssPath );
+  useStyleSheet( {Settings::instance().style_css_path()} );
   requireJQuery("https://code.jquery.com/jquery-2.1.1.min.js");
   CookiesLawDisclaimer::checkOrCreate(root(), [=] {
-      string googleAnalytics_ua, googleAnalytics_domain;
-  if(readConfigurationProperty("google-analytics-ua", googleAnalytics_ua) && readConfigurationProperty("google-analytics-domain", googleAnalytics_domain)) {
+  if(Settings::instance().google_analytics_ua() && Settings::instance().google_analytics_domain()) {
     vector<uint8_t> data;
     ::Utils::copy((format(R"(
        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -173,7 +170,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
        ga('require', 'linkid', 'linkid.js');
        ga('require', 'displayfeatures');
        ga('send', 'pageview');
-       )") % googleAnalytics_ua % googleAnalytics_domain).str(), back_inserter(data));
+       )") % *Settings::instance().google_analytics_ua() % *Settings::instance().google_analytics_domain()).str(), back_inserter(data));
     WMemoryResource *analyticsScriptResource = new WMemoryResource("application/javascript", data, this);
     require(analyticsScriptResource->url(), "googleAnalytics");
   }

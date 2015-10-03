@@ -19,6 +19,7 @@
 
 #include "settings.h"
 #include <list>
+#include <boost/filesystem.hpp>
 
 using namespace std;
 
@@ -55,10 +56,79 @@ boost::optional< string > Settings::google_api_key() const
   return d->reader->value("google_api_server_key");
 }
 
-Settings::optional_value< string > Settings::style_css_path() const
+Settings::optional< string > Settings::style_css_path() const
 {
   return {d->reader->value("style-css-path"), "/skyplanner_style.css"};
 }
+
+boost::optional< string > Settings::admin_password() const
+{
+  return d->reader->value("quit-password");
+}
+
+boost::optional< string > Settings::openweather_api_key() const
+{
+  return d->reader->value("openweather_api_key");
+}
+
+Settings::optional< string > Settings::show_sql_queries() const
+{
+  return {d->reader->value("show-sql-queries"), "false"};
+}
+
+boost::optional< string > Settings::psql_connection() const
+{
+  return d->reader->value("psql-connection");
+}
+
+Settings::optional< string > Settings::sqlite_database() const
+{
+  return {d->reader->value("sqlite-database"), "SkyPlanner.db"};
+}
+
+Settings::optional<string> Settings::admin_name() const
+{
+  return {d->reader->value("admin-name"), "SkyPlanner Administrator"};
+}
+
+
+Settings::optional<string> Settings::admin_email() const
+{
+  return {d->reader->value("admin-email"), "root@localhost"};
+}
+
+Settings::optional< string > Settings::strings_dir() const
+{
+  return {d->reader->value("strings_directory"), (boost::filesystem::path(SHARED_PREFIX) / "strings").string()};
+}
+
+boost::optional< string > Settings::theme_css() const
+{
+  return d->reader->value("theme-css-path");
+}
+
+
+boost::optional< string > Settings::google_analytics_domain() const
+{
+  return d->reader->value("google-analytics-domain");
+}
+
+boost::optional< string > Settings::google_analytics_ua() const
+{
+  return d->reader->value("google-analytics-ua");
+}
+
+Settings::optional< string > Settings::dss_cache_path() const
+{
+  return {d->reader->value("dss-cache-dir"), (boost::filesystem::path(DATA_DIR) / "cache" / "SkyPlanner" / "dss").string()};
+}
+
+boost::optional< string > Settings::dss_cache_url() const
+{
+  return d->reader->value("dsscache_deploy_path");
+}
+
+
 
 
 class CompositeReader::Private {
@@ -69,12 +139,10 @@ public:
 
 CompositeReader::Private::Private(const initializer_list< Reader::ptr >& readers) : readers{readers}
 {
-
 }
 
 CompositeReader::CompositeReader(const initializer_list< Reader::ptr >& readers) : dptr(readers)
 {
-
 }
 
 boost::optional< string > CompositeReader::value(const string& key) const
@@ -88,10 +156,13 @@ boost::optional< string > CompositeReader::value(const string& key) const
 }
 
 #include <cstdlib>
+#include <boost/algorithm/string.hpp>
 boost::optional< std::string > EnvironmentReader::value(const string& key) const
 {
-  if(getenv(key.c_str()))
-    return string{getenv(key.c_str())};
+  string key_tr = string{"SKYPLANNER_"} + boost::replace_all_copy(key, string{"-"}, string{"_"});
+  boost::to_upper(key_tr);
+  if(getenv(key_tr.c_str()))
+    return string{getenv(key_tr.c_str())};
   return {};
 }
 

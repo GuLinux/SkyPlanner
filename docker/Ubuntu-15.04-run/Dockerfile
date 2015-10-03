@@ -8,4 +8,4 @@ COPY @ubuntu_package_filename@ /
 RUN dpkg -i @ubuntu_package_filename@ && rm -f @ubuntu_package_filename@
 EXPOSE 8080
 VOLUME /var/cache/SkyPlanner/dss
-CMD /usr/bin/SkyPlanner --http-address 0.0.0.0 --http-port 8080 -c /wt_config.xml --docroot /usr/share/Wt\;/resources 
+CMD /usr/bin/SkyPlanner --http-address 0.0.0.0 --http-port 8080 -c /etc/wt/wt_config.xml --docroot /usr/share/Wt\;/resources 

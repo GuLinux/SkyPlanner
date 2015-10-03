@@ -40,6 +40,7 @@
 #include <Magick++.h>
 #include "models/Models"
 #include <urls.h>
+#include <settings.h>
 #include <Wt/WDoubleSpinBox>
 #include <Wt/WMemoryResource>
 #include <opencv2/opencv.hpp>
@@ -123,8 +124,7 @@ map<DSSImage::ImageSize,DSSImage::Private::Image> DSSImage::Private::imageSizeMa
 
 boost::filesystem::path DSSImage::Private::Image::file(const DSSImage::ImageOptions &imageOptions)
 {
-  static string cacheDir((boost::filesystem::path(DATA_DIR) / "cache" / "SkyPlanner" / "dss").string());
-  wApp->readConfigurationProperty("dss-cache-dir", cacheDir);
+  static string cacheDir = Settings::instance().dss_cache_path();
   try {
     fs::create_directories(cacheDir);
   } catch(std::exception &e) {
@@ -272,12 +272,9 @@ void DSSImage::Private::setImage(const Wt::WLink& link)
 Wt::WLink DSSImage::Private::linkFor(const boost::filesystem::path &file) const
 {
   WLink link;
-  string deployPath;
-  bool has_deploy_path = wApp->readConfigurationProperty("dsscache_deploy_path", deployPath );
-  static string has_external_deploy_dir{has_deploy_path ? "true" : "false"};
-  wApp->readConfigurationProperty("dsscache_deploy_external", has_external_deploy_dir );
-  if(has_external_deploy_dir == "true" && !deployPath.empty() ) {
-    link.setUrl(format("%s/%s") % deployPath % file.filename().string());
+  static auto deploy_url = Settings::instance().dss_cache_url();
+  if(deploy_url) {
+    link.setUrl(format("%s/%s") % *deploy_url % file.filename().string());
   } else
     link.setResource(new WFileResource(file.string(), q));
   return link;

@@ -32,11 +32,12 @@ public:
       typedef std::shared_ptr<Reader> ptr;
     };
     
-    template<typename T> class optional_value {
+    template<typename T> class optional {
     public:
-      optional_value(const boost::optional<T> &value, const T &default_value) : _value(value), _default_value(default_value) {}
-      operator bool() const { return _value; }
-      operator T() { if(_value) return *_value; return _default_value; };
+      optional(const boost::optional<T> &value, const T &default_value) : _value(value), _default_value(default_value) {}
+      bool is_set() const { return (_value ? true: false); }
+      operator T() const { if(_value) return *_value; return _default_value; };
+      T value() const { return *this; }
     private:
       boost::optional<T> _value;
       T _default_value;
@@ -47,7 +48,20 @@ public:
     static Settings &instance();
     
     boost::optional<std::string> google_api_key() const;
-    optional_value<std::string> style_css_path() const;
+    optional<std::string> style_css_path() const;
+    boost::optional<std::string> admin_password() const;
+    boost::optional<std::string> openweather_api_key() const;
+    optional<std::string> show_sql_queries() const;
+    optional<std::string> sqlite_database() const;
+    boost::optional<std::string> psql_connection() const;
+    optional<std::string> admin_name() const;
+    optional<std::string> admin_email() const;
+    optional<std::string> strings_dir() const;
+    boost::optional<std::string> theme_css() const;
+    boost::optional<std::string> google_analytics_ua() const;
+    boost::optional<std::string> google_analytics_domain() const;
+    optional<std::string> dss_cache_path() const;
+    boost::optional<std::string> dss_cache_url() const;
 private:
   D_PTR;
 };
