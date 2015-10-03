@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 enable_testing()
 project(SkyPlanner)
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/" ${CMAKE_SOURCE_DIR}/src/Wt-Commons/cmake)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/" ${CMAKE_SOURCE_DIR}/GuLinux-Commons/cmake)
 
 enable_testing()
 find_package(Wt 3.3.1 REQUIRED)
@@ -46,3 +46,4 @@ add_subdirectory(CatalogsParsing)
 
 add_subdirectory(tests)
 add_subdirectory(support)
+add_subdirectory(docker)
