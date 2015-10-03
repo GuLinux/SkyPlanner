@@ -1,1 +1,6 @@
-install(FILES objects_dump.sql.xz DESTINATION share/${CMAKE_PROJECT_NAME})
+#install(FILES objects_dump.sql.xz DESTINATION share/${CMAKE_PROJECT_NAME})
+add_custom_command(OUTPUT catalogues-min.json COMMAND xzcat ${CMAKE_CURRENT_SOURCE_DIR}/catalogues-min.xz > ${CMAKE_CURRENT_BINARY_DIR}/catalogues-min.json)
+add_custom_command(OUTPUT skyobjects-min.json COMMAND xzcat ${CMAKE_CURRENT_SOURCE_DIR}/skyobjects-min.xz > ${CMAKE_CURRENT_BINARY_DIR}/skyobjects-min.json)
+add_custom_command(OUTPUT skyobjects-names-min.json COMMAND xzcat ${CMAKE_CURRENT_SOURCE_DIR}/skyobjects-names-min.xz > ${CMAKE_CURRENT_BINARY_DIR}/skyobjects-names-min.json)
+add_custom_target(extract_json_data ALL SOURCES catalogues-min.json skyobjects-min.json skyobjects-names-min.json)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/catalogues-min.json ${CMAKE_CURRENT_BINARY_DIR}/skyobjects-min.json ${CMAKE_CURRENT_BINARY_DIR}/skyobjects-names-min.json DESTINATION share/${CMAKE_PROJECT_NAME})

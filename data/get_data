@@ -1,0 +1,5 @@
+#!/bin/bash
+base_url="$1"
+curl "$base_url/rest/skyobjects" | python -mrjsmin | xz -9ev > skyobjects-min.xz
+curl "$base_url/rest/skyobjects-names" | python -mrjsmin | xz -9ev > skyobjects-names-min.xz
+curl "$base_url/rest/catalogues" | python -mrjsmin | xz -9ev > catalogues-min.xz
