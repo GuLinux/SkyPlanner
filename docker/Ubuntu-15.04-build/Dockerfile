@@ -14,4 +14,5 @@ RUN rm -rf /RELEASE_2_3_0.zip /libharu-RELEASE_2_3_0
 
 RUN mkdir /SkyPlanner /SkyPlanner-dist /SkyPlanner-install
 WORKDIR /SkyPlanner-build
-CMD cmake /SkyPlanner -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release -DLIBHARU_PREFIX=/usr -DHARU_LIBRARY=hpdfs -DEXTRA_LIBS="z;png" && make -j4 && make package && cp -av SkyPlanner* /SkyPlanner-dist/@ubuntu_package_filename@
+CMD cmake /SkyPlanner -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=@DOCKER_BUILD_TYPE@ -DLIBHARU_PREFIX=/usr -DHARU_LIBRARY=hpdfs -DEXTRA_LIBS="z;png" && 
+  make -j@DOCKER_BUILD_JOBS@ && make package && cp -av SkyPlanner* /SkyPlanner-dist/@ubuntu_package_filename@

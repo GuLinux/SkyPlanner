@@ -1,3 +1,5 @@
+set(DOCKER_BUILD_TYPE Debug CACHE STRING "Docker images CMAKE_BUILD_TYPE (default: Debug)")
+set(DOCKER_BUILD_JOBS 1 CACHE STRING "Docker images make jobs number (default: 1)")
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Dockerfile Dockerfile @ONLY)
 add_custom_target(docker_clean_ubuntu_build_img docker rm skyplanner_ubuntu_build )
 add_custom_target(docker_ubuntu_build_img docker build -t skyplanner_ubuntu_build_img .)
