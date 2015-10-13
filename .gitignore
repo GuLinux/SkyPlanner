@@ -1,4 +1,7 @@
 *kdev*
+resources/skyobjects-min.json
+resources/skyobjects-names-min.json
+resources/catalogues-min.json
 .directory
 *.user*
 *swp

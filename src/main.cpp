@@ -29,6 +29,7 @@
 #include <Magick++.h>
 #include "quitresource.h"
 #include <Wt/Http/Response>
+#include <Wt/Json/Parser>
 #include "webservice/activesessionsresource.h"
 #include "webservice/dbo_restresource.h"
 #include "urls.h"
@@ -53,6 +54,57 @@ WApplication *newSkyPlanner(const WEnvironment &env)
    activeSessions.push_back(newApp);
    std::cerr << nowString() << " - Starting new session: activeSessions=" << activeSessions.size() << std::endl;
    return newApp;
+}
+
+template<typename T> T json_cast(const Wt::Json::Value &v) { return v; }
+
+void populate_database() {
+    Session session;
+    Dbo::Transaction t(session);
+    if(session.query<long long>("SELECT COUNT(*) FROM objects;") > 0) {
+      return;
+    }
+    WServer::instance()->log("notice") << "*** Database needs to be populated.";
+    auto json_file = "skyobjects-min.json";
+    auto json_file_path = (boost::filesystem::path(Settings::instance().resources_path()) / json_file).string();
+    ifstream json( json_file_path );
+    if(!json) {
+      WServer::instance()->log("warning") << "Unable to initialize database: " << json_file_path << " could not be read.";
+      return;
+    }
+    stringstream content;
+    content << json.rdbuf();
+    Wt::Json::Value result;
+    try {
+    Wt::Json::parse(content.str(), result);
+    } catch(const Wt::Json::ParseError &e) {
+      WServer::instance()->log("warning") << "Unable to parse " << json_file_path << ": " << e.what();
+      return;
+    }
+    Wt::Json::Array objects = result;
+    for(auto object: objects) {
+      auto json_object = json_cast<Wt::Json::Object>(object);
+      /*
+       *         "angular-size": 0.25,
+        "declination": 0.449015,
+        "extra-data": "",
+        "id": 337445.0,
+        "magnitude": 14.0,
+        "object-id": "MCG+04-02-018",
+        "right-ascension": 0.113519,
+        "type": 0
+
+        */
+      session.execute("INSERT INTO objects(id, object_id, ra, dec, magnitude, angular_size, type, extra_data) VALUES(?,?,?,?,?,?,?,?)")
+	.bind(json_cast<long long>(json_object["id"]))
+	.bind(json_cast<string>(json_object["object-id"]))
+	.bind(json_cast<double>(json_object["right-ascension"]))
+	.bind(json_cast<double>(json_object["declination"]))
+	.bind(json_cast<double>(json_object["magnitude"]))
+	.bind(json_cast<double>(json_object["angular-size"]))
+	.bind(json_cast<int>(json_object["type"]))
+	.bind(json_cast<string>(json_object["extra-data"]));
+    }
 }
 
 
@@ -89,6 +141,7 @@ int main(int argc, char **argv) {
         addStaticResource("logo_350.png", "/skyplanner_logo.png");
         addStaticResource("loading-64.png", URLs::loading_indicator);
 
+	populate_database();
         server.addEntryPoint(Wt::Application, newSkyPlanner);
         Session::configureAuth();
         if (server.start()) {
