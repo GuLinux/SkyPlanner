@@ -40,6 +40,6 @@ CONTAINER_NAME="skyplanner-${ENV_NAME}"
 [[ "$CREATE_DB" == true ]] && ( remove_container "$DB_CONTAINER_NAME";  docker create --name "$DB_CONTAINER_NAME" -e POSTGRES_PASSWORD=skyplanner -v /var/lib/postgresql-skyplanner-${ENV_NAME}/:/var/lib/postgresql skyplanner-postgres-img )
 remove_container "$CONTAINER_NAME"
 docker inspect -f "{{.Name}}" "$DB_CONTAINER_NAME" 2>/dev/null && db_link="--link ${DB_CONTAINER_NAME}:postgres" && db_connection_string="-e SKYPLANNER_PSQL_CONNECTION=\"application_name=SkyPlanner host=postgres port=5432 dbname=skyplanner user=postgres password=skyplanner\""
-eval "docker create -p 127.0.0.1:${EXPOSE_PORT}:8080 --name \"$CONTAINER_NAME\" -v \"$WT_CONFIG_FILE:/etc/wt/wt_config.xml:ro\" $db_link $db_connection_string $@ skyplanner-ubuntu-run-img-${environment}"
+eval "docker create -p 127.0.0.1:${EXPOSE_PORT}:8080 --name \"$CONTAINER_NAME\" -v \"$WT_CONFIG_FILE:/etc/wt/wt_config.xml:ro\" $db_link $db_connection_string $@ skyplanner-ubuntu-run-img-${ENV_NAME}"
 
 
