@@ -100,7 +100,7 @@ Settings::optional<string> Settings::admin_email() const
 
 Settings::optional< string > Settings::resources_path() const
 {
-  return {d->reader->value("resources_path"), (boost::filesystem::path(SHARED_PREFIX) / "strings").string()};
+  return {d->reader->value("resources_path"), SHARED_PREFIX};
 }
 
 Settings::optional< string > Settings::strings_dir() const
@@ -163,14 +163,16 @@ boost::optional< string > CompositeReader::value(const string& key) const
   return {};
 }
 
+
 #include <cstdlib>
 #include <boost/algorithm/string.hpp>
 boost::optional< std::string > EnvironmentReader::value(const string& key) const
 {
   string key_tr = string{"SKYPLANNER_"} + boost::replace_all_copy(key, string{"-"}, string{"_"});
   boost::to_upper(key_tr);
-  if(getenv(key_tr.c_str()))
+  if(getenv(key_tr.c_str())) {
     return string{getenv(key_tr.c_str())};
+  }
   return {};
 }
 
@@ -178,8 +180,9 @@ boost::optional< std::string > EnvironmentReader::value(const string& key) const
 boost::optional< string > WServerConfigurationReader::value(const string& key) const
 {
   string value;
-  if(Wt::WServer::instance()->readConfigurationProperty(key, value))
+  if(Wt::WServer::instance()->readConfigurationProperty(key, value)) {
     return value;
+  }
   return {};
 }
 
