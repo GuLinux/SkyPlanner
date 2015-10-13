@@ -61,49 +61,73 @@ template<typename T> T json_cast(const Wt::Json::Value &v) { return v; }
 void populate_database() {
     Session session;
     Dbo::Transaction t(session);
-    if(session.query<long long>("SELECT COUNT(*) FROM objects;") > 0) {
+    auto objects_count = session.query<boost::tuple<long long, long long, long long>>
+      ("select (select count(id) from objects), (select count(id) from catalogues), (select count(id) from denominations);").resultValue();
+    if(get<0>(objects_count) > 0 && get<1>(objects_count) && get<2>(objects_count) > 0) {
       return;
     }
+    session.execute("DELETE FROM denominations");
+    session.execute("DELETE FROM catalogues");
+    session.execute("DELETE FROM objects");
     WServer::instance()->log("notice") << "*** Database needs to be populated.";
-    auto json_file = "skyobjects-min.json";
-    auto json_file_path = (boost::filesystem::path(Settings::instance().resources_path()) / json_file).string();
-    ifstream json( json_file_path );
-    if(!json) {
-      WServer::instance()->log("warning") << "Unable to initialize database: " << json_file_path << " could not be read.";
-      return;
-    }
-    stringstream content;
-    content << json.rdbuf();
-    Wt::Json::Value result;
-    try {
-    Wt::Json::parse(content.str(), result);
-    } catch(const Wt::Json::ParseError &e) {
-      WServer::instance()->log("warning") << "Unable to parse " << json_file_path << ": " << e.what();
-      return;
-    }
-    Wt::Json::Array objects = result;
-    for(auto object: objects) {
-      auto json_object = json_cast<Wt::Json::Object>(object);
-      /*
-       *         "angular-size": 0.25,
-        "declination": 0.449015,
-        "extra-data": "",
-        "id": 337445.0,
-        "magnitude": 14.0,
-        "object-id": "MCG+04-02-018",
-        "right-ascension": 0.113519,
-        "type": 0
-
-        */
+    
+    auto save_ngcobject = [&session](const Wt::Json::Object &json_object) {
       session.execute("INSERT INTO objects(id, object_id, ra, dec, magnitude, angular_size, type, extra_data) VALUES(?,?,?,?,?,?,?,?)")
-	.bind(json_cast<long long>(json_object["id"]))
-	.bind(json_cast<string>(json_object["object-id"]))
-	.bind(json_cast<double>(json_object["right-ascension"]))
-	.bind(json_cast<double>(json_object["declination"]))
-	.bind(json_cast<double>(json_object["magnitude"]))
-	.bind(json_cast<double>(json_object["angular-size"]))
-	.bind(json_cast<int>(json_object["type"]))
-	.bind(json_cast<string>(json_object["extra-data"]));
+        .bind(json_cast<long long>(json_object.at("id")))
+        .bind(json_cast<string>(json_object.at("object-id")))
+        .bind(json_cast<double>(json_object.at("right-ascension")))
+        .bind(json_cast<double>(json_object.at("declination")))
+        .bind(json_cast<double>(json_object.at("magnitude")))
+        .bind(json_cast<double>(json_object.at("angular-size")))
+        .bind(json_cast<int>(json_object.at("type")))
+        .bind(json_cast<string>(json_object.at("extra-data")));
+    };
+    auto save_catalogue = [&session](const Wt::Json::Object &json_object) {
+      session.execute("INSERT INTO catalogues(id, version, name, code, priority, search_mode, hidden) VALUES(?, 1, ?, ?, ?, ?, ?)")
+        .bind(json_cast<long long>(json_object.at("id")))
+        .bind(json_cast<string>(json_object.at("name")))
+        .bind(json_cast<string>(json_object.at("code")))
+        .bind(json_cast<int>(json_object.at("priority")))
+        .bind(json_cast<int>(json_object.at("search-mode")))
+        .bind(json_cast<int>(json_object.at("hidden-mode")));
+    };
+    auto save_denomination = [&session](const Wt::Json::Object &json_object) {
+      session.execute("INSERT INTO denominations(id, number, name, comment, other_catalogues, objects_id, catalogues_id) VALUES(?,?,?,?,?,?,?)")
+        .bind(json_cast<long long>(json_object.at("id")))
+        .bind(json_cast<string>(json_object.at("number")))
+        .bind(json_cast<string>(json_object.at("name")))
+        .bind(json_cast<string>(json_object.at("comment")))
+        .bind(json_cast<string>(json_object.at("other-catalogues")))
+        .bind(json_cast<long long>(json_object.at("object")))
+        .bind(json_cast<long long>(json_object.at("catalogue")));
+    };
+    typedef function<void(const Wt::Json::Object &)> SaveObject;
+    typedef pair<string, SaveObject> ObjectParser;
+    
+    for(auto json_parser: vector<ObjectParser>{{"skyobjects-min.json", save_ngcobject}, {"catalogues-min.json", save_catalogue}, {"skyobjects-names-min.json", save_denomination}}) {
+      auto json_file_path = (boost::filesystem::path(Settings::instance().resources_path()) / json_parser.first).string();
+      ifstream json( json_file_path );
+      if(!json) {
+        WServer::instance()->log("warning") << "Unable to initialize database: " << json_file_path << " could not be read.";
+        return;
+      }
+      stringstream content;
+      content << json.rdbuf();
+      Wt::Json::Value result;
+      try {
+      Wt::Json::parse(content.str(), result);
+      } catch(const Wt::Json::ParseError &e) {
+        WServer::instance()->log("warning") << "Unable to parse " << json_file_path << ": " << e.what();
+        return;
+      }
+      Wt::Json::Array objects = result;
+      for(auto object: objects) {
+        try {
+          json_parser.second( json_cast<Wt::Json::Object>(object) );
+        } catch(const std::exception &e) {
+          WServer::instance()->log("warning") << "Unable to save objects from " << json_file_path << ": " << e.what();
+        }
+      }
     }
 }
 
