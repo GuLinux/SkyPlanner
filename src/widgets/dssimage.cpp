@@ -40,7 +40,8 @@
 #include <Magick++.h>
 #include "models/Models"
 #include <urls.h>
-#include <settings.h>
+#include "c++/settings.h"
+#include "settings.h"
 #include <Wt/WDoubleSpinBox>
 #include <Wt/WMemoryResource>
 #include <opencv2/opencv.hpp>

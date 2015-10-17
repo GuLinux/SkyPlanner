@@ -20,69 +20,37 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 #include "c++/dptr.h"
+#include "c++/settings.h"
 #include <boost/optional.hpp>
 
 class Settings
 {
 public:
     typedef std::shared_ptr<Settings> ptr;
-    class Reader {
-    public:
-      virtual boost::optional<std::string> value(const std::string &key) const = 0;
-      typedef std::shared_ptr<Reader> ptr;
-    };
-    
-    template<typename T> class optional {
-    public:
-      optional(const boost::optional<T> &value, const T &default_value) : _value(value), _default_value(default_value) {}
-      bool is_set() const { return (_value ? true: false); }
-      operator T() const { if(_value) return *_value; return _default_value; };
-      T value() const { return *this; }
-    private:
-      boost::optional<T> _value;
-      T _default_value;
-    };
-    
-    Settings(const Reader::ptr &reader);
+   
+    Settings(const GuLinux::Settings::Reader::ptr &reader);
     ~Settings();
     static Settings &instance();
     
     boost::optional<std::string> google_api_key() const;
-    optional<std::string> style_css_path() const;
+    GuLinux::Settings::value_with_default<std::string> style_css_path() const;
     boost::optional<std::string> admin_password() const;
     boost::optional<std::string> openweather_api_key() const;
-    optional<std::string> show_sql_queries() const;
-    optional<std::string> sqlite_database() const;
+    GuLinux::Settings::value_with_default<std::string> show_sql_queries() const;
+    GuLinux::Settings::value_with_default<std::string> sqlite_database() const;
     boost::optional<std::string> psql_connection() const;
-    optional<std::string> admin_name() const;
-    optional<std::string> admin_email() const;
-    optional<std::string> strings_dir() const;
+    GuLinux::Settings::value_with_default<std::string> admin_name() const;
+    GuLinux::Settings::value_with_default<std::string> admin_email() const;
+    GuLinux::Settings::value_with_default<std::string> strings_dir() const;
     boost::optional<std::string> theme_css() const;
     boost::optional<std::string> google_analytics_ua() const;
     boost::optional<std::string> google_analytics_domain() const;
-    optional<std::string> resources_path() const;
-    optional<std::string> dss_cache_path() const;
+    GuLinux::Settings::value_with_default<std::string> resources_path() const;
+    GuLinux::Settings::value_with_default<std::string> dss_cache_path() const;
     boost::optional<std::string> dss_cache_url() const;
 private:
   D_PTR;
 };
 
-class EnvironmentReader : public Settings::Reader {
-public:
-  virtual boost::optional<std::string> value(const std::string& key) const;
-};
-
-class WServerConfigurationReader : public Settings::Reader {
-public:
-  virtual boost::optional<std::string> value(const std::string& key) const;
-};
-
-class CompositeReader : public Settings::Reader {
-public:
-  CompositeReader(const std::initializer_list<Reader::ptr> &readers);
-  virtual boost::optional<std::string> value(const std::string& key) const;
-private:
-  D_PTR
-};
 
 #endif // SETTINGS_H

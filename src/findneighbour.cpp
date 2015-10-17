@@ -18,7 +18,7 @@
  */
 
 #include "findneighbour.h"
-#include "stlutils.h"
+#include "c++/stlutils.h"
 #include <Wt/WApplication>
 #include "session.h"
 #include "libnova/libnova.h"
