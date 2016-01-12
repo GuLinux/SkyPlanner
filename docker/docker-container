@@ -2,7 +2,7 @@
 EXPOSE_PORT=8080
 ENV_NAME="testing"
 CREATE_DB="false"
-WT_CONFIG_FILE="/etc/wt/wt_config.xml"
+WT_CONFIG_FILE=""
 
 while [[ -n "$1"  && "$1" != "--" ]]; do
   case "$1" in
@@ -36,10 +36,14 @@ remove_container() {
 
 DB_CONTAINER_NAME="skyplanner-${ENV_NAME}-postgres"
 CONTAINER_NAME="skyplanner-${ENV_NAME}"
+NETWORK_NAME="skyplanner-net-$ENV_NAME"
+[[ -n "$WT_CONFIG_FILE" ]] && WT_CONFIG_VOLUME="-v \"$WT_CONFIG_FILE\":/etc/wt/wt_config.xml:ro"
 
-[[ "$CREATE_DB" == true ]] && ( remove_container "$DB_CONTAINER_NAME";  docker create --name "$DB_CONTAINER_NAME" -e POSTGRES_PASSWORD=skyplanner -v /var/lib/postgresql-skyplanner-${ENV_NAME}/:/var/lib/postgresql skyplanner-postgres-img )
+docker network inspect "$NETWORK_NAME" >/dev/null 2>&1 || docker network create $NETWORK_NAME
+
+[[ "$CREATE_DB" == true ]] && ( remove_container "$DB_CONTAINER_NAME";  docker create --name "$DB_CONTAINER_NAME" -e POSTGRES_PASSWORD=skyplanner --net $NETWORK_NAME -v /var/lib/postgresql-skyplanner-${ENV_NAME}/:/var/lib/postgresql skyplanner-postgres-img )
 remove_container "$CONTAINER_NAME"
-docker inspect -f "{{.Name}}" "$DB_CONTAINER_NAME" 2>/dev/null && db_link="--link ${DB_CONTAINER_NAME}:postgres" && db_connection_string="-e SKYPLANNER_PSQL_CONNECTION=\"application_name=SkyPlanner host=postgres port=5432 dbname=skyplanner user=postgres password=skyplanner\""
-eval "docker create -p 127.0.0.1:${EXPOSE_PORT}:8080 --name \"$CONTAINER_NAME\" -v \"$WT_CONFIG_FILE:/etc/wt/wt_config.xml:ro\" $db_link $db_connection_string $@ skyplanner-ubuntu-run-img-${ENV_NAME}"
+db_connection_string="-e SKYPLANNER_PSQL_CONNECTION=\"application_name=SkyPlanner host=$DB_CONTAINER_NAME port=5432 dbname=skyplanner user=postgres password=skyplanner\""
+eval "docker create -p 127.0.0.1:${EXPOSE_PORT}:8080 --name \"$CONTAINER_NAME\" --net $NETWORK_NAME $WT_CONFIG_VOLUME $db_link $db_connection_string $@ skyplanner-ubuntu-run-img-${ENV_NAME}"
 
 
