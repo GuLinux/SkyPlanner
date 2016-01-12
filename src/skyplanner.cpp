@@ -176,7 +176,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
   }
 
   //requireJQuery("https://code.jquery.com/jquery-1.11.1.min.js");
-  require("http://s7.addthis.com/js/300/addthis_widget.js#pubid=ra-53db62c0246c3a25");
+//  require("http://s7.addthis.com/js/300/addthis_widget.js#pubid=ra-53db62c0246c3a25");
   });  
   {
     Dbo::Transaction t(d->session);
