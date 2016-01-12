@@ -412,7 +412,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
   footer->setTemplateText(R"(
     <nav class="navbar navbar-default navbar-fixed-bottom" role="navigation" id="footer_gulinux">
       <div class="container-fluid">
-      <div class="navbar-text addthis_native_toolbox"  data-url="${share-url}"></div>
+<!--      <div class="navbar-text addthis_native_toolbox"  data-url="${share-url}"></div> -->
 	<ul class="nav navbar-nav navbar-right">
 	  <li><a href="http://blog.gulinux.net/" target="_BLANK">GuLinux Blog</a></li>
 	  <li><a href="http://blog.gulinux.net/skyplanner" target="_BLANK">SkyPlanner Homepage</a></li>
