@@ -44,6 +44,7 @@ docker network inspect "$NETWORK_NAME" >/dev/null 2>&1 || docker network create 
 [[ "$CREATE_DB" == true ]] && ( remove_container "$DB_CONTAINER_NAME";  docker create --name "$DB_CONTAINER_NAME" -e POSTGRES_PASSWORD=skyplanner --net $NETWORK_NAME -v /var/lib/postgresql-skyplanner-${ENV_NAME}/:/var/lib/postgresql skyplanner-postgres-img )
 remove_container "$CONTAINER_NAME"
 db_connection_string="-e SKYPLANNER_PSQL_CONNECTION=\"application_name=SkyPlanner host=$DB_CONTAINER_NAME port=5432 dbname=skyplanner user=postgres password=skyplanner\""
+set -x
 eval "docker create -p 127.0.0.1:${EXPOSE_PORT}:8080 --name \"$CONTAINER_NAME\" --net $NETWORK_NAME $WT_CONFIG_VOLUME $db_link $db_connection_string $@ skyplanner-ubuntu-run-img-${ENV_NAME}"
-
+set +x
 
