@@ -2,5 +2,6 @@
 if [[ "$COPY_STATIC_FILES" == "true" ]]; then
   echo "Copying static files for external http daemon caching in $STATIC_FILES_CACHE_PATH"
   cp -av "$STATIC_FILES_PATH"/* "$STATIC_FILES_CACHE_PATH"
+  cp -av "/usr/share/Wt/resources" "$STATIC_FILES_CACHE_PATH/wt_resources"
 fi
 /usr/bin/SkyPlanner "$@"
