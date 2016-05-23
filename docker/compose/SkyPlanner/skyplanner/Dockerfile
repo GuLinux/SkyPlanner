@@ -21,8 +21,8 @@ CMD cmake /SkyPlanner -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Debug -DLIB
 
 
 #RUN apt-get update && apt-get install -y libcurl3 libwt38 libwthttp38 libwtdbosqlite38 libwtdbopostgres38 libgraphicsmagick++11 libboost-signals1.58.0 libboost-chrono1.58.0 libboost-thread1.58.0 \
-  libboost-regex1.58.0 libboost-system1.58.0 libboost-filesystem1.58.0 libboost-random1.58.0 libboost-date-time1.58.0 libboost-program-options1.58.0 \
-  libnova-0.14-0 postgresql-client xz-utils
+#  libboost-regex1.58.0 libboost-system1.58.0 libboost-filesystem1.58.0 libboost-random1.58.0 libboost-date-time1.58.0 libboost-program-options1.58.0 \
+#  libnova-0.14-0 postgresql-client xz-utils
 #COPY @ubuntu_package_filename@ /
 #COPY @entrypoint_filename@ /entrypoint
 #RUN dpkg -i @ubuntu_package_filename@ && rm -f @ubuntu_package_filename@
