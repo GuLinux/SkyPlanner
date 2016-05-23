@@ -20,6 +20,7 @@
 #include "private/curl_p.h"
 #include <iostream>
 #include <boost/algorithm/string.hpp>
+#include <vector>
 
 using namespace std;
 
