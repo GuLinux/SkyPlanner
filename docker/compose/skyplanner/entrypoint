@@ -1,0 +1,24 @@
+#!/bin/bash
+DATA_PATH="/data"
+STATIC_FILES_PATH="$DATA_PATH/SkyPlanner-Static"
+mkdir -p "$STATIC_FILES_PATH"
+
+if ! [[ -d "$STATIC_FILES_PATH/resources" ]]; then
+  cp -a "/usr/share/Wt/resources" "$STATIC_FILES_PATH/resources"
+fi
+if ! [[ -r $DATA_PATH/wt_config.xml ]]; then
+  properties_line_number="$( sed -n '/<properties>/=' wt_config_docker.xml )"
+  head -n "$properties_line_number" /etc/wt/wt_config.xml > $DATA_PATH/wt_config.xml
+  cat >>$DATA_PATH/wt_config.xml <<EOF
+  <property name="favicon">favicon.png</property>
+EOF
+  tail -n +"$(( $properties_line_number+1 ))" /etc/wt/wt_config.xml >> $DATA_PATH/wt_config.xml
+fi
+
+echo "Building with MAKEOPTS=$MAKEOPTS"
+cmake /SkyPlanner -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Debug -DLIBHARU_PREFIX=/usr -DHARU_LIBRARY=hpdfs -DEXTRA_LIBS="z;png" && \
+  make ${MAKEOPTS} all install
+
+echo "Copying static files for external http daemon caching in $STATIC_FILES_PATH"
+cp -a "/usr/share/SkyPlanner"/* "$STATIC_FILES_PATH"
+/usr/bin/SkyPlanner "$@"

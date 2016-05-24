@@ -11,12 +11,13 @@ WORKDIR libharu-RELEASE_2_3_0/build
 RUN cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release -DLIBHPDF_SHARED=Off -DLIBHPDF_STATIC=On && make && make install
 WORKDIR /
 RUN rm -rf /RELEASE_2_3_0.zip /libharu-RELEASE_2_3_0
+VOLUME /SkyPlanner
+COPY entrypoint /
 
 WORKDIR /SkyPlanner-build
-
-VOLUME /SkyPlanner
-CMD cmake /SkyPlanner -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Debug -DLIBHARU_PREFIX=/usr -DHARU_LIBRARY=hpdfs -DEXTRA_LIBS="z;png" && \
-  make ${MAKEOPTS} all install
+CMD /entrypoint --http-address 0.0.0.0 --http-port 8080 -c /data/wt_config.xml --docroot /data/SkyPlanner-Static\;/resources 
+#CMD cmake /SkyPlanner -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Debug -DLIBHARU_PREFIX=/usr -DHARU_LIBRARY=hpdfs -DEXTRA_LIBS="z;png" && \
+#  make ${MAKEOPTS} all install
 
 
 

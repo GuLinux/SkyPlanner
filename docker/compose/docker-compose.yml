@@ -1,0 +1,28 @@
+version: '2'
+volumes:
+  data:
+  postgres:
+
+services:
+    postgres:
+      image: postgres:latest
+      environment:
+        POSTGRES_USER: "postgres"
+        POSTGRES_PASSWORD: "skyplanner"
+        POSTGRES_DB: "skyplanner"
+      volumes:
+        - postgres:/var/lib/postgresql/data
+
+    skyplanner:
+      build: skyplanner
+      environment:
+        MAKEOPTS: '${MAKEOPTS}'
+        SKYPLANNER_PSQL_CONNECTION: "application_name=SkyPlanner host=postgres port=5432 dbname=skyplanner user=postgres password=skyplanner"
+        SKYPLANNER_DSS_CACHE_DIR: "/data/dss"
+      volumes:
+          - ../../:/SkyPlanner:ro
+          - data:/data
+      ports:
+        - "${SKYPLANNER_PORT}:8080"
+      depends_on:
+        - postgres
