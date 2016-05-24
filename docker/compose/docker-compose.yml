@@ -2,6 +2,7 @@ version: '2'
 volumes:
   data:
   postgres:
+  build:
 
 services:
     postgres:
@@ -22,6 +23,7 @@ services:
       volumes:
           - ../../:/SkyPlanner:ro
           - data:/data
+          - build:/SkyPlanner-build
       ports:
         - "${SKYPLANNER_PORT}:8080"
       depends_on:
