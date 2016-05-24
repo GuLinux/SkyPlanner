@@ -1,6 +1,23 @@
 #!/bin/bash
 DATA_PATH="/data"
 STATIC_FILES_PATH="$DATA_PATH/SkyPlanner-Static"
+BUILD_PROJECT="true"
+RUN_PROJECT="true"
+
+while [[ -n "$1" && "$1" != "--" ]]; do
+  case "$1" in
+    -b|--build)
+      BUILD_PROJECT="$2"; shift
+      ;;
+    -r|--run)
+      RUN_PROJECT="$2"; shift
+      ;;
+  esac
+  shift
+done
+shift
+echo "SkyPlanner: build=$BUILD_PROJECT; run=$RUN_PROJECT" >&2
+
 mkdir -p "$STATIC_FILES_PATH"
 
 if ! [[ -d "$STATIC_FILES_PATH/resources" ]]; then
@@ -15,10 +32,15 @@ EOF
   tail -n +"$(( $properties_line_number+1 ))" /etc/wt/wt_config.xml >> $DATA_PATH/wt_config.xml
 fi
 
-echo "Building with MAKEOPTS=$MAKEOPTS"
-cmake /SkyPlanner -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Debug -DLIBHARU_PREFIX=/usr -DHARU_LIBRARY=hpdfs -DEXTRA_LIBS="z;png" && \
-  make ${MAKEOPTS} all install
+if [[ "$BUILD_PROJECT" == "true" ]]; then
+  echo "Building with MAKEOPTS=$MAKEOPTS"
+  cmake /SkyPlanner -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Debug -DLIBHARU_PREFIX=/usr -DHARU_LIBRARY=hpdfs -DEXTRA_LIBS="z;png" && \
+    make ${MAKEOPTS} all install
+  echo "Copying static files for external http daemon caching in $STATIC_FILES_PATH"
+  cp -a "/usr/share/SkyPlanner"/* "$STATIC_FILES_PATH"
+fi
 
-echo "Copying static files for external http daemon caching in $STATIC_FILES_PATH"
-cp -a "/usr/share/SkyPlanner"/* "$STATIC_FILES_PATH"
-/usr/bin/SkyPlanner "$@"
+if [[ "$RUN_PROJECT" == "true" ]]; then
+  echo "Running Skyplanner $@" >&2
+  /usr/bin/SkyPlanner "$@"
+fi
