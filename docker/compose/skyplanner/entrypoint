@@ -7,7 +7,7 @@ if ! [[ -d "$STATIC_FILES_PATH/resources" ]]; then
   cp -a "/usr/share/Wt/resources" "$STATIC_FILES_PATH/resources"
 fi
 if ! [[ -r $DATA_PATH/wt_config.xml ]]; then
-  properties_line_number="$( sed -n '/<properties>/=' wt_config_docker.xml )"
+  properties_line_number="$( sed -n '/<properties>/=' wt_config.xml )"
   head -n "$properties_line_number" /etc/wt/wt_config.xml > $DATA_PATH/wt_config.xml
   cat >>$DATA_PATH/wt_config.xml <<EOF
   <property name="favicon">favicon.png</property>
