@@ -39,7 +39,7 @@ else(DOCKER_ONLY)
   endif(DISABLE_HARU)
 
   include_directories(${Wt_INCLUDE_DIR} ${Boost_INCLUDE_DIR})
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11 -fstack-protector-all")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -fstack-protector-all")
   set(HAVE_WT_JSON_SERIALIZE On CACHE STRING "" FORCE)
 
   set(EXTRA_LIBS "" CACHE STRING "Extra linking libraries")

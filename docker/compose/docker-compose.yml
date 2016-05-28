@@ -20,6 +20,7 @@ services:
         MAKEOPTS: '${MAKEOPTS}'
         SKYPLANNER_PSQL_CONNECTION: "application_name=SkyPlanner host=postgres port=5432 dbname=skyplanner user=postgres password=skyplanner"
         SKYPLANNER_DSS_CACHE_DIR: "/data/dss"
+        SKYPLANNER_DSSCACHE_DEPLOY_PATH: "${SKYPLANNER_DSSCACHE_DEPLOY_PATH}"
       volumes:
           - ../../:/SkyPlanner:ro
           - data:/data
@@ -28,3 +29,8 @@ services:
         - "${SKYPLANNER_PORT}:8080"
       depends_on:
         - postgres
+        - smtp
+    smtp:
+      image: namshi/smtp
+      environment:
+        MAILNAME: '${SKYPLANNER_DOMAIN_NAME}'
