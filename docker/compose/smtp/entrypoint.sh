@@ -43,7 +43,7 @@ elif [ "$SMARTHOST_USER" -a "$SMARTHOST_PASSWORD" ] && [ "$SMARTHOST_ALIASES" -a
 		dc_eximconfig_configtype 'smarthost'
 		dc_smarthost "${SMARTHOST_ADDRESS}::${SMARTHOST_PORT-25}"
 	)
-	echo > /etc/exim4/passwd.client
+	rm -f /etc/exim4/passwd.client
 	echo "$SMARTHOST_ALIASES;" | while read -d ";" alias; do
 	  echo "${alias}:$SMARTHOST_USER:$SMARTHOST_PASSWORD" >> /etc/exim4/passwd.client
 	done
