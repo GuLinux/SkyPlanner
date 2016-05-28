@@ -56,3 +56,5 @@ else
 fi
 
 /bin/set-exim4-update-conf "${opts[@]}"
+
+exec "$@"
