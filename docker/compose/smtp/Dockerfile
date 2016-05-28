@@ -1,2 +1,2 @@
 FROM namshi/smtp
-COPY entrypoint.sh /entrypoint.sh
+COPY entrypoint.sh /bin/entrypoint.sh
