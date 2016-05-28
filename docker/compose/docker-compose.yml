@@ -33,4 +33,4 @@ services:
     smtp:
       image: namshi/smtp
       environment:
-        MAILNAME: '${SKYPLANNER_DOMAIN_NAME}'
+        MAILNAME: '${SKYPLANNER_SMTP_DOMAIN_NAME}'
