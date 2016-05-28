@@ -28,6 +28,8 @@ if ! [[ -r $DATA_PATH/wt_config.xml ]]; then
   head -n "$properties_line_number" /etc/wt/wt_config.xml > $DATA_PATH/wt_config.xml
   cat >>$DATA_PATH/wt_config.xml <<EOF
   <property name="favicon">favicon.png</property>
+  <property name="smtp-self-host">smtp</property>
+  <property name="smtp-host">smtp</property>
 EOF
   tail -n +"$(( $properties_line_number+1 ))" /etc/wt/wt_config.xml >> $DATA_PATH/wt_config.xml
 fi
