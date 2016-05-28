@@ -24,6 +24,7 @@
 #include <Wt/Auth/Login>
 #include <Wt/WAnchor>
 #include "models/Models"
+#include "urls.h"
 
 using namespace std;
 using namespace Wt;
@@ -59,6 +60,7 @@ void HomePage::Private::populate() {
   }
   content->bindString("login-menu-path", link.createCall("'/login/'"));
   content->bindString("sessions-menu-path", link.createCall("'/sessions/list/'"));
+  content->bindString("logo-image", URLs::skyplanner_logo);
 
   auto catalogues = session.find<Catalogue>().where("hidden < ?").bind(0xFF).orderBy("priority ASC").resultList();
   content->setCondition("have-features-list", catalogues.size() > 0);

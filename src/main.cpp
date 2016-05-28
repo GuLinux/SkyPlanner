@@ -162,7 +162,7 @@ int main(int argc, char **argv) {
           auto resource_path = boost::filesystem::path{Settings::instance().resources_path()} / relPath;
           server.addResource(new WFileResource(resource_path.string()), deployPath);
         };
-        addStaticResource("logo_350.png", "/skyplanner_logo.png");
+        addStaticResource("skyplanner_logo.png", URLs::skyplanner_logo);
         addStaticResource("loading-64.png", URLs::loading_indicator);
 
 	populate_database();

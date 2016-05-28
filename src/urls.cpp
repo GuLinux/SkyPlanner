@@ -21,5 +21,6 @@
 
 using namespace std;
 
-const string URLs::loading_indicator = {"/skyplanner_loading_indicator.png"};
+const string URLs::loading_indicator = {"/loading-64.png"};
+const string URLs::skyplanner_logo = {"/skyplanner_logo.png"};
 const string URLs::bootstrap_url = {"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"};
