@@ -45,7 +45,7 @@ elif [ "$SMARTHOST_USER" -a "$SMARTHOST_PASSWORD" ] && [ "$SMARTHOST_ALIASES" -a
 	)
 	echo > /etc/exim4/passwd.client
 	echo "$SMARTHOST_ALIASES;" | while read -d ";" alias; do
-	  echo "${alias}:$SMARTHOST_USER:$SMARTHOST_PASSWORD" > /etc/exim4/passwd.client
+	  echo "${alias}:$SMARTHOST_USER:$SMARTHOST_PASSWORD" >> /etc/exim4/passwd.client
 	done
 elif [ "$RELAY_DOMAINS" ]; then
 	opts+=(
