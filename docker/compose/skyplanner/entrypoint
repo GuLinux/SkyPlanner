@@ -4,6 +4,8 @@ STATIC_FILES_PATH="$DATA_PATH/SkyPlanner-Static"
 BUILD_PROJECT="true"
 RUN_PROJECT="true"
 
+set -e
+
 while [[ -n "$1" && "$1" != "--" ]]; do
   case "$1" in
     -b|--build)

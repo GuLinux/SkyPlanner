@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015  <copyright holder> <email>
+ * Copyright (C) 2016  <copyright holder> <email>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,17 +16,25 @@
  *
  */
 
-#include "urls.h"
-#include <boost/format.hpp>
+#ifndef MOONPHASECALENDAR_H
+#define MOONPHASECALENDAR_H
 
-using namespace std;
+#include "c++/dptr.h"
+#include <Wt/WCalendar>
+#include <Wt/WString>
 
-const string URLs::loading_indicator = {"/loading-64.png"};
-const string URLs::skyplanner_logo = {"/skyplanner_logo.png"};
-const string URLs::bootstrap_url = {"http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"};
-const string URLs::moon_phase_image(double phase)
+class MoonPhaseCalendar : public Wt::WCalendar
 {
-  int phase_index = int( 36.0*phase+0.5 ) % 36;
-//   cerr << "phase: input=" << fixed << setprecision(2) << phase << ", output=" << phase_index << endl;
-  return (boost::format("/moon_phases/moon%02d.png") % phase_index).str();
-}
+public:
+    MoonPhaseCalendar(Wt::WContainerWidget* parent = nullptr);
+    ~MoonPhaseCalendar();
+    
+    virtual WWidget* renderCell(WWidget* widget, const Wt::WDate& date);
+
+    static Wt::WDialog *dialog(Wt::WObject *parent = nullptr);
+    static Wt::WPushButton *button(Wt::WContainerWidget* parent = nullptr, const Wt::WString& text = {});
+private:
+    D_PTR
+};
+
+#endif // MOONPHASECALENDAR_H

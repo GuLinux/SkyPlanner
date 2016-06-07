@@ -18,4 +18,4 @@ VOLUME /SkyPlanner
 COPY entrypoint /entrypoint
 WORKDIR /SkyPlanner-build
 #CMD  ["/bin/bash", "/entrypoint", "--http-address", "0.0.0.0", "--http-port", "8080", "-c", "/data/wt_config.xml", "--docroot", "/data/SkyPlanner-Static\;/resources"] 
-CMD  /entrypoint -- --http-address 0.0.0.0 --http-port 8080 -c /data/wt_config.xml --docroot /data/SkyPlanner-Static\;/resources
+CMD  /entrypoint -- --http-address 0.0.0.0 --http-port 8080 -c /data/wt_config.xml --docroot /data/SkyPlanner-Static\;/resources,/moon_phases,/loading-64.png,/skyplanner_logo.png

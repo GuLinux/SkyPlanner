@@ -27,6 +27,7 @@ public:
   static const std::string loading_indicator;
   static const std::string skyplanner_logo;
   static const std::string bootstrap_url;
+  static const std::string moon_phase_image(double phase);
 };
 
 #endif // URLS_H

@@ -36,6 +36,7 @@
 #include "utils/format.h"
 #include "wform.h"
 #include "wt_utils.h"
+#include "widgets/moonphasecalendar.h"
 
 using namespace Wt;
 using namespace WtCommons;
@@ -90,7 +91,7 @@ AstroSessionsListTab::AstroSessionsListTab(Session &session, Wt::WContainerWidge
   }).setEnabled(true);
 //  newSessionName->keyWentUp().connect([=](WKeyEvent){ newSessionAdd->setEnabled(!newSessionName->text().empty() );});
 //  addWidget(WW<WContainerWidget>().css("form-inline").add(new WLabel{"astrosessionslisttab_add_new_label"_wtr}).add(newSessionName).add(newSessionDate).add(newSessionAdd));
-  addWidget(WW<WForm>(WForm::Inline).get()->add(newSessionName, "astrosessionslisttab_add_new_label")->add(newSessionDate)->addButton(newSessionAdd));
+  addWidget(WW<WForm>(WForm::Inline).get()->add(newSessionName, "astrosessionslisttab_add_new_label")->add(newSessionDate)->addButton(MoonPhaseCalendar::button(nullptr, "Moon Calendar"))->addButton(newSessionAdd));
   
   vector<pair<Ephemeris::LunarPhase,boost::posix_time::ptime>> newMoons;
   Ephemeris moonPhaseEphemeris{{}, {}};

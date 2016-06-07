@@ -15,7 +15,7 @@ if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/googletest/CMakeLists.txt")
     message("adding test: name=${add_test_NAME}, type=${add_test_TYPE}, sources: ${add_test_SOURCES}, link: ${add_test_TARGET_LINK_LIBRARIES}")
     set(test_name test_${add_test_TYPE}_${add_test_NAME})
     add_executable(${test_name} ${add_test_SOURCES})
-    target_link_libraries(${test_name} ${add_test_TARGET_LINK_LIBRARIES} gtest_main)
+    target_link_libraries(${test_name} ${add_test_TARGET_LINK_LIBRARIES} gtest_main pthread)
     add_dependencies(compile_${add_test_TYPE}_tests ${test_name})
   endfunction(add_test)
 

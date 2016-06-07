@@ -296,3 +296,15 @@ div.weather-box {
 .modal-body {
   font-size: small;
 }
+
+.moon-calendar-image {
+  width: 2em;
+}
+
+.moon-calendar-text {
+  width: 2em;
+  display: inline;
+}
+.moon-calendar-cell {
+  width: 6em;
+}
