@@ -1,3 +1,6 @@
 [submodule "GuLinux-Commons"]
 	path = GuLinux-Commons
 	url = https://github.com/GuLinux/GuLinux-Commons.git
+[submodule "tests/googletest"]
+	path = tests/googletest
+	url = https://github.com/google/googletest.git

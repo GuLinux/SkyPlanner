@@ -1,59 +1,26 @@
-if(Boost_UNIT_TEST_FRAMEWORK_LIBRARY)
-  message("Tests support enabled")
-  add_definitions(-DBOOST_TEST_DYN_LINK)
-  include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/googletest/CMakeLists.txt")
+  message("Found googletest, enabling testing")
+  add_subdirectory(googletest)
   add_custom_target(compile_unit_tests)
   add_custom_target(compile_integration_tests)
   add_custom_target(unit_tests COMMAND ctest --output-on-failure -R "unit.*" DEPENDS compile_unit_tests)
   add_custom_target(integration_tests COMMAND ctest --output-on-failure -R "integration.*" DEPENDS compile_integration_tests)
-  
-  function(register_test name type)
-    set(test_name ${type}_test_${name})
-    add_executable(${test_name} EXCLUDE_FROM_ALL ${ARGN} )
-    add_test(${type}_${name} ${test_name})
-    add_dependencies(compile_${type}_tests ${test_name})
-  endfunction()
-  
-  function(link_unit_test name)
-    target_link_libraries(unit_test_${name}  ${ARGN} ${Boost_LIBRARIES})
-  endfunction()
-  
-  function(link_integration_test name)
-    target_link_libraries(integration_test_${name}  ${ARGN} ${Boost_LIBRARIES})
-  endfunction()
-  
-  function(register_unit_test name)
-    register_test(${name} unit  ${ARGN})
-  endfunction()
-  
-  function(register_integration_test name)
-    register_test(${name} integration  ${ARGN})
-  endfunction()
-  
-  
-  register_unit_test(simple_test simple_test.cpp
-    ${CMAKE_SOURCE_DIR}/src/types.cpp
-  )
-  link_unit_test(simple_test nova)
-  
-  register_unit_test(angles_test angles_test.cpp
-    ${CMAKE_SOURCE_DIR}/src/types.cpp
-  )
-  link_unit_test(angles_test nova)
-  
-  #register_unit_test(ephemeris
-  #  ephemeris_test.cpp
-  #  ${CMAKE_SOURCE_DIR}/src/ephemeris.cpp
-  #  ${CMAKE_SOURCE_DIR}/src/types.cpp
-  #  ${AAPLUS_SRCS}
-  #)
-  #link_unit_test(ephemeris nova)
-  
-  add_definitions(-DTESTS_NO_WT=1)
-  #register_unit_test(utils utils_test.cpp ${CMAKE_SOURCE_DIR}/src/utils/utils.cpp)
-  file(GLOB openweather_SRCS ${CMAKE_SOURCE_DIR}/src/openweather/*cpp)
 
-  #register_unit_test(openweather_test openweather_parsing_test.cpp ${openweather_SRCS} ${CMAKE_SOURCE_DIR}/src/types.cpp )
-  #link_unit_test(openweather_test ${Wt_LIBRARIES} nova)
-endif(Boost_UNIT_TEST_FRAMEWORK_LIBRARY)
 
+  function(add_test)
+    #set(options)
+    set(oneValueArgs NAME TYPE)
+    set(multiValueArgs SOURCES TARGET_LINK_LIBRARIES)
+    cmake_parse_arguments(add_test "${options}"  "${oneValueArgs}" "${multiValueArgs}" "${ARGN}")
+    message("adding test: name=${add_test_NAME}, type=${add_test_TYPE}, sources: ${add_test_SOURCES}, link: ${add_test_TARGET_LINK_LIBRARIES}")
+    set(test_name test_${add_test_TYPE}_${add_test_NAME})
+    add_executable(${test_name} ${add_test_SOURCES})
+    target_link_libraries(${test_name} ${add_test_TARGET_LINK_LIBRARIES} gtest_main)
+    add_dependencies(compile_${add_test_TYPE}_tests ${test_name})
+  endfunction(add_test)
+
+  add_subdirectory(nova)
+
+
+
+endif(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/googletest/CMakeLists.txt")
