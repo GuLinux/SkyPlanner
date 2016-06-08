@@ -1,10 +1,10 @@
 FROM ubuntu:16.04
 MAINTAINER Marco Gulino <marco@gulinux.net>
 
-RUN apt-get update && apt-get install -y build-essential pkg-config libopencv-dev libwt-dev libwtdbosqlite-dev libwthttp-dev libwtdbopostgres-dev libnova-dev libboost-all-dev cmake unzip
+RUN apt-get update && apt-get install -y build-essential pkg-config libopencv-dev libwt-dev libwtdbosqlite-dev \
+    libwthttp-dev libwtdbopostgres-dev libnova-dev libboost-all-dev cmake unzip gdb
 # TO BE REMOVED:
-RUN apt-get install -y libgraphicsmagick++1-dev
-RUN apt-get install -y libcurl4-openssl-dev
+RUN apt-get install -y libgraphicsmagick++1-dev libcurl4-openssl-dev
 
 RUN curl -LO https://github.com/libharu/libharu/archive/RELEASE_2_3_0.zip && \
     unzip /RELEASE_2_3_0.zip && \
