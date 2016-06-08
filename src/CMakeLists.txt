@@ -26,7 +26,7 @@ set(SkyPlanner_SRCS
 )
 include(models/source_files.cmake)
 
-file(GLOB Widgets_SRCS widgets/*.C widgets/*.cpp)
+file(GLOB_RECURSE Widgets_SRCS widgets/*.C widgets/*.cpp)
 
 
 

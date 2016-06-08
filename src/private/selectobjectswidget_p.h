@@ -21,7 +21,7 @@
 #include "selectobjectswidget.h"
 #include <boost/thread.hpp>
 #include "utils/format.h"
-#include "widgets/astroobjectstable.h"
+#include "widgets/skyobjects/astroobjectstable.h"
 
 class FilterByConstellation;
 namespace Wt

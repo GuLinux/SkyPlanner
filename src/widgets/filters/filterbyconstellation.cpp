@@ -16,7 +16,7 @@
  * 
  */
 
-#include "widgets/filterbyconstellation.h"
+#include "filterbyconstellation.h"
 #include "private/filterbyconstellation_p.h"
 #include <utils/format.h>
 #include <Wt/WComboBox>

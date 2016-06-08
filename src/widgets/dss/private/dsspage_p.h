@@ -18,9 +18,9 @@
 
 #ifndef DSSPAGE_P_H
 #define DSSPAGE_P_H
-#include "widgets/dsspage.h"
+#include "widgets/dss/dsspage.h"
 #include "models/Models"
-#include "widgets/dssimage.h"
+#include "widgets/dss/dssimage.h"
 #include "session.h"
 class DSSPage::Private
 {

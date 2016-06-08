@@ -18,11 +18,11 @@
 
 #ifndef ASTROOBJECTSTABLE_P_H
 #define ASTROOBJECTSTABLE_P_H
-#include "widgets/astroobjectstable.h"
-#include <widgets/filterbytypewidget.h>
-#include <widgets/filterbycatalogue.h>
-#include <widgets/filterbyconstellation.h>
-#include <widgets/filterbyobservedwidget.h>
+#include "widgets/skyobjects/astroobjectstable.h"
+#include <widgets/filters/filterbytypewidget.h>
+#include <widgets/filters/filterbycatalogue.h>
+#include <widgets/filters/filterbyconstellation.h>
+#include <widgets/filters/filterbyobservedwidget.h>
 #include "session.h"
 #include <Wt/WTable>
 #include <Wt/WStandardItemModel>

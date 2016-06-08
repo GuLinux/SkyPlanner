@@ -27,9 +27,9 @@
 #include <Wt/WStackedWidget>
 #include <Wt/WTemplate>
 #include <Wt/WLabel>
-#include "widgets/astroobjectstable.h"
+#include "widgets/skyobjects/astroobjectstable.h"
 #include <mutex>
-#include "widgets/astroobjectwidget.h"
+#include "widgets/skyobjects/astroobjectwidget.h"
 #include "widgets/positiondetailswidget.h"
 #include "widgets/texteditordialog.h"
 #include "widgets/instrumentstable.h"

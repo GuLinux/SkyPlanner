@@ -22,9 +22,9 @@
 #include <Wt/WCompositeWidget>
 #include "c++/dptr.h"
 #include "models/Models"
-#include "widgets/filterbyrangewidget.h"
 #include <functional>
 #include <boost/logic/tribool.hpp>
+#include "widgets/filters/filterbyrangewidget.h"
 
 class Session;
 class ObjectPopupMenu;

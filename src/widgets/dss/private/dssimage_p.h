@@ -18,7 +18,7 @@
 
 #ifndef DSSIMAGE_P_H
 #define DSSIMAGE_P_H
-#include "widgets/dssimage.h"
+#include "widgets/dss/dssimage.h"
 #include <Wt/WFileResource>
 #include <boost/filesystem/path.hpp>
 #include <Wt/WLink>

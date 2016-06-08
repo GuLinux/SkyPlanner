@@ -23,15 +23,15 @@
 #include "utils/format.h"
 #include <boost/algorithm/string.hpp>
 #include <Wt/WText>
-#include "widgets/dsspage.h"
+#include "widgets/dss/dsspage.h"
 #include <Wt/WTemplate>
 #include <Wt/Utils>
 #include "ephemeris.h"
-#include "widgets/cataloguesdescriptionwidget.h"
-#include "widgets/objectdifficultywidget.h"
+#include "cataloguesdescriptionwidget.h"
+#include "objectdifficultywidget.h"
 #include <Wt/WToolBar>
 #include <Wt/WPushButton>
-#include "widgets/objectnameswidget.h"
+#include "objectnameswidget.h"
 #include "skyplanner.h"
 
 using namespace std;

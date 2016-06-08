@@ -15,36 +15,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  */
-#ifndef ASTROOBJECTWIDGET_P_H
-#define ASTROOBJECTWIDGET_P_H
+#ifndef FILTERBYTYPEWIDGET_P_H
+#define FILTERBYTYPEWIDGET_P_H
 
-#include "widgets/astroobjectwidget.h"
+#include "widgets/filters/filterbytypewidget.h"
 #include "models/Models"
-#include "session.h"
-class DSSPage;
-class AstroObjectWidget::Private
+
+class FilterByTypeWidget::Private
 {
 public:
-  Private(const AstroGroup &astroGroup, Session &session, const std::shared_ptr<std::mutex> &downloadMutex, const std::vector<Wt::WPushButton*> &actionButtons, AstroObjectWidget *q);
+  Private(const std::set<NgcObject::NebulaType> &initialSelection, FilterByTypeWidget *q);
+  Wt::Signal<> changed;
+  std::set<NgcObject::NebulaType> nebulaTypeFilters;
+  std::set<NgcObject::NebulaType> initialSelection;
 
-  void init();
-
-  AstroGroup astroGroup;
-  Session &session;
-  std::shared_ptr<std::mutex> downloadMutex;
-  std::vector<Wt::WPushButton*> actionButtons;
-  
-
-  DSSPage *dssPage;
-  Wt::WContainerWidget *content;
-  Wt::WContainerWidget *expanded;
-  Wt::WWidget *collapsed;
-  Wt::WTemplate *info;
-  Wt::WContainerWidget *actionsToolbar;
 private:
-  AstroObjectWidget *q;
+  FilterByTypeWidget *q;
 };
 
-#endif // ASTROOBJECTWIDGET_H
+#endif // FILTERBYTYPEWIDGET_H
 
 

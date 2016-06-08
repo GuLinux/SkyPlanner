@@ -27,10 +27,10 @@
 #include "ephemeris.h"
 #include "utils/format.h"
 #include "utils/utils.h"
-#include "widgets/objectnameswidget.h"
-#include "widgets/cataloguesdescriptionwidget.h"
+#include "widgets/skyobjects/objectnameswidget.h"
+#include "widgets/skyobjects/cataloguesdescriptionwidget.h"
 #include "constellationfinder.h"
-#include "widgets/objectdifficultywidget.h"
+#include "widgets/skyobjects/objectdifficultywidget.h"
 #include <Wt/WServer>
 #include <boost/algorithm/string.hpp>
 
@@ -48,7 +48,7 @@
 #endif
 #endif
 
-#include "widgets/astroobjectstable.h"
+#include "widgets/skyobjects/astroobjectstable.h"
 #include "skyplanner.h"
 #include "wt_utils.h"
 

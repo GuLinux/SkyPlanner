@@ -28,11 +28,11 @@
 #include <Wt/WToolBar>
 #include <wt_helpers.h>
 #include "models/Models"
-#include "widgets/astroobjectwidget.h"
-#include "widgets/objectnameswidget.h"
+#include "astroobjectwidget.h"
+#include "objectnameswidget.h"
 #include "utils/format.h"
-#include "widgets/objectdifficultywidget.h"
-#include "widgets/objectpopupmenu.h"
+#include "objectdifficultywidget.h"
+#include "objectpopupmenu.h"
 
 using namespace Wt;
 using namespace WtCommons;

@@ -16,7 +16,7 @@
  * 
  */
 
-#include "widgets/filterbycatalogue.h"
+#include "filterbycatalogue.h"
 #include "private/filterbycatalogue_p.h"
 #include <utils/format.h>
 #include <Wt/WComboBox>

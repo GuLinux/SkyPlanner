@@ -15,21 +15,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  */
+#ifndef FILTERBYOBSERVEDWIDGET_P_H
+#define FILTERBYOBSERVEDWIDGET_P_H
 
-#ifndef FILTERBYCATALOGUE_P_H
-#define FILTERBYCATALOGUE_P_H
-#include "widgets/filterbyconstellation.h"
-#include "session.h"
+#include "widgets/filters/filterbyobservedwidget.h"
+#include <Wt/WComboBox>
 
-class FilterByCatalogue::Private
+class FilterByObservedWidget::Private
 {
-  public:
-    Private( Session &session, FilterByCatalogue *q );
-    Session &session;
-    Wt::Signal<> changed;
-    Wt::WStandardItemModel *model;
-    Wt::WComboBox *cataloguesCombo;
-  private:
-    class FilterByCatalogue *const q;
+public:
+  Private(FilterByObservedWidget *q);
+  Wt::Signal<> changed;
+  Wt::WComboBox *combo;
+private:
+  FilterByObservedWidget *q;
 };
-#endif // FILTERBYCATALOGUE_P_H
+
+#endif // FILTERBYOBSERVEDWIDGET_H
+
+

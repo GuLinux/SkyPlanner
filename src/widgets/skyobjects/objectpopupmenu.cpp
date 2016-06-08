@@ -16,7 +16,7 @@
  * 
  */
 
-#include "widgets/private/objectpopupmenu_p.h"
+#include "private/objectpopupmenu_p.h"
 
 #include <Wt/WLink>
 #include <Wt/WApplication>
@@ -27,9 +27,9 @@
 
 #include "wt_helpers.h"
 #include <boost/algorithm/string/join.hpp>
-#include "widgets/astroobjectwidget.h"
+#include "widgets/skyobjects/astroobjectwidget.h"
 #include "types.h"
-#include "widgets/dsspage.h"
+#include "widgets/dss/dsspage.h"
 #include "utils/format.h"
 #include "utils/autopostresource.h"
 #include "skyplanner.h"

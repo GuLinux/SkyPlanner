@@ -18,7 +18,7 @@
 #ifndef DBOHELPER_H
 #define DBOHELPER_H
 #include <Wt/Dbo/Query>
-#include "widgets/astroobjectstable.h"
+#include "widgets/skyobjects/astroobjectstable.h"
 #include "Models"
 #include <vector>
 #include <boost/algorithm/string.hpp>

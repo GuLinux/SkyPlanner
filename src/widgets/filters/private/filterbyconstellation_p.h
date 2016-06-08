@@ -15,22 +15,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * 
  */
-#ifndef FILTERBYOBSERVEDWIDGET_P_H
-#define FILTERBYOBSERVEDWIDGET_P_H
 
-#include "widgets/filterbyobservedwidget.h"
-#include <Wt/WComboBox>
+#ifndef FILTERBYCONSTELLATION_P_H
+#define FILTERBYCONSTELLATION_P_H
+#include "widgets/filters/filterbyconstellation.h"
 
-class FilterByObservedWidget::Private
+class FilterByConstellation::Private
 {
-public:
-  Private(FilterByObservedWidget *q);
-  Wt::Signal<> changed;
-  Wt::WComboBox *combo;
-private:
-  FilterByObservedWidget *q;
+  public:
+    Private( FilterByConstellation *q );
+    Wt::Signal<> changed;
+    ConstellationFinder::Constellation selected;
+    Filter filter = [](const ConstellationFinder::Constellation &) { return true; };
+    Wt::WStandardItemModel *model;
+    Wt::WComboBox *constellationsCombo;
+  private:
+    class FilterByConstellation *const q;
 };
-
-#endif // FILTERBYOBSERVEDWIDGET_H
-
-
+#endif // FILTERBYCONSTELLATION_P_H

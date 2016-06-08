@@ -16,20 +16,24 @@
  * 
  */
 
-#ifndef FILTERBYCONSTELLATION_P_H
-#define FILTERBYCONSTELLATION_P_H
-#include "widgets/filterbyconstellation.h"
+#ifndef OBJECTPOPUPMENU_P_H
+#define OBJECTPOPUPMENU_P_H
 
-class FilterByConstellation::Private
+#include "widgets/skyobjects/objectpopupmenu.h"
+#include "models/Models"
+#include "session.h"
+
+class ObjectPopupMenu::Private
 {
-  public:
-    Private( FilterByConstellation *q );
-    Wt::Signal<> changed;
-    ConstellationFinder::Constellation selected;
-    Filter filter = [](const ConstellationFinder::Constellation &) { return true; };
-    Wt::WStandardItemModel *model;
-    Wt::WComboBox *constellationsCombo;
-  private:
-    class FilterByConstellation *const q;
+public:
+  Private(ObjectPopupMenu *q);
+  Wt::Signal<AstroSessionObjectPtr> objectsListChanged;
+
+private:
+  ObjectPopupMenu *q;
 };
-#endif // FILTERBYCONSTELLATION_P_H
+
+#endif // OBJECTPOPUPMENU_P_H
+
+
+ 

@@ -33,8 +33,8 @@
 #include <Wt/WText>
 #include <Wt/WTimer>
 #include "models/Models"
-#include "widgets/dsspage.h"
-#include "widgets/astroobjectstable.h"
+#include "widgets/dss/dsspage.h"
+#include "widgets/skyobjects/astroobjectstable.h"
 #include <Wt/Auth/AbstractUserDatabase>
 #include "usersettingspage.h"
 #include "sendfeedbackpage.hpp"

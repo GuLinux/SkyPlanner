@@ -16,24 +16,20 @@
  * 
  */
 
-#ifndef OBJECTPOPUPMENU_P_H
-#define OBJECTPOPUPMENU_P_H
-
-#include "widgets/objectpopupmenu.h"
-#include "models/Models"
+#ifndef FILTERBYCATALOGUE_P_H
+#define FILTERBYCATALOGUE_P_H
+#include "widgets/filters/filterbyconstellation.h"
 #include "session.h"
 
-class ObjectPopupMenu::Private
+class FilterByCatalogue::Private
 {
-public:
-  Private(ObjectPopupMenu *q);
-  Wt::Signal<AstroSessionObjectPtr> objectsListChanged;
-
-private:
-  ObjectPopupMenu *q;
+  public:
+    Private( Session &session, FilterByCatalogue *q );
+    Session &session;
+    Wt::Signal<> changed;
+    Wt::WStandardItemModel *model;
+    Wt::WComboBox *cataloguesCombo;
+  private:
+    class FilterByCatalogue *const q;
 };
-
-#endif // OBJECTPOPUPMENU_P_H
-
-
- 
+#endif // FILTERBYCATALOGUE_P_H

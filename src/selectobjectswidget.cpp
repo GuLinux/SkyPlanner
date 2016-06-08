@@ -36,10 +36,10 @@
 #include <boost/format.hpp>
 #include <boost/thread.hpp>
 #include "constellationfinder.h"
-#include "widgets/objectnameswidget.h"
-#include "widgets/objectdifficultywidget.h"
-#include "widgets/astroobjectstable.h"
-#include "widgets/cataloguesdescriptionwidget.h"
+#include "widgets/skyobjects/objectnameswidget.h"
+#include "widgets/skyobjects/objectdifficultywidget.h"
+#include "widgets/skyobjects/astroobjectstable.h"
+#include "widgets/skyobjects/cataloguesdescriptionwidget.h"
 #include "skyplanner.h"
 #include <Wt/WGroupBox>
 #include <Wt/WSpinBox>
@@ -50,7 +50,7 @@
 #include <boost/regex.hpp>
 #include <boost/algorithm/string.hpp>
 #include <Wt/WCheckBox>
-#include "widgets/astroobjectwidget.h"
+#include "widgets/skyobjects/astroobjectwidget.h"
 #include <Wt/WImage>
 #include "astrosessiontab.h"
 #include "dbohelper.h"
