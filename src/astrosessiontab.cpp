@@ -47,7 +47,6 @@
 #include <Wt/WTextArea>
 #include <Wt/WStandardItemModel>
 #include <Wt/WStandardItem>
-#include <Wt/WDateEdit>
 #include <Wt/WLineEdit>
 #include <Wt/WToolBar>
 #include <Wt/WTemplate>
@@ -80,6 +79,7 @@
 #include "widgets/weatherwidget.h"
 #include "widgets/texteditordialog.h"
 #include "widgets/instrumentstable.h"
+#include "widgets/moonphasecalendar.h"
 #include "astrosessionpreview.h"
 #include "wglyphicon.h"
 #include "wt_utils.h"
@@ -398,8 +398,7 @@ WToolBar *AstroSessionTab::Private::actionsToolbar()
   auto changeNameOrDateButton = WW<WPushButton>("astrosessiontab_change_name_or_date"_wtr).css("btn btn-xs").onClick([=](WMouseEvent){
     WDialog *changeNameOrDateDialog = new WDialog("astrosessiontab_change_name_or_date"_wtr);
     WLineEdit *sessionName = WW<WLineEdit>(astroSession->name()).css("input-block-level");
-    WDateEdit *sessionDate = WW<WDateEdit>().css("input-block-level form-control-dateedit");
-    sessionDate->setDate(astroSession->wDateWhen().date());
+    MoonPhaseCalendar::Picker *sessionDate = WW<MoonPhaseCalendar::Picker>(astroSession->wDateWhen().date()).css("input-block-level");
     changeNameOrDateDialog->footer()->addWidget(WW<WPushButton>("Wt.WMessageBox.Ok"_wtr).css("btn btn-primary").onClick([=](WMouseEvent){
       Dbo::Transaction t(session);
       astroSession.modify()->setName(sessionName->text().toUTF8());

@@ -23,11 +23,15 @@
 #include <Wt/WDialog>
 #include <Wt/WPushButton>
 #include <Wt/WImage>
+#include <Wt/WDate>
+#include <Wt/WLocalDateTime>
+#include <Wt/WTime>
 #include <libnova/libnova.h>
 #include <boost/format.hpp>
-
+#include "wt_helpers.h"
 using namespace std;
 using namespace Wt;
+using namespace WtCommons;
 
 class MoonPhaseCalendar::Private {
 public:
@@ -79,19 +83,62 @@ WWidget* MoonPhaseCalendar::renderCell(WWidget* widget, const WDate& date)
 }
 
 
-WDialog* MoonPhaseCalendar::dialog(WObject *parent)
+
+class MoonPhaseCalendar::Picker::Private {
+public:
+  Private(const WDate &date);
+  WDate date;
+  WDialog *dialog;
+  MoonPhaseCalendar *calendar;
+  WPushButton *button;
+  WText *label;
+  void update_label();
+};
+
+MoonPhaseCalendar::Picker::Private::Private(const WDate& date) 
+  : date{ date.isNull() ? WDate::currentDate() : date },
+    dialog{new WDialog{WString::tr("set_date")}},
+    calendar{new MoonPhaseCalendar{dialog->contents()}},
+    button{new WPushButton{WString::tr("set_date")}},
+    label{new WText}
 {
-  WDialog *dialog = new WDialog();
-  MoonPhaseCalendar *calendar = new MoonPhaseCalendar(dialog->contents());
+//   button->setIcon("/resources/themes/bootstrap/3/date-edit-button.png"); // TODO: proper url?
   dialog->setClosable(true);
-  return dialog;
+  calendar->select(date);
+  calendar->clicked().connect([this](const WDate &date, _n5) {
+    this->date = date;
+    update_label();
+    dialog->hide();
+  });
+  update_label();
 }
 
-WPushButton* MoonPhaseCalendar::button(WContainerWidget* parent, const WString& text)
+void MoonPhaseCalendar::Picker::Private::update_label()
 {
-  WPushButton *button = new WPushButton(text, parent);
-  auto popup = dialog(button);
-  button->clicked().connect(bind([=]{popup->show();}));
-  return button;
+  label->setText(WLocalDateTime(date, {0,0,0}).toString("dddd, dd MMMM"));
 }
+
+
+
+MoonPhaseCalendar::Picker::Picker(const WDate& date, WContainerWidget* parent): WCompositeWidget(parent), dptr(date)
+{
+  auto container = WW<WContainerWidget>().add(d->label).add(d->button);
+  setImplementation(container.get());
+  d->button->clicked().connect(bind([=]{d->dialog->show();}));
+}
+
+
+WDate MoonPhaseCalendar::Picker::date() const
+{
+  return d->date;
+}
+
+void MoonPhaseCalendar::Picker::setDate(const WDate& date)
+{
+  d->date = date;
+  d->update_label();
+  d->calendar->select(date);
+}
+
+
 

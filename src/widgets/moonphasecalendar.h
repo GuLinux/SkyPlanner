@@ -31,8 +31,14 @@ public:
     
     virtual WWidget* renderCell(WWidget* widget, const Wt::WDate& date);
 
-    static Wt::WDialog *dialog(Wt::WObject *parent = nullptr);
-    static Wt::WPushButton *button(Wt::WContainerWidget* parent = nullptr, const Wt::WString& text = {});
+    class Picker : public Wt::WCompositeWidget {
+    public:
+      Picker(const Wt::WDate &date = {}, Wt::WContainerWidget* parent = 0);
+      Wt::WDate date() const;
+      void setDate(const Wt::WDate &date);
+    private:
+      D_PTR;
+    };
 private:
     D_PTR
 };

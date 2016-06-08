@@ -23,7 +23,6 @@
 #include "wt_helpers.h"
 #include "Models"
 #include <Wt/WLineEdit>
-#include <Wt/WDateEdit>
 #include <Wt/WPushButton>
 #include <Wt/WTable>
 #include <Wt/WMessageBox>
@@ -70,9 +69,8 @@ AstroSessionsListTab::AstroSessionsListTab(Session &session, Wt::WContainerWidge
   WLineEdit *newSessionName = WW<WLineEdit>();
   newSessionName->setWidth(300);
 //  newSessionName->setEmptyText("astrosessionslisttab_name"_wtr);
-  WDateEdit *newSessionDate = WW<WDateEdit>().css("form-control-dateedit");
+  auto *newSessionDate = WW<MoonPhaseCalendar::Picker>().get();
 //  newSessionDate->setEmptyText("astrosessionslisttab_when"_wtr);
-  newSessionDate->setDate(WDate::currentDate());
   setMinimumSize(WLength::Auto, 500);
   
   WPushButton *newSessionAdd = WW<WPushButton>("buttons_add"_wtr).css("btn btn-primary").onClick([=](WMouseEvent){
@@ -81,17 +79,13 @@ AstroSessionsListTab::AstroSessionsListTab(Session &session, Wt::WContainerWidge
       SkyPlanner::instance()->notification("notification_error_title"_wtr, "astrosessionslisttab_add_new_name_empty"_wtr, SkyPlanner::Notification::Error, 10  );
       return;
     }
-    if( ! newSessionDate->date().isValid() ) {
-      SkyPlanner::instance()->notification("notification_error_title"_wtr, "astrosessionslisttab_add_new_date_invalid"_wtr, SkyPlanner::Notification::Error, 10  );
-      return;
-    }
     d->addNew(newSessionName->text(), newSessionDate->date());
     d->populateSessions();
     newSessionName->setText("");
   }).setEnabled(true);
 //  newSessionName->keyWentUp().connect([=](WKeyEvent){ newSessionAdd->setEnabled(!newSessionName->text().empty() );});
 //  addWidget(WW<WContainerWidget>().css("form-inline").add(new WLabel{"astrosessionslisttab_add_new_label"_wtr}).add(newSessionName).add(newSessionDate).add(newSessionAdd));
-  addWidget(WW<WForm>(WForm::Inline).get()->add(newSessionName, "astrosessionslisttab_add_new_label")->add(newSessionDate)->addButton(MoonPhaseCalendar::button(nullptr, "Moon Calendar"))->addButton(newSessionAdd));
+  addWidget(WW<WForm>(WForm::Inline).get()->add(newSessionName, "astrosessionslisttab_add_new_label")->add(newSessionDate, {}, false)->addButton(newSessionAdd));
   
   vector<pair<Ephemeris::LunarPhase,boost::posix_time::ptime>> newMoons;
   Ephemeris moonPhaseEphemeris{{}, {}};

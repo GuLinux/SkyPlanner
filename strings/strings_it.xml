@@ -397,4 +397,6 @@ Dopo aver aggiunto una nuova sessione, clicca sul suo nome per aggiungere oggett
 <message id="printable_version_deprecated_use_preview"><strong>Questa sezione è obsoleta</strong>: puoi avere una versione stampabile della tua sessione molto migliore 
   cliccando il tasto <em>Anteprima con immagini</em>, personalizzando la pagina (invertendo le immagini, collassando elementi, etc)
   e quindi cliccando il tasto <em>Stampa</em>.<hr /></message>
+<message id="set_date">Cambia data</message>
+
 </messages>
