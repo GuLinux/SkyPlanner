@@ -47,7 +47,7 @@ NavigationBar::~NavigationBar()
 }
 
 NavigationBar::NavigationBar(const MenuItem::list &menu_items, WStackedWidget *stack, Session &session, Wt::WContainerWidget* parent)
-    : dptr(session, this)
+    : WNavigationBar(parent), dptr(session, this)
 {
   addStyleClass("navbar-inverse");
   setResponsive(true);

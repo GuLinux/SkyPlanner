@@ -205,7 +205,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
 
 
   root()->addWidget(d->notifications = WW<WContainerWidget>().addCss("skyplanner-notifications hidden-print"));
-  d->widgets = WW<WStackedWidget>( root() ).addCss("contents");
+  d->widgets = WW<WStackedWidget>().addCss("contents");
   d->widgets->setTransitionAnimation({WAnimation::AnimationEffect::Fade});
   d->widgets->setMargin(10);
   
@@ -239,7 +239,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
     {"mainmenu_feedback", "feedback/", NavigationBar::MenuItem::LoggedIn ,new SendFeedbackPage(d->session) },
   };
   NavigationBar *navBar = new NavigationBar(navbar_menu_items, d->widgets, d->session, root());
-  
+  root()->addWidget(d->widgets);
   auto loginLogoutMessage = [=] {
     if(d->session.login().loggedIn()) {
       Dbo::Transaction t(d->session);
