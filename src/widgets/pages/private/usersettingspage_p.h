@@ -18,7 +18,7 @@
 #ifndef USERSETTINGSPAGE_P_H
 #define USERSETTINGSPAGE_P_H
 
-#include "usersettingspage.h"
+#include "widgets/pages/usersettingspage.h"
 
 class UserSettingsPage::Private
 {

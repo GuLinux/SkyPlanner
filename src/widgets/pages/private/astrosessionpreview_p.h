@@ -16,34 +16,25 @@
  * 
  */
 
-#ifndef ASTROSESSIONSPAGE_P_H
-#define ASTROSESSIONSPAGE_P_H
-#include "astrosessionspage.h"
 
-class AstroSessionTab;
-class AstroSession;
-class Session;
-class AstroSessionsListTab;
+#ifndef ASTROSESSIONPREVIEW_P_H
+#define ASTROSESSIONPREVIEW_P_H
+#include "widgets/pages/astrosessionpreview.h"
+#include "types.h"
+#include "models/Models"
+#include "session.h"
 
-
-class AstroSessionsPage::Private
+class AstroSessionPreview::Private
 {
 public:
-  struct Tab {
-    std::string path;
-    AstroSessionTab *page;
-    Wt::WMenuItem *menuItem;
-    Wt::Dbo::ptr<AstroSession> astroSession;
-  };
-  Private(Session &session, AstroSessionsPage* q);
-  Session &session;
-  std::map<int, Tab> tabs;
-  Wt::WTabWidget *tabWidget;
-  AstroSessionsListTab *astroSessionsListTab;
-  void removeTab(const Wt::Dbo::ptr<AstroSession> &astroSession);
-  std::map<std::string,std::string> sessionsNamesCache;
+    Private(const AstroGroup& astroGroup, Session& session, AstroSessionPreview* q);
+    AstroGroup astroGroup;
+    Session &session;
+    Wt::Signal<> backClicked;
+    Wt::Signal<> sessionsChanged;
 private:
-  class AstroSessionsPage* const q;
+    class AstroSessionPreview* const q;
 };
 
-#endif // ASTROSESSIONSPAGE_P_H
+
+#endif // ASTROSESSIONPREVIEW_P_H

@@ -23,7 +23,7 @@
 #include "wt_helpers.h"
 #include "wform.h"
 #include "session.h"
-#include "placewidget.h"
+#include "widgets/placewidget.h"
 #include <Wt/WText>
 #include <Wt/WComboBox>
 #include <Wt/Dbo/QueryModel>
@@ -35,7 +35,7 @@
 #include <boost/format.hpp>
 #include "ephemeris.h"
 #include "types.h"
-#include "selectobjectswidget.h"
+#include "widgets/skyobjects/selectobjectswidget.h"
 #include "widgets/skyobjects/objectdifficultywidget.h"
 #include "widgets/skyobjects/objectnameswidget.h"
 #include "widgets/skyobjects/cataloguesdescriptionwidget.h"
@@ -80,7 +80,7 @@
 #include "widgets/texteditordialog.h"
 #include "widgets/instrumentstable.h"
 #include "widgets/moonphasecalendar.h"
-#include "astrosessionpreview.h"
+#include "widgets/pages/astrosessionpreview.h"
 #include "wglyphicon.h"
 #include "wt_utils.h"
 

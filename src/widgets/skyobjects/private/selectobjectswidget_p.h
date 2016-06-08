@@ -18,7 +18,7 @@
 
 #ifndef SELECTOBJECTSWIDGET_P_H
 #define SELECTOBJECTSWIDGET_P_H
-#include "selectobjectswidget.h"
+#include "widgets/skyobjects/selectobjectswidget.h"
 #include <boost/thread.hpp>
 #include "utils/format.h"
 #include "widgets/skyobjects/astroobjectstable.h"

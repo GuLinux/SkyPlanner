@@ -18,7 +18,7 @@
 
 #ifndef HOMEPAGE_P_H
 #define HOMEPAGE_P_H
-#include "homepage.h"
+#include "widgets/pages/homepage.h"
 
 namespace Wt
 {

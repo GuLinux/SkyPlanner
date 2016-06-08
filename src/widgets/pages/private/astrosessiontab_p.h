@@ -18,7 +18,7 @@
 
 #ifndef ASTROSESSIONTAB_P_H
 #define ASTROSESSIONTAB_P_H
-#include "astrosessiontab.h"
+#include "widgets/pages/astrosessiontab.h"
 #include <forecast.h>
 #include "types.h"
 #include "models/Models"

@@ -18,7 +18,7 @@
 #ifndef SENDFEEDBACKPAGE_P_H
 #define SENDFEEDBACKPAGE_P_H
 
-#include "sendfeedbackpage.hpp"
+#include "widgets/pages/sendfeedbackpage.hpp"
 #include <Wt/WJavaScript>
 class SendFeedbackPage::Private
 {

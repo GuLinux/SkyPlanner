@@ -16,27 +16,27 @@
  * 
  */
 
-#ifndef PLACEWIDGET_P_H
-#define PLACEWIDGET_P_H
-#include "placewidget.h"
+#ifndef ASTROSESSIONSLISTTAB_P_H
+#define ASTROSESSIONSLISTTAB_P_H
+#include "widgets/pages/astrosessionslisttab.h"
 
-#include "widgets/WGoogleMap"
+namespace Wt {
+class WTable;
+}
 
-class MapsWidget : public Wt::WGoogleMapMod {
-public:
-    MapsWidget(Wt::WLineEdit *searchBox, const Wt::JSignal<> &mapReady, Wt::WContainerWidget* parent = 0);
-    void centerToGeoLocation();
-};
-
-class PlaceWidget::Private
+class Session;
+class AstroSession;
+class AstroSessionsListTab::Private
 {
 public:
-    Private(const Wt::Dbo::ptr< AstroSession >& astroSession, Session& session, PlaceWidget* q);
-    Wt::Dbo::ptr< AstroSession > astroSession;
+    Private(Session& session, AstroSessionsListTab* q);
     Session &session;
-    Wt::JSignal<> mapReady;
-    Wt::Signal<double,double> placeChanged;
+    Wt::WTable *sessionsTable;
+    void populateSessions();
+    Wt::Signal<Wt::Dbo::ptr<AstroSession>> sessionClicked;
+    Wt::Signal<Wt::Dbo::ptr<AstroSession>> deletingSession;
+    Wt::Dbo::ptr<AstroSession> addNew(const Wt::WString &name, const Wt::WDate &date);
 private:
-    class PlaceWidget* const q;
+    class AstroSessionsListTab* const q;
 };
-#endif // PLACEWIDGET_P_H
+#endif // ASTROSESSIONSLISTTAB_P_H

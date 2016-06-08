@@ -16,27 +16,34 @@
  * 
  */
 
-#ifndef ASTROSESSIONSLISTTAB_P_H
-#define ASTROSESSIONSLISTTAB_P_H
-#include "astrosessionslisttab.h"
+#ifndef ASTROSESSIONSPAGE_P_H
+#define ASTROSESSIONSPAGE_P_H
+#include "widgets/pages/astrosessionspage.h"
 
-namespace Wt {
-class WTable;
-}
-
-class Session;
+class AstroSessionTab;
 class AstroSession;
-class AstroSessionsListTab::Private
+class Session;
+class AstroSessionsListTab;
+
+
+class AstroSessionsPage::Private
 {
 public:
-    Private(Session& session, AstroSessionsListTab* q);
-    Session &session;
-    Wt::WTable *sessionsTable;
-    void populateSessions();
-    Wt::Signal<Wt::Dbo::ptr<AstroSession>> sessionClicked;
-    Wt::Signal<Wt::Dbo::ptr<AstroSession>> deletingSession;
-    Wt::Dbo::ptr<AstroSession> addNew(const Wt::WString &name, const Wt::WDate &date);
+  struct Tab {
+    std::string path;
+    AstroSessionTab *page;
+    Wt::WMenuItem *menuItem;
+    Wt::Dbo::ptr<AstroSession> astroSession;
+  };
+  Private(Session &session, AstroSessionsPage* q);
+  Session &session;
+  std::map<int, Tab> tabs;
+  Wt::WTabWidget *tabWidget;
+  AstroSessionsListTab *astroSessionsListTab;
+  void removeTab(const Wt::Dbo::ptr<AstroSession> &astroSession);
+  std::map<std::string,std::string> sessionsNamesCache;
 private:
-    class AstroSessionsListTab* const q;
+  class AstroSessionsPage* const q;
 };
-#endif // ASTROSESSIONSLISTTAB_P_H
+
+#endif // ASTROSESSIONSPAGE_P_H

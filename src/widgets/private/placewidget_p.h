@@ -16,33 +16,27 @@
  * 
  */
 
-#ifndef TELESCOPESPAGE_P_H
-#define TELESCOPESPAGE_P_H
-#include "telescopespage.h"
+#ifndef PLACEWIDGET_P_H
+#define PLACEWIDGET_P_H
+#include "widgets/placewidget.h"
 
-namespace Wt {
-  class WCheckBox;
-}
+#include "widgets/WGoogleMap"
 
-class TelescopesPage::Private
-{
-  public:
-    Private( Session &session, TelescopesPage *q );
-    Session &session;
-    void loginChanged();
-    void populateTelescopes();
-    void populateEyepieces();
-    void populateFocalMultipliers();
-    void setupTelescopesTable();
-    void setupEyepiecesTable();
-    void setupFocalMultipliersTable();
-    Wt::WTable *telescopesTable;
-    Wt::WTable *eyepiecesTable;
-    Wt::WTable *focalMultipliersTable;
-    Wt::WCheckBox *isDefault;
-    Wt::Signal<> changed;
-  private:
-    class TelescopesPage *const q;
+class MapsWidget : public Wt::WGoogleMapMod {
+public:
+    MapsWidget(Wt::WLineEdit *searchBox, const Wt::JSignal<> &mapReady, Wt::WContainerWidget* parent = 0);
+    void centerToGeoLocation();
 };
 
-#endif // TELESCOPESPAGE_P_H
+class PlaceWidget::Private
+{
+public:
+    Private(const Wt::Dbo::ptr< AstroSession >& astroSession, Session& session, PlaceWidget* q);
+    Wt::Dbo::ptr< AstroSession > astroSession;
+    Session &session;
+    Wt::JSignal<> mapReady;
+    Wt::Signal<double,double> placeChanged;
+private:
+    class PlaceWidget* const q;
+};
+#endif // PLACEWIDGET_P_H

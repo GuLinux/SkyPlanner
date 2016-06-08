@@ -6,22 +6,12 @@ include_directories(${LIBHARU_PREFIX}/include/)
 set(SkyPlanner_SRCS
   skyplanner.cpp
   forecast.cpp
-  placewidget.cpp
-  astrosessiontab.cpp
-  astrosessionslisttab.cpp
-  astrosessionspage.cpp
-  selectobjectswidget.cpp
   main.cpp
   utils/autopostresource.cpp
   utils/curl.cpp
-  telescopespage.cpp
   exportastrosessionresource.cpp
-  usersettingspage.cpp
-  sendfeedbackpage.cpp
-  homepage.cpp
   dss.cpp
   geocoder.cpp
-  astrosessionpreview.cpp
   ${CMAKE_CURRENT_BINARY_DIR}/style.css.cpp
 )
 include(models/source_files.cmake)

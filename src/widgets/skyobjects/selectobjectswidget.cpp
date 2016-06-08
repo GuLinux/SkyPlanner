@@ -52,7 +52,7 @@
 #include <Wt/WCheckBox>
 #include "widgets/skyobjects/astroobjectwidget.h"
 #include <Wt/WImage>
-#include "astrosessiontab.h"
+#include "widgets/pages/astrosessiontab.h"
 #include "dbohelper.h"
 #include "urls.h"
 #include "c++/stlutils.h"

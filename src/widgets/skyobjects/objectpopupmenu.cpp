@@ -33,8 +33,8 @@
 #include "utils/format.h"
 #include "utils/autopostresource.h"
 #include "skyplanner.h"
-#include "sendfeedbackpage.hpp"
-#include "astrosessiontab.h"
+#include "widgets/pages/sendfeedbackpage.hpp"
+#include "widgets/pages/astrosessiontab.h"
 #include <findneighbour.h>
 
 using namespace std;

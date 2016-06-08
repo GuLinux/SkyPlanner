@@ -16,25 +16,33 @@
  * 
  */
 
+#ifndef TELESCOPESPAGE_P_H
+#define TELESCOPESPAGE_P_H
+#include "widgets/pages/telescopespage.h"
 
-#ifndef ASTROSESSIONPREVIEW_P_H
-#define ASTROSESSIONPREVIEW_P_H
-#include "astrosessionpreview.h"
-#include "types.h"
-#include "models/Models"
-#include "session.h"
+namespace Wt {
+  class WCheckBox;
+}
 
-class AstroSessionPreview::Private
+class TelescopesPage::Private
 {
-public:
-    Private(const AstroGroup& astroGroup, Session& session, AstroSessionPreview* q);
-    AstroGroup astroGroup;
+  public:
+    Private( Session &session, TelescopesPage *q );
     Session &session;
-    Wt::Signal<> backClicked;
-    Wt::Signal<> sessionsChanged;
-private:
-    class AstroSessionPreview* const q;
+    void loginChanged();
+    void populateTelescopes();
+    void populateEyepieces();
+    void populateFocalMultipliers();
+    void setupTelescopesTable();
+    void setupEyepiecesTable();
+    void setupFocalMultipliersTable();
+    Wt::WTable *telescopesTable;
+    Wt::WTable *eyepiecesTable;
+    Wt::WTable *focalMultipliersTable;
+    Wt::WCheckBox *isDefault;
+    Wt::Signal<> changed;
+  private:
+    class TelescopesPage *const q;
 };
 
-
-#endif // ASTROSESSIONPREVIEW_P_H
+#endif // TELESCOPESPAGE_P_H
