@@ -39,8 +39,9 @@ public:
     class DayPhaseWidget : public WContainerWidget {
     public:
         DayPhaseWidget(WDate date, WText *day_text, WContainerWidget* parent = 0);
-	WDate date;
 	WText *day_text;
+        DayPhaseWidget *update(const WDate &date);
+	WImage *image;
     };
 private:
     MoonPhaseCalendar *q;
@@ -61,25 +62,40 @@ MoonPhaseCalendar::~MoonPhaseCalendar()
 }
 
 MoonPhaseCalendar::Private::DayPhaseWidget::DayPhaseWidget(WDate date, WText* day_text, WContainerWidget* parent)
-  : WContainerWidget(parent), date{date}, day_text{day_text}
+  : WContainerWidget(parent), day_text{day_text}
 {
   setStyleClass("moon-calendar-cell");
+  image = new WImage();
+  day_text->addStyleClass("moon-calendar-text");
+  addWidget(day_text);
+  image->addStyleClass("moon-calendar-image");
+  addWidget( image );
+  update(date);
+
+}
+
+MoonPhaseCalendar::Private::DayPhaseWidget* MoonPhaseCalendar::Private::DayPhaseWidget::update(const WDate& date)
+{
   day_text->addStyleClass("moon-calendar-text");
   auto moonPhaseAngle = ln_get_lunar_phase(date.toJulianDay());
   bool is_crescent = ln_get_lunar_bright_limb(date.toJulianDay()) > 180;
   double phase = (is_crescent ? 180. - moonPhaseAngle : 180. + moonPhaseAngle) / 360.;
-  addWidget(day_text);
-  auto image = new WImage( URLs::moon_phase_image(phase));
-  image->addStyleClass("moon-calendar-image");
-  addWidget( image );
+  image->setImageLink(URLs::moon_phase_image(phase));
+  return this;
 }
+
+
+
 
 
 WWidget* MoonPhaseCalendar::renderCell(WWidget* widget, const WDate& date)
 {
-//   if(widget)
-//     return widget;
-  return new Private::DayPhaseWidget(date, reinterpret_cast<WText*>(WCalendar::renderCell(widget, date)));
+  auto cell = dynamic_cast<Private::DayPhaseWidget*>(widget);
+  if(cell) {
+    WCalendar::renderCell(cell->day_text, date);
+    return cell->update(date);
+  }
+  return new Private::DayPhaseWidget(date, reinterpret_cast<WText*>(WCalendar::renderCell(nullptr, date)));
 }
 
 
