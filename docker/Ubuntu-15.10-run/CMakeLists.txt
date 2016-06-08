@@ -1,5 +1,0 @@
-get_filename_component(entrypoint_dir ${CMAKE_CURRENT_BINARY_DIR} NAME)
-set(entrypoint_filename "${entrypoint_dir}/entrypoint")
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Dockerfile Dockerfile @ONLY)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/entrypoint entrypoint @ONLY)
-add_custom_target(docker_ubuntu_run_img docker build -t skyplanner-ubuntu-run-img-${DOCKER_SUFFIX} -f ${CMAKE_CURRENT_BINARY_DIR}/Dockerfile ${CMAKE_CURRENT_BINARY_DIR}/.. DEPENDS docker_build_ubuntu)

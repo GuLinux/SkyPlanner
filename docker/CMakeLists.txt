@@ -1,6 +1,0 @@
-set(ubuntu_package_filename ${PROJECT_NAME}-${SkyPlanner_VERSION}_ubuntu15.04.deb)
-set(ubuntu_package_file ${CMAKE_CURRENT_BINARY_DIR}/${ubuntu_package_filename})
-set(DOCKER_SUFFIX "testing" CACHE STRING "Docker images and containers suffix (default: testing)")
-add_subdirectory(Ubuntu-15.10-build/)
-add_subdirectory(Ubuntu-15.10-run/)
-add_subdirectory(postgres-skyplanner)

@@ -1,2 +1,0 @@
-#!/bin/bash
-[[ -z "$( docker ps -aqf name="$1")" ]] || docker rm -f "$1"
