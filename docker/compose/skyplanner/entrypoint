@@ -4,7 +4,6 @@ STATIC_FILES_PATH="$DATA_PATH/SkyPlanner-Static"
 BUILD_PROJECT="true"
 RUN_PROJECT="true"
 
-set -e
 
 while [[ -n "$1" && "$1" != "--" ]]; do
   case "$1" in
@@ -19,6 +18,7 @@ while [[ -n "$1" && "$1" != "--" ]]; do
 done
 shift
 echo "SkyPlanner: build=$BUILD_PROJECT; run=$RUN_PROJECT" >&2
+set -e
 
 mkdir -p "$STATIC_FILES_PATH"
 
