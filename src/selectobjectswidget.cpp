@@ -55,10 +55,12 @@
 #include "astrosessiontab.h"
 #include "dbohelper.h"
 #include "urls.h"
+#include "c++/stlutils.h"
 
 using namespace Wt;
 using namespace WtCommons;
 using namespace std;
+using namespace GuLinux;
 
 
 SelectObjectsWidget::Private::Private(const Dbo::ptr< AstroSession >& astroSession, Session& session, SelectObjectsWidget* q) : astroSession(astroSession), session(session),
@@ -197,6 +199,7 @@ void SelectObjectsWidget::populateFor(const Dbo::ptr< Telescope > &telescope , T
     Ephemeris ephemeris({astroSession->position().latitude, astroSession->position().longitude}, d->timezone);
     auto twilight = ephemeris.astronomicalTwilight(astroSession->date());
     long loadedObjects = 0;
+    benchmark benchmark_search{"populate objects cache", [=](const string &name, int, double elapsed){ WServer::instance()->log("notice") << name << " took " << elapsed << "ms"; }, 1};
     for(auto ngcObject: ephemerisCacheSession.find<NgcObject>().where("magnitude < ?").bind(magnitudeLimit).resultList()) {
       auto bestAltitude = ephemeris.findBestAltitude(ngcObject->coordinates(), twilight.set, twilight.rise);
       if(bestAltitude.coordinates.altitude.degrees() > 17.) {
