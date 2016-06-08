@@ -24,6 +24,7 @@
 class URLs
 {
 public:
+  static const std::string home;
   static const std::string loading_indicator;
   static const std::string skyplanner_logo;
   static const std::string bootstrap_url;

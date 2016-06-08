@@ -57,7 +57,6 @@ public:
     std::shared_ptr<Notification>notification( const Wt::WString &title, const Wt::WString &content, Notification::Type type, int autoHideSeconds = 0 , Wt::WContainerWidget *addTo = nullptr, const std::string &categoryTag = {});
     std::shared_ptr<Notification>notification( const Wt::WString &title, Wt::WWidget *content, Notification::Type type, int autoHideSeconds = 0 , Wt::WContainerWidget *addTo = nullptr, const std::string &categoryTag = {});
     void clearNotifications();
-    static const std::string HOME_PATH;
     Wt::WLogEntry uLog (const std::string &type) const;
 
     Wt::Signal<> &telescopesListChanged() const;

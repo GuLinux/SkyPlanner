@@ -59,9 +59,11 @@
 #include <Wt/WMemoryResource>
 #include <Wt/WFileResource>
 #include "widgets/pages/astrosessionpreview.h"
+#include "widgets/navigationbar.h"
 #include "settings.h"
 #include "urls.h"
 #include "cookieslawdisclaimer.h"
+#include "c++/containers_streams.h"
 
 using namespace std;
 using namespace Wt;
@@ -99,7 +101,6 @@ SkyPlanner::SessionInfo::SessionInfo() {
     lastEvent = boost::posix_time::second_clock().local_time();
 }
 
-const string SkyPlanner::HOME_PATH = "/home/";
 
 class AuthWidget : public Auth::AuthWidget {
 public:
@@ -117,6 +118,8 @@ void AuthWidget::registerNewUser(const Auth::Identity& oauth)
   stack->setCurrentWidget(registerWidget);
 //     Wt::Auth::AuthWidget::registerNewUser(oauth);
 }
+
+
 
 
 SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
@@ -200,18 +203,12 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
   }
 
 
-  WNavigationBar *navBar = WW<WNavigationBar>(root()).addCss( "navbar-inverse" );
-
-  navBar->setResponsive( true );
-  navBar->setTitle( WString::tr("application_title"), WLink(WLink::InternalPath, HOME_PATH) );
 
   root()->addWidget(d->notifications = WW<WContainerWidget>().addCss("skyplanner-notifications hidden-print"));
   d->widgets = WW<WStackedWidget>( root() ).addCss("contents");
   d->widgets->setTransitionAnimation({WAnimation::AnimationEffect::Fade});
   d->widgets->setMargin(10);
-  WMenu *navBarMenu = new WMenu(d->widgets);
   
-  navBar->addMenu(navBarMenu);
   WStackedWidget *authWidgetStack = new WStackedWidget;
   Auth::AuthWidget *authWidget = new AuthWidget( Session::auth(), d->session.users(), d->session.login(), authWidgetStack );
   authWidgetStack->addWidget(authWidget);
@@ -221,73 +218,27 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
   authWidget->processEnvironment();
 //   authWidget->setInternalBasePath("/login");
   
-  navBarMenu->setInternalPathEnabled("/");
   
-  WMenuItem *home = navBarMenu->addItem(WString::tr("mainmenu_home"), new HomePage(d->session));
-  home->setPathComponent("home/");
   
-  WMenuItem *authMenuItem;
-  d->loggedOutItems.push_back(authMenuItem = navBarMenu->addItem(WString::tr("mainmenu_login"), authWidgetStack));
-  authMenuItem->setPathComponent("login/");
+
+  
   TelescopesPage *telescopesPage = new TelescopesPage(d->session);
   telescopesPage->changed().connect([=](_n6) { d->telescopesListChanged.emit(); });
   d->astrosessionspage = new AstroSessionsPage(d->session);
 
-  WMenuItem *mySessionsMenuItem = navBarMenu->addItem(WString::tr("mainmenu_my_sessions"), d->astrosessionspage);
-  d->loggedInItems.push_back(mySessionsMenuItem);
-  mySessionsMenuItem->setPathComponent("sessions/");
-
-
-  WMenuItem *userSubMenu = WW<WMenuItem>(navBarMenu->addItem("")).addCss("hidden-xs");
-  userSubMenu->setInternalPathEnabled(false);
-  d->loggedInItems.push_back(userSubMenu);
-  WPopupMenu *userPopup = new WPopupMenu(d->widgets);
-  userPopup->setInternalPathEnabled("/");
-  userSubMenu->setMenu(userPopup);
-
-  WMenuItem *telescopesMenuItem = WW<WMenuItem>(userPopup->addItem(WString::tr("mainmenu_my_telescopes"), telescopesPage));
-  d->loggedInItems.push_back(telescopesMenuItem);
-  telescopesMenuItem->setPathComponent("instruments/");
-
-  WMenuItem *userSettingsMenuItem = WW<WMenuItem>(userPopup->addItem(WString::tr("mainmenu_my_settings"), new UserSettingsPage(d->session)));
-  d->loggedInItems.push_back(userSettingsMenuItem);
-  userSettingsMenuItem->setPathComponent("settings/");
-
-  WMenuItem *logout = WW<WMenuItem>(userPopup->addItem(WString::tr("mainmenu_logout")));
-  logout->setPathComponent("logout/");
-  d->loggedInItems.push_back(logout);
-  logout->triggered().connect([=](WMenuItem*,_n5){ d->session.login().logout(); });
-  
- 
-  WMenuItem *feedbackMenuItem = navBarMenu->addItem(WString::tr("mainmenu_feedback"), new SendFeedbackPage(d->session));
-  d->loggedInItems.push_back(feedbackMenuItem);
-  feedbackMenuItem->setPathComponent("feedback/");
-
-
-  auto rightMenu = new Wt::WMenu();
-  navBar->addMenu(rightMenu, Wt::AlignRight);
-
-/*
-  WMenuItem *gulinuxMenuItem = WW<WMenuItem>(rightMenu->addItem("GuLinux")).addCss("bold").addCss("menu-item-highlight");
-  gulinuxMenuItem->setInternalPathEnabled(false);
-  WPopupMenu *gulinuxPopup = new WPopupMenu;
-  gulinuxMenuItem->setMenu(gulinuxPopup);
-  auto blogMenuItem = gulinuxPopup->addItem("Blog");
-  blogMenuItem->setLink("http://blog.gulinux.net");
-  blogMenuItem->setLinkTarget(Wt::TargetNewWindow);
-  auto skyPlannerMenuItem = gulinuxPopup->addItem("SkyPlanner Homepage");
-  skyPlannerMenuItem->setLink((format("http://blog.gulinux.net/skyplanner?lang=%s") % locale().name()).str() );
-  skyPlannerMenuItem->setLinkTarget(Wt::TargetNewWindow);
-*/
-  
-  auto setMenuItemsVisibility = [=] {
-    bool loggedIn = d->session.login().loggedIn();
-    for(auto i: d->loggedInItems)
-      i->setHidden(!loggedIn);
-    for(auto i: d->loggedOutItems)
-      i->setHidden(loggedIn);
+  WMenuItem *userSubMenu;
+  list<NavigationBar::MenuItem> navbar_menu_items {
+    {"mainmenu_home", "home/", NavigationBar::MenuItem::Both ,new HomePage{d->session}},
+    {"mainmenu_login", "login/", NavigationBar::MenuItem::LoggedOut ,authWidgetStack },
+    {"mainmenu_my_sessions", "sessions/", NavigationBar::MenuItem::LoggedIn ,d->astrosessionspage },
+    { {}, {}, NavigationBar::MenuItem::LoggedIn, nullptr, {
+      {"mainmenu_my_telescopes", "instruments/", NavigationBar::MenuItem::LoggedIn ,telescopesPage },
+      {"mainmenu_my_settings", "settings/", NavigationBar::MenuItem::LoggedIn ,new UserSettingsPage(d->session) },
+      {"mainmenu_logout", "logout/", NavigationBar::MenuItem::LoggedIn ,nullptr },
+    }, {"hidden-xs"}, &userSubMenu },
+    {"mainmenu_feedback", "feedback/", NavigationBar::MenuItem::LoggedIn ,new SendFeedbackPage(d->session) },
   };
-
+  NavigationBar *navBar = new NavigationBar(navbar_menu_items, d->widgets, d->session, root());
   
   auto loginLogoutMessage = [=] {
     if(d->session.login().loggedIn()) {
@@ -308,8 +259,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
  
   d->session.login().changed().connect([=](_n6){
     if(internalPathMatches("/login") || internalPathMatches("/logout"))
-      setInternalPath(HOME_PATH, true);
-    setMenuItemsVisibility();
+      setInternalPath(URLs::home, true);
     loginLogoutMessage();
     if(d->session.login().loggedIn() && d->initialInternalPath.size()) {
       spLog("notice") << "User logged in, setting internal path to previous value: " << d->initialInternalPath;
@@ -317,7 +267,6 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
       d->initialInternalPath = string{};
     }
   });
-  setMenuItemsVisibility();
   if(d->session.login().loggedIn())
     loginLogoutMessage();
   auto handlePath = [=](const string &newPath){
@@ -336,6 +285,9 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
     }
     if(internalPathMatches("/sessions")) {
       d->astrosessionspage->open(internalPathNextPart("/sessions/"));
+    }
+    if(internalPathMatches("/logout")) {
+      d->session.login().logout();
     }
     d->previousInternalPath = newPath;
   };
@@ -404,7 +356,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
  // searchByNameEdit->changed().connect([=](_n1){ startSearch(); });
   searchByNameEdit->keyWentUp().connect([=](WKeyEvent e) { if(e.key() == Key_Enter ) startSearch(); });
   if(!d->session.login().loggedIn() && ! (internalPathMatches("/dss") || internalPathMatches("/report") || internalPathMatches("/sessionpreview")) ) {
-    setInternalPath(HOME_PATH, true);
+    setInternalPath(URLs::home, true);
   }
   handlePath(internalPath());
 
@@ -423,7 +375,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
     </nav>
     
   )", XHTMLUnsafeText);
-  footer->bindString("share-url", wApp->makeAbsoluteUrl(wApp->bookmarkUrl(HOME_PATH)));
+  footer->bindString("share-url", wApp->makeAbsoluteUrl(wApp->bookmarkUrl(URLs::home)));
   root()->addWidget(footer);
 }
 
@@ -460,7 +412,7 @@ void SkyPlanner::Private::loadReport( const std::string &hexId )
   Dbo::Transaction t(session);
   AstroSessionPtr astroSession = session.find<AstroSession>().where("id = ?").where("report_shared = ?").bind(objectId).bind(true);
   if(!astroSession) {
-    wApp->setInternalPath(HOME_PATH, true);
+    wApp->setInternalPath(URLs::home, true);
     return;
   }
   auto placeInfo = ::GeoCoder::placeInformation(astroSession->position(), astroSession->when());
@@ -487,7 +439,7 @@ void SkyPlanner::Private::loadPreview( const std::string &hexId )
   AstroSessionPtr astroSession = session.find<AstroSession>().where("id = ?").where("preview_shared = ?").bind(objectId).bind(true);
   if(!astroSession) {
     spLog("notice") << "Preview for session " << objectId  << " not found, redirecting to home";
-    wApp->setInternalPath(HOME_PATH, true);
+    wApp->setInternalPath(URLs::home, true);
     return;
   }
   auto placeInfo = ::GeoCoder::placeInformation(astroSession->position(), astroSession->when());

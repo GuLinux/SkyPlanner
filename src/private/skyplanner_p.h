@@ -35,8 +35,6 @@ public:
     OnQuit onQuit;
     Session session;
     
-    std::vector<Wt::WMenuItem*> loggedInItems;
-    std::vector<Wt::WMenuItem*> loggedOutItems;
     Wt::WContainerWidget *notifications;
     Wt::WStackedWidget *widgets;
     void loadDSSPage(const std::string &hexId);
