@@ -299,12 +299,15 @@ div.weather-box {
 
 .moon-calendar-image {
   width: 2em;
+  float: right;
 }
 
 .moon-calendar-text {
   width: 2em;
+  float: left;
   display: inline;
 }
 .moon-calendar-cell {
-  width: 6em;
+  width: 5em;
+  height: 3em!important;
 }
