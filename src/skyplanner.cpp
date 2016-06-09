@@ -368,7 +368,7 @@ bool SkyPlanner::Private::searchByName(const string &name, AstroObjectsTable *ta
   spLog("notice") << "search by name: count=" << count;
   auto tablePage = AstroObjectsTable::Page::fromCount(page, count, [=](int p) { searchByName(name, table, p); });
   if(tablePage.total > 200) {
-    q->notifications()->show(WString::tr("select_objects_widget_add_by_name"), WString::tr("select_objects_widget_add_by_name_too_many"), Notification::Information, 5);
+    notifications->show(WString::tr("select_objects_widget_add_by_name"), WString::tr("select_objects_widget_add_by_name_too_many"), Notification::Information, 5);
     return false;
   }
 

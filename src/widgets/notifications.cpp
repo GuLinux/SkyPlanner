@@ -17,6 +17,7 @@
  */
 
 #include "notifications.h"
+#include <skyplanner.h>
 #include "wt_helpers.h"
 #include <Wt/WText>
 #include <Wt/WTimer>
@@ -43,7 +44,7 @@ Notifications::~Notifications()
 }
 
 Notifications::Notifications(Wt::WContainerWidget* parent)
-    : dptr(this)
+    : WContainerWidget(parent), dptr(this)
 {
   addStyleClass("skyplanner-notifications");
   addStyleClass("hidden-print");
@@ -56,10 +57,10 @@ void Notifications::clearNotifications()
   d->shownNotifications.clear();
 }
 
-Notification::ptr Notifications::show(const Wt::WString& title, Wt::WWidget* content, Notification::Type type, int autoHideSeconds, Wt::WContainerWidget* addTo, const std::__cxx11::string& categoryTag)
+Notification::ptr Notifications::show(const Wt::WString& title, Wt::WWidget* content, Notification::Type type, int autoHideSeconds, const string& categoryTag)
 {
   auto notification = make_shared<Notification>(title, content, type, true, categoryTag);
-  (addTo ? addTo : this)->addWidget(notification->widget() );
+  addWidget(notification->widget() );
   notification->widget()->animateShow({WAnimation::Fade, WAnimation::EaseInOut, 500});
   if(!categoryTag.empty()) {
     auto old_notification = find_if(begin(d->shownNotifications), end(d->shownNotifications), [categoryTag](const shared_ptr<Notification> &n){ return n->categoryTag() == categoryTag; });
@@ -74,7 +75,12 @@ Notification::ptr Notifications::show(const Wt::WString& title, Wt::WWidget* con
   return notification;
 }
 
-Notification::ptr Notifications::show(const Wt::WString& title, const Wt::WString& content, Notification::Type type, int autoHideSeconds, Wt::WContainerWidget* addTo, const std::__cxx11::string& categoryTag)
+Notification::ptr Notifications::show(const Wt::WString& title, const Wt::WString& content, Notification::Type type, int autoHideSeconds, const string& categoryTag)
 {
-  return show(title, new WText(content), type, autoHideSeconds, addTo, categoryTag);
+  return show(title, new WText(content), type, autoHideSeconds, categoryTag);
+}
+
+
+Notifications::ptr Notifications::instance() {
+  return SkyPlanner::instance()->notifications();
 }

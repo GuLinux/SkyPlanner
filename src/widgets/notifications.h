@@ -26,12 +26,12 @@ class Notifications : public Wt::WContainerWidget
 {
 public:
     typedef std::shared_ptr<Notifications> ptr;
+    static ptr instance();
     
     ~Notifications();
     Notifications(Wt::WContainerWidget* parent);
-    
-    Notification::ptr show( const Wt::WString &title, const Wt::WString &content, Notification::Type type, int autoHideSeconds = 0 , Wt::WContainerWidget *addTo = nullptr, const std::string &categoryTag = {});
-    Notification::ptr show( const Wt::WString &title, Wt::WWidget *content, Notification::Type type, int autoHideSeconds = 0 , Wt::WContainerWidget *addTo = nullptr, const std::string &categoryTag = {});
+    Notification::ptr show( const Wt::WString &title, const Wt::WString &content, Notification::Type type, int autoHideSeconds = 0, const std::string &categoryTag = {});
+    Notification::ptr show( const Wt::WString &title, Wt::WWidget *content, Notification::Type type, int autoHideSeconds = 0, const std::string &categoryTag = {});
     void clearNotifications();
 
 private:
