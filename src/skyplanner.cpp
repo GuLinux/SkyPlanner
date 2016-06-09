@@ -204,7 +204,7 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
 
 
 
-  root()->addWidget(d->notifications = WW<WContainerWidget>().addCss("skyplanner-notifications hidden-print"));
+  d->notifications = make_shared<Notifications>(root());
   d->widgets = WW<WStackedWidget>().addCss("contents");
   d->widgets->setTransitionAnimation({WAnimation::AnimationEffect::Fade});
   d->widgets->setMargin(10);
@@ -368,7 +368,7 @@ bool SkyPlanner::Private::searchByName(const string &name, AstroObjectsTable *ta
   spLog("notice") << "search by name: count=" << count;
   auto tablePage = AstroObjectsTable::Page::fromCount(page, count, [=](int p) { searchByName(name, table, p); });
   if(tablePage.total > 200) {
-    q->notification(WString::tr("select_objects_widget_add_by_name"), WString::tr("select_objects_widget_add_by_name_too_many"), Notification::Information, 5);
+    q->notifications()->show(WString::tr("select_objects_widget_add_by_name"), WString::tr("select_objects_widget_add_by_name_too_many"), Notification::Information, 5);
     return false;
   }
 
@@ -456,42 +456,17 @@ WLogEntry SkyPlanner::uLog(const string &type) const
     return WApplication::log(type) << "{user: '" << (d->loginname.empty() ? "anonymous" : WString("{1} ({2})").arg(d->loginname).arg(static_cast<long>(d->session.user().id())) ) << "'} ";
 }
 
-void SkyPlanner::clearNotifications()
-{
-  for(auto notification: d->shownNotifications)
-    notification->close();
-  d->shownNotifications.clear();
-}
-
-shared_ptr<Notification> SkyPlanner::notification(const WString &title, const WString &content, Notification::Type type, int autoHideSeconds, WContainerWidget *addTo, const string &categoryTag)
-{
-  return notification(title, new WText(content), type, autoHideSeconds, addTo, categoryTag);
-}
-shared_ptr<Notification> SkyPlanner::notification(const WString& title, WWidget* content, Notification::Type type, int autoHideSeconds, WContainerWidget* addTo, const string& categoryTag)
-{
-  auto notification = make_shared<Notification>(title, content, type, true, categoryTag);
-  (addTo ? addTo : d->notifications)->addWidget(notification->widget() );
-  notification->widget()->animateShow({WAnimation::Fade, WAnimation::EaseInOut, 500});
-  if(!categoryTag.empty()) {
-    auto old_notification = find_if(begin(d->shownNotifications), end(d->shownNotifications), [categoryTag](const shared_ptr<Notification> &n){ return n->categoryTag() == categoryTag; });
-    if(old_notification != end(d->shownNotifications)) {
-      (*old_notification)->close();
-    }
-  }
-  if(autoHideSeconds > 0)
-    WTimer::singleShot(1000*autoHideSeconds, [=](WMouseEvent) { notification->close(); } );
-  d->shownNotifications.insert(notification);
-  notification->closed().connect([=](_n6) { d->shownNotifications.erase(notification); });
-  return notification;
-}
-
-
 
 Signal<> &SkyPlanner::telescopesListChanged() const
 {
   return d->telescopesListChanged;
 }
 
+
+Notifications::ptr SkyPlanner::notifications() const
+{
+  return d->notifications;
+}
 
 
 #include "utils/stacktrace.h"

@@ -23,6 +23,7 @@
 #include "c++/dptr.h"
 #include "json_object.h"
 #include "widgets/notification.h"
+#include "widgets/notifications.h"
 
 class SkyPlanner : public Wt::WApplication
 {
@@ -42,9 +43,7 @@ public:
   SkyPlanner(const Wt::WEnvironment& environment, OnQuit onQuit);
     ~SkyPlanner();
     static SkyPlanner *instance();
-    std::shared_ptr<Notification>notification( const Wt::WString &title, const Wt::WString &content, Notification::Type type, int autoHideSeconds = 0 , Wt::WContainerWidget *addTo = nullptr, const std::string &categoryTag = {});
-    std::shared_ptr<Notification>notification( const Wt::WString &title, Wt::WWidget *content, Notification::Type type, int autoHideSeconds = 0 , Wt::WContainerWidget *addTo = nullptr, const std::string &categoryTag = {});
-    void clearNotifications();
+    Notifications::ptr notifications() const;
     Wt::WLogEntry uLog (const std::string &type) const;
 
     Wt::Signal<> &telescopesListChanged() const;

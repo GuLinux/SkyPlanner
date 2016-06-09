@@ -83,7 +83,7 @@ void SendFeedbackPage::Private::feedbackForm(const Wt::Dbo::ptr<NgcObject> &obje
 {
   content->clear();
   if(session.login().user().email().empty()) {
-    SkyPlanner::instance()->notification(WString::tr("notification_error_title"), WString::tr("feedback_user_without_email_error"), Notification::Error);
+    SkyPlanner::instance()->notifications()->show(WString::tr("notification_error_title"), WString::tr("feedback_user_without_email_error"), Notification::Error);
     wApp->setInternalPath("/", true);
     return;
   }
@@ -118,11 +118,11 @@ void SendFeedbackPage::Private::feedbackForm(const Wt::Dbo::ptr<NgcObject> &obje
     spLog("notice") << "email body   : " << body;
     if(client.connect()) {
       client.send(message);
-      SkyPlanner::instance()->notification(WString::tr("notification_success_title"), WString::tr("feedback_sent_notification"), Notification::Success, 10);
+      SkyPlanner::instance()->notifications()->show(WString::tr("notification_success_title"), WString::tr("feedback_sent_notification"), Notification::Success, 10);
     }
     else {
       spLog("error") << "Error connetting to SMTP Agent.";
-      SkyPlanner::instance()->notification(WString::tr("notification_error_title"), WString::tr("feedback_sending_error_notification"), Notification::Error);
+      SkyPlanner::instance()->notifications()->show(WString::tr("notification_error_title"), WString::tr("feedback_sending_error_notification"), Notification::Error);
     }
   });
   enableSendButtonConnection.disconnect();

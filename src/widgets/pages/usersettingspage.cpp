@@ -79,24 +79,24 @@ void UserSettingsPage::Private::onDisplay()
     Dbo::Transaction t(session);
     Auth::PasswordService &passwordService = session.passwordAuth();
     if(hasOldPassword && ! passwordService.verifyPassword(session.login().user(), oldPassword->text() )) {
-      SkyPlanner::instance()->notification(WString::tr("changepwd_error_title"), WString::tr("changepwd_wrong_password"), Notification::Error, 10);
+      SkyPlanner::instance()->notifications()->show(WString::tr("changepwd_error_title"), WString::tr("changepwd_wrong_password"), Notification::Error, 10);
       return;
     }
     if(newPassword->text() != newPasswordConfirm->text()) {
-      SkyPlanner::instance()->notification(WString::tr("changepwd_error_title"), WString::tr("changepwd__passwords_not_matching"), Notification::Error, 10);
+      SkyPlanner::instance()->notifications()->show(WString::tr("changepwd_error_title"), WString::tr("changepwd__passwords_not_matching"), Notification::Error, 10);
       return;
     }
     string email = session.login().user().email().empty() ? session.login().user().unverifiedEmail() : session.login().user().email();
     WValidator::Result passwordValidation = passwordService.strengthValidator()->validate(newPassword->text(), session.user()->loginName(), email);
     if( passwordValidation.state() != WValidator::Valid ) {
-      SkyPlanner::instance()->notification(WString::tr("changepwd_error_title"), passwordValidation.message(), Notification::Error, 10);
+      SkyPlanner::instance()->notifications()->show(WString::tr("changepwd_error_title"), passwordValidation.message(), Notification::Error, 10);
       return;
     }
     passwordService.updatePassword(session.login().user(), newPassword->text());
     oldPassword->setText(WString());
     newPassword->setText(WString());
     newPasswordConfirm->setText(WString());
-    SkyPlanner::instance()->notification(WString::tr("notification_success_title"), WString::tr("changepwd_passwords_changed"), Notification::Success, 10);
+    SkyPlanner::instance()->notifications()->show(WString::tr("notification_success_title"), WString::tr("changepwd_passwords_changed"), Notification::Success, 10);
   });
 
   auto enableChangePasswordButton = [=] {
@@ -146,7 +146,7 @@ void UserSettingsPage::Private::onDisplay()
     currentEmail->setText(newEmail->text());
     session.auth().verifyEmailAddress(user, newEmail->text().toUTF8());
     changeAddress->disable();
-    SkyPlanner::instance()->notification(WString::tr("user_settings_new_email"), WString::tr("user_settings_email_changed_notify") + WString::tr("user_settings_email_verification_notify"), Notification::Information, 10);
+    SkyPlanner::instance()->notifications()->show(WString::tr("user_settings_new_email"), WString::tr("user_settings_email_changed_notify") + WString::tr("user_settings_email_verification_notify"), Notification::Information, 10);
   });
 
 
@@ -159,7 +159,7 @@ void UserSettingsPage::Private::onDisplay()
     resendVerification->clicked().connect([=](WMouseEvent) {
       session.auth().verifyEmailAddress(user, user.unverifiedEmail());
       resendVerification->disable();
-      SkyPlanner::instance()->notification(WString::tr("user_settings_email_verification_notify_title"), WString::tr("user_settings_email_verification_notify"), Notification::Information, 10);
+      SkyPlanner::instance()->notifications()->show(WString::tr("user_settings_email_verification_notify_title"), WString::tr("user_settings_email_verification_notify"), Notification::Information, 10);
     });
     toolbar->addButton(resendVerification);
   }

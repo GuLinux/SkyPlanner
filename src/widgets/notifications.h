@@ -16,27 +16,26 @@
  *
  */
 
-#ifndef NOTIFICATION_H
-#define NOTIFICATION_H
+#ifndef NOTIFICATIONS_H
+#define NOTIFICATIONS_H
 
-#include "c++/dptr.h"
-#include <Wt/WString>
-#include <Wt/WWidget>
 #include <Wt/WContainerWidget>
-class Notification
+#include "c++/dptr.h"
+#include "notification.h"
+class Notifications : public Wt::WContainerWidget
 {
 public:
-      typedef std::shared_ptr<Notification> ptr;
-      enum Type { Alert, Error, Success, Information };
-      Notification(const Wt::WString &title, Wt::WWidget *content, Type type, bool addCloseButton, const std::string &categoryTag = {}, Wt::WContainerWidget *parent = 0);
-      ~Notification();
-      void close();
-      bool valid() const;
-      Wt::Signal<> &closed() const;
-      Wt::WWidget *widget() const;
-      std::string categoryTag() const;
+    typedef std::shared_ptr<Notifications> ptr;
+    
+    ~Notifications();
+    Notifications(Wt::WContainerWidget* parent);
+    
+    Notification::ptr show( const Wt::WString &title, const Wt::WString &content, Notification::Type type, int autoHideSeconds = 0 , Wt::WContainerWidget *addTo = nullptr, const std::string &categoryTag = {});
+    Notification::ptr show( const Wt::WString &title, Wt::WWidget *content, Notification::Type type, int autoHideSeconds = 0 , Wt::WContainerWidget *addTo = nullptr, const std::string &categoryTag = {});
+    void clearNotifications();
+
 private:
     D_PTR
 };
 
-#endif // NOTIFICATION_H
+#endif // NOTIFICATIONS_H

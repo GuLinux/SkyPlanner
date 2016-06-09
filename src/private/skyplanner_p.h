@@ -35,7 +35,7 @@ public:
     OnQuit onQuit;
     Session session;
     
-    Wt::WContainerWidget *notifications;
+    Notifications::ptr notifications;
     Wt::WStackedWidget *widgets;
     void loadDSSPage(const std::string &hexId);
     void loadReport(const std::string &hexId);
@@ -46,7 +46,6 @@ public:
     Wt::WContainerWidget *reportsContainer;
     Wt::WString loginname;
     Wt::Signal<> telescopesListChanged;
-    std::set<std::shared_ptr<Notification>> shownNotifications;
     std::string lastNameSearch;
     bool agentIsBot;
     std::string initialInternalPath;
