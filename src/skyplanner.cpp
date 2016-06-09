@@ -296,17 +296,14 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
   d->widgets->addWidget(d->reportsContainer = new WContainerWidget);
   WContainerWidget *searchByNameWidget = WW<WContainerWidget>();
   d->widgets->addWidget(searchByNameWidget);
-  WLineEdit *searchByNameEdit = new WLineEdit;
-  navBar->addSearch(searchByNameEdit, AlignRight);
-  searchByNameEdit->setTextSize(0);
-  searchByNameEdit->setEmptyText(WString::tr("select_objects_widget_add_by_name"));
-  auto startSearch = [=] {
-    spLog("notice") << "Search by name: original=" << searchByNameEdit->valueText();
-    string nameToSearch = boost::algorithm::trim_copy(searchByNameEdit->valueText().toUTF8());
+
+  auto startSearch = [=] (const WString &value_text) {
+    spLog("notice") << "Search by name: original=" << value_text;
+    string nameToSearch = boost::algorithm::trim_copy(value_text.toUTF8());
     searchByNameWidget->clear();
     transform(nameToSearch.begin(), nameToSearch.end(), nameToSearch.begin(), ::tolower);
     
-    spLog("notice") << "Search by name: original=" << searchByNameEdit->valueText() << ", trimmed: " << nameToSearch << ";";
+    spLog("notice") << "Search by name: original=" << value_text << ", trimmed: " << nameToSearch << ";";
     boost::replace_all(nameToSearch, "*", "%");
     if(nameToSearch.empty()) {
       return;
@@ -352,9 +349,8 @@ SkyPlanner::SkyPlanner( const WEnvironment &environment, OnQuit onQuit )
     if(d->searchByName(nameToSearch, resultsTable))
       d->widgets->setCurrentWidget(searchByNameWidget);
   };
-
- // searchByNameEdit->changed().connect([=](_n1){ startSearch(); });
-  searchByNameEdit->keyWentUp().connect([=](WKeyEvent e) { if(e.key() == Key_Enter ) startSearch(); });
+  navBar->search().connect([=](const WString &s, _n5) { startSearch(s);  });
+  
   if(!d->session.login().loggedIn() && ! (internalPathMatches("/dss") || internalPathMatches("/report") || internalPathMatches("/sessionpreview")) ) {
     setInternalPath(URLs::home, true);
   }

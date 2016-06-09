@@ -22,6 +22,7 @@
 #include <Wt/WPopupMenu>
 #include <Wt/Auth/Login>
 #include <Wt/WStackedWidget>
+#include <Wt/WLineEdit>
 #include <functional>
 #include "session.h"
 #include <urls.h>
@@ -43,6 +44,7 @@ public:
     LoadedMenus loaded_menus;
     void load(const NavigationBar::MenuItem &menu_item, WMenu *menu);
     void update_visibility();
+    Signal<WString> search;
 private:
     NavigationBar *q;
 };
@@ -66,6 +68,13 @@ NavigationBar::NavigationBar(const MenuItem::list &menu_items, WStackedWidget *s
   addMenu(navBarMenu);
   GuLinux::make_stream(menu_items).for_each([=](const auto &item) {d->load(item, navBarMenu); });
   session.login().changed().connect(bind(&Private::update_visibility, d.get()));
+  
+  WLineEdit *searchByNameEdit = new WLineEdit;
+  addSearch(searchByNameEdit, AlignRight);
+  searchByNameEdit->setTextSize(0);
+  searchByNameEdit->setEmptyText(WString::tr("select_objects_widget_add_by_name"));
+  searchByNameEdit->keyWentUp().connect([=](WKeyEvent e) { if(e.key() == Key_Enter ) d->search.emit(searchByNameEdit->valueText()); });
+  
   d->update_visibility();
 }
 
@@ -100,4 +109,10 @@ void NavigationBar::Private::load(const NavigationBar::MenuItem& menu_item, WMen
   if(menu_item.ptr)
     *menu_item.ptr = item;
 }
+
+Signal< WString >& NavigationBar::search() const
+{
+  return d->search;
+}
+
 

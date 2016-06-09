@@ -38,7 +38,7 @@ public:
     };
     ~NavigationBar();
     NavigationBar(const MenuItem::list &menu_items, Wt::WStackedWidget *stack, Session &session, Wt::WContainerWidget* parent = 0);
-
+    Wt::Signal<Wt::WString> &search() const;
 private:
     D_PTR
 };
