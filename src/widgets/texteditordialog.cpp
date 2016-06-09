@@ -54,7 +54,7 @@ TextEditorDialog::TextEditorDialog(const SetDescription &setDescription, Session
     accept();
     Dbo::Transaction t(session);
     setDescription.editTextField(t, descriptionTextArea->text());
-    SkyPlanner::instance()->notification(WString::tr("notification_success_title"), WString::tr(setDescription.notification), SkyPlanner::Notification::Success, 5);
+    SkyPlanner::instance()->notification(WString::tr("notification_success_title"), WString::tr(setDescription.notification), Notification::Success, 5);
     setDescription.onUpdate();
   }));
 }

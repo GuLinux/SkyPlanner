@@ -115,7 +115,7 @@ AstroSessionObjectPtr AstroSessionTab::add(const NgcObjectPtr &ngcObject, const 
   Dbo::Transaction t(session);
   int existing = session.query<int>("select count(*) from astro_session_object where astro_session_id = ? AND objects_id = ? ").bind(astroSession.id() ).bind(ngcObject.id() );
   if(existing>0) {
-    SkyPlanner::instance()->notification("notification_warning_title"_wtr, "notification_object_already_added"_wtr, SkyPlanner::Notification::Alert, 10);
+    SkyPlanner::instance()->notification("notification_warning_title"_wtr, "notification_object_already_added"_wtr, Notification::Alert, 10);
     return {};
   }
   astroSession.modify()->astroSessionObjects().insert(new AstroSessionObject(ngcObject));
@@ -170,14 +170,14 @@ void AstroSessionTab::Private::load()
 
   auto locationPanel = WW<WPanel>(addPanel("position_title"_wtr, placeWidget, false, true, sessionContainer )).addCss("hidden-print").get();
   addPanel("astrosessiontab_information_panel"_wtr, sessionInfoWidget, true, true, sessionContainer)->addStyleClass("hidden-print");
-  shared_ptr<SkyPlanner::Notification> placeWidgetInstructions;
+  shared_ptr<Notification> placeWidgetInstructions;
   if(astroSession->position()) {
     placeWidget->mapReady().connect([=](_n6){ WTimer::singleShot(1500, [=](WMouseEvent){
         locationPanel->collapse();
       });
     });
   } else {
-    placeWidgetInstructions = SkyPlanner::instance()->notification("notification_suggestion_title"_wtr, "placewidget_instructions_notification"_wtr, SkyPlanner::Notification::Information);
+    placeWidgetInstructions = SkyPlanner::instance()->notification("notification_suggestion_title"_wtr, "placewidget_instructions_notification"_wtr, Notification::Information);
   }
   updateTimezone();
 
@@ -192,7 +192,7 @@ void AstroSessionTab::Private::load()
     updateTimezone();
     if(placeWidgetInstructions)
       placeWidgetInstructions->close();
-    SkyPlanner::instance()->notification("notification_success_title"_wtr, "placewidget_place_set_notification"_wtr, SkyPlanner::Notification::Success, 5);
+    SkyPlanner::instance()->notification("notification_success_title"_wtr, "placewidget_place_set_notification"_wtr, Notification::Success, 5);
     populate();
     addObjectsTabWidget->populateFor(selectedTelescope, timezone);
     updatePosition();
@@ -322,7 +322,7 @@ void AstroSessionTab::Private::load()
     } else {
       telescopeComboContainer->setHidden(true);
       WAnchor *telescopeLink =  WW<WAnchor>("", "mainmenu_my_telescopes"_wtr).css("link alert-link").onClick([=](WMouseEvent){ SkyPlanner::instance()->clearNotifications(); wApp->setInternalPath("/telescopes", true); });
-      SkyPlanner::instance()->notification("notification_suggestion_title"_wtr, WW<WTemplate>("astrosessiontab_no_telescopes_message"_wtr).bindWidget("my_telescopes_link", telescopeLink), SkyPlanner::Notification::Information);
+      SkyPlanner::instance()->notification("notification_suggestion_title"_wtr, WW<WTemplate>("astrosessiontab_no_telescopes_message"_wtr).bindWidget("my_telescopes_link", telescopeLink), Notification::Information);
     }
   };
   updateTelescopes(t);
@@ -451,7 +451,7 @@ WToolBar *AstroSessionTab::Private::actionsToolbar()
     exportMenuItem->setLinkTarget(TargetNewWindow);
     if(exportType.second == ExportAstroSessionResource::KStars) {
       exportMenuItem->triggered().connect([=](WMenuItem*, _n5) {
-        SkyPlanner::instance()->notification("notification_suggestion_title"_wtr, "kstars_suggestion"_wtr, SkyPlanner::Notification::Information);
+        SkyPlanner::instance()->notification("notification_suggestion_title"_wtr, "kstars_suggestion"_wtr, Notification::Information);
       });
     }
   }
@@ -642,7 +642,7 @@ void AstroSessionTab::Private::populate(const AstroSessionObjectPtr &addedObject
   astroObjectsTable->populate(astroObjects, selectedTelescope, timezone, page,
     addedObject ? AstroObjectsTable::Selection{addedObject->ngcObject(), "success", [=](const AstroObjectsTable::Row &r) {
       SkyPlanner::instance()->notification("notification_success_title"_wtr, "notification_object_added"_wtr | r.tableRow->id()
-      , SkyPlanner::Notification::Information, 5, nullptr, "astrosession_object_added");
+      , Notification::Information, 5, nullptr, "astrosession_object_added");
     }} : AstroObjectsTable::Selection{} );
   if(page.total > 1) {
     if(page) {

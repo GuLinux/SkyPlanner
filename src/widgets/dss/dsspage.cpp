@@ -119,7 +119,7 @@ void DSSPage::Private::setImageType(DSS::ImageVersion version, const shared_ptr<
 		auto size = image->imageSize();
 		double circleSize = opticalSetup.fov().degrees() * size.width /image->fov().degrees();
 		if(circleSize > size.width * 1.2) {
-		  SkyPlanner::instance()->notification(WString::tr("notification_warning_title"), WString::tr("fov_too_big"), SkyPlanner::Notification::Alert, 10);
+		  SkyPlanner::instance()->notification(WString::tr("notification_warning_title"), WString::tr("fov_too_big"), Notification::Alert, 10);
 		  return;
 		}
 		WSvgImage *overlay = new WSvgImage(size.width, size.height, q);

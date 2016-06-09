@@ -22,6 +22,7 @@
 #include <Wt/WContainerWidget>
 #include "c++/dptr.h"
 #include "json_object.h"
+#include "widgets/notification.h"
 
 class SkyPlanner : public Wt::WApplication
 {
@@ -40,19 +41,6 @@ public:
     typedef std::function<void(SkyPlanner*)> OnQuit;
   SkyPlanner(const Wt::WEnvironment& environment, OnQuit onQuit);
     ~SkyPlanner();
-    class Notification {
-    public:
-      enum Type { Alert, Error, Success, Information };
-      Notification(const Wt::WString &title, Wt::WWidget *content, Type type, bool addCloseButton, const std::string &categoryTag = {}, Wt::WContainerWidget *parent = 0);
-      ~Notification();
-      void close();
-      bool valid() const;
-      Wt::Signal<> &closed() const;
-      Wt::WWidget *widget() const;
-      std::string categoryTag() const;
-    private:
-      D_PTR;
-    };
     static SkyPlanner *instance();
     std::shared_ptr<Notification>notification( const Wt::WString &title, const Wt::WString &content, Notification::Type type, int autoHideSeconds = 0 , Wt::WContainerWidget *addTo = nullptr, const std::string &categoryTag = {});
     std::shared_ptr<Notification>notification( const Wt::WString &title, Wt::WWidget *content, Notification::Type type, int autoHideSeconds = 0 , Wt::WContainerWidget *addTo = nullptr, const std::string &categoryTag = {});
@@ -64,8 +52,6 @@ public:
     protected:
     virtual void notify(const Wt::WEvent &e);
 private:
-  static std::map<std::string,std::string> globalProperties;
-  friend int main(int, char**);
     D_PTR;
 };
 

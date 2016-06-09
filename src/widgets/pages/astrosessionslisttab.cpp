@@ -61,7 +61,7 @@ AstroSessionsListTab::AstroSessionsListTab(Session &session, Wt::WContainerWidge
     if(User::Setting::value<bool>(t, "astrosessionlisttab_firstintro_shown", d->session.user(), false))
       return;
     helpContainer->clear();
-    SkyPlanner::instance()->notification("help_notification"_wtr, "help_astrosessionlisttab_1"_wtr, SkyPlanner::Notification::Information, 0, helpContainer);
+    SkyPlanner::instance()->notification("help_notification"_wtr, "help_astrosessionlisttab_1"_wtr, Notification::Information, 0, helpContainer);
     User::Setting::setValue(t, "astrosessionlisttab_firstintro_shown", d->session.user(), true);
   };
   displayFirstLoginHelp();
@@ -76,7 +76,7 @@ AstroSessionsListTab::AstroSessionsListTab(Session &session, Wt::WContainerWidge
   WPushButton *newSessionAdd = WW<WPushButton>("buttons_add"_wtr).css("btn btn-primary").onClick([=](WMouseEvent){
     if(!d->session.login().loggedIn() || ! d->session.user() ) return;
     if( newSessionName->text().empty() ) {
-      SkyPlanner::instance()->notification("notification_error_title"_wtr, "astrosessionslisttab_add_new_name_empty"_wtr, SkyPlanner::Notification::Error, 10  );
+      SkyPlanner::instance()->notification("notification_error_title"_wtr, "astrosessionslisttab_add_new_name_empty"_wtr, Notification::Error, 10  );
       return;
     }
     d->addNew(newSessionName->text(), newSessionDate->date());

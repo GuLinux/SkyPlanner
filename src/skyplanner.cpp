@@ -368,7 +368,7 @@ bool SkyPlanner::Private::searchByName(const string &name, AstroObjectsTable *ta
   spLog("notice") << "search by name: count=" << count;
   auto tablePage = AstroObjectsTable::Page::fromCount(page, count, [=](int p) { searchByName(name, table, p); });
   if(tablePage.total > 200) {
-    q->notification(WString::tr("select_objects_widget_add_by_name"), WString::tr("select_objects_widget_add_by_name_too_many"), SkyPlanner::Notification::Information, 5);
+    q->notification(WString::tr("select_objects_widget_add_by_name"), WString::tr("select_objects_widget_add_by_name_too_many"), Notification::Information, 5);
     return false;
   }
 
@@ -463,11 +463,11 @@ void SkyPlanner::clearNotifications()
   d->shownNotifications.clear();
 }
 
-shared_ptr<SkyPlanner::Notification> SkyPlanner::notification(const WString &title, const WString &content, Notification::Type type, int autoHideSeconds, WContainerWidget *addTo, const string &categoryTag)
+shared_ptr<Notification> SkyPlanner::notification(const WString &title, const WString &content, Notification::Type type, int autoHideSeconds, WContainerWidget *addTo, const string &categoryTag)
 {
   return notification(title, new WText(content), type, autoHideSeconds, addTo, categoryTag);
 }
-shared_ptr<SkyPlanner::Notification> SkyPlanner::notification(const WString& title, WWidget* content, SkyPlanner::Notification::Type type, int autoHideSeconds, WContainerWidget* addTo, const string& categoryTag)
+shared_ptr<Notification> SkyPlanner::notification(const WString& title, WWidget* content, Notification::Type type, int autoHideSeconds, WContainerWidget* addTo, const string& categoryTag)
 {
   auto notification = make_shared<Notification>(title, content, type, true, categoryTag);
   (addTo ? addTo : d->notifications)->addWidget(notification->widget() );
@@ -485,72 +485,6 @@ shared_ptr<SkyPlanner::Notification> SkyPlanner::notification(const WString& tit
   return notification;
 }
 
-class SkyPlanner::Notification::Private {
-public:
-  Signal<> closed;
-  WContainerWidget *widget;
-  bool valid = true;
-  string categoryTag;
-};
-
-Signal<> &SkyPlanner::Notification::closed() const
-{
-  return d->closed;
-}
-
-WWidget *SkyPlanner::Notification::widget() const
-{
-  return d->widget;
-}
-
-void SkyPlanner::Notification::close()
-{
-  spLog("notice") << " valid=" << valid();
-  if(!valid())
-    return;
-  d->valid = false;
-  d->closed.emit();
-  d->widget->hide();
-  delete d->widget;
-//  WTimer::singleShot(3000, [=](WMouseEvent){delete d->widget; d->widget = nullptr; });
-}
-
-bool SkyPlanner::Notification::valid() const
-{
-  return d->valid;
-}
-
-SkyPlanner::Notification::Notification(const WString& title, WWidget* content, SkyPlanner::Notification::Type type, bool addCloseButton, const string& categoryTag, WContainerWidget* parent)
-  : dptr()
-{
-  d->categoryTag = categoryTag;
-  static map<Type,string> notificationStyles {
-    {Error, "alert-danger"},
-    {Success, "alert-success"},
-    {Information, "alert-info"},
-    {Alert, "alert-warning"},
-  };
-  d->widget = WW<WContainerWidget>().addCss("alert").addCss("alert-block").addCss(notificationStyles[type]);
-  if(addCloseButton) {
-    WPushButton *closeButton = WW<WPushButton>().css("close").onClick([=](WMouseEvent) { close(); } );
-    closeButton->setTextFormat(XHTMLUnsafeText);
-    closeButton->setText("<h4><strong>&times;</strong></h4>");
-    d->widget->addWidget(closeButton);
-  }
-
-  d->widget->addWidget(new WText{WString("<h4>{1}</h4>").arg(title) });
-  d->widget->addWidget(content);
-}
-
-string SkyPlanner::Notification::categoryTag() const
-{
-  return d->categoryTag;
-}
-
-
-SkyPlanner::Notification::~Notification()
-{
-}
 
 
 Signal<> &SkyPlanner::telescopesListChanged() const

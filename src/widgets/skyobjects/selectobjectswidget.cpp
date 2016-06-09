@@ -247,7 +247,7 @@ void SelectObjectsWidget::Private::searchByNameTab(Dbo::Transaction& transaction
          WW<WToolBar>()
             .addButton( WW<WPushButton>(WString::tr("search")).css("btn btn-primary").onClick([=](WMouseEvent){ searchByNameTrigger(); }) )
             .addButton( WW<WPushButton>("?").css("btn btn-primary").onClick([=](WMouseEvent){
-                SkyPlanner::instance()->notification(WString::tr("help_notification"), WString::tr("help_search_by_name"), SkyPlanner::Notification::Information, 10 );
+                SkyPlanner::instance()->notification(WString::tr("help_notification"), WString::tr("help_search_by_name"), Notification::Information, 10 );
             }) )
 
          ));
@@ -272,7 +272,7 @@ void SelectObjectsWidget::Private::searchByName(const string &name, AstroObjects
   spLog("notice") << "search by name: count=" << count;
   auto tablePage = AstroObjectsTable::Page::fromCount(page, count, [=](int p) { searchByName(name, table, p); });
   if(tablePage.total > 200) {
-    SkyPlanner::instance()->notification(WString::tr("select_objects_widget_add_by_name"), WString::tr("select_objects_widget_add_by_name_too_many"), SkyPlanner::Notification::Information, 5);
+    SkyPlanner::instance()->notification(WString::tr("select_objects_widget_add_by_name"), WString::tr("select_objects_widget_add_by_name_too_many"), Notification::Information, 5);
     return;
   }
 
