@@ -29,12 +29,12 @@ public:
     struct MenuItem {
       typedef std::list<MenuItem> list;
       std::string key, path;
-      enum {LoggedIn, LoggedOut, Both} visibility;
+      enum Visibility {LoggedIn, LoggedOut, Both};
+      Visibility visibility;
       Wt::WWidget *widget;
       MenuItem::list children;
       std::list<std::string> css;
       Wt::WMenuItem **ptr;
-      void addTo(Wt::WMenu* menu, Session& session) const;
     };
     ~NavigationBar();
     NavigationBar(const MenuItem::list &menu_items, Wt::WStackedWidget *stack, Session &session, Wt::WContainerWidget* parent = 0);

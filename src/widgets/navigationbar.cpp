@@ -34,6 +34,15 @@ public:
     Private(Session &session, NavigationBar *q);
     Session& session;
 
+    
+    struct LoadedMenu {
+      NavigationBar::MenuItem menu_item;
+      WMenuItem *wmenu_item;
+    };
+    typedef list<LoadedMenu> LoadedMenus;
+    LoadedMenus loaded_menus;
+    void load(const NavigationBar::MenuItem &menu_item, WMenu *menu);
+    void update_visibility();
 private:
     NavigationBar *q;
 };
@@ -55,36 +64,40 @@ NavigationBar::NavigationBar(const MenuItem::list &menu_items, WStackedWidget *s
   WMenu *navBarMenu = new WMenu(stack);
   navBarMenu->setInternalPathEnabled("/");
   addMenu(navBarMenu);
-  GuLinux::make_stream(menu_items).for_each([=](const auto &item) {item.addTo(navBarMenu, d->session); });
+  GuLinux::make_stream(menu_items).for_each([=](const auto &item) {d->load(item, navBarMenu); });
+  session.login().changed().connect(bind(&Private::update_visibility, d.get()));
+  d->update_visibility();
 }
 
-void NavigationBar::MenuItem::addTo(Wt::WMenu* menu, Session& session) const
+void NavigationBar::Private::update_visibility()
 {
-  auto item = menu->addItem(key.empty() ? WString{} : WString::tr(key), widget);
-  for(auto style: css)
+  bool logged_in_hidden = !session.login().loggedIn();
+  bool logged_out_hidden = !logged_in_hidden;
+  auto items = GuLinux::make_stream_copy(loaded_menus)
+    .remove([](const LoadedMenu &item){ return item.menu_item.visibility == NavigationBar::MenuItem::Both; })
+    .for_each([=](const LoadedMenu &item){ item.wmenu_item->setHidden( item.menu_item.visibility == NavigationBar::MenuItem::LoggedIn ? logged_in_hidden : logged_out_hidden ); });
+}
+
+
+void NavigationBar::Private::load(const NavigationBar::MenuItem& menu_item, WMenu *menu)
+{
+  auto item = menu->addItem(menu_item.key.empty() ? WString{} : WString::tr(menu_item.key), menu_item.widget);
+  loaded_menus.push_back({menu_item, item});
+  for(auto style: menu_item.css)
     item->addStyleClass(style);
-  if(path.empty())
+  if(menu_item.path.empty())
     item->setInternalPathEnabled(false);
   else
-    item->setPathComponent(path);
-  if(!children.empty()) {
+    item->setPathComponent(menu_item.path);
+  if(!menu_item.children.empty()) {
     auto popup = new WPopupMenu(menu->contentsStack());
     if(menu->internalPathEnabled())
       popup->setInternalPathEnabled(menu->internalBasePath());
-    for(auto child: children)
-      child.addTo(popup,session);
+    for(auto child: menu_item.children)
+      load(child,popup);
     item->setMenu(popup);
   }
-  if(visibility != Both) {
-    auto showhide = [=, &session]{
-      bool loggedIn = session.login().loggedIn();
-      bool hidden = visibility ==  LoggedIn ? !loggedIn : loggedIn;
-      std::cerr << "NavBarMenuItem: loggedIn: " << loggedIn << ", widget: " << key << " with visibility " << visibility << ", setting hidden: " << hidden << std::endl;
-      item->setHidden( hidden );
-    };
-    session.login().changed().connect(bind(showhide));
-    showhide();
-  }
-  if(ptr)
-    *ptr = item;
+  if(menu_item.ptr)
+    *menu_item.ptr = item;
 }
+
