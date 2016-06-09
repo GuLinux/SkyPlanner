@@ -26,9 +26,11 @@
 #include <functional>
 #include "session.h"
 #include <urls.h>
+#include "wt_helpers.h"
 #include "c++/containers_streams.h"
 
 using namespace Wt;
+using namespace WtCommons;
 using namespace std;
 class NavigationBar::Private {
 public:
@@ -70,11 +72,17 @@ NavigationBar::NavigationBar(const MenuItem::list &menu_items, WStackedWidget *s
   session.login().changed().connect(bind(&Private::update_visibility, d.get()));
   
   WLineEdit *searchByNameEdit = new WLineEdit;
-  addSearch(searchByNameEdit, AlignRight);
   searchByNameEdit->setTextSize(0);
   searchByNameEdit->setEmptyText(WString::tr("select_objects_widget_add_by_name"));
   searchByNameEdit->keyWentUp().connect([=](WKeyEvent e) { if(e.key() == Key_Enter ) d->search.emit(searchByNameEdit->valueText()); });
-  
+  WMenu *rightMenu = new WMenu;
+  WPopupMenu *aboutPopup = new WPopupMenu;
+  rightMenu->addItem("Help and Information")->setMenu(aboutPopup);
+  WW<WMenuItem>(aboutPopup->addItem("GuLinux Blog")).setLinkTarget(Wt::TargetNewWindow).get()->setLink("http://blog.gulinux.net/");
+  WW<WMenuItem>(aboutPopup->addItem("SkyPlanner Homepage")).setLinkTarget(Wt::TargetNewWindow).get()->setLink("http://blog.gulinux.net/skyplanner");
+  aboutPopup->addItem("Copyright Marco Gulino - gulinux.net");
+  addMenu(rightMenu, AlignRight);
+  addSearch(searchByNameEdit, AlignRight);
   d->update_visibility();
 }
 
