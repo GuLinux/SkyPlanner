@@ -18,17 +18,14 @@
 #include "skyplanner.h"
 #include "private/skyplanner_p.h"
 #include "utils/utils.h"
-#include <Wt/WNavigationBar>
 #include <Wt/WBootstrapTheme>
 #include <Wt/WStackedWidget>
 #include <Wt/Auth/AuthWidget>
-#include <Wt/WMenu>
 #include "wt_helpers.h"
 #include "widgets/pages/telescopespage.h"
 #include "widgets/pages/astrosessionspage.h"
 #include <Wt/Auth/PasswordService>
 #include <Wt/Auth/Login>
-#include <boost/filesystem.hpp>
 #include <Wt/WPushButton>
 #include <Wt/WText>
 #include <Wt/WTimer>
@@ -40,31 +37,23 @@
 #include "widgets/pages/sendfeedbackpage.hpp"
 #include <Wt/WCombinedLocalizedStrings>
 #include <Wt/WMessageResourceBundle>
-#include <Wt/Dbo/QueryModel>
 #include <whtmltemplateslocalizedstrings.h>
 #include "widgets/pages/homepage.h"
-#include <mutex>
-#include <Wt/WProgressBar>
-#include <Wt/WPopupMenu>
-#include <Wt/WLineEdit>
-#include <Wt/WComboBox>
-#include <Wt/WProgressBar>
-#include <Wt/WStandardItemModel>
-#include <Wt/WStandardItem>
-#include <Wt/WEnvironment>
-#include <Wt/WMessageBox>
 #include "utils/format.h"
 #include "widgets/pages/astrosessiontab.h"
 #include <boost/algorithm/string.hpp>
-#include <Wt/WMemoryResource>
-#include <Wt/WFileResource>
 #include "widgets/pages/astrosessionpreview.h"
 #include "widgets/navigationbar.h"
 #include "settings.h"
 #include "urls.h"
 #include "cookieslawdisclaimer.h"
-#include "c++/containers_streams.h"
-
+#include <Wt/WMessageBox>
+#include <Wt/WStandardItemModel>
+#include <Wt/WMenuItem>
+#include <Wt/WStandardItem>
+#include <Wt/WComboBox>
+#include <Wt/WMemoryResource>
+#include <Wt/WEnvironment>
 using namespace std;
 using namespace Wt;
 using namespace WtCommons;
