@@ -1,6 +1,7 @@
 import unittest
-from ephem import degrees, degree
+from ephem import degrees, degree, hours
 from skyplanner.ephemeris.skysector import SkySector
+from math import pi
 
 class TestSkySector(unittest.TestCase):
     def setUp(self):
@@ -20,3 +21,11 @@ class TestSkySector(unittest.TestCase):
 
         self.assertEqual(step_angle/2, self.sectors[0].center['ar'])
         self.assertEqual(step_angle/2 + degrees(degree*-90), self.sectors[0].center['dec'])
+
+    def test_find_sector(self):
+        hour = pi/12
+        ar = hours(hour*12.53)
+        dec = degrees(degree*33.24)
+        sector = SkySector.find_sector( ar, dec )
+        self.assertTrue( sector.ar[0] < ar < sector.ar[1]) 
+        self.assertTrue( sector.dec[0] < dec < sector.dec[1]) 
