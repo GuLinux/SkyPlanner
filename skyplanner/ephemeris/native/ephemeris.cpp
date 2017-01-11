@@ -1,6 +1,8 @@
 #include "ephemeris.hpp"
 #include <algorithm>
 #include <map>
+#include <thread>
+#include <future>
 using namespace std;
 
 Ephemeris::Ephemeris(double lat, double lng) : observer{lng, lat}
@@ -9,7 +11,6 @@ Ephemeris::Ephemeris(double lat, double lng) : observer{lng, lat}
 
 Ephemeris::~Ephemeris() {
 }
-
 
 RiseTransitSet Ephemeris::rst(const Coordinates &coordinates, double jd, double horizon) const
 {
@@ -23,13 +24,15 @@ RiseTransitSet Ephemeris::rst(const Coordinates &coordinates, double jd, double 
 }
 
 
-vector<RiseTransitSet> Ephemeris::rst(const boost::python::list &coordinates, double jd, double horizon) const
+vector<RiseTransitSet> Ephemeris::rst_parallel(const vector<Coordinates> &coordinates, double jd, double horizon) const
 {
-    vector<Coordinates> coordinates_vector(len(coordinates));
-    for(size_t i = 0; i < len(coordinates); i++) {
-        coordinates_vector[i] = boost::python::extract<Coordinates>(coordinates[i]);
-    }
-    return rst(coordinates_vector, jd, horizon);
+    auto do_calc = [&](const Coordinates &c) { return rst(c, jd, horizon); };
+    auto parallel = [&](const Coordinates &c) { return async(bind(do_calc, c)); };
+    vector<RiseTransitSet> result(coordinates.size());
+    vector<future<RiseTransitSet>> futures(coordinates.size());
+    transform(begin(coordinates), end(coordinates), begin(futures), parallel); 
+    transform(begin(futures), end(futures), begin(result), [](future<RiseTransitSet> &f) { return f.get(); });
+    return result;
 }
 
 vector<RiseTransitSet> Ephemeris::rst(const vector<Coordinates> &coordinates, double jd, double horizon) const

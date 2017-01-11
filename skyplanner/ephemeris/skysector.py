@@ -53,6 +53,7 @@ class SkySector:
 
     def rise_transit_set(ephemeris, jd, horizon = Angle(0)):
         sectors_coords = [coordinates(x.center.ra.degrees, x.center.dec.degrees) for x in SkySector.all() ]
+#        return ephemeris.rst_parallel(sectors_coords, jd, horizon.degrees)
         return ephemeris.rst_list(sectors_coords, jd, horizon.degrees)
 
 
