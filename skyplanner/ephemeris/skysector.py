@@ -12,7 +12,9 @@ class SkySector:
         self.dec = dec
         self.index = index
         self.center = {'ar': ar[0] + (ar[1] - ar[0])/2, 'dec': dec[0] + (dec[1] - dec[0])/2}
-
+        self.body = ephem.FixedBody()
+        self.body._ra = self.center['ar']
+        self.body._dec = self.center['dec']
 
     def belongs_to(self, ar, dec):
         return self.ar[0] < ar < self.ar[1] and self.dec[0] < dec < self.dec[1]
@@ -47,3 +49,16 @@ class SkySector:
         index = ar_sectors_for_dec[bisect_right(ar_sectors, ar)-1][1]
         return all_sectors[index]
 
+    def rise_transit_set(observer):
+        rts = []
+        for sector in SkySector.all():
+            try:
+                r = observer.next_rising(sector.body)
+                t = observer.next_transit(sector.body)
+                s = observer.next_setting(sector.body)
+                rts.append((r, t, s))
+            except ephem.NeverUpError:
+                pass
+            except ephem.AlwaysUpError:
+                pass
+        return rts
