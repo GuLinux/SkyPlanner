@@ -1,26 +1,26 @@
-import ephem
+from skyplanner.models.skycoord import SkyCoord
+from skyplanner.models.angle import Angle
 from bisect import bisect_right
+from skyplanner.ephemeris.native.ephemeris import coordinates
+
 class SkySector:
     VERSION = 1
     DEGREES_STEP = 5
     __sectors = None
-    __sectors_ar = []
+    __sectors_ra = []
     __sectors_dec = []
 
-    def __init__(self, ar, dec, index):
-        self.ar = ar
-        self.dec = dec
+    def __init__(self, start, end, index):
+        self.start = start
+        self.end = end
         self.index = index
-        self.center = {'ar': ar[0] + (ar[1] - ar[0])/2, 'dec': dec[0] + (dec[1] - dec[0])/2}
-        self.body = ephem.FixedBody()
-        self.body._ra = self.center['ar']
-        self.body._dec = self.center['dec']
+        self.center = SkyCoord( start.ra + (end.ra - start.ra)/2, start.dec + (end.dec - start.dec)/2)
 
-    def belongs_to(self, ar, dec):
-        return self.ar[0] < ar < self.ar[1] and self.dec[0] < dec < self.dec[1]
+    def belongs_to(self, coords):
+        return self.start.ra < coords.ra < self.end.ra and self.start.dec < coords.dec < self.end.dec
 
     def __str__(self):
-        return 'AR: {0} to {1}; DEC: {2} to {3}'.format(self.ar[0], self.ar[1], self.dec[0], self.dec[1])
+        return 'AR: {0} to {1}; DEC: {2} to {3}'.format(self.start.ra, self.end.ra, self.start.dec, self.end.dec)
 
     def __repr__(self):
         return 'index: {0}, coords: {1}'.format(self.index, self.__str__())
@@ -30,35 +30,30 @@ class SkySector:
             SkySector.__sectors = list()
             index = 0
             for dec in range(-90, 90, SkySector.DEGREES_STEP):
-                dec_range = ephem.degrees(ephem.degree * dec), ephem.degrees(ephem.degree * (dec + SkySector.DEGREES_STEP))
-                SkySector.__sectors_dec.append((dec_range[0], index))
-                for ar in range(0, 360, SkySector.DEGREES_STEP):
-                    ar_range = ephem.hours(ephem.degree * ar), ephem.hours(ephem.degree * (ar + SkySector.DEGREES_STEP))
-                    SkySector.__sectors_ar.append((ar_range[0], index))
-                    SkySector.__sectors.append(SkySector(ar_range, dec_range, index))
+                SkySector.__sectors_dec.append((dec, index))
+                dec_end = dec + SkySector.DEGREES_STEP
+
+                for ra in range(0, 360, SkySector.DEGREES_STEP):
+                    SkySector.__sectors_ra.append((ra, index))
+                    ra_end = ra + SkySector.DEGREES_STEP
+
+                    SkySector.__sectors.append(SkySector( SkyCoord(ra, dec), SkyCoord(ra_end, dec_end) , index))
                     index += 1
         return SkySector.__sectors
 
-    def find_sector(ar, dec):
+    def find_sector(coords):
         all_sectors = SkySector.all()
         sectors_dec = [x[0] for x in SkySector.__sectors_dec]
-        index_dec =  SkySector.__sectors_dec[bisect_right(sectors_dec, dec)-1][1]
+        index_dec =  SkySector.__sectors_dec[bisect_right(sectors_dec, coords.dec.degrees)-1][1]
 
-        ar_sectors_for_dec = [x for x in SkySector.__sectors_ar if x[1] >= index_dec and x[1] < index_dec + 360/SkySector.DEGREES_STEP]
-        ar_sectors = [x[0] for x in ar_sectors_for_dec]
-        index = ar_sectors_for_dec[bisect_right(ar_sectors, ar)-1][1]
+        ra_sectors_for_dec = [x for x in SkySector.__sectors_ra if x[1] >= index_dec and x[1] < index_dec + 360/SkySector.DEGREES_STEP]
+        ra_sectors = [x[0] for x in ra_sectors_for_dec]
+        index = ra_sectors_for_dec[bisect_right(ra_sectors, coords.ra.degrees)-1][1]
         return all_sectors[index]
 
-    def rise_transit_set(observer):
-        rts = []
-        for sector in SkySector.all():
-            try:
-                r = observer.next_rising(sector.body)
-                t = observer.next_transit(sector.body)
-                s = observer.next_setting(sector.body)
-                rts.append((r, t, s))
-            except ephem.NeverUpError:
-                pass
-            except ephem.AlwaysUpError:
-                pass
-        return rts
+    def rise_transit_set(ephemeris, jd, horizon = Angle(0)):
+        sectors_coords = [coordinates(x.center.ra.degrees, x.center.dec.degrees) for x in SkySector.all() ]
+        return ephemeris.rst_list(sectors_coords, jd, horizon.degrees)
+
+
+
