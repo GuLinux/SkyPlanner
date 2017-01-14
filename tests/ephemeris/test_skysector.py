@@ -44,5 +44,5 @@ class TestSkySector(unittest.TestCase):
                 cnt[1] += 1
             elif obj.type is RiseTransitSet.Type.NeverRises:
                 cnt[2] += 1
-        print('elapsed: {0} seconds; total objects: {1}, circumpolar: {2}, rising: {3}, never rising: {4})'.format(end-start, len(rts), cnt[0], cnt[1], cnt[2] ))
+        print('elapsed: {0} ms; total objects: {1}, circumpolar: {2}, rising: {3}, never rising: {4})'.format( (end-start)*1000, len(rts), cnt[0], cnt[1], cnt[2] ))
 
