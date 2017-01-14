@@ -1,7 +1,8 @@
 import unittest
-from ephem import degrees, degree, hours
+from ephem import degrees, degree, hours, Observer
 from skyplanner.ephemeris.skysector import SkySector
 from math import pi
+import time
 
 class TestSkySector(unittest.TestCase):
     def setUp(self):
@@ -29,3 +30,13 @@ class TestSkySector(unittest.TestCase):
         sector = SkySector.find_sector( ar, dec )
         self.assertTrue( sector.ar[0] < ar < sector.ar[1]) 
         self.assertTrue( sector.dec[0] < dec < sector.dec[1]) 
+
+    def test_benchmark_ephemeris(self):
+        observer = Observer()
+        observer.lat = degrees(degree*51.507351)
+        observer.lon = degrees(degree*-0.127758)
+        start = time.time()
+        rts = SkySector.rise_transit_set(observer)
+        end = time.time()
+        print('elapsed: {0} seconds; ephemeris size: {1} ({2} total objects)'.format(end-start, len(rts), len(self.sectors)))
+
