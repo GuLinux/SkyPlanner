@@ -1,0 +1,3 @@
+#!/bin/bash
+
+FLASK_APP=skyplanner/skyplanner.py python3 -m flask run "$@"

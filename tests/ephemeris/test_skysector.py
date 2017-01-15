@@ -32,17 +32,23 @@ class TestSkySector(unittest.TestCase):
         self.assertTrue( sector.start.dec < dec < sector.end.dec) 
 
     def test_benchmark_ephemeris(self):
-        ephemeris = Ephemeris(51.507351, 0.127758)
-        start = time.time()
-        rts = SkySector.rise_transit_set(ephemeris, 2457767.500000)
-        end = time.time()
-        cnt = [0, 0, 0]
-        for obj in rts:
-            if obj.type is RiseTransitSet.Type.CircumPolar:
-                cnt[0] += 1
-            elif obj.type is RiseTransitSet.Type.Rises:
-                cnt[1] += 1
-            elif obj.type is RiseTransitSet.Type.NeverRises:
-                cnt[2] += 1
-        print('elapsed: {0} ms; total objects: {1}, circumpolar: {2}, rising: {3}, never rising: {4})'.format( (end-start)*1000, len(rts), cnt[0], cnt[1], cnt[2] ))
+        avg = 0
+        rst = []
+        cnt = []
+        size = 50
+        for n in range(0, size):
+            ephemeris = Ephemeris(51.507351, 0.127758)
+            start = time.time()
+            rts = SkySector.rise_transit_set(ephemeris, 2457767.500000)
+            end = time.time()
+            cnt = [0, 0, 0]
+            for obj in rts:
+                if obj.type is RiseTransitSet.Type.CircumPolar:
+                    cnt[0] += 1
+                elif obj.type is RiseTransitSet.Type.Rises:
+                    cnt[1] += 1
+                elif obj.type is RiseTransitSet.Type.NeverRises:
+                    cnt[2] += 1
+            avg += end-start
+        print('elapsed: {0} ms; total objects: {1}, circumpolar: {2}, rising: {3}, never rising: {4})'.format( (avg/size)*1000, len(rts), cnt[0], cnt[1], cnt[2] ))
 
