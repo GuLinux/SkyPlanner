@@ -1,1 +1,5 @@
-console.log([1, 2, 3].map(n => n + 1))
+ReactDOM.render(
+  <h1>Hello, world!</h1>,
+  document.getElementById('page-content')
+);
+
