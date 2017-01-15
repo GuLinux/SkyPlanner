@@ -7,7 +7,7 @@ app.config.from_envvar('SKYPLANNER_SETTINGS', silent=True)
 
 @app.route('/')
 def index():
-    return 'Hello, this is SkyPlanner skeleton'
+    return render_template('index.html')
 
 
 
