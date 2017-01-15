@@ -1,10 +1,6 @@
-class Hello extends React.Component {
-    render() {
-        return <h1>Hello, {this.props.name}</h1>;
-    }
-}
+import NavbarLink from './navbar/navbarlink'
 
 ReactDOM.render(
-  <Hello name="Marco" />,
-  document.getElementById('content')
+  <NavbarLink text="NavLink" />,
+  document.getElementById('skyplanner-navbar-navigation')
 );

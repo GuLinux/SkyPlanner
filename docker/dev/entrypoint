@@ -13,5 +13,11 @@ bower install
     rm *.so build -rf
     python3 setup.py build_ext --inplace
 )
-gulp watch & 
+(
+    while true; do
+        gulp watch
+        echo "Gulp finished running"
+        sleep 1
+    done
+) &
 FLASK_APP=skyplanner/skyplanner.py flask run --host=0.0.0.0 

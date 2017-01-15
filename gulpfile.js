@@ -27,8 +27,13 @@ gulp.task('del', function () {
 });
 
 gulp.task('watch', ['del'], function() {
-    gulp.start('transform');
-    gulp.watch('./skyplanner/static/scripts/jsx/*.js', ['transform']);
+    try {
+        gulp.start('transform');
+        gulp.watch('./skyplanner/static/scripts/jsx/*.js', ['transform']);
+    }
+    catch(e) {
+        console.log(e);
+    }
 });
 
 gulp.task('default', ['del'], function() {
