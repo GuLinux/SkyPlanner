@@ -23,9 +23,14 @@ gulp.task('transform', function () {
 });
 
 gulp.task('del', function () {
-    return del(['./project/static/scripts/js']);
+    return del(['./skyplanner/static/scripts/js']);
 });
 
-gulp.task('default', function() {
+gulp.task('watch', ['del'], function() {
+    gulp.start('transform');
+    gulp.watch('./skyplanner/static/scripts/jsx/*.js', ['transform']);
+});
+
+gulp.task('default', ['del'], function() {
     gulp.start('transform');
 });
