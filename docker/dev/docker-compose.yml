@@ -1,7 +1,12 @@
 version: '2'
 services:
     web:
-        build: .
+        build:
+            context: .
+            args:
+                - http_proxy
+                - https_proxy
+                - no_proxy
         ports:
             - "5000:5000"
         volumes:
@@ -9,4 +14,7 @@ services:
             - ./entrypoint:/entrypoint
         environment:
             - FLASK_DEBUG=${FLASK_DEBUG}
+            - http_proxy=${http_proxy}
+            - https_proxy=${https_proxy}
+            - no_proxy=${no_proxy}
 
