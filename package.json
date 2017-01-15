@@ -1,0 +1,25 @@
+{
+  "name": "skyplanner",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GuLinux/SkyPlanner.git"
+  },
+  "author": "Marco Gulino <marco@gulinux.net>",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/GuLinux/SkyPlanner/issues"
+  },
+  "homepage": "https://github.com/GuLinux/SkyPlanner#readme",
+  "devDependencies": {
+    "bower": "^1.8.0"
+  }
+}
