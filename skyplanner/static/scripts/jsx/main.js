@@ -1,8 +1,13 @@
-import NavbarLink from 'navbar/navbarlink'
-import NavbarLinks from 'navbar/navbarlinks'
+import React from 'react'
+import ReactDOM from 'react-dom'
+class Hello extends React.Component {
+    render() {
+        return <h1>Hello</h1>;
+    }
+};
 
 ReactDOM.render(
-    <ReactBootstrap.Button bsStyle='primary'>Hello World!</ReactBootstrap.Button>,
+    <Hello />,
 //    document.getElementById('skyplanner-main-navbar-links')
     document.getElementById('content')
 );

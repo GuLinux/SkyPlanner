@@ -28,5 +28,9 @@
     "gulp": "^3.9.1",
     "gulp-browser": "^3.0.4",
     "gulp-size": "^2.1.0"
+  },
+  "dependencies": {
+    "react": "^15.4.2",
+    "react-dom": "^15.4.2"
   }
 }

@@ -7,7 +7,7 @@ env
 
 pip3 install --user -r requirements.txt
 npm install
-bower install
+#bower install
 (
     cd skyplanner/ephemeris/native
 #    rm *.so build -rf
