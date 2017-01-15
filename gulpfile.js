@@ -15,7 +15,11 @@ gulp.task('transform', function () {
     }
     catch(e) {
     }
-    broserify('./skyplanner/static/scripts/jsx/main.js')
+    broserify(
+            {
+                entries: ['./skyplanner/static/scripts/jsx/main.js'],
+                paths: ['./skyplanner/static/scripts/jsx']
+            })
         .transform(babelify, {presets: ["es2015", "react"]})
         .bundle()
         .pipe(fs.createWriteStream("./skyplanner/static/scripts/js/bundle.js"))

@@ -10,14 +10,15 @@ npm install
 bower install
 (
     cd skyplanner/ephemeris/native
-    rm *.so build -rf
+#    rm *.so build -rf
     python3 setup.py build_ext --inplace
 )
 (
     while true; do
         gulp watch
-        echo "Gulp finished running"
-        sleep 1
+        while ! gulp transform >/dev/null 2>&1; do
+            sleep 1
+        done
     done
 ) &
 FLASK_APP=skyplanner/skyplanner.py flask run --host=0.0.0.0 
