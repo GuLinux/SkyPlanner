@@ -29,7 +29,7 @@ gulp.task('del', function () {
 gulp.task('watch', ['del'], function() {
     try {
         gulp.start('transform');
-        gulp.watch('./skyplanner/static/scripts/jsx/*.js', ['transform']);
+        gulp.watch('./skyplanner/static/scripts/jsx/**/*.js', ['transform']);
     }
     catch(e) {
         console.log(e);

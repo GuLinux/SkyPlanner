@@ -1,6 +1,9 @@
+import NavbarLinks from './navbar/navbarlinks'
 import NavbarLink from './navbar/navbarlink'
 
 ReactDOM.render(
-  <NavbarLink text="NavLink" />,
-  document.getElementById('skyplanner-navbar-navigation')
+    <NavbarLinks classname="skyplanner-main-nav">
+        <NavbarLink text="NavLink" />
+    </NavbarLinks>,
+  document.getElementById('skyplanner-main-navbar-links')
 );
