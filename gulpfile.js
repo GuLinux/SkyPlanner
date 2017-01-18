@@ -1,11 +1,9 @@
 // requirements
 
 var gulp = require('gulp');
-var broserify = require('browserify');
-var babelify = require("babelify");
-
 var del = require('del');
 var fs = require('fs');
+var webpack = require('webpack-stream');
 
 // tasks
 
@@ -15,15 +13,11 @@ gulp.task('transform', function () {
     }
     catch(e) {
     }
-    broserify(
-            {
-                entries: ['./skyplanner/static/scripts/jsx/main.js'],
-                paths: ['./skyplanner/static/scripts/jsx']
-            })
-        .transform(babelify, {presets: ["es2015", "react"]})
-        .bundle()
-        .pipe(fs.createWriteStream("./skyplanner/static/scripts/js/bundle.js"))
-        ;
+    var src = './skyplanner/static/scripts/jsx/main.js';
+    var dest = './skyplanner/static/scripts/js';
+    return gulp.src(src)
+        .pipe(webpack(require('./webpack.config.js')))
+        .pipe(gulp.dest(dest));
 });
 
 gulp.task('del', function () {
