@@ -17,7 +17,9 @@ gulp.task('transform', function () {
     var dest = './skyplanner/static/scripts/js';
     return gulp.src(src)
         .pipe(webpack(require('./webpack.config.js')))
-        .pipe(gulp.dest(dest));
+        .on('error', function(e) { console.log('!!!!! ERROR on WebPack !!!!!'); console.log(e); })
+        .pipe(gulp.dest(dest))
+    ;
 });
 
 gulp.task('del', function () {
