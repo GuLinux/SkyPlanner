@@ -2,6 +2,9 @@ import React from 'react';
 import { Navbar, Nav, NavItem } from 'react-bootstrap';
 
 class SkyPlannerNavigation extends React.Component {
+    constructor(props) {
+        super(props);
+    }
     render() {
         return <Navbar inverse collapseOnSelect fluid>
                 <Navbar.Header>
