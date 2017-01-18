@@ -6,9 +6,11 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
         <title>SkyPlanner</title>
+        <link rel="stylesheet" type="text/css" href="/static/scripts/js/bundle.css">
     </head>
     <body>
         <div id='content'></div>
+        <script src="{{ url_for('static', filename='scripts/js/vendor.bundle.js') }}"></script>
         <script src="{{ url_for('static', filename='scripts/js/bundle.js') }}"></script>
     </body>
 </html>
