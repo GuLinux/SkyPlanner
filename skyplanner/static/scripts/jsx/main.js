@@ -1,14 +1,9 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { Button } from 'react-toolbox/lib/button';
 
-class Hello extends React.Component {
-    render() {
-        return <h1>Hello</h1>;
-    }
-};
+import SkyPlannerNavigation from './skyplanner-navigation';
 
 ReactDOM.render(
-    <Button label="Hello World!" />,
+    <SkyPlannerNavigation />,
     document.getElementById('content')
 );
