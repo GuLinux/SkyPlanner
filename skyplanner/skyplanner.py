@@ -6,6 +6,8 @@ from flask_login import LoginManager
 import pprint
 from skyplanner.controllers.users import UsersController
 
+controllers = dict()
+
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
 app.config.from_envvar('SKYPLANNER_SETTINGS', silent=True)
@@ -30,8 +32,17 @@ def login():
 def create_user():
     return json.jsonify(usersController().create(request.get_json()))
 
+
+
 def usersController():
-    return UsersController(app)
+    def create():
+        return UsersController(app)
+    return get_controller('users', create)
+
+def get_controller(name, factory):
+    if not name in controllers:
+        controllers[name] = factory()
+    return controllers[name]
 
 @app.cli.command()
 def init_db():
