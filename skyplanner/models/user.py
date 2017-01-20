@@ -16,3 +16,6 @@ class User(db.Model, UserMixin):
 
     def set_password(self, password):
         self.password_hash = bcrypt.hashpw(bytes(password, 'utf-8'), bcrypt.gensalt())
+
+    def to_map(self):
+        return {'username': self.username, 'id': self.id}

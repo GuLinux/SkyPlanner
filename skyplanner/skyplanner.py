@@ -1,7 +1,10 @@
 from flask import Flask, request, session, g, redirect, url_for, abort, \
      render_template, flash, json
+import click
 from skyplanner.models.db import db
 from flask_login import LoginManager
+import pprint
+from skyplanner.controllers.users import UsersController
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
@@ -19,11 +22,19 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/api/login', methods=['POST'])
+@app.route('/api/users/login', methods=['POST'])
 def login():
-    data = request.get_json()
-    user = User.query.filter_by(username=data['username']).first()
-    if not user or not user.verify_password(data['password']):
-        return json.jsonify({'result': 'wrong_user_or_password'})
-    return json.jsonify({'result': 'ok'})
+    return json.jsonify(usersController().login(request.get_json()))
+
+@app.route('/api/users/create', methods=['PUT'])
+def create_user():
+    return json.jsonify(usersController().create(request.get_json()))
+
+def usersController():
+    return UsersController(app)
+
+@app.cli.command()
+def init_db():
+    """Initialize the database"""
+    db.create_all()
 

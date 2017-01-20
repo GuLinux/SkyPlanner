@@ -1,0 +1,41 @@
+#!/bin/bash
+method=POST
+json=""
+url=""
+
+print_help() {
+    echo "Usage: $0 [-m|--method METHOD] -u|--url URL -j|--json JSON [ -- CURL_OPTIONS ]"
+}
+
+while [[ -n "$1" ]] && [[ "$1" != "--" ]]; do
+    case "$1" in
+        -h|--help)
+            print_help
+            exit 0
+            ;;
+        -u|--url)
+            url="$2"; shift
+            ;;
+        -m|--method)
+            method="$2"; shift
+            ;;
+        -j|--json)
+            json="$2"; shift
+            ;;
+        *)
+            echo "Unknown option: $1" >&2
+            print_help
+            exit 1
+            ;;
+    esac
+    shift
+done
+shift
+
+if [[ -z "$url" ]] || [[ -z "$json" ]]; then
+    print_help
+    exit 1
+fi
+
+curl -H "Content-Type: application/json" -X "$method" -d "$json" "$url" "$@"
+
