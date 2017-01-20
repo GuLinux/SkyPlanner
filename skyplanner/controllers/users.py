@@ -23,10 +23,10 @@ class UsersController:
             return {'result': 'ok', 'user': user.to_map()}
         except sqlalchemy.exc.IntegrityError as e:
             self.logger.info(e)
-            return {'result': 'error', 'error_type': 'username_existing'}
+            return {'result': 'error', 'reason': 'username_existing'}
         except sqlalchemy.exc.SQLAlchemyError as e:
             self.logger.info(e)
-            return {'result': 'error', 'error_type': 'unknown'}
+            return {'result': 'error', 'reason': 'unknown'}
 
     def auth_token(self, user, expiration = 600):
         s = Serializer(self.app.config['SECRET_KEY'], expires_in = expiration)

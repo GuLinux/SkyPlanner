@@ -4,6 +4,10 @@ source "$HOME/.profile"
 #export LANG=C.UTF-8
 
 setup() {
+    if ! grep -q '# entrypoint setup' "$HOME/.bashrc"; then
+        echo "# entrypoint setup" >> "$HOME/.bashrc"
+        echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$HOME/.bashrc"
+    fi
     pip3 install --user -r requirements.txt
     npm install
     #bower install

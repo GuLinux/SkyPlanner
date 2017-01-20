@@ -1,5 +1,4 @@
 flask
-flask-login
 flask-sqlalchemy
 astropy
 bcrypt

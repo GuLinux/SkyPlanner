@@ -1,8 +1,7 @@
-from flask_login import UserMixin
 from skyplanner.models.db import db
 import bcrypt
 
-class User(db.Model, UserMixin):
+class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String, nullable = False, unique = True)
     password_hash = db.Column(db.String, nullable = False)
