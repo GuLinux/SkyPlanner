@@ -4,7 +4,7 @@ import bcrypt
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String, nullable = False)
+    username = db.Column(db.String, nullable = False, unique = True)
     password_hash = db.Column(db.String, nullable = False)
 
     def __init__(self, username, password):
