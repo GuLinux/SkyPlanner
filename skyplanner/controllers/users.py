@@ -1,5 +1,6 @@
 from skyplanner.models.db import db
 from skyplanner.models.user import User
+from skyplanner.result_helpers import *
 import sqlalchemy.exc
 from itsdangerous import (TimedJSONWebSignatureSerializer
                           as Serializer, BadSignature, SignatureExpired)
@@ -12,21 +13,21 @@ class UsersController:
     def login(self, data):
         user = User.query.filter_by(username=data['username']).first()
         if not user or not user.verify_password(data['password']):
-            return {'result': 'wrong_user_or_password'}
-        return {'result': 'ok', 'user': user.to_map(), 'token': self.auth_token(user)}
+            return result_error(reason='wrong_user_or_password')
+        return result_ok(user=user.to_map(), token=self.auth_token(user))
 
     def create(self, data):
         try:
             user = User(username = data['username'], password = data['password'])
             db.session.add(user)
             db.session.commit()
-            return {'result': 'ok', 'user': user.to_map()}
+            return result_ok(user = user.to_map())
         except sqlalchemy.exc.IntegrityError as e:
             self.logger.info(e)
-            return {'result': 'error', 'reason': 'username_existing'}
+            return result_error(reason='username_existing')
         except sqlalchemy.exc.SQLAlchemyError as e:
             self.logger.info(e)
-            return {'result': 'error', 'reason': 'unknown'}
+            return result_error(reason='unknown')
 
     def auth_token(self, user, expiration = 600):
         s = Serializer(self.app.config['SECRET_KEY'], expires_in = expiration)
