@@ -28,20 +28,25 @@ class SkyPlannerLoginPage extends React.Component {
     login(e) {
         e.preventDefault();
         Ajax.send_json('/api/users/login', this.state, 'POST')
-            .then(Ajax.decode_json())
-            .then(function(j) { console.log(j); }); 
+            .then(Ajax.decode_json({
+                is_success: this.checkLoginSuccess,
+                success: this.loginSuccess
+        }));
     }
 
     handleChange(e) {
         this.setState({[e.target.name]: e.target.value})
     }
 
-    loginSuccess(data, textStatus, jqXHR) {
-        console.log('login successful: ' + jqXHR + ', ' + textStatus + ', ' + data);
+    checkLoginSuccess(response) {
+        if(response.status == 401) {
+            console.log("Unknown user or password");
+        } 
+        return response.status == 200;
     }
 
-    loginError(jqXHR, textStatus, errorThrown) {
-        console.log('error occured on login: ' + jqXHR + ', ' + textStatus + ', ' + errorThrown);
+    loginSuccess(json) {
+        console.log(json);
     }
 }
 export default SkyPlannerLoginPage;
