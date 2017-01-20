@@ -13,8 +13,14 @@ class Ajax {
         });
     }
     
-    static decode_json(response) {
-        return response.json();
+    static decode_json(options) {
+        var opts = { ok_statuses: [200], on_error: function(){} };
+        Object.assign(opts, options);        
+        return function(response) {
+            console.log(opts);
+            console.log(response);
+            return response.json();
+        };
     }
 }
 

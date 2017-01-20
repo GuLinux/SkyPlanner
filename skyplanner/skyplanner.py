@@ -2,6 +2,7 @@ from flask import Flask, request, session, g, redirect, url_for, abort, \
      render_template, flash, json
 import click
 from skyplanner.models.db import db
+from skyplanner.controllers.users import UsersController
 import pprint
 
 app = Flask(__name__)
@@ -23,7 +24,10 @@ def index():
 
 @app.route('/api/users/login', methods=['POST'])
 def login():
-    return json.jsonify(users_controller().login(request.get_json()))
+    try:
+        return json.jsonify(users_controller().login(request.get_json()))
+    except UsersController.UserOrPasswordError:
+        return json_error(reason='invalid_user_or_password'), 401 
 
 @app.route('/api/users/create', methods=['PUT'])
 def create_user():

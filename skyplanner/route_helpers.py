@@ -5,7 +5,6 @@ from skyplanner.result_helpers import result_ok, result_error
 app = None
 controllers = dict()
 
-
 def json_ok(**kwargs):
     return json.jsonify(result_ok(**kwargs))
 

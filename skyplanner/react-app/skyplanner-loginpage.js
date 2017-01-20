@@ -28,7 +28,7 @@ class SkyPlannerLoginPage extends React.Component {
     login(e) {
         e.preventDefault();
         Ajax.send_json('/api/users/login', this.state, 'POST')
-            .then(Ajax.decode_json)
+            .then(Ajax.decode_json())
             .then(function(j) { console.log(j); }); 
     }
 
