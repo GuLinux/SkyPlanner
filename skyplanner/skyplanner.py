@@ -21,5 +21,9 @@ def index():
 
 @app.route('/api/login', methods=['POST'])
 def login():
+    data = request.get_json()
+    user = User.query.filter_by(username=data['username']).first()
+    if not user or not user.verify_password(data['password']):
+        return json.jsonify({'result': 'wrong_user_or_password'})
     return json.jsonify({'result': 'ok'})
 

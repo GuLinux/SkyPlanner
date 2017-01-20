@@ -3,23 +3,31 @@ source "$HOME/.profile"
 #export LC_ALL=C.UTF-8
 #export LANG=C.UTF-8
 
-env
-
-pip3 install --user -r requirements.txt
-npm install
-#bower install
-(
-    cd skyplanner/ephemeris/native
-#    rm *.so build -rf
-    python3 setup.py build_ext --inplace
-)
-(
-    while true; do
-        gulp watch
-        while ! gulp transform >/dev/null 2>&1; do
-            sleep 1
+setup() {
+    pip3 install --user -r requirements.txt
+    npm install
+    #bower install
+    (
+        cd skyplanner/ephemeris/native
+    #    rm *.so build -rf
+        python3 setup.py build_ext --inplace
+    )
+    (
+        while true; do
+            gulp watch
+            while ! gulp transform >/dev/null 2>&1; do
+                sleep 1
+            done
         done
-    done
-) &
-# FLASK_APP=skyplanner/skyplanner.py flask run --host=0.0.0.0 
-flask run --host=0.0.0.0 
+    ) &
+}
+
+case "$1" in
+    'shell')
+        flask shell
+        ;;
+    *)
+        setup
+        flask run --host=0.0.0.0 
+        ;;
+esac

@@ -9,7 +9,10 @@ class User(db.Model, UserMixin):
 
     def __init__(self, username, password):
         self.username = username
-        self.password_hash = bcrypt.hashpw(bytes(password, 'utf-8'), bcrypt.gensalt())
+        self.set_password(password)
 
     def verify_password(self, password):
-        return bcrypt.checkpw(password, self.password_hash)
+        return bcrypt.checkpw(bytes(password, 'utf-8'), self.password_hash)
+
+    def set_password(self, password):
+        self.password_hash = bcrypt.hashpw(bytes(password, 'utf-8'), bcrypt.gensalt())
