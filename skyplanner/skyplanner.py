@@ -11,6 +11,7 @@ controllers = dict()
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
 app.config.from_envvar('SKYPLANNER_SETTINGS', silent=True)
+app.config['SECRET_KEY'] = 'a51df902b5a78f3ced5074db638e9992cd8ffac1547514449d9426f67eb90ed6'
 
 db.init_app(app)
 login_manager = LoginManager()
@@ -32,7 +33,9 @@ def login():
 def create_user():
     return json.jsonify(usersController().create(request.get_json()))
 
-
+@app.route('/api/users/get/<token>')
+def get_user(token):
+    return json.jsonify(usersController().verify_token(token).to_map())
 
 def usersController():
     def create():
