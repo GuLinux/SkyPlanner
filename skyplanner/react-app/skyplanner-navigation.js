@@ -14,12 +14,16 @@ class SkyPlannerNavigation extends React.Component {
                     <Navbar.Toggle />
                 </Navbar.Header>
                 <Navbar.Collapse>
-                    <Nav>
-                        <NavItem eventKey={1} href="#">Link</NavItem>
+                    <Nav activeKey='home'>
+                        {this.navs()}
                     </Nav>
                 </Navbar.Collapse>
             </Navbar>
             ;
+    }
+
+    navs() {
+        return this.props.navs.map( (nav) => { return <NavItem key={nav.key} eventKey={nav.key} href={'/' + nav.key}>{nav.display}</NavItem> } );;
     }
 };
 

@@ -1,17 +1,20 @@
 import React from 'react';
 class SkyPlannerContentManager extends React.Component {
-    constructor(props, pages, current) {
+    constructor(props) {
         super(props);
-        this.state['pages'] = pages;
-        this.state['current'] = current;
+        this.state = {current: 'home'};
     }
 
     render() {
-        return <div>{this.currentPage()}</div>; 
+        return <div className='container-fluid'>{this.current()}</div>; 
     }
 
-    currentPage() {
-        return this.state['pages'][this.state['current']]['page'];
+    setCurrent(page) {
+        setState({current: page});
+    }
+
+    current() {
+        return this.props.children.find( (x) => x.key == this.state.current);
     }
 }
 export default SkyPlannerContentManager;
