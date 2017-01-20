@@ -26,8 +26,8 @@ def index():
 def login():
     try:
         return json.jsonify(users_controller().login(request.get_json()))
-    except UsersController.UserOrPasswordError:
-        return json_error(reason='invalid_user_or_password'), 401 
+    except UsersController.Error as e:
+        return json_error(reason=e.reason), 401 
 
 @app.route('/api/users/create', methods=['PUT'])
 def create_user():

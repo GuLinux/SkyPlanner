@@ -15,12 +15,16 @@ def json_error(reason, **kwargs):
 def auth_url(func):
     def wrapper(*args, **kwargs):
         user = None
-        if request.args.get('auth'):
-            user = users_controller().verify_token(request.args.get('auth'))
-        if not user:
-            return json_error(reason='auth_required'), 401
-        kwargs['user'] = user
-        return func(*args, **kwargs)
+        try:
+            if request.args.get('auth'):
+                user = users_controller().verify_token(request.args.get('auth'))
+            if not user:
+                return json_error(reason='auth_required'), 401
+            kwargs['user'] = user
+            return func(*args, **kwargs)
+        except UsersController.Error as e:
+            return json_error(reason=e.reason), 401 
+
     return wrapper
 
 def users_controller():
