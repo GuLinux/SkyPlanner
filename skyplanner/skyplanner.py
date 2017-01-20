@@ -1,5 +1,5 @@
 from flask import Flask, request, session, g, redirect, url_for, abort, \
-     render_template, flash
+     render_template, flash, json
 from skyplanner.models.db import db
 from flask_login import LoginManager
 
@@ -12,10 +12,14 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 from skyplanner.models.skyobject import SkyObject
+from skyplanner.models.user import User
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
 
+@app.route('/api/login', methods=['POST'])
+def login():
+    return json.jsonify({'result': 'ok'})
 
