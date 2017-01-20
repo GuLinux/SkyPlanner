@@ -1,5 +1,7 @@
 import React from 'react';
 import { Navbar, Nav, NavItem } from 'react-bootstrap';
+import { LinkContainer, IndexLinkContainer } from 'react-router-bootstrap';
+
 
 class SkyPlannerNavigation extends React.Component {
     constructor(props) {
@@ -14,7 +16,7 @@ class SkyPlannerNavigation extends React.Component {
                     <Navbar.Toggle />
                 </Navbar.Header>
                 <Navbar.Collapse>
-                    <Nav activeKey='home'>
+                    <Nav>
                         {this.navs()}
                     </Nav>
                 </Navbar.Collapse>
@@ -23,7 +25,20 @@ class SkyPlannerNavigation extends React.Component {
     }
 
     navs() {
-        return this.props.navs.map( (nav) => { return <NavItem key={nav.key} eventKey={nav.key} href={'/' + nav.key}>{nav.display}</NavItem> } );;
+        return this.props.navs.map( (nav) => {
+            if(nav.key == '/')
+                return (
+                    <IndexLinkContainer key={nav.key} to={nav.key}>
+                        <NavItem eventKey={nav.key}>{nav.display}</NavItem>
+                    </IndexLinkContainer>
+
+                );
+            return (
+                <LinkContainer key={nav.key} to={nav.key}>
+                    <NavItem eventKey={nav.key}>{nav.display}</NavItem>
+                </LinkContainer>
+            );
+        } );
     }
 };
 
