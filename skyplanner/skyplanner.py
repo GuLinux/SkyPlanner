@@ -31,7 +31,10 @@ def login():
 
 @app.route('/api/users/create', methods=['PUT'])
 def create_user():
-    return json.jsonify(users_controller().create(request.get_json()))
+    try:
+        return json.jsonify(users_controller().create(request.get_json()))
+    except UsersController.Error as e:
+        return json_error(reason=e.reason), 409
 
 @app.route('/api/users/get')
 @auth_url
