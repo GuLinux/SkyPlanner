@@ -25,7 +25,7 @@ def auth_url(func):
             user = usersController().verify_token(request.args.get('auth'))
         if not user:
             return json.jsonify({'result': 'error', 'reason': 'auth_required'}), 401
-        return func(user, *args, **kwargs)
+        return func(*args, **kwargs, user=user)
     return wrapper
 
 @app.route('/')
