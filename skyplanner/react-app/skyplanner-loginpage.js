@@ -1,4 +1,6 @@
 import React from 'react';
+import Ajax from './ajax';
+
 import { FormControl, FormGroup, ControlLabel, Button } from 'react-bootstrap'
 class SkyPlannerLoginPage extends React.Component {
     constructor(props) {
@@ -23,12 +25,23 @@ class SkyPlannerLoginPage extends React.Component {
        )
     }
 
-    login() {
-        console.log(this);
+    login(e) {
+        e.preventDefault();
+        Ajax.send_json('/api/users/login', this.state, 'POST')
+            .then(Ajax.decode_json)
+            .then(function(j) { console.log(j); }); 
     }
 
     handleChange(e) {
         this.setState({[e.target.name]: e.target.value})
+    }
+
+    loginSuccess(data, textStatus, jqXHR) {
+        console.log('login successful: ' + jqXHR + ', ' + textStatus + ', ' + data);
+    }
+
+    loginError(jqXHR, textStatus, errorThrown) {
+        console.log('error occured on login: ' + jqXHR + ', ' + textStatus + ', ' + errorThrown);
     }
 }
 export default SkyPlannerLoginPage;
