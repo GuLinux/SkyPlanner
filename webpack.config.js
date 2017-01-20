@@ -10,7 +10,7 @@ module.exports = {
   output: {
     path: __dirname,
     filename: 'bundle.js',
-    publicPath: '/static/scripts/js/'
+    publicPath: '/static/react-app/'
   },
   resolve: {
     extensions: ['', '.scss', '.css', '.js', '.json'],

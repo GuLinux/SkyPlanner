@@ -8,13 +8,13 @@ var webpack = require('webpack-stream');
 // tasks
 
 gulp.task('transform', function () {
+    var dest = './skyplanner/static/react-app';
     try {
-        fs.mkdirSync('./skyplanner/static/scripts/js');
+        fs.mkdirSync(dest);
     }
     catch(e) {
     }
-    var src = './skyplanner/static/scripts/jsx/main.js';
-    var dest = './skyplanner/static/scripts/js';
+    var src = './skyplanner/react-app/main.js';
     return gulp.src(src)
         .pipe(webpack(require('./webpack.config.js')))
         .on('error', function(e) { console.log('!!!!! ERROR on WebPack !!!!!'); console.log(e); })
@@ -29,7 +29,7 @@ gulp.task('del', function () {
 gulp.task('watch', ['del'], function() {
     try {
         gulp.start('transform');
-        gulp.watch('./skyplanner/static/scripts/jsx/**/*.js', ['transform']);
+        gulp.watch('./skyplanner/react-app/**/*.js', ['transform']);
     }
     catch(e) {
         console.log(e);

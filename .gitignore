@@ -4,4 +4,4 @@ build
 *.so
 bower_components
 node_modules
-skyplanner/static/scripts/js
+skyplanner/static/react-app
