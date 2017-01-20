@@ -1,5 +1,6 @@
 import React from 'react';
 import Ajax from './ajax';
+import { NotificationManager } from 'react-notifications';
 
 import { FormControl, FormGroup, ControlLabel, Button } from 'react-bootstrap'
 class SkyPlannerLoginPage extends React.Component {
@@ -40,13 +41,13 @@ class SkyPlannerLoginPage extends React.Component {
 
     checkLoginSuccess(response) {
         if(response.status == 401) {
-            console.log("Unknown user or password");
+            NotificationManager.warning('Login Error', 'Invalid username or password', 5000);
         } 
         return response.status == 200;
     }
 
     loginSuccess(json) {
-        console.log(json);
+        NotificationManager.warning('Login', 'User ' + json.username + ' correctly logged in', 5000);
     }
 }
 export default SkyPlannerLoginPage;
