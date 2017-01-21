@@ -8,11 +8,10 @@ import SkyPlannerLoginPage from './skyplanner-loginpage'
 import { NotificationContainer, NotificationManager } from 'react-notifications';
 import Ajax from './ajax';
 import AuthManager from './auth-manager';
-
+import URLs from './urls';
 require('style!react-notifications/lib/notifications.css');
 
 var history = hashHistory;
-
 class RoutesContainer extends React.Component {
     constructor(props) {
         super(props);
@@ -38,10 +37,10 @@ class RoutesContainer extends React.Component {
     render() {
         return (
             <Router history={history} ref='router'>
-                <Route path="/" component={SkyPlannerApp} navs={this.navs()}>
+                <Route path={URLs.root.route} component={SkyPlannerApp} navs={this.navs()}>
                     <IndexRoute component={SkyPlannerHomePage} />} />
-                    <Route path="login" component={SkyPlannerLoginPage} />
-                    <Route path='logout' component='div' onEnter={() => AuthManager.setUser(null) } />
+                    <Route path={URLs.login.route} component={SkyPlannerLoginPage} />
+                    <Route path={URLs.logout.route} component='div' onEnter={() => AuthManager.setUser(null) } />
                 </Route>
             </Router>
         );
@@ -49,8 +48,8 @@ class RoutesContainer extends React.Component {
 
     navs() {
         return {
-            loggedIn: [{key: '/', display: 'Home'}, {key: '/logout', display: 'Logout'}],
-            loggedOut: [{key: '/', display: 'Home'}, {key: '/login', display: 'Login'}]
+            loggedIn: [{key: URLs.root.path, display: 'Home'}, {key: URLs.logout.path, display: 'Logout'}],
+            loggedOut: [{key: URLs.root.path, display: 'Home'}, {key: URLs.login.path, display: 'Login'}]
         };
     }
 
@@ -59,7 +58,7 @@ class RoutesContainer extends React.Component {
             window.localStorage.removeItem('user_token');
             NotificationManager.success('User logged out correctly', 'Logout', 5000);
         }
-        history.push('/');
+        history.replace('/');
     }
 }
 
