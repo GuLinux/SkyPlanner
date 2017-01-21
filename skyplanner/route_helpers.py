@@ -24,7 +24,6 @@ def auth_url(func):
             return func(*args, **kwargs)
         except UsersController.Error as e:
             return json_error(reason=e.reason), 401 
-
     return wrapper
 
 def users_controller():

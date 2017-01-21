@@ -6,12 +6,23 @@ import SkyPlannerApp from './skyplanner-app';
 import SkyPlannerHomePage from './skyplanner-homepage'
 import SkyPlannerLoginPage from './skyplanner-loginpage'
 import { NotificationContainer, NotificationManager } from 'react-notifications';
+import Ajax from './ajax';
 
 require('style!react-notifications/lib/notifications.css');
 
 var history = hashHistory;
 
 class RoutesContainer extends React.Component {
+    constructor(props) {
+        super(props);
+        var token = window.localStorage.getItem('user_token');
+        if(token != null) {
+            Ajax.fetch('/api/users/get?auth=' + token)
+                .then(Ajax.decode_json({
+                    success: (j) => { Object.assign(j, {token: token}); this.setUser(j); } 
+            }));
+        }
+    }
     render() {
         return (
             <Router history={history} ref='router'>
@@ -37,6 +48,7 @@ class RoutesContainer extends React.Component {
 
     logout() {
         this.setUser(undefined);
+        window.localStorage.removeItem('user_token');
         NotificationManager.success('User logged out correctly', 'Logout', 5000);
     }
 
