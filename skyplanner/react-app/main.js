@@ -31,7 +31,7 @@ class RoutesContainer extends React.Component {
                             {props.children}
                         </SkyPlannerApp>
                     ) }>
-                    <IndexRoute component={SkyPlannerHomePage} />
+                    <IndexRoute component={(props) => <SkyPlannerHomePage ref={(home) => {this.home = home; } } />} />
                     <Route path="login" component={(props) => <SkyPlannerLoginPage onLogin={this.setUser.bind(this)} /> } />
                     <Route path='logout' component='div' onEnter={this.logout.bind(this)} />
                 </Route>
