@@ -7,6 +7,7 @@ import SkyPlannerHomePage from './skyplanner-homepage'
 import SkyPlannerLoginPage from './skyplanner-loginpage'
 import { NotificationContainer, NotificationManager } from 'react-notifications';
 import Ajax from './ajax';
+import LoginDispatcher from './login-dispatcher';
 
 require('style!react-notifications/lib/notifications.css');
 
