@@ -9,37 +9,42 @@ import { NotificationContainer } from 'react-notifications';
 
 require('style!react-notifications/lib/notifications.css');
 
+var history = hashHistory;
 
-class Entrypoint extends React.Component{
-    constructor(props) {
-        super(props);
-        this.state = {user: undefined};
-    }
+class RoutesContainer extends React.Component {
     render() {
         return (
-            <Router history={hashHistory}>
-                <Route path="/" component={SkyPlannerApp} navs={this.getNavLinks()}>
+            <Router history={history} ref='router'>
+                <Route path="/" component={(props) => (
+                        <SkyPlannerApp navs={this.navs()} location={props.location} ref={(a) => {this.app = a; } }>
+                            {props.children}
+                        </SkyPlannerApp>
+                    ) }>
                     <IndexRoute component={SkyPlannerHomePage} />
-                    <Route path="login" component={SkyPlannerLoginPage} onLogin={this.setUser.bind(this)} />
+                    <Route path="login" component={(props) => <SkyPlannerLoginPage onLogin={this.setUser.bind(this)} /> } />
+                    <Route path='logout' component='div' onEnter={this.setUser.bind(this, undefined)} />
                 </Route>
             </Router>
-        )
+        );
+    }
+
+    navs() {
+        return {
+            loggedIn: [{key: '/', display: 'Home'}, {key: '/logout', display: 'Logout'}],
+            loggedOut: [{key: '/', display: 'Home'}, {key: '/login', display: 'Login'}]
+        };
     }
 
     setUser(user) {
-        this.setState({user: user});
-    }
-
-    getNavLinks() {
-        if(this.state.user === undefined)
-            return [{key: '/', display: 'Home'}, {key: '/login', display: 'Login'}];
-        return [{key: '/', display: 'Home'}, {key: '/logout', display: 'Logout'}];
+        this.app.setUser(user);
+        history.push('/');
     }
 }
 
+
 render(
     <div>
-        <Entrypoint />
+        <RoutesContainer />
         <NotificationContainer />
     </div>,
     document.getElementById('content')

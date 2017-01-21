@@ -7,11 +7,14 @@ import { RouteTransition } from 'react-router-transition';
 
 
 class SkyPlannerApp extends React.Component {
-
+    constructor(props) {
+        super(props);
+        this.state = {user: undefined};
+    }
     render() {
         return (
             <div>
-                <SkyPlannerNavigation navs={this.props.route.navs}/>
+                <SkyPlannerNavigation navs={this.navs()}/>
                 <RouteTransition pathname={this.props.location.pathname} 
                     atEnter={{ opacity: 0 }}
                     atLeave={{ opacity: 0 }}
@@ -20,6 +23,15 @@ class SkyPlannerApp extends React.Component {
                 </RouteTransition>
             </div>
         ); 
+    }
+
+    setUser(user) {
+        this.setState({user: user});
+    }
+
+    navs() {
+        var state = this.state.user ? 'loggedIn' : 'loggedOut';
+        return this.props.navs[state];
     }
 
 }
