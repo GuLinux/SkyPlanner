@@ -38,10 +38,10 @@ class RoutesContainer extends React.Component {
     render() {
         return (
             <Router history={history} ref='router'>
-                <Route path="/" component={(props) => <SkyPlannerApp navs={this.navs()} location={props.location} >{props.children}</SkyPlannerApp> }>
+                <Route path="/" component={SkyPlannerApp} navs={this.navs()}>
                     <IndexRoute component={SkyPlannerHomePage} />} />
                     <Route path="login" component={SkyPlannerLoginPage} />
-                    <Route path='logout' component='div' onEnter={() => LoginDispatcher.setUser(undefined) } />
+                    <Route path='logout' component='div' onEnter={() => LoginDispatcher.setUser(null) } />
                 </Route>
             </Router>
         );
@@ -55,7 +55,7 @@ class RoutesContainer extends React.Component {
     }
 
     setUser(user) {
-        if(user === undefined) {
+        if(user == null) {
             window.localStorage.removeItem('user_token');
             NotificationManager.success('User logged out correctly', 'Logout', 5000);
         }

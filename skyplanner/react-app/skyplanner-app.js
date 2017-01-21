@@ -10,7 +10,7 @@ import LoginDispatcher from './login-dispatcher';
 class SkyPlannerApp extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {user: undefined};
+        this.state = {user: null};
     }
 
     componentDidMount() {
@@ -41,7 +41,7 @@ class SkyPlannerApp extends React.Component {
 
     navs() {
         var state = this.state.user ? 'loggedIn' : 'loggedOut';
-        return this.props.navs[state];
+        return this.props.route.navs[state];
     }
 
 }

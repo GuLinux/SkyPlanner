@@ -2,7 +2,11 @@ var path = require('path');
 var webpack = require('webpack');
 
 module.exports = {
-    output: { path: __dirname, filename: 'bundle.js' },
+    output: {
+        path: __dirname,
+        filename: 'bundle.js',
+        publicPath: '/static/react-app/'
+    },
     module: {
         loaders: [
             {
