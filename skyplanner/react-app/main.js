@@ -5,7 +5,7 @@ import { Router, Route, IndexRoute, Link, hashHistory } from 'react-router'
 import SkyPlannerApp from './skyplanner-app';
 import SkyPlannerHomePage from './skyplanner-homepage'
 import SkyPlannerLoginPage from './skyplanner-loginpage'
-import { NotificationContainer } from 'react-notifications';
+import { NotificationContainer, NotificationManager } from 'react-notifications';
 
 require('style!react-notifications/lib/notifications.css');
 
@@ -22,7 +22,7 @@ class RoutesContainer extends React.Component {
                     ) }>
                     <IndexRoute component={SkyPlannerHomePage} />
                     <Route path="login" component={(props) => <SkyPlannerLoginPage onLogin={this.setUser.bind(this)} /> } />
-                    <Route path='logout' component='div' onEnter={this.setUser.bind(this, undefined)} />
+                    <Route path='logout' component='div' onEnter={this.logout.bind(this)} />
                 </Route>
             </Router>
         );
@@ -33,6 +33,11 @@ class RoutesContainer extends React.Component {
             loggedIn: [{key: '/', display: 'Home'}, {key: '/logout', display: 'Logout'}],
             loggedOut: [{key: '/', display: 'Home'}, {key: '/login', display: 'Login'}]
         };
+    }
+
+    logout() {
+        this.setUser(undefined);
+        NotificationManager.success('User logged out correctly', 'Logout', 5000);
     }
 
     setUser(user) {
