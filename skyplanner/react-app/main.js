@@ -7,7 +7,7 @@ import SkyPlannerHomePage from './skyplanner-homepage'
 import SkyPlannerLoginPage from './skyplanner-loginpage'
 import { NotificationContainer, NotificationManager } from 'react-notifications';
 import Ajax from './ajax';
-import LoginDispatcher from './login-dispatcher';
+import AuthManager from './auth-manager';
 
 require('style!react-notifications/lib/notifications.css');
 
@@ -19,20 +19,20 @@ class RoutesContainer extends React.Component {
     }
     
     componentDidMount() {
-        LoginDispatcher.register(this);
+        AuthManager.register(this);
 
         var token = window.localStorage.getItem('user_token');
         if(token != null) {
             Ajax.fetch('/api/users/get?auth=' + token)
                 .then(Ajax.decode_json({
-                    success: (j) => { Object.assign(j, {token: token}); LoginDispatcher.setUser(j); } 
+                    success: (j) => { Object.assign(j, {token: token}); AuthManager.setUser(j); } 
             }));
         }
 
     }
 
     componentWillUnmount() {
-        LoginDispatcher.unregister(this);
+        AuthManager.unregister(this);
     }
 
     render() {
@@ -41,7 +41,7 @@ class RoutesContainer extends React.Component {
                 <Route path="/" component={SkyPlannerApp} navs={this.navs()}>
                     <IndexRoute component={SkyPlannerHomePage} />} />
                     <Route path="login" component={SkyPlannerLoginPage} />
-                    <Route path='logout' component='div' onEnter={() => LoginDispatcher.setUser(null) } />
+                    <Route path='logout' component='div' onEnter={() => AuthManager.setUser(null) } />
                 </Route>
             </Router>
         );
@@ -60,6 +60,16 @@ class RoutesContainer extends React.Component {
             NotificationManager.success('User logged out correctly', 'Logout', 5000);
         }
         history.push('/');
+    }
+}
+
+
+var requireAuth = function() {
+    if (!AuthManager.user() ) {
+        replace({
+            pathname: '/login',
+            state: { nextPathname: nextState.location.pathname }
+        })
     }
 }
 

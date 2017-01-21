@@ -1,5 +1,5 @@
 import React from 'react';
-import LoginDispatcher from './login-dispatcher';
+import AuthManager from './auth-manager';
 
 class SkyPlannerHomePage extends React.Component {
     constructor(props) {
@@ -8,11 +8,11 @@ class SkyPlannerHomePage extends React.Component {
     }
 
     componentDidMount() {
-        LoginDispatcher.register(this);
+        AuthManager.register(this);
     }
 
     componentWillUnmount() {
-        LoginDispatcher.unregister(this);
+        AuthManager.unregister(this);
     }
 
     render() {
@@ -31,5 +31,6 @@ class SkyPlannerHomePage extends React.Component {
         console.log(user);
         this.setState({user: user});
     }
+
 }
 export default SkyPlannerHomePage;
