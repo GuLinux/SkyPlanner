@@ -1,12 +1,27 @@
 import React from 'react';
 import { Navbar, Nav, NavItem } from 'react-bootstrap';
 import { LinkContainer, IndexLinkContainer } from 'react-router-bootstrap';
-
+import AuthManager from './auth-manager';
+import URLs from './urls'
 
 class SkyPlannerNavigation extends React.Component {
     constructor(props) {
         super(props);
+        this.state = { loggedIn: false };
     }
+
+    componentDidMount() {
+        AuthManager.register(this);
+    }
+
+    componentWillUnmount() {
+        AuthManager.unregister(this);
+    }
+
+    loginChanged(user) {
+        this.setState({loggedIn: user != null});
+    }
+
     render() {
         return <Navbar inverse collapseOnSelect fluid>
                 <Navbar.Header>
@@ -16,30 +31,29 @@ class SkyPlannerNavigation extends React.Component {
                     <Navbar.Toggle />
                 </Navbar.Header>
                 <Navbar.Collapse>
-                    <Nav>
-                        {this.navs()}
-                    </Nav>
+                    {this.state.loggedIn ? this.navsAuthenticated() : this.navsAnonymous()}
                 </Navbar.Collapse>
             </Navbar>
             ;
     }
 
-    navs() {
-        return this.props.navs.map( (nav) => {
-            if(nav.key == '/')
-                return (
-                    <IndexLinkContainer key={nav.key} to={nav.key}>
-                        <NavItem eventKey={nav.key}>{nav.display}</NavItem>
-                    </IndexLinkContainer>
-
-                );
-            return (
-                <LinkContainer key={nav.key} to={nav.key}>
-                    <NavItem eventKey={nav.key}>{nav.display}</NavItem>
-                </LinkContainer>
-            );
-        } );
+    navsAuthenticated() {
+        return (
+            <Nav>
+                <IndexLinkContainer to={URLs.root.path}><NavItem eventKey='index'>Home</NavItem></IndexLinkContainer>
+                <LinkContainer to={URLs.logout.path}><NavItem eventKey='logout'>Logout</NavItem></LinkContainer>
+            </Nav>
+        );
     }
+
+    navsAnonymous() {
+         return (
+            <Nav>
+                <IndexLinkContainer to={URLs.root.path}><NavItem eventKey='index'>Home</NavItem></IndexLinkContainer>
+                <LinkContainer to={URLs.login.path}><NavItem eventKey='login'>Login</NavItem></LinkContainer>
+            </Nav>
+        );
+   }
 };
 
 export default SkyPlannerNavigation;

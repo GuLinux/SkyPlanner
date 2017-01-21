@@ -22,7 +22,7 @@ class AuthManager {
 
     static setUser(user) {
         AuthManager.user = user;
-        AuthManager.instance().observers.forEach( (o) => o.setUser(user) );
+        AuthManager.instance().observers.forEach( (o) => o.loginChanged(user) );
     }
 
     static user() {
@@ -38,6 +38,7 @@ class AuthManager {
 
     static logout() {
         AuthManager.setUser(null);
+        window.localStorage.removeItem('user_token');
     }
 
     static token() {

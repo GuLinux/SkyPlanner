@@ -4,17 +4,25 @@ import SkyPlannerHomePage from './skyplanner-homepage';
 import SkyPlannerLoginPage from './skyplanner-loginpage';
 import { RouteTransition } from 'react-router-transition';
 import AuthManager from './auth-manager';
-
+import { NotificationManager } from 'react-notifications';
+import URLs from './urls';
 
 
 class SkyPlannerApp extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {user: null};
+        console.log(props);
     }
 
     componentDidMount() {
         AuthManager.register(this);
+        let token = AuthManager.token();
+        if(token != null) {
+            Ajax.fetch( URLs.buildAuthPath('/api/users/get'))
+                .then(Ajax.decode_json({
+                    success: (j) => { Object.assign(j, {token: token}); AuthManager.login(j); } 
+            }));
+        }
     }
 
     componentWillUnmount() {
@@ -24,7 +32,7 @@ class SkyPlannerApp extends React.Component {
     render() {
         return (
             <div>
-                <SkyPlannerNavigation navs={this.navs()}/>
+                <SkyPlannerNavigation />
                 <RouteTransition pathname={this.props.location.pathname} 
                     atEnter={{ opacity: 0 }}
                     atLeave={{ opacity: 0 }}
@@ -35,14 +43,11 @@ class SkyPlannerApp extends React.Component {
         ); 
     }
 
-    setUser(user) {
-        this.setState({user: user});
+    loginChanged(user) {
+        if(!user) {
+            NotificationManager.success('User logged out correctly', 'Logout', 5000);
+            props.router.replace('/');
+        }
     }
-
-    navs() {
-        var state = this.state.user ? 'loggedIn' : 'loggedOut';
-        return this.props.route.navs[state];
-    }
-
 }
 export default SkyPlannerApp;

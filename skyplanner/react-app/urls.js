@@ -6,6 +6,8 @@ class URLs {
     static get logout() { return URLs.__build_url('/logout', 'logout') }
 
     static buildPath(path, parameters) {
+        if(Array.isArray(path))
+            path = path.map( encodeURIComponent ).join('/');
         return [
             path,
             Object.keys(parameters).map( (key) => [encodeURIComponent(key), encodeURIComponent(parameters[key])].join('=') ).join('&')
