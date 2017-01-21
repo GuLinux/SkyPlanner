@@ -20,9 +20,9 @@ class RoutesContainer extends React.Component {
     componentDidMount() {
         AuthManager.register(this);
 
-        var token = window.localStorage.getItem('user_token');
+        let token = AuthManager.token();
         if(token != null) {
-            Ajax.fetch('/api/users/get?auth=' + token)
+            Ajax.fetch( URLs.buildAuthPath('/api/users/get'))
                 .then(Ajax.decode_json({
                     success: (j) => { Object.assign(j, {token: token}); AuthManager.setUser(j); } 
             }));

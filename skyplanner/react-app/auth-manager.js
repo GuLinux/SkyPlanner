@@ -28,6 +28,21 @@ class AuthManager {
     static user() {
         return AuthManager.instance().user;
     }
+
+    static login(user, remember) {
+        AuthManager.setUser(user);
+        if(remember) {
+            localStorage.setItem('user_token', json.token);
+        }
+    }
+
+    static logout() {
+        AuthManager.setUser(null);
+    }
+
+    static token() {
+        return localStorage.getItem('user_token');
+    }
 }
 
 export default AuthManager;

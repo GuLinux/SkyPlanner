@@ -62,10 +62,7 @@ class SkyPlannerLoginPage extends React.Component {
 
     loginSuccess(json) {
         NotificationManager.success('User ' + json.username + ' correctly logged in', 'Login', 5000);
-        AuthManager.setUser(Object.assign(json.user, {token: json.token}));
-        if(this.state.remember) {
-            window.localStorage.setItem('user_token', json.token);
-        }
+        AuthManager.login(Object.assign(json.user, {token: json.token}), this.state.remember);
     }
 }
 export default SkyPlannerLoginPage;

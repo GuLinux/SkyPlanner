@@ -1,3 +1,5 @@
+import AuthManager from './auth-manager'
+
 class URLs {
     static get root() { return  URLs.__build_url('/')}
     static get login() { return URLs.__build_url('/login', 'login') }
@@ -11,7 +13,7 @@ class URLs {
     }
 
     static buildAuthPath(path, parameters) {
-        return URLs.buildPath(path, Object.assign({auth: 'xxxx'}, parameters) );
+        return URLs.buildPath(path, Object.assign({auth: AuthManager.token()}, parameters) );
     }
 
     static __build_url(path, route) { return {path: path, route: route ? route : path}; }
