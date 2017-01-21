@@ -2,13 +2,13 @@ import React from 'react';
 import Ajax from './ajax';
 import { NotificationManager } from 'react-notifications';
 
-import { FormControl, FormGroup, ControlLabel, Button } from 'react-bootstrap'
+import { FormControl, FormGroup, ControlLabel, Button, Checkbox} from 'react-bootstrap'
 class SkyPlannerLoginPage extends React.Component {
     constructor(props) {
         super(props);
         this.handleChange = this.handleChange.bind(this);
         this.login = this.login.bind(this);
-        this.state = {username: '', password: ''};
+        this.state = {username: '', password: '', remember: false};
     }
     render() {
        return (
@@ -21,6 +21,9 @@ class SkyPlannerLoginPage extends React.Component {
                     <ControlLabel>Password</ControlLabel>
                     <FormControl name='password' type='password' value={this.state.password} onChange={this.handleChange}/>
                 </FormGroup>
+                <FormGroup>
+                    <Checkbox name='remember-me' inline checked={this.state.remember} onChange={(e) => {this.setState({remember: !this.state.remember }) } }>Remember me</Checkbox>
+                </FormGroup>
                 <Button type='submit'>Login</Button>
             </form>
        )
@@ -28,7 +31,6 @@ class SkyPlannerLoginPage extends React.Component {
 
     login(e) {
         e.preventDefault();
-
         if( ['username', 'password'].map( (v) => this.validate(v, this.state[v])  ).some( (v) => !v )  ) {
             NotificationManager.warning('Please fill the required fields', 'Login', 5000);
             return;
@@ -60,6 +62,9 @@ class SkyPlannerLoginPage extends React.Component {
     loginSuccess(json) {
         NotificationManager.success('User ' + json.username + ' correctly logged in', 'Login', 5000);
         this.props.onLogin(Object.assign(json.user, {token: json.token}));
+        if(this.state.remember) {
+            window.localStorage.setItem('user_token', json.token);
+        }
     }
 }
 export default SkyPlannerLoginPage;
