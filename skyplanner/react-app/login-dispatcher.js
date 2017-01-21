@@ -1,24 +1,26 @@
-let instance = null;
+let __instance = null;
 
 class LoginDispatcher {
     constructor() {
-        if(! instance) {
-            instance = this;
-            this.observers = [];
-        }
-        return instance;
+        this.observers = [];
     }
 
-    register(observer) {
-        this.observers.push(observer);
+    static instance() {
+        if(! __instance)
+            __instance = new LoginDispatcher();
+        return __instance;
     }
 
-    unregister(observer) {
-        this.observers.pop(observer);
+    static register(observer) {
+        LoginDispatcher.instance().observers.push(observer);
     }
 
-    setUser(user) {
-        this.observers.forEach( (o) => o.setUser(user) );
+    static unregister(observer) {
+        LoginDispatcher.instance().observers.pop(observer);
+    }
+
+    static setUser(user) {
+        LoginDispatcher.instance().observers.forEach( (o) => o.setUser(user) );
     }
 }
 

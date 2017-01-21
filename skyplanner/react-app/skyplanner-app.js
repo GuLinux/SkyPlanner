@@ -3,6 +3,7 @@ import SkyPlannerNavigation from './skyplanner-navigation';
 import SkyPlannerHomePage from './skyplanner-homepage';
 import SkyPlannerLoginPage from './skyplanner-loginpage';
 import { RouteTransition } from 'react-router-transition';
+import LoginDispatcher from './login-dispatcher';
 
 
 
@@ -11,6 +12,15 @@ class SkyPlannerApp extends React.Component {
         super(props);
         this.state = {user: undefined};
     }
+
+    componentDidMount() {
+        LoginDispatcher.register(this);
+    }
+
+    componentWillUnmount() {
+        LoginDispatcher.unregister(this);
+    }
+
     render() {
         return (
             <div>

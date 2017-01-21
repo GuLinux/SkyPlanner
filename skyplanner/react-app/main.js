@@ -16,25 +16,32 @@ var history = hashHistory;
 class RoutesContainer extends React.Component {
     constructor(props) {
         super(props);
+    }
+    
+    componentDidMount() {
+        LoginDispatcher.register(this);
+
         var token = window.localStorage.getItem('user_token');
         if(token != null) {
             Ajax.fetch('/api/users/get?auth=' + token)
                 .then(Ajax.decode_json({
-                    success: (j) => { Object.assign(j, {token: token}); this.setUser(j); } 
+                    success: (j) => { Object.assign(j, {token: token}); LoginDispatcher.setUser(j); } 
             }));
         }
+
     }
+
+    componentWillUnmount() {
+        LoginDispatcher.unregister(this);
+    }
+
     render() {
         return (
             <Router history={history} ref='router'>
-                <Route path="/" component={(props) => (
-                        <SkyPlannerApp navs={this.navs()} location={props.location} ref={(a) => {this.app = a; } }>
-                            {props.children}
-                        </SkyPlannerApp>
-                    ) }>
-                    <IndexRoute component={(props) => <SkyPlannerHomePage ref={(home) => {this.home = home; } } />} />
-                    <Route path="login" component={(props) => <SkyPlannerLoginPage onLogin={this.setUser.bind(this)} /> } />
-                    <Route path='logout' component='div' onEnter={this.logout.bind(this)} />
+                <Route path="/" component={(props) => <SkyPlannerApp navs={this.navs()} location={props.location} >{props.children}</SkyPlannerApp> }>
+                    <IndexRoute component={SkyPlannerHomePage} />} />
+                    <Route path="login" component={SkyPlannerLoginPage} />
+                    <Route path='logout' component='div' onEnter={() => LoginDispatcher.setUser(undefined) } />
                 </Route>
             </Router>
         );
@@ -47,14 +54,11 @@ class RoutesContainer extends React.Component {
         };
     }
 
-    logout() {
-        this.setUser(undefined);
-        window.localStorage.removeItem('user_token');
-        NotificationManager.success('User logged out correctly', 'Logout', 5000);
-    }
-
     setUser(user) {
-        this.app.setUser(user);
+        if(user === undefined) {
+            window.localStorage.removeItem('user_token');
+            NotificationManager.success('User logged out correctly', 'Logout', 5000);
+        }
         history.push('/');
     }
 }

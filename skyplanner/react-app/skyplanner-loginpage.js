@@ -1,6 +1,7 @@
 import React from 'react';
 import Ajax from './ajax';
 import { NotificationManager } from 'react-notifications';
+import LoginDispatcher from './login-dispatcher';
 
 import { FormControl, FormGroup, ControlLabel, Button, Checkbox} from 'react-bootstrap'
 class SkyPlannerLoginPage extends React.Component {
@@ -61,7 +62,7 @@ class SkyPlannerLoginPage extends React.Component {
 
     loginSuccess(json) {
         NotificationManager.success('User ' + json.username + ' correctly logged in', 'Login', 5000);
-        this.props.onLogin(Object.assign(json.user, {token: json.token}));
+        LoginDispatcher.setUser(Object.assign(json.user, {token: json.token}));
         if(this.state.remember) {
             window.localStorage.setItem('user_token', json.token);
         }
