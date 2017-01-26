@@ -37,7 +37,7 @@ class UsersController:
 
     def auth_token(self, user, expiration = 600):
         s = Serializer(self.app.config['SECRET_KEY'], expires_in = expiration)
-        return s.dumps({'id': user.id, 'username': user.username}).decode('utf-8')
+        return s.dumps({'id': user.id}).decode('utf-8')
 
     def verify_token(self, token):
         s = Serializer(self.app.config['SECRET_KEY'])
