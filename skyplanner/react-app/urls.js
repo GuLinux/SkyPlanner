@@ -4,6 +4,7 @@ class URLs {
     static get root() { return  URLs.__build_url('/')}
     static get login() { return URLs.__build_url('/login', 'login') }
     static get logout() { return URLs.__build_url('/logout', 'logout') }
+    static get equipment() { return URLs.__build_url('/equipment', 'equipment') }
 
     static buildPath(path, parameters) {
         if(Array.isArray(path))

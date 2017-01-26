@@ -4,7 +4,6 @@ import AuthManager from './auth-manager';
 class SkyPlannerHomePage extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { user: null };
     }
 
     componentDidMount() {
@@ -16,7 +15,7 @@ class SkyPlannerHomePage extends React.Component {
     }
 
     render() {
-        return this.state.user ? this.renderLoggedIn() : this.renderAnonymous(); 
+        return !!AuthManager.user() ? this.renderLoggedIn() : this.renderAnonymous(); 
     }
 
     renderAnonymous() {
@@ -24,12 +23,11 @@ class SkyPlannerHomePage extends React.Component {
     }
 
     renderLoggedIn() {
-        return <div>Hello {this.state.user.username}, this is the Homepage</div>; 
+        return <div>Hello {AuthManager.user().username}, this is the Homepage</div>; 
     }
 
-    setUser(user) {
-        console.log(user);
-        this.setState({user: user});
+    loginChanged(user) {
+        this.forceUpdate();
     }
 
 }

@@ -14,12 +14,15 @@ class Ajax {
     }
     
     static decode_json(options) {
-        var opts = { is_success: (r) => true, success: (d) => {}  };
+        var opts = { is_success: (r) => true, success: (data) => {}, failure: (data, response) => {} };
         Object.assign(opts, options);
         
         return function(response) {
             if(opts.is_success(response))
                 response.json().then(opts.success);
+            else {
+                response.json().then( (j) => opts.failure(j, response));
+            }
         };
     }
 }

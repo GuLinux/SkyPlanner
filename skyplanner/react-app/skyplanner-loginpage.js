@@ -2,8 +2,9 @@ import React from 'react';
 import Ajax from './ajax';
 import { NotificationManager } from 'react-notifications';
 import AuthManager from './auth-manager';
-
+import URLs from './urls';
 import { FormControl, FormGroup, ControlLabel, Button, Checkbox} from 'react-bootstrap'
+
 class SkyPlannerLoginPage extends React.Component {
     constructor(props) {
         super(props);
@@ -63,6 +64,11 @@ class SkyPlannerLoginPage extends React.Component {
     loginSuccess(json) {
         NotificationManager.success('User ' + json.username + ' correctly logged in', 'Login', 5000);
         AuthManager.login(Object.assign(json.user, {token: json.token}), this.state.remember);
+        var nextLocation = URLs.root.path;
+        try {
+            nextLocation = this.props.location.state.nextPathname;
+        } catch(TypeError) {}
+        this.props.router.replace(nextLocation);
     }
 }
 export default SkyPlannerLoginPage;

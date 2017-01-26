@@ -3,7 +3,7 @@ let __instance = null;
 class AuthManager {
     constructor() {
         this.observers = [];
-        this.user = null;
+        this.__user = null;
     }
 
     static instance() {
@@ -17,22 +17,22 @@ class AuthManager {
     }
 
     static unregister(observer) {
-        AuthManager.instance().observers.pop(observer);
+        AuthManager.instance().observers = AuthManager.instance().observers.filter( (x) => x != observer);
     }
 
     static setUser(user) {
-        AuthManager.user = user;
+        AuthManager.instance().__user = user;
         AuthManager.instance().observers.forEach( (o) => o.loginChanged(user) );
     }
 
     static user() {
-        return AuthManager.instance().user;
+        return AuthManager.instance().__user;
     }
 
-    static login(user, remember) {
+    static login(user, remember, nextPath) {
         AuthManager.setUser(user);
         if(remember) {
-            localStorage.setItem('user_token', json.token);
+            localStorage.setItem('user_token', user.token);
         }
     }
 
@@ -44,6 +44,7 @@ class AuthManager {
     static token() {
         return localStorage.getItem('user_token');
     }
+
 }
 
 export default AuthManager;

@@ -13,29 +13,55 @@ require('style!react-notifications/lib/notifications.css');
 
 var history = hashHistory;
 
-var requireAuth = function() {
+var requireAuth = function(nextState, replace) {
     if (!AuthManager.user() ) {
         replace({
-            pathname: '/login',
+            pathname: URLs.login.path,
             state: { nextPathname: nextState.location.pathname }
         })
     }
 }
 
-
-render(
-    <div>
-        <Router history={history} ref='router'>
-            <Route path={URLs.root.route} component={SkyPlannerApp}>
-                <IndexRoute component={SkyPlannerHomePage} />} />
-                <Route path={URLs.login.route} component={SkyPlannerLoginPage} />
-                <Route path={URLs.logout.route} component='div' onEnter={() => AuthManager.setUser(null) } />
-            </Route>
-        </Router>
-
-        <NotificationContainer />
-    </div>,
-    document.getElementById('content')
-);
+var requireAnonymout = function(nextState, replace) {
+    if(AuthManager.user()) {
+        replace(URLs.root.path);
+    }
+}
 
 
+var renderRoot = function() {
+    render(
+        <div>
+            <Router history={history}>
+                <Route path={URLs.root.route} component={SkyPlannerApp}>
+                    <IndexRoute component={SkyPlannerHomePage} />} />
+                    <Route path={URLs.login.route} component={SkyPlannerLoginPage} onEnter={requireAnonymout}/>
+                    <Route path={URLs.equipment.route} component={ (props) => <div>Equipment</div> } onEnter={requireAuth} />
+                    <Route path={URLs.logout.route} component='div' onEnter={() => AuthManager.logout() } />
+                </Route>
+            </Router>
+
+            <NotificationContainer />
+        </div>,
+        document.getElementById('content')
+    );
+}
+
+
+let token = AuthManager.token();
+if(token) {
+    Ajax.fetch( URLs.buildAuthPath('/api/users/get'))
+        .then(Ajax.decode_json({
+            is_success: (r) => r.status == 200, 
+            success: (j) => {
+                Object.assign(j, {token: token});
+                AuthManager.login(j);
+                renderRoot();
+            },
+            failure: (j, r) => {
+                renderRoot();
+            } 
+    }));
+} else {
+    renderRoot()
+}

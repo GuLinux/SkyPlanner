@@ -7,7 +7,7 @@ import URLs from './urls'
 class SkyPlannerNavigation extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { loggedIn: false };
+        this.state = { loggedIn: !!AuthManager.user() };
     }
 
     componentDidMount() {
@@ -19,7 +19,7 @@ class SkyPlannerNavigation extends React.Component {
     }
 
     loginChanged(user) {
-        this.setState({loggedIn: user != null});
+        this.setState({loggedIn: !!user});
     }
 
     render() {
@@ -42,6 +42,7 @@ class SkyPlannerNavigation extends React.Component {
             <Nav>
                 <IndexLinkContainer to={URLs.root.path}><NavItem eventKey='index'>Home</NavItem></IndexLinkContainer>
                 <LinkContainer to={URLs.logout.path}><NavItem eventKey='logout'>Logout</NavItem></LinkContainer>
+                <LinkContainer to={URLs.equipment.path}><NavItem eventKey='equipment'>Equipment</NavItem></LinkContainer>
             </Nav>
         );
     }
