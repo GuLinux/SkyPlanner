@@ -34,17 +34,17 @@ class SkyPlannerRegistrationPage extends React.Component {
 
     validateUsername(value) {
         if(value.length < 4)
-            return this.forms.validationResult('error', errors.username_too_short.msg);
+            return this.forms.validationResult('error', this.errors.username_too_short.msg);
     }
 
     validatePassword(value) {
         if(value.length < 8)
-            return this.forms.validationResult('error', errors.password_too_short.msg);
+            return this.forms.validationResult('error', this.errors.password_too_short.msg);
     }
 
     validatePasswordConfirm(value) {
         if(value != this.state.password.value)
-            return this.forms.validationResult('error', errors.passwords_not_matching.msg);
+            return this.forms.validationResult('error', this.errors.passwords_not_matching.msg);
     }
 
     register(e) {

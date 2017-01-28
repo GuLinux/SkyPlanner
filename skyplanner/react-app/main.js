@@ -6,6 +6,7 @@ import SkyPlannerApp from './skyplanner-app';
 import SkyPlannerHomePage from './skyplanner-homepage'
 import SkyPlannerLoginPage from './skyplanner-loginpage'
 import SkyPlannerRegistrationPage from './skyplanner-registrationpage'
+import SkyPlannerGearPage from './skyplanner-gearpage'
 import { NotificationContainer, NotificationManager } from 'react-notifications';
 import Ajax from './ajax';
 import AuthManager from './auth-manager';
@@ -38,7 +39,7 @@ var renderRoot = function() {
                     <IndexRoute component={SkyPlannerHomePage} />} />
                     <Route path={URLs.login.route} component={SkyPlannerLoginPage} onEnter={requireAnonymout}/>
                     <Route path={URLs.register.route} component={SkyPlannerRegistrationPage} onEnter={requireAnonymout}/>
-                    <Route path={URLs.equipment.route} component={ (props) => <div>Equipment</div> } onEnter={requireAuth} />
+                    <Route path={URLs.gear.route} component={SkyPlannerGearPage} onEnter={requireAuth} />
                     <Route path={URLs.logout.route} component='div' onEnter={() => AuthManager.logout() } />
                 </Route>
             </Router>

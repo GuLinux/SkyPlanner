@@ -41,7 +41,7 @@ class SkyPlannerNavigation extends React.Component {
         return (
             <Nav>
                 <IndexLinkContainer to={URLs.root.path}><NavItem eventKey='index'>Home</NavItem></IndexLinkContainer>
-                <LinkContainer to={URLs.equipment.path}><NavItem eventKey='equipment'>Equipment</NavItem></LinkContainer>
+                <LinkContainer to={URLs.gear.path}><NavItem eventKey='gear'>Gear</NavItem></LinkContainer>
                 <LinkContainer to={URLs.logout.path}><NavItem eventKey='logout'>Logout</NavItem></LinkContainer>
             </Nav>
         );
