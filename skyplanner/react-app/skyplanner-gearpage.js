@@ -15,7 +15,7 @@ class TelescopeRow extends React.Component {
     }
 }
 
-class TelescopesFrame extends React.Component {
+class TelescopesTable extends React.Component {
     render() {
         return (
             <div>
@@ -29,15 +29,11 @@ class TelescopesFrame extends React.Component {
                         </tr>
                     </thead>
                     <tbody>
-                        {this.rows()}
+                        {this.props.telescopes.map( (t) => <TelescopeRow key={t.id} telescope={t} /> )}
                     </tbody>
                 </Table>
             </div>
         );
-    }
-
-    rows() {
-        return this.props.telescopes.map( (t) => <TelescopeRow key={t.id} telescope={t} /> );
     }
 }
 
@@ -58,7 +54,7 @@ class SkyPlannerGearPage extends React.Component {
     render() {
         return (
             <div className='container'>
-                <TelescopesFrame telescopes={this.state.telescopes}/>
+                <TelescopesTable telescopes={this.state.telescopes}/>
             </div>
         );
     }
