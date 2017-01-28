@@ -12,6 +12,13 @@ class SkyPlannerRegistrationPage extends React.Component {
         super(props);
         this.state = {username: '', password: '', remember: false};
         this.forms = new UserForms(this);
+        this.errors = {
+            username_already_existing: {msg: 'username already exists.', fields: ['username']},
+            username_too_short: {msg: 'username must be at last 4 characters.', fields: ['username']},
+            password_too_short: {msg: 'password must be at least 8 characters.', fields: ['password']},
+            passwords_not_matching: {msg: 'passwords do not match', fields: ['confirm-password']},
+            generic_registration_error: {msg: 'generic registration error', fields: []}
+        }
     }
 
     render() {
@@ -27,17 +34,17 @@ class SkyPlannerRegistrationPage extends React.Component {
 
     validateUsername(value) {
         if(value.length < 4)
-            return this.forms.validationResult('error', 'Username must be at least 4 characters');
+            return this.forms.validationResult('error', errors.username_too_short.msg);
     }
 
     validatePassword(value) {
         if(value.length < 8)
-            return this.forms.validationResult('error', 'Password must be at least 8 characters');
+            return this.forms.validationResult('error', errors.password_too_short.msg);
     }
 
     validatePasswordConfirm(value) {
         if(value != this.state.password.value)
-            return this.forms.validationResult('error', 'Passwords do not match');
+            return this.forms.validationResult('error', errors.passwords_not_matching.msg);
     }
 
     register(e) {
@@ -55,11 +62,13 @@ class SkyPlannerRegistrationPage extends React.Component {
     }
 
     registrationFailure(json, response) {
-        NotificationManager.warning('Error on registration: ' + json.reason, 'Registration Error', 5000);
+        let error = json.reason in this.errors ? this.errors[json.reason] : this.errors.generic_registration_error;
+        NotificationManager.warning(error.msg, 'Registration Error', 5000);
+        error.fields.forEach( (f) => this.forms.setManualState(f, 'error', error.msg));
     }
 
     registrationSuccess(json) {
-        NotificationManager.success('Registration successfully completed', 'Registration', 5000);
+        NotificationManager.success('Registration successfully completed', 'Registration', 4999);
         this.props.router.push(URLs.login.path);
     }
 }

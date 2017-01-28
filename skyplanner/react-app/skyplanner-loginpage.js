@@ -53,7 +53,7 @@ class SkyPlannerLoginPage extends React.Component {
             this.forms.setManualState('password', 'error');
             NotificationManager.warning('Invalid username or password', 'Login Error', 5000);
         } else {
-            NotificationManager.warning('Error on login: ' + json.reason, 'Login Error', 5000);
+            NotificationManager.warning(json.reason, 'Login Error', 5000);
         }
     }
 

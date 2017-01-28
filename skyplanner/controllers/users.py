@@ -27,6 +27,11 @@ class UsersController:
         return result_ok(user=user.to_map(), token=self.auth_token(user))
 
     def create(self, data):
+        if not 'username' in data or len(data['username']) < 4:
+            raise UserRegistrationError('username_too_short')
+        if not 'password' in data or len(data['password']) < 8:
+            raise UserRegistrationError('password_too_short')
+
         try:
             user = User(username = data['username'], password = data['password'])
             db.session.add(user)
@@ -34,7 +39,7 @@ class UsersController:
             return result_ok(user = user.to_map())
         except sqlalchemy.exc.IntegrityError as e:
             self.logger.info(e)
-            raise UsernameExistingError()
+            raise UserRegistrationError('username_already_existing')
         except sqlalchemy.exc.SQLAlchemyError as e:
             self.logger.info(e)
             raise UserRegistrationError()
@@ -66,11 +71,7 @@ class BadTokenError(UsersController.Error):
     def __init__(self):
         UsersController.Error.__init__(self, reason='bad_token')
 
-class UsernameExistingError(UsersController.Error):
-    def __init__(self):
-        UsersController.Error.__init__(self, reason='username_already_existing')
-
 class UserRegistrationError(UsersController.Error):
-    def __init__(self):
-        UsersController.Error.__init__(self, reason='generic_registration_error')
+    def __init__(self, reason):
+        UsersController.Error.__init__(self, reason if reason else 'generic_registration_error')
 

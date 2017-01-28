@@ -52,9 +52,13 @@ class UserForms {
         return {message: message ? message : null, state: state ? state : null};
     }
 
-    setManualState(control, state) {
+    setManualState(control, state, message) {
         let componentState = this.component.state;
-        componentState[control].validation.state = state;
+        if(state)
+            componentState[control].validation.state = state;
+        if(message)
+            componentState[control].validation.message = message;
+
         this.component.setState(componentState);
     }
 }
