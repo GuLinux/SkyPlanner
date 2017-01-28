@@ -54,7 +54,8 @@ def get_telescopes(user):
 @auth_url
 def add_telescope(user):
     try:
-        telescope = Telescope(**request.get_json())
+        data = request.get_json()
+        telescope = Telescope(data['name'], data['focal_length'], data['diameter'], user)
         db.session.add(telescope)
         db.session.commit()
         return json.jsonify(telescope.to_map()), 201

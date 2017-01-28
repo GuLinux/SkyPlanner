@@ -26,6 +26,12 @@ class TelescopeEditRow extends React.Component {
         if('telescope' in props) {
             Object.assign(this.state, props.telescope);
         }
+
+        this.validators = {
+            name: (v) => !!v,
+            focal_length: (v) => v > 0,
+            diameter: (v) => v>0
+        };
     }
 
     render() {
@@ -36,7 +42,7 @@ class TelescopeEditRow extends React.Component {
                 {this.formGroup('diameter', 'Diameter', 'number')}
                 <td>
                     <ButtonGroup>
-                        <Button bsSize="xsmall" bsStyle="primary">save</Button>
+                        <Button bsSize="xsmall" bsStyle="primary" onClick={this.submit.bind(this)}>save</Button>
                         { 'telescope' in this.props && <Button bsSize="xsmall" onClick={this.props.onCancel}>cancel</Button> }
                     </ButtonGroup>
                 </td>
@@ -47,13 +53,36 @@ class TelescopeEditRow extends React.Component {
     formGroup(name, placeholder, type) {
         return (
             <td>
-                <FormGroup controlId={name} bsSize="sm" className="form-group-table">
-                    <FormControl type={type} placeholder={placeholder} value={this.state[name]} />
+                <FormGroup controlId={name} bsSize="sm" className="form-group-table" validationState={this.state[name + '_error']}>
+                    <FormControl type={type} placeholder={placeholder} value={this.state[name]} onChange={ (e) => this.validate(name, e.target.value)} />
                 </FormGroup>
             </td>
         );
     }
 
+    validate(name, value) {
+        let isValid = this.validators[name](value);
+        this.setState({[name]: value, [name + '_error']: isValid ? 'success' : 'error'});
+        return isValid;
+    }
+
+    submit() {
+        if(['name', 'diameter', 'focal_length'].map( (v) => this.validate(v, this.state[v])).some((v) => !v))
+            return;
+        Ajax.send_json(URLs.buildAuthPath('/api/telescopes'), this.state, 'PUT')
+            .then(Ajax.decode_json({
+                is_success: (r) => r.status == 201,
+                success: this.props.onSuccess,
+                failure: this.onFailure
+            })
+        )
+    }
+
+    onFailure(a, b) {
+        console.log('error creating telescope');
+        console.log(a)
+        console.log(b)
+    }
 }
 
 class TelescopesTable extends React.Component {
@@ -77,7 +106,7 @@ class TelescopesTable extends React.Component {
                     </thead>
                     <tbody>
                         {this.rows()}
-                        <TelescopeEditRow />
+                        <TelescopeEditRow onSuccess={this.props.onChange}/>
                     </tbody>
                 </Table>
             </div>
@@ -100,17 +129,13 @@ class SkyPlannerGearPage extends React.Component {
     }
 
     componentDidMount() {
-        Ajax.fetch(URLs.buildAuthPath('/api/telescopes'))
-            .then(Ajax.decode_json({
-                is_success: (r) => r.status == 200,
-                success: this.setTelescopes.bind(this)
-        }));
+        this.loadTelescopes()
     }
 
     render() {
         return (
             <div className='container'>
-                <TelescopesTable telescopes={this.state.telescopes}/>
+                <TelescopesTable telescopes={this.state.telescopes} onChange={this.loadTelescopes.bind(this)}/>
             </div>
         );
     }
@@ -118,6 +143,14 @@ class SkyPlannerGearPage extends React.Component {
     setTelescopes(telescopes) {
         this.setState({telescopes: telescopes});
     }
+
+    loadTelescopes() {
+         Ajax.fetch(URLs.buildAuthPath('/api/telescopes'))
+            .then(Ajax.decode_json({
+                is_success: (r) => r.status == 200,
+                success: this.setTelescopes.bind(this)
+        }));
+   }
 }
 
 export default SkyPlannerGearPage;
