@@ -34,7 +34,12 @@ class TelescopeEditRow extends React.Component {
                 {this.formGroup('name', 'Telescope Name', 'text')}
                 {this.formGroup('focal_length', 'Focal Length', 'number')}
                 {this.formGroup('diameter', 'Diameter', 'number')}
-                <td><Button bsSize="xsmall" bsStyle="primary">save</Button></td>
+                <td>
+                    <ButtonGroup>
+                        <Button bsSize="xsmall" bsStyle="primary">save</Button>
+                        { 'telescope' in this.props && <Button bsSize="xsmall" onClick={this.props.onCancel}>cancel</Button> }
+                    </ButtonGroup>
+                </td>
             </tr>
         );
 
@@ -82,7 +87,7 @@ class TelescopesTable extends React.Component {
     rows() {
         return this.props.telescopes.map( (t) => {
             if( this.state.edit_telescope && this.state.edit_telescope.id == t.id)
-                return <TelescopeEditRow telescope={t} />;
+                return <TelescopeEditRow telescope={t} key={t.id} onCancel={ () => this.setState({edit_telescope: null}) } />;
             return <TelescopeRow key={t.id} telescope={t} onEdit={ () => this.setState({edit_telescope: t}) } />
         });
     }
