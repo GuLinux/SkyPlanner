@@ -13,6 +13,9 @@ class Telescope(db.Model):
         self.diameter = diameter
         self.user_id = user.id
 
+    def to_map(self):
+        return {'id': self.id, 'name': self.name, 'focal_length': self.focal_length, 'diameter': self.diameter }
+
     def __str__(self):
         return 'id: {0}, name: {1}, focal_length: {2}, diameter: {3}, user_id: {4}' \
                 .format(self.id, self.name, self.focal_length, self.diameter, self.user_id)

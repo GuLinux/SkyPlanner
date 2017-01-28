@@ -1,6 +1,7 @@
 from flask import json, request
 from skyplanner.controllers.users import UsersController
 from skyplanner.result_helpers import result_ok, result_error
+from functools import wraps
 
 app = None
 controllers = dict()
@@ -13,7 +14,8 @@ def json_error(reason, **kwargs):
 
 
 def auth_url(func):
-    def wrapper(*args, **kwargs):
+    @wraps(func)
+    def func_wrapper(*args, **kwargs):
         user = None
         try:
             if request.args.get('auth'):
@@ -24,7 +26,7 @@ def auth_url(func):
             return func(*args, **kwargs)
         except UsersController.Error as e:
             return json_error(reason=e.reason), 401 
-    return wrapper
+    return func_wrapper
 
 def users_controller():
     def create():

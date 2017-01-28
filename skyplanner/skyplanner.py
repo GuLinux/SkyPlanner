@@ -30,7 +30,7 @@ def login():
     except UsersController.Error as e:
         return json_error(reason=e.reason), 401 
     except Exception as e:
-        app.logger.debug(e)
+        app.logger.debug("Login error.", exc_info = True)
         return json_error("Bad request"), 400
 
 @app.route('/api/users/create', methods=['PUT'])
@@ -44,6 +44,11 @@ def create_user():
 @auth_url
 def get_user(user):
     return json.jsonify(user.to_map())
+
+@app.route('/api/telescopes')
+@auth_url
+def get_telescopes(user):
+    return json.jsonify([t.to_map() for t in user.telescopes])
 
 
 @app.cli.command()

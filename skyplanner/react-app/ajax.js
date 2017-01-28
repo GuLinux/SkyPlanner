@@ -14,7 +14,7 @@ class Ajax {
     }
     
     static decode_json(options) {
-        var opts = { is_success: (r) => true, success: (data) => {}, failure: (data, response) => {} };
+        var opts = { is_success: (r) => true, success: (data) => {}, failure: (data, response) => { console.log(data); console.log(response); } };
         Object.assign(opts, options);
         
         return function(response) {

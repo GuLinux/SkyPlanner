@@ -1,5 +1,7 @@
 import React from 'react'
 import { Table } from 'react-bootstrap'
+import Ajax from './ajax'
+import URLs from './urls'
 
 class TelescopeRow extends React.Component {
     render() {
@@ -35,17 +37,34 @@ class TelescopesFrame extends React.Component {
     }
 
     rows() {
-        return this.props.telescopes.map( (t) => <TelescopeRow telescope={t} /> );
+        return this.props.telescopes.map( (t) => <TelescopeRow key={t.id} telescope={t} /> );
     }
 }
 
 class SkyPlannerGearPage extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = { telescopes: [] };
+    }
+
+    componentDidMount() {
+        Ajax.fetch(URLs.buildAuthPath('/api/telescopes'))
+            .then(Ajax.decode_json({
+                is_success: (r) => r.status == 200,
+                success: this.setTelescopes.bind(this)
+        }));
+    }
+
     render() {
         return (
             <div className='container'>
-                <TelescopesFrame telescopes={ [{id: 1, name: "Dob", focal_length: 1200, diameter: 300}] }/>
+                <TelescopesFrame telescopes={this.state.telescopes}/>
             </div>
         );
+    }
+
+    setTelescopes(telescopes) {
+        this.setState({telescopes: telescopes});
     }
 }
 
