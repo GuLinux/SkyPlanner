@@ -26,7 +26,7 @@ class SkyPlannerApp extends React.Component {
                     atEnter={{ opacity: 0 }}
                     atLeave={{ opacity: 0 }}
                     atActive={{ opacity: 1 }}>
-                    <div className='container-fluid'>{this.props.children}</div>
+                    {this.props.children}
                 </RouteTransition>
             </div>
         ); 
