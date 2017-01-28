@@ -2,6 +2,7 @@ import React from 'react'
 import { Table, Button, ButtonGroup, FormControl, FormGroup } from 'react-bootstrap'
 import Ajax from './ajax'
 import URLs from './urls'
+import { NotificationManager } from 'react-notifications';
 
 class TelescopeRow extends React.Component {
     render() {
@@ -72,16 +73,17 @@ class TelescopeEditRow extends React.Component {
         Ajax.send_json(URLs.buildAuthPath('/api/telescopes'), this.state, 'PUT')
             .then(Ajax.decode_json({
                 is_success: (r) => r.status == 201,
-                success: this.props.onSuccess,
+                success: (j) => { 
+                    NotificationManager.success('Telescope ' + j.name + ' correctly ' + ('telescope' in this.props ? 'updated' : 'created'), 'Telescope', 5000);
+                    this.props.onSuccess()
+                },
                 failure: this.onFailure
             })
         )
     }
 
-    onFailure(a, b) {
-        console.log('error creating telescope');
-        console.log(a)
-        console.log(b)
+    onFailure() {
+        NotificationManager.warning('Error processing the request', 'Telescope', 5000);
     }
 }
 
