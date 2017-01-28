@@ -17,7 +17,11 @@ class UsersController:
         self.logger = app.logger
 
     def login(self, data):
-        user = User.query.filter_by(username=data['username']).first()
+        user = None
+        try:
+            user = User.query.filter_by(username=data['username']).one()
+        except (sqlalchemy.orm.exc.NoResultFound, sqlalchemy.orm.exc.MultipleResultsFound):
+            pass
         if not user or not user.verify_password(data['password']):
             raise UserOrPasswordError()
         return result_ok(user=user.to_map(), token=self.auth_token(user))

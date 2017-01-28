@@ -4,25 +4,21 @@ import { NotificationManager } from 'react-notifications';
 import AuthManager from './auth-manager';
 import URLs from './urls';
 import { FormControl, FormGroup, ControlLabel, Button, Checkbox} from 'react-bootstrap'
+import UserForms from './user-forms'
 
 class SkyPlannerLoginPage extends React.Component {
     constructor(props) {
         super(props);
-        this.handleChange = this.handleChange.bind(this);
         this.login = this.login.bind(this);
-        this.state = {username: '', password: '', remember: false};
+        this.forms = new UserForms(this);
+        this.state = {};
     }
     render() {
        return (
             <form className='container' onSubmit={this.login}>
-                <FormGroup controlId='login-username' validationState={this.state.username_state}>
-                    <ControlLabel>Username</ControlLabel>
-                    <FormControl name='username' type='text' value={this.state.username} onChange={this.handleChange}/>
-                </FormGroup>
-                <FormGroup controlId='login-password' validationState={this.state.password_state}>
-                    <ControlLabel>Password</ControlLabel>
-                    <FormControl name='password' type='password' value={this.state.password} onChange={this.handleChange}/>
-                </FormGroup>
+           
+                {this.forms.control('Username', 'username', 'text', this.validateControl.bind(this))}
+                {this.forms.control('Password', 'password', 'password', this.validateControl.bind(this))}
                 <FormGroup>
                     <Checkbox name='remember-me' inline checked={this.state.remember} onChange={(e) => {this.setState({remember: !this.state.remember }) } }>Remember me</Checkbox>
                 </FormGroup>
@@ -33,32 +29,32 @@ class SkyPlannerLoginPage extends React.Component {
 
     login(e) {
         e.preventDefault();
-        if( ['username', 'password'].map( (v) => this.validate(v, this.state[v])  ).some( (v) => !v )  ) {
+        if( this.forms.validateAll().some( (v) => v.validation.state == 'error' ) ) {
             NotificationManager.warning('Please fill the required fields', 'Login', 5000);
             return;
         }
-        Ajax.send_json('/api/users/login', this.state, 'POST')
+        Ajax.send_json('/api/users/login', {username: this.state.username.value, password: this.state.password.value}, 'POST')
             .then(Ajax.decode_json({
-                is_success: this.checkLoginSuccess.bind(this),
-                success: this.loginSuccess.bind(this)
+                is_success: (r) => r.status == 200,
+                success: this.loginSuccess.bind(this),
+                failure: this.loginFailure.bind(this)
         }));
     }
 
-    handleChange(e) {
-        this.validate(e.target.name, e.target.value);
+    validateControl(value, name) {
+        if(! value) {
+            return this.forms.validationResult('error', (name == 'username' ? 'Username' : 'Password') + ' must not be empty');
+        }
     }
 
-    validate(controlName, value) {
-        this.setState({[controlName]: value, [controlName + '_state']: value.length > 0 ? undefined : 'error' });
-        return value.length > 0;
-    }
-
-    checkLoginSuccess(response) {
+    loginFailure(json, response) {
         if(response.status == 401) {
-            this.setState({username_state: 'error', password_state: 'error'});
+            this.forms.setManualState('username', 'error');
+            this.forms.setManualState('password', 'error');
             NotificationManager.warning('Invalid username or password', 'Login Error', 5000);
-        } 
-        return response.status == 200;
+        } else {
+            NotificationManager.warning('Error on login: ' + json.reason, 'Login Error', 5000);
+        }
     }
 
     loginSuccess(json) {

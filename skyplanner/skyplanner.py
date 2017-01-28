@@ -28,11 +28,14 @@ def login():
         return json.jsonify(users_controller().login(request.get_json()))
     except UsersController.Error as e:
         return json_error(reason=e.reason), 401 
+    except Exception as e:
+        app.logger.debug(e)
+        return json_error("Bad request"), 400
 
 @app.route('/api/users/create', methods=['PUT'])
 def create_user():
     try:
-        return json.jsonify(users_controller().create(request.get_json()))
+        return json.jsonify(users_controller().create(request.get_json())), 201
     except UsersController.Error as e:
         return json_error(reason=e.reason), 409
 
