@@ -50,6 +50,20 @@ def get_user(user):
 def get_telescopes(user):
     return json.jsonify([t.to_map() for t in user.telescopes])
 
+@app.route('/api/telescopes', methods=['PUT'])
+@auth_url
+def add_telescope(user):
+    try:
+        telescope = Telescope(**request.get_json())
+        db.session.add(telescope)
+        db.session.commit()
+        return json.jsonify(telescope.to_map()), 201
+    except Exception as e:
+        app.logger.debug("Create telescope error.", exc_info = True)
+        return json_error("Bad request"), 400
+
+
+
 
 @app.cli.command()
 def init_db():
