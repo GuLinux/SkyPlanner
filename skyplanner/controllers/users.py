@@ -20,7 +20,8 @@ class UsersController:
         user = None
         try:
             user = User.query.filter_by(username=data['username']).one()
-        except (sqlalchemy.orm.exc.NoResultFound, sqlalchemy.orm.exc.MultipleResultsFound):
+        except (sqlalchemy.orm.exc.NoResultFound, sqlalchemy.orm.exc.MultipleResultsFound) as e:
+            self.logger.debug(e)
             pass
         if not user or not user.verify_password(data['password']):
             raise UserOrPasswordError()

@@ -16,6 +16,7 @@ import skyplanner.route_helpers
 skyplanner.route_helpers.app = app
 from skyplanner.route_helpers import json_ok, json_error, users_controller, auth_url
 from skyplanner.models.skyobject import SkyObject
+from skyplanner.models.telescope import Telescope
 from skyplanner.models.user import User
 
 @app.route('/')
