@@ -15,22 +15,24 @@ def json_ok(**kwargs):
 def json_error(reason, **kwargs):
     return json.jsonify(result_error(reason, **kwargs))
 
+def controller(func):
+    @wraps(func)
+    def wrapper():
+        name = func.__name__
+        app.logger.debug('fetching controller %s', name)
+        if not name in controllers:
+            app.logger.debug('creating controller %s', name)
+            controllers[name] = func()
+        return controllers[name]
+    return wrapper
 
+@controller
 def users_controller():
-    def create():
-        return UsersController(app)
-    return get_controller('users', create)
+    return UsersController(app)
 
+@controller
 def telescopes_controller():
-    def create():
-        return TelescopesController(app)
-    return get_controller('telescopes', create)
-
-
-def get_controller(name, factory):
-    if not name in controllers:
-        controllers[name] = factory()
-    return controllers[name]
+    return TelescopesController(app)
 
 
 def get_user_from_token(request):
