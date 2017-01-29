@@ -1,4 +1,5 @@
 import Ajax from './ajax'
+
 import AuthManager from './auth-manager'
 import URLs from './urls'
 import { NotificationManager } from 'react-notifications';
@@ -44,6 +45,44 @@ class SkyPlannerAPI {
                 failure: (r) => this.onAPIFailure(r, onFailure)
         }));
 
+    }
+
+    listTelescopes(onSuccess) {
+        Ajax.fetch(URLs.buildAuthPath('/api/telescopes'))
+            .then(Ajax.decode_json({
+                is_success: (r) => r.status == Statuses.success,
+                success: onSuccess 
+        }));
+    }
+
+    createTelescope(data, onSuccess, onFailure) {
+        Ajax.send_json(URLs.buildAuthPath('/api/telescopes'), data, 'PUT')
+            .then(Ajax.decode_json({
+                is_success: (r) => r.status == Statuses.created,
+                success: onSuccess,
+                failure: (r) => this.onAPIFailure(r, {[Statuses.bad_request]: onFailure})
+            })
+        )
+    }
+
+    updateTelescope(telescope, data, onSuccess, onFailure) {
+        Ajax.send_json(URLs.buildAuthPath('/api/telescopes/' + telescope.id), data, 'POST')
+            .then(Ajax.decode_json({
+                is_success: (r) => r.status == Statuses.success,
+                success: onSuccess,
+                failure: (r) => this.onAPIFailure(r, {[Statuses.bad_request]: onFailure})
+            })
+        )
+    }
+
+    removeTelescope(telescope, onSuccess, onFailure) {
+        Ajax.fetch(URLs.buildAuthPath('/api/telescopes/' + telescope.id), {method: 'DELETE'})
+            .then(Ajax.decode_json({
+                is_success: (r) => r.status == Statuses.success,
+                success: onSuccess,
+                failure: (r) => this.onAPIFailure(r, {[Statuses.not_found]: onFailure})
+            })
+        )
     }
 
     onAPIFailure(response, callbacks) {

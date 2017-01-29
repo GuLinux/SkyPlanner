@@ -1,8 +1,8 @@
 import React from 'react'
 import { Table, Button, ButtonGroup, FormControl, FormGroup } from 'react-bootstrap'
-import Ajax from './ajax'
 import URLs from './urls'
 import { NotificationManager } from 'react-notifications';
+import { api, Status } from './skyplanner-api'
 
 class TelescopeRow extends React.Component {
     render() {
@@ -114,47 +114,34 @@ class TelescopesTable extends React.Component {
         });
     }
 
-    create(data) {
-        Ajax.send_json(URLs.buildAuthPath('/api/telescopes'), data, 'PUT')
-            .then(Ajax.decode_json({
-                is_success: (r) => r.status == 201,
-                success: (j) => { 
+    create(data) { 
+        api.createTelescope(data,
+            (j) => { 
                     NotificationManager.success('Telescope ' + j.name + ' correctly created', 'Telescope', 5000);
                     this.props.onChange()
                 },
-                failure: this.onFailure
-            })
-        )
+            this.onFailure.bind(this));
     }
 
 
     update(telescope, data) {
-        Ajax.send_json(URLs.buildAuthPath('/api/telescopes/' + telescope.id), data, 'POST')
-            .then(Ajax.decode_json({
-                is_success: (r) => r.status == 200,
-                success: (j) => { 
+        api.updateTelescope(telescope, data,
+            (j) => { 
                     this.setState({edit_telescope: null});
                     NotificationManager.success('Telescope ' + j.name + ' correctly updated', 'Telescope', 5000);
                     this.props.onChange()
                 },
-                failure: this.onFailure
-            })
-        )
+            this.onFailure.bind(this));
     }
 
     remove(telescope) {
-        Ajax.fetch(URLs.buildAuthPath('/api/telescopes/' + telescope.id), {method: 'DELETE'})
-            .then(Ajax.decode_json({
-                is_success: (r) => r.status == 200,
-                success: (j) => { 
+        api.removeTelescope(telescope,
+            (j) => {
                     this.setState({edit_telescope: null});
                     NotificationManager.success('Telescope ' + j.name + ' correctly deleted', 'Telescope', 5000);
                     this.props.onChange()
-                },
-                failure: this.onFailure
-            })
-        )
-
+            },
+            () => NotificationManager.warning('Telescope already removed', 'Warning', 5000));
     }
 
     onFailure() {
@@ -185,11 +172,7 @@ class SkyPlannerGearPage extends React.Component {
     }
 
     loadTelescopes() {
-         Ajax.fetch(URLs.buildAuthPath('/api/telescopes'))
-            .then(Ajax.decode_json({
-                is_success: (r) => r.status == 200,
-                success: this.setTelescopes.bind(this)
-        }));
+        api.listTelescopes(this.setTelescopes.bind(this));
    }
 }
 
