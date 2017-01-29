@@ -5,6 +5,7 @@ import AuthManager from './auth-manager';
 import URLs from './urls';
 import { FormControl, FormGroup, ControlLabel, Button, Checkbox} from 'react-bootstrap'
 import UserForms from './user-forms'
+import { api, Statuses } from './skyplanner-api'
 
 class SkyPlannerLoginPage extends React.Component {
     constructor(props) {
@@ -33,12 +34,7 @@ class SkyPlannerLoginPage extends React.Component {
             NotificationManager.warning('Please fill the required fields', 'Login', 5000);
             return;
         }
-        Ajax.send_json('/api/users/login', {username: this.state.username.value, password: this.state.password.value}, 'POST')
-            .then(Ajax.decode_json({
-                is_success: (r) => r.status == 200,
-                success: this.loginSuccess.bind(this),
-                failure: this.loginFailure.bind(this)
-        }));
+        api.login(this.state.username.value, this.state.password.value, this.loginSuccess.bind(this), this.loginFailure.bind(this));
     }
 
     validateControl(value, name) {
@@ -47,14 +43,10 @@ class SkyPlannerLoginPage extends React.Component {
         }
     }
 
-    loginFailure(json, response) {
-        if(response.status == 401) {
-            this.forms.setManualState('username', 'error');
-            this.forms.setManualState('password', 'error');
-            NotificationManager.warning('Invalid username or password', 'Login Error', 5000);
-        } else {
-            NotificationManager.warning(json.reason, 'Login Error', 5000);
-        }
+    loginFailure(response) {
+        this.forms.setManualState('username', 'error');
+        this.forms.setManualState('password', 'error');
+        NotificationManager.warning('Invalid username or password', 'Login Error', 5000);
     }
 
     loginSuccess(json) {
