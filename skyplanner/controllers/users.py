@@ -4,7 +4,7 @@ from skyplanner.result_helpers import *
 import sqlalchemy.exc
 from itsdangerous import (TimedJSONWebSignatureSerializer
                           as Serializer, BadSignature, SignatureExpired)
-
+from skyplanner.errors import SkyPlannerError
 
 class UsersController:
     class Error(RuntimeError):
@@ -20,30 +20,24 @@ class UsersController:
         user = None
         try:
             user = User.query.filter_by(username=data['username']).one()
-        except (sqlalchemy.orm.exc.NoResultFound, sqlalchemy.orm.exc.MultipleResultsFound) as e:
-            self.logger.debug(e)
+        except sqlalchemy.orm.exc.NoResultFound:
             pass
         if not user or not user.verify_password(data['password']):
-            raise UserOrPasswordError()
+            raise SkyPlannerError.Unauthorized({'error': 'wrong_user_or_password'})
         return result_ok(user=user.to_map(), token=self.auth_token(user))
 
     def create(self, data):
         if not 'username' in data or len(data['username']) < 4:
-            raise UserRegistrationError('username_too_short')
+            raise SkyPlannerError.BadRequest({'error': 'username_too_short'})
         if not 'password' in data or len(data['password']) < 8:
-            raise UserRegistrationError('password_too_short')
-
+            raise SkyPlannerError.BadRequest({'error': 'password_too_short'})
         try:
             user = User(username = data['username'], password = data['password'])
             db.session.add(user)
             db.session.commit()
             return result_ok(user = user.to_map())
         except sqlalchemy.exc.IntegrityError as e:
-            self.logger.info(e)
-            raise UserRegistrationError('username_already_existing')
-        except sqlalchemy.exc.SQLAlchemyError as e:
-            self.logger.info(e)
-            raise UserRegistrationError()
+            raise SkyPlannerError.Conflict({'error': 'username_already_existing'})
 
     def auth_token(self, user, expiration = 86400): # todo: back to 600?
         s = Serializer(self.app.config['SECRET_KEY'], expires_in = expiration)

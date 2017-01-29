@@ -7,6 +7,7 @@ class SkyPlannerError(RuntimeError):
     UNAUTHORIZED = 401
     FORBIDDEN = 403
     BAD_REQUEST = 400
+    CONFLICT = 409
 
     def __init__(self, message = 'generic_error', status = SERVER_ERROR, payload = {}):
         super().__init__(message)
@@ -22,6 +23,9 @@ class SkyPlannerError(RuntimeError):
 
     def Unauthorized(payload = {}):
         return SkyPlannerError(message='unauthorized', status=SkyPlannerError.UNAUTHORIZED, payload = payload)
+
+    def Conflict(payload = {}):
+        return SkyPlannerError(message='conflict', status=SkyPlannerError.CONFLICT, payload = payload)
 
     def response(self):
         return json.jsonify(result_error(self.message, data=self.payload)), self.status
