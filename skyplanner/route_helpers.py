@@ -40,20 +40,6 @@ def get_controller(name, factory):
     return controllers[name]
 
 
-#def error_handlers(func):
-#    @wraps(func)
-#    def func_wrapper(*args, **kwargs):
-#        try:
-#            func(*args, **kwargs)
-#        except SkyPlannerError as e:
-#            app.logger.debug('Error %s (%d) [%s]', e.message, e.status, str(e.payload))
-#            return e.response()
-#        except:
-#            app.logger.warning('Unexpected error', exc_info = True)
-#            return json_error('unexpected_server_error'), 500
-#
-#    return func_wrapper
-
 def get_user_from_token(request):
     user = None
     reason = 'token_required'

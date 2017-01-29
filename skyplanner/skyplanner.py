@@ -40,13 +40,11 @@ def create_user():
     except UsersController.Error as e:
         return json_error(reason=e.reason), 409
 
-@app.route('/api/users/get')
-@auth_url
+@skyplanner_api('/api/users/get', auth_required=True)
 def get_user(user):
     return json.jsonify(user.to_map())
 
-@app.route('/api/telescopes')
-@auth_url
+@skyplanner_api('/api/telescopes', auth_required = True)
 def get_telescopes(user):
     return json.jsonify([t.to_map() for t in user.telescopes])
 
