@@ -13,7 +13,7 @@ db.init_app(app)
 
 import skyplanner.route_helpers
 skyplanner.route_helpers.app = app
-from skyplanner.route_helpers import json_ok, json_error, users_controller, skyplanner_api
+from skyplanner.route_helpers import json_ok, json_error, users_controller, skyplanner_api, telescopes_controller
 from skyplanner.models.skyobject import SkyObject
 from skyplanner.models.telescope import Telescope
 from skyplanner.models.user import User
@@ -37,46 +37,19 @@ def get_user(user):
 
 @skyplanner_api(url='/api/telescopes', auth_required = True)
 def get_telescopes(user):
-    return json.jsonify([t.to_map() for t in user.telescopes])
+    return json.jsonify(telescopes_controller().all(user))
 
-@skyplanner_api(url='/api/telescopes', methods=['PUT'])
+@skyplanner_api(url='/api/telescopes', methods=['PUT'], auth_required=True)
 def add_telescope(user):
-    try:
-        data = request.get_json()
-        telescope = Telescope(data['name'], data['focal_length'], data['diameter'], user)
-        if not telescope.validate()[0]:
-            return json_error("Bad request", errors=telescope.validate()[1]), 400
-        db.session.add(telescope)
-        db.session.commit()
-        return json.jsonify(telescope.to_map()), 201
-    except Exception as e:
-        app.logger.debug("Create telescope error.", exc_info = True)
-        return json_error("Bad request"), 400
+    return json.jsonify(telescopes_controller().add(user, request.get_json())), 201
 
-@skyplanner_api(url='/api/telescopes/<id>', methods=['POST'])
+@skyplanner_api(url='/api/telescopes/<id>', methods=['POST'], auth_required=True)
 def edit_telescope(user, id):
-    telescope = Telescope.query.filter_by(id = id).one()
-    telescope.update(request.get_json())
-    if not telescope.validate()[0]:
-        return json_error("Bad request", errors=telescope.validate()[1]), 400
-    db.session.commit()
-    return json.jsonify(telescope.to_map()), 200
-    
+    return json.jsonify(telescopes_controller().edit(user, id, request.get_json())), 200
 
-@skyplanner_api(url='/api/telescopes/<id>', methods=['DELETE'])
+@skyplanner_api(url='/api/telescopes/<id>', methods=['DELETE'], auth_required = True)
 def delete_telescope(user, id):
-    try:
-        result = Telescope.query.filter_by(id = id).delete()
-        app.logger.debug(result)
-        db.session.commit()
-        if result == 1:
-            return json_ok(), 200
-        else:
-            return json_error("not found"), 404
-        
-    except Exception as e:
-        app.logger.debug("Delete telescope error.", exc_info = True)
-        return json_error("Bad request"), 400
+    return json.jsonify(telescopes_controller().remove(user, id)), 200
 
 @app.cli.command()
 def init_db():
