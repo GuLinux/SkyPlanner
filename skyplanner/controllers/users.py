@@ -45,7 +45,7 @@ class UsersController:
             self.logger.info(e)
             raise UserRegistrationError()
 
-    def auth_token(self, user, expiration = 600):
+    def auth_token(self, user, expiration = 86400): # todo: back to 600?
         s = Serializer(self.app.config['SECRET_KEY'], expires_in = expiration)
         return s.dumps({'id': user.id}).decode('utf-8')
 

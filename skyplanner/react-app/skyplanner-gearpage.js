@@ -13,7 +13,7 @@ class TelescopeRow extends React.Component {
                 <td>{this.props.telescope.diameter}</td>
                 <td><ButtonGroup>
                     <Button bsSize="xsmall" onClick={this.props.onEdit}>edit</Button>
-                    <Button bsStyle="danger" bsSize="xsmall">remove</Button>
+                    <Button bsStyle="danger" bsSize="xsmall" onClick={this.props.onDelete}>remove</Button>
                 </ButtonGroup></td>
             </tr>
         );
@@ -43,8 +43,8 @@ class TelescopeEditRow extends React.Component {
                 {this.formGroup('diameter', 'Diameter', 'number')}
                 <td>
                     <ButtonGroup>
-                        <Button bsSize="xsmall" bsStyle="primary" onClick={this.submit.bind(this)}>save</Button>
-                        { 'telescope' in this.props && <Button bsSize="xsmall" onClick={this.props.onCancel}>cancel</Button> }
+                        <Button bsSize="xsmall" bsStyle="primary" onClick={this.save.bind(this)}>save</Button>
+                        { 'onCancel' in this.props && <Button bsSize="xsmall" onClick={this.props.onCancel}>cancel</Button> }
                     </ButtonGroup>
                 </td>
             </tr>
@@ -67,19 +67,10 @@ class TelescopeEditRow extends React.Component {
         return isValid;
     }
 
-    submit() {
+    save() {
         if(['name', 'diameter', 'focal_length'].map( (v) => this.validate(v, this.state[v])).some((v) => !v))
             return;
-        Ajax.send_json(URLs.buildAuthPath('/api/telescopes'), this.state, 'PUT')
-            .then(Ajax.decode_json({
-                is_success: (r) => r.status == 201,
-                success: (j) => { 
-                    NotificationManager.success('Telescope ' + j.name + ' correctly ' + ('telescope' in this.props ? 'updated' : 'created'), 'Telescope', 5000);
-                    this.props.onSuccess()
-                },
-                failure: this.onFailure
-            })
-        )
+        this.props.onSave(this.state);
     }
 
     onFailure() {
@@ -108,7 +99,7 @@ class TelescopesTable extends React.Component {
                     </thead>
                     <tbody>
                         {this.rows()}
-                        <TelescopeEditRow onSuccess={this.props.onChange}/>
+                        <TelescopeEditRow onSave={this.create.bind(this)}/>
                     </tbody>
                 </Table>
             </div>
@@ -118,9 +109,56 @@ class TelescopesTable extends React.Component {
     rows() {
         return this.props.telescopes.map( (t) => {
             if( this.state.edit_telescope && this.state.edit_telescope.id == t.id)
-                return <TelescopeEditRow telescope={t} key={t.id} onCancel={ () => this.setState({edit_telescope: null}) } />;
-            return <TelescopeRow key={t.id} telescope={t} onEdit={ () => this.setState({edit_telescope: t}) } />
+                return <TelescopeEditRow telescope={t} key={t.id} onCancel={ () => this.setState({edit_telescope: null}) } onSave={(d) => this.update(t, d)} />;
+            return <TelescopeRow key={t.id} telescope={t} onEdit={ () => this.setState({edit_telescope: t}) } onDelete={ () => this.remove(t) } />
         });
+    }
+
+    create(data) {
+        Ajax.send_json(URLs.buildAuthPath('/api/telescopes'), data, 'PUT')
+            .then(Ajax.decode_json({
+                is_success: (r) => r.status == 201,
+                success: (j) => { 
+                    NotificationManager.success('Telescope ' + j.name + ' correctly created', 'Telescope', 5000);
+                    this.props.onChange()
+                },
+                failure: this.onFailure
+            })
+        )
+    }
+
+
+    update(telescope, data) {
+        Ajax.send_json(URLs.buildAuthPath('/api/telescopes/' + telescope.id), data, 'POST')
+            .then(Ajax.decode_json({
+                is_success: (r) => r.status == 200,
+                success: (j) => { 
+                    this.setState({edit_telescope: null});
+                    NotificationManager.success('Telescope ' + j.name + ' correctly updated', 'Telescope', 5000);
+                    this.props.onChange()
+                },
+                failure: this.onFailure
+            })
+        )
+    }
+
+    remove(telescope) {
+        Ajax.fetch(URLs.buildAuthPath('/api/telescopes/' + telescope.id), {method: 'DELETE'})
+            .then(Ajax.decode_json({
+                is_success: (r) => r.status == 200,
+                success: (j) => { 
+                    this.setState({edit_telescope: null});
+                    NotificationManager.success('Telescope ' + j.name + ' correctly deleted', 'Telescope', 5000);
+                    this.props.onChange()
+                },
+                failure: this.onFailure
+            })
+        )
+
+    }
+
+    onFailure() {
+        NotificationManager.warning('Error processing the request', 'Telescope', 5000);
     }
 }
 

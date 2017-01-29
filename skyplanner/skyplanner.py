@@ -56,6 +56,8 @@ def add_telescope(user):
     try:
         data = request.get_json()
         telescope = Telescope(data['name'], data['focal_length'], data['diameter'], user)
+        if not telescope.validate()[0]:
+            return json_error("Bad request", errors=telescope.validate()[1]), 400
         db.session.add(telescope)
         db.session.commit()
         return json.jsonify(telescope.to_map()), 201
@@ -63,8 +65,32 @@ def add_telescope(user):
         app.logger.debug("Create telescope error.", exc_info = True)
         return json_error("Bad request"), 400
 
+@app.route('/api/telescopes/<id>', methods=['POST'])
+@auth_url
+def edit_telescope(user, id):
+    telescope = Telescope.query.filter_by(id = id).one()
+    telescope.update(request.get_json())
+    if not telescope.validate()[0]:
+        return json_error("Bad request", errors=telescope.validate()[1]), 400
+    db.session.commit()
+    return json.jsonify(telescope.to_map()), 200
+    
 
-
+@app.route('/api/telescopes/<id>', methods=['DELETE'])
+@auth_url
+def delete_telescope(user, id):
+    try:
+        result = Telescope.query.filter_by(id = id).delete()
+        app.logger.debug(result)
+        db.session.commit()
+        if result == 1:
+            return json_ok(), 200
+        else:
+            return json_error("not found"), 404
+        
+    except Exception as e:
+        app.logger.debug("Delete telescope error.", exc_info = True)
+        return json_error("Bad request"), 400
 
 @app.cli.command()
 def init_db():

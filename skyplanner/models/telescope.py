@@ -22,3 +22,22 @@ class Telescope(db.Model):
 
     def __repr__(self):
         return self.__str__()
+
+    def validate(self):
+        errors = []
+        if not self.name:
+            errors.append('name is not valid')
+        if not self.focal_length:
+            errors.append('focal_length is not valid')
+        if not self.diameter:
+            errors.append('diameter is not valid')
+        return len(errors) == 0, errors
+
+    def update(self, data):
+        if 'name' in data:
+            self.name = data['name']
+        if 'focal_length' in data:
+            self.focal_length = data['focal_length']
+        if 'diameter' in data:
+            self.diameter = data['diameter']
+
