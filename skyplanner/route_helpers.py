@@ -1,5 +1,7 @@
 from flask import json, request
 from skyplanner.controllers.users import UsersController
+from skyplanner.controllers.telescopes import TelescopesController
+
 from skyplanner.result_helpers import result_ok, result_error
 from functools import wraps
 from skyplanner.errors import SkyPlannerError
@@ -14,25 +16,16 @@ def json_error(reason, **kwargs):
     return json.jsonify(result_error(reason, **kwargs))
 
 
-def auth_url(func):
-    @wraps(func)
-    def func_wrapper(*args, **kwargs):
-        user = None
-        try:
-            if request.args.get('auth'):
-                user = users_controller().verify_token(request.args.get('auth'))
-            if not user:
-                return json_error(reason='auth_required'), 401
-            kwargs['user'] = user
-            return func(*args, **kwargs)
-        except UsersController.Error as e:
-            return json_error(reason=e.reason), 401 
-    return func_wrapper
-
 def users_controller():
     def create():
         return UsersController(app)
     return get_controller('users', create)
+
+def telescopes_controller():
+    def create():
+        return TelescopesController(app)
+    return get_controller('telescopes', create)
+
 
 def get_controller(name, factory):
     if not name in controllers:
@@ -42,14 +35,10 @@ def get_controller(name, factory):
 
 def get_user_from_token(request):
     user = None
-    reason = 'token_required'
-    try:
-        if request.args.get('auth'):
-            user = users_controller().verify_token(request.args.get('auth'))
-    except UsersController.Error as e:
-        reason = e.__class__.__name__
+    if request.args.get('auth'):
+        user = users_controller().verify_token(request.args.get('auth'))
     if not user:
-        raise SkyPlannerError.Unauthorized({'error': reason})
+        raise SkyPlannerError.Unauthorized({'error': 'token_required'})
     return user
 
 

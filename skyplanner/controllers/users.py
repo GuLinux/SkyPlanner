@@ -7,11 +7,6 @@ from itsdangerous import (TimedJSONWebSignatureSerializer
 from skyplanner.errors import SkyPlannerError
 
 class UsersController:
-    class Error(RuntimeError):
-        def __init__(self, reason = 'unknown'):
-            self.reason = reason
-
-
     def __init__(self, app):
         self.app = app
         self.logger = app.logger
@@ -47,11 +42,9 @@ class UsersController:
         s = Serializer(self.app.config['SECRET_KEY'])
         try:
             data = s.loads(bytes(token, 'utf-8'))
-        except SignatureExpired:
-            raise TokenExpiredError()
-        except BadSignature:
-            raise BadTokenError()
-        user = User.query.get(data['id'])
+            user = User.query.filter_by(id=data['id']).one()
+        except Exception as e:
+            raise SkyPlannerError.Unauthorized(e.__class__.__name__)
         return user
 
 
