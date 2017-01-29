@@ -15,17 +15,17 @@ class SkyPlannerError(RuntimeError):
         self.status = status
         self.payload = payload
 
-    def BadRequest(payload = {}):
-        return SkyPlannerError(message='bad_request', status=SkyPlannerError.BAD_REQUEST, payload = payload)
+    def BadRequest(message = 'bad_request', payload = {}):
+        return SkyPlannerError(message=message, status=SkyPlannerError.BAD_REQUEST, payload = payload)
 
-    def NotFound(payload = {}):
-        return SkyPlannerError(message='not_found', status=SkyPlannerError.NOT_FOUND, payload = payload)
+    def NotFound(message='not_found', payload = {}):
+        return SkyPlannerError(message=message, status=SkyPlannerError.NOT_FOUND, payload = payload)
 
-    def Unauthorized(payload = {}):
-        return SkyPlannerError(message='unauthorized', status=SkyPlannerError.UNAUTHORIZED, payload = payload)
+    def Unauthorized(message='unauthorized', payload = {}):
+        return SkyPlannerError(message=message, status=SkyPlannerError.UNAUTHORIZED, payload = payload)
 
-    def Conflict(payload = {}):
-        return SkyPlannerError(message='conflict', status=SkyPlannerError.CONFLICT, payload = payload)
+    def Conflict(message='conflict', payload = {}):
+        return SkyPlannerError(message=message, status=SkyPlannerError.CONFLICT, payload = payload)
 
     def response(self):
         return json.jsonify(result_error(self.message, data=self.payload)), self.status
