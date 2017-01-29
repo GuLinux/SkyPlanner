@@ -14,7 +14,7 @@ db.init_app(app)
 
 import skyplanner.route_helpers
 skyplanner.route_helpers.app = app
-from skyplanner.route_helpers import json_ok, json_error, users_controller, auth_url
+from skyplanner.route_helpers import json_ok, json_error, users_controller, auth_url, skyplanner_api
 from skyplanner.models.skyobject import SkyObject
 from skyplanner.models.telescope import Telescope
 from skyplanner.models.user import User
@@ -96,4 +96,12 @@ def delete_telescope(user, id):
 def init_db():
     """Initialize the database"""
     db.create_all()
+
+@skyplanner_api(url='/api_test', auth_required=True)
+def api_test(user):
+    return '[GET] hello, user: {0}\n'.format(user.to_map()), 200
+
+@skyplanner_api(url='/api_test2', methods=['POST'])
+def api_test2():
+    return '[POST] hello\n', 200
 

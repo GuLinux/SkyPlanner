@@ -1,5 +1,5 @@
-import route_helpers
-from result_helpers import json_error
+from skyplanner.result_helpers import result_ok, result_error
+from flask import json
 
 class SkyPlannerError(RuntimeError):
     SERVER_ERROR = 500
@@ -8,22 +8,20 @@ class SkyPlannerError(RuntimeError):
     FORBIDDEN = 403
     BAD_REQUEST = 400
 
-    def __init__(self, message = 'generic_error', status=SkyPlannerError.SERVER_ERROR, payload={}):
+    def __init__(self, message = 'generic_error', status = SERVER_ERROR, payload = {}):
         super().__init__(message)
         self.message = message
         self.status = status
         self.payload = payload
 
-    def response(self):
-        return json_error(reason=self.message, data=self.payload), self.status
-
     def BadRequest(payload = {}):
-        return SkyPlannerError(message='bad_request', status=SkyPlannerError.BAD_REQUEST, payload)
+        return SkyPlannerError(message='bad_request', status=SkyPlannerError.BAD_REQUEST, payload = payload)
 
     def NotFound(payload = {}):
-        return SkyPlannerError(message='not_found'), status=SkyPlannerError.NOT_FOUND, payload)
+        return SkyPlannerError(message='not_found', status=SkyPlannerError.NOT_FOUND, payload = payload)
 
     def Unauthorized(payload = {}):
-        return SkyPlannerError(message='unauthorized'), status=SkyPlannerError.UNAUTHORIZED, payload)
+        return SkyPlannerError(message='unauthorized', status=SkyPlannerError.UNAUTHORIZED, payload = payload)
 
-    
+    def response(self):
+        return json.jsonify(result_error(self.message, data=self.payload)), self.status
