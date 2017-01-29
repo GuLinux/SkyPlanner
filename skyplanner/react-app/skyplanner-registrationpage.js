@@ -1,11 +1,10 @@
 import React from 'react';
-import Ajax from './ajax';
 import { NotificationManager } from 'react-notifications';
 import AuthManager from './auth-manager';
 import URLs from './urls';
 import { FormControl, FormGroup, ControlLabel, Button, Checkbox} from 'react-bootstrap'
 import UserForms from './user-forms'
-
+import { api, Statuses } from './skyplanner-api'
 
 class SkyPlannerRegistrationPage extends React.Component {
     constructor(props) {
@@ -49,26 +48,20 @@ class SkyPlannerRegistrationPage extends React.Component {
 
     register(e) {
         e.preventDefault();
-        if( this.forms.validateAll().some( (v) => v.validation.state == 'error' ) ) {
-            NotificationManager.warning('Please check the required fields', 'Registration', 5000);
-            return;
-        }
-        Ajax.send_json('/api/users/create', {username: this.state.username.value, password: this.state.password.value}, 'PUT')
-            .then(Ajax.decode_json({
-                is_success: (r) => r.status == 201,
-                success: this.registrationSuccess.bind(this),
-                failure: this.registrationFailure.bind(this)
-        }));
+        api.register(this.state.username.value, this.state.password.value, this.registrationSuccess.bind(this), {
+            [Statuses.conflict]: (r) => r.json().then(this.registrationFailure.bind(this)),
+            [Statuses.bad_request]: (r) => r.json().then(this.registrationFailure.bind(this))
+        });
     }
 
-    registrationFailure(json, response) {
+    registrationFailure(json) {
         let error = json.reason in this.errors ? this.errors[json.reason] : this.errors.generic_registration_error;
         NotificationManager.warning(error.msg, 'Registration Error', 5000);
         error.fields.forEach( (f) => this.forms.setManualState(f, 'error', error.msg));
     }
 
     registrationSuccess(json) {
-        NotificationManager.success('Registration successfully completed', 'Registration', 4999);
+        NotificationManager.success('Registration successfully completed', 'Registration', 5000);
         this.props.router.push(URLs.login.path);
     }
 }

@@ -8,10 +8,10 @@ import SkyPlannerLoginPage from './skyplanner-loginpage'
 import SkyPlannerRegistrationPage from './skyplanner-registrationpage'
 import SkyPlannerGearPage from './skyplanner-gearpage'
 import { NotificationContainer, NotificationManager } from 'react-notifications';
-import Ajax from './ajax';
 import AuthManager from './auth-manager';
 import URLs from './urls';
 require('style!react-notifications/lib/notifications.css');
+import { api } from './skyplanner-api'
 
 var history = hashHistory;
 
@@ -53,18 +53,8 @@ var renderRoot = function() {
 
 let token = AuthManager.token();
 if(token) {
-    Ajax.fetch( URLs.buildAuthPath('/api/users/get'))
-        .then(Ajax.decode_json({
-            is_success: (r) => r.status == 200, 
-            success: (j) => {
-                Object.assign(j, {token: token});
-                AuthManager.login(j);
-                renderRoot();
-            },
-            failure: (j, r) => {
-                renderRoot();
-            } 
-    }));
+
+    api.tokenLogin(token, () => renderRoot(), () => renderRoot() );
 } else {
     renderRoot()
 }

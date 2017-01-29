@@ -21,7 +21,7 @@ class Ajax {
             if(opts.is_success(response))
                 response.json().then(opts.success);
             else {
-                response.json().then( (j) => opts.failure(response));
+                opts.failure(response);
             }
         };
     }

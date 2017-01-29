@@ -23,6 +23,28 @@ class SkyPlannerAPI {
                 failure: (r) => this.onAPIFailure(r, {[Statuses.unauthorized]: onFailure})
         }));
     } 
+    tokenLogin(token, onSuccess, onFailure) {
+        Ajax.fetch( URLs.buildAuthPath('/api/users/get'))
+            .then(Ajax.decode_json({
+                is_success: (r) => r.status == Statuses.success, 
+                success: (j) => {
+                    Object.assign(j, {token: token});
+                    AuthManager.login(j);
+                    onSuccess();
+                },
+                failure: (r) => this.onAPIFailure(r, {[Statuses.unauthorized]: onFailure})
+        }));
+    }
+
+    register(username, password, onSuccess, onFailure) {
+        Ajax.send_json('/api/users/create', {username: username, password: password}, 'PUT')
+            .then(Ajax.decode_json({
+                is_success: (r) => r.status == Statuses.created,
+                success: onSuccess,
+                failure: (r) => this.onAPIFailure(r, onFailure)
+        }));
+
+    }
 
     onAPIFailure(response, callbacks) {
         let cb = {

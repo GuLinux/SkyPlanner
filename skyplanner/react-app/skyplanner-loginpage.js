@@ -1,11 +1,10 @@
 import React from 'react';
-import Ajax from './ajax';
 import { NotificationManager } from 'react-notifications';
 import AuthManager from './auth-manager';
 import URLs from './urls';
 import { FormControl, FormGroup, ControlLabel, Button, Checkbox} from 'react-bootstrap'
 import UserForms from './user-forms'
-import { api, Statuses } from './skyplanner-api'
+import { api } from './skyplanner-api'
 
 class SkyPlannerLoginPage extends React.Component {
     constructor(props) {
