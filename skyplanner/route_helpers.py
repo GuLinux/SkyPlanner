@@ -19,9 +19,7 @@ def controller(func):
     @wraps(func)
     def wrapper():
         name = func.__name__
-        app.logger.debug('fetching controller %s', name)
         if not name in controllers:
-            app.logger.debug('creating controller %s', name)
             controllers[name] = func()
         return controllers[name]
     return wrapper
