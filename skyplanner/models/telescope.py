@@ -24,12 +24,14 @@ class Telescope(db.Model):
         return self.__str__()
 
     def validate(self):
+        def is_number(n):
+            return isinstance(n, int) or isinstance(n, float)
         errors = []
         if not self.name:
             errors.append('name is not valid')
-        if not self.focal_length:
+        if not self.focal_length or not is_number(self.focal_length): 
             errors.append('focal_length is not valid')
-        if not self.diameter:
+        if not self.diameter or not is_number(self.diameter):
             errors.append('diameter is not valid')
         return len(errors) == 0, errors
 
