@@ -1,5 +1,4 @@
-from skyplanner.models import SkyCoord
-from skyplanner.models import Angle
+from skyplanner.models import SkyCoord, Angle
 from skyplanner.ephemeris.native.ephemeris import coordinates
 
 from bisect import bisect_right

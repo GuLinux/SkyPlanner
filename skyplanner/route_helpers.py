@@ -1,7 +1,5 @@
 from flask import json, request
-from skyplanner.controllers import UsersController
-from skyplanner.controllers import TelescopesController
-from skyplanner.controllers import ObservationsController
+from skyplanner.controllers import UsersController, TelescopesController, ObservationsController
 from skyplanner.result_helpers import result_ok, result_error
 from functools import wraps
 from skyplanner.errors import SkyPlannerError

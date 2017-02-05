@@ -1,7 +1,6 @@
 import unittest
-from skyplanner.ephemeris.skysector import SkySector
-from skyplanner.models import Angle
-from skyplanner.models import SkyCoord
+from skyplanner.ephemeris import SkySector
+from skyplanner.models import Angle, SkyCoord
 from skyplanner.ephemeris.native.ephemeris import *
 
 import time
