@@ -2,6 +2,7 @@ from skyplanner.errors import SkyPlannerError
 from skyplanner.models.telescope import Telescope
 from skyplanner.models.db import db
 from skyplanner.result_helpers import result_ok, result_error
+import sqlalchemy
 
 class TelescopesController:
     def __init__(self, app):
@@ -20,14 +21,18 @@ class TelescopesController:
         return telescope.to_map()
 
     def remove(self, user, telescope_id):
-        result = Telescope.query.filter_by(id = telescope_id).delete()
+        result = Telescope.query.filter_by(id = telescope_id, user_id = user.id).delete()
         db.session.commit()
         if result == 0:
             raise SkyPlannerError.NotFound('telescope_not_found')
         return result_ok()
 
     def edit(self, user, telescope_id, data):
-        telescope = Telescope.query.filter_by(id = telescope_id).one()
+        telescope = None
+        try:
+            telescope = Telescope.query.filter_by(id = telescope_id, user_id = user.id).one()
+        except sqlalchemy.orm.exc.NoResultFound:
+            raise SkyPlannerError.NotFound('telescope id {0} for user {1} not found'.format(telescope_id, user.id))
         telescope.update(data)
         self.validate(telescope)
         db.session.commit()
