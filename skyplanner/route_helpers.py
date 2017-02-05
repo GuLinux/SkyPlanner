@@ -1,7 +1,7 @@
 from flask import json, request
-from skyplanner.controllers.users import UsersController
-from skyplanner.controllers.telescopes import TelescopesController
-from skyplanner.controllers.observations import ObservationsController
+from skyplanner.controllers import UsersController
+from skyplanner.controllers import TelescopesController
+from skyplanner.controllers import ObservationsController
 from skyplanner.result_helpers import result_ok, result_error
 from functools import wraps
 from skyplanner.errors import SkyPlannerError
@@ -32,7 +32,7 @@ def users_controller():
 def telescopes_controller():
     return TelescopesController(app)
 
-@controllers
+@controller
 def observations_controller():
     return ObservationsController(app)
 

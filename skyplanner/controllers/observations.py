@@ -1,6 +1,6 @@
 from skyplanner.errors import SkyPlannerError
-from skyplanner.models.observation import Observation
-from skyplanner.models.db import db
+from skyplanner.models import Observation
+from skyplanner.models import db
 from skyplanner.result_helpers import result_ok, result_error
 import sqlalchemy
 

@@ -1,5 +1,5 @@
-from skyplanner.models.db import db
-from skyplanner.models.user import User
+from skyplanner.models import db
+from skyplanner.models import User
 from skyplanner.result_helpers import *
 import sqlalchemy.exc
 from itsdangerous import (TimedJSONWebSignatureSerializer

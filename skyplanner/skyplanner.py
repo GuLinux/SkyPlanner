@@ -1,7 +1,7 @@
 from flask import Flask, request, session, g, redirect, url_for, abort, \
      render_template, flash, json
 import click
-from skyplanner.models.db import db
+from skyplanner.models import db
 import pprint
 
 app = Flask(__name__)
@@ -14,10 +14,10 @@ db.init_app(app)
 import skyplanner.route_helpers
 skyplanner.route_helpers.app = app
 from skyplanner.route_helpers import json_ok, json_error, users_controller, skyplanner_api, telescopes_controller
-from skyplanner.models.skyobject import SkyObject
-from skyplanner.models.telescope import Telescope
-from skyplanner.models.observation import Observation
-from skyplanner.models.user import User
+from skyplanner.models import SkyObject
+from skyplanner.models import Telescope
+from skyplanner.models import Observation
+from skyplanner.models import User
 from skyplanner.errors import SkyPlannerError
 
 @app.route('/')

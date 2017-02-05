@@ -1,4 +1,4 @@
-from skyplanner.models.db import db
+from skyplanner.models import db
 import math
 import pprint
 import sys

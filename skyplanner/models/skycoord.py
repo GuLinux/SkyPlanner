@@ -1,4 +1,4 @@
-from skyplanner.models.angle import Angle
+from skyplanner.models import Angle
 class SkyCoord:
     def __init__(self, ra, dec):
         self.ra = ra if type(ra) is Angle else Angle(ra)

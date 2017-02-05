@@ -1,4 +1,4 @@
-from skyplanner.models.db import db
+from skyplanner.models import db
 
 class Observation(db.Model):
     id = db.Column(db.Integer, primary_key=True)

@@ -1,5 +1,5 @@
 import unittest
-from skyplanner.models.telescope import Telescope
+from skyplanner.models import Telescope
 
 # limiting magnitude = 5 x LOG10(aperture of scope in cm)  + 7.5
 # math.log10(x)
