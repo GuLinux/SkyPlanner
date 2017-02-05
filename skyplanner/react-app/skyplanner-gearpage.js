@@ -26,8 +26,8 @@ class TelescopeEditRow extends React.Component {
         this.state = this.initialState();
         this.handlers= {
             name: { validator: (v) => !!v, parse: (v) => v},
-            focal_length: {validator: (v) => v > 0, parse: parseInt},
-            diameter: {validator: (v) => v>0, parse: parseInt}
+            focal_length: {validator: (v) => v > 0, parse: (v) => !!v ? parseInt(v) : v},
+            diameter: {validator: (v) => v>0, parse: (v) => !!v ? parseInt(v) : v}
         };
     }
     
@@ -71,10 +71,13 @@ class TelescopeEditRow extends React.Component {
         return isValid;
     }
 
+    reset() {
+        this.setState(this.initialState());
+    }
+
     save() {
         if(['name', 'diameter', 'focal_length'].map( (v) => this.validate(v, this.state[v])).some((v) => !v))
             return;
-        console.log(this);
         this.props.onSave(this.state);
     }
 }
@@ -100,7 +103,7 @@ class TelescopesTable extends React.Component {
                     </thead>
                     <tbody>
                         {this.rows()}
-                        <TelescopeEditRow onSave={this.create.bind(this)}/>
+                        <TelescopeEditRow onSave={this.create.bind(this)} ref={(n) => { this.newTelescopeRow = n; }}/>
                     </tbody>
                 </Table>
             </div>
@@ -120,6 +123,8 @@ class TelescopesTable extends React.Component {
             (j) => { 
                     NotificationManager.success('Telescope ' + j.name + ' correctly created', 'Telescope', 5000);
                     this.props.onChange()
+                    if(this.newTelescopeRow)
+                        this.newTelescopeRow.reset();
                 },
             this.onFailure.bind(this));
     }
