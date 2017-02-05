@@ -23,16 +23,20 @@ class TelescopeRow extends React.Component {
 class TelescopeEditRow extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {name: "", focal_length: "" , diameter: ""};
-        if('telescope' in props) {
-            Object.assign(this.state, props.telescope);
-        }
-
-        this.validators = {
-            name: (v) => !!v,
-            focal_length: (v) => v > 0,
-            diameter: (v) => v>0
+        this.state = this.initialState();
+        this.handlers= {
+            name: { validator: (v) => !!v, parse: (v) => v},
+            focal_length: {validator: (v) => v > 0, parse: parseInt},
+            diameter: {validator: (v) => v>0, parse: parseInt}
         };
+    }
+    
+    initialState() {
+        let state = {name: "", focal_length: "" , diameter: ""};
+        if('telescope' in this.props) {
+            Object.assign(state, this.props.telescope);
+        }
+        return state;
     }
 
     render() {
@@ -62,19 +66,16 @@ class TelescopeEditRow extends React.Component {
     }
 
     validate(name, value) {
-        let isValid = this.validators[name](value);
-        this.setState({[name]: value, [name + '_error']: isValid ? 'success' : 'error'});
+        let isValid = this.handlers[name].validator(value);
+        this.setState({[name]: this.handlers[name].parse(value), [name + '_error']: isValid ? 'success' : 'error'});
         return isValid;
     }
 
     save() {
         if(['name', 'diameter', 'focal_length'].map( (v) => this.validate(v, this.state[v])).some((v) => !v))
             return;
+        console.log(this);
         this.props.onSave(this.state);
-    }
-
-    onFailure() {
-        NotificationManager.warning('Error processing the request', 'Telescope', 5000);
     }
 }
 

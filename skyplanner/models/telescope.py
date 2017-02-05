@@ -1,5 +1,7 @@
 from skyplanner.models.db import db
 import math
+import pprint
+import sys
 
 class Telescope(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -14,12 +16,13 @@ class Telescope(db.Model):
         self.diameter = diameter
         self.user_id = user.id
 
-    def magnitude_gain(self, pupil):
+    def magnitude_gain(self, pupil = None):
+        if not pupil:
+            pupil = self.user.pupil
         return math.log10(self.diameter / pupil) * 5
 
     def validate(self):
-        def is_number(n):
-            return isinstance(n, int) or isinstance(n, float)
+        is_number = lambda n: isinstance(n, int) or isinstance(n, float)
         errors = []
         if not self.name:
             errors.append('name is not valid')

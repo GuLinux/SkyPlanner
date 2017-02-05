@@ -5,6 +5,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String, nullable = False, unique = True)
     password_hash = db.Column(db.String, nullable = False)
+    pupil = db.Column(db.Float(precision = 1), default = 6.5)
     telescopes = db.relationship('Telescope', backref='user', lazy='select')
 
     def __init__(self, username, password):
