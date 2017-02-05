@@ -1,6 +1,5 @@
-from skyplanner.models import db
+from . import db
 import math
-import pprint
 import sys
 
 class Telescope(db.Model):

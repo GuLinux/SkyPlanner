@@ -1,4 +1,5 @@
 import math
+
 class Angle:
     __rad = 180 / math.pi
     __hour = 360 / 24

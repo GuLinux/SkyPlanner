@@ -1,4 +1,4 @@
-from skyplanner.models import db
+from . import db
 import bcrypt
 
 class User(db.Model):

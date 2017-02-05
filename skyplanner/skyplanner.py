@@ -1,8 +1,7 @@
 from flask import Flask, request, session, g, redirect, url_for, abort, \
      render_template, flash, json
 import click
-from skyplanner.models import db
-import pprint
+from .models import db
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/test.db'
@@ -13,12 +12,9 @@ db.init_app(app)
 
 import skyplanner.route_helpers
 skyplanner.route_helpers.app = app
-from skyplanner.route_helpers import json_ok, json_error, users_controller, skyplanner_api, telescopes_controller
-from skyplanner.models import SkyObject
-from skyplanner.models import Telescope
-from skyplanner.models import Observation
-from skyplanner.models import User
-from skyplanner.errors import SkyPlannerError
+from .route_helpers import json_ok, json_error, users_controller, skyplanner_api, telescopes_controller
+from .models import SkyObject, Telescope, Observation, User
+from .errors import SkyPlannerError
 
 @app.route('/')
 def index():
