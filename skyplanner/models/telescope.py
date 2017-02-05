@@ -14,8 +14,8 @@ class Telescope(db.Model):
         self.diameter = diameter
         self.user_id = user.id
 
-    def magnitude_gain(self):
-        return math.log10(self.diameter) * 5
+    def magnitude_gain(self, pupil):
+        return math.log10(self.diameter / pupil) * 5
 
     def validate(self):
         def is_number(n):
