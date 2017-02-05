@@ -16,6 +16,7 @@ skyplanner.route_helpers.app = app
 from skyplanner.route_helpers import json_ok, json_error, users_controller, skyplanner_api, telescopes_controller
 from skyplanner.models.skyobject import SkyObject
 from skyplanner.models.telescope import Telescope
+from skyplanner.models.observation import Observation
 from skyplanner.models.user import User
 from skyplanner.errors import SkyPlannerError
 
