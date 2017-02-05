@@ -26,3 +26,6 @@ class TestTelescope(unittest.TestCase):
         self.assertTrue(validate[0])
         self.assertEqual(0, len(validate[1]))
 
+    def test_magnitude(self):
+        telescope = Telescope('test', 100, 120, FakeUser())
+        self.assertAlmostEqual(10.395906230, telescope.magnitude_gain() )

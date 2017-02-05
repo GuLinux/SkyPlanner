@@ -1,4 +1,5 @@
 from skyplanner.models.db import db
+import math
 
 class Telescope(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -13,15 +14,8 @@ class Telescope(db.Model):
         self.diameter = diameter
         self.user_id = user.id
 
-    def to_map(self):
-        return {'id': self.id, 'name': self.name, 'focal_length': self.focal_length, 'diameter': self.diameter }
-
-    def __str__(self):
-        return 'id: {0}, name: {1}, focal_length: {2}, diameter: {3}, user_id: {4}' \
-                .format(self.id, self.name, self.focal_length, self.diameter, self.user_id)
-
-    def __repr__(self):
-        return self.__str__()
+    def magnitude_gain(self):
+        return math.log10(self.diameter) * 5
 
     def validate(self):
         def is_number(n):
@@ -42,4 +36,14 @@ class Telescope(db.Model):
             self.focal_length = data['focal_length']
         if 'diameter' in data:
             self.diameter = data['diameter']
+
+    def to_map(self):
+        return {'id': self.id, 'name': self.name, 'focal_length': self.focal_length, 'diameter': self.diameter }
+
+    def __str__(self):
+        return 'id: {0}, name: {1}, focal_length: {2}, diameter: {3}, user_id: {4}' \
+                .format(self.id, self.name, self.focal_length, self.diameter, self.user_id)
+
+    def __repr__(self):
+        return self.__str__()
 
