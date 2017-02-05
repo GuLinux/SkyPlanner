@@ -52,16 +52,13 @@ def edit_telescope(user, id):
 def delete_telescope(user, id):
     return json.jsonify(telescopes_controller().remove(user, id)), 200
 
+@skyplanner_api(url='/api/observations', auth_required = True)
+def get_observations(user):
+    return json.jsonify(observations_controller().all(user))
+
+#########  CLI Commands
 @app.cli.command()
 def init_db():
     """Initialize the database"""
     db.create_all()
-
-@skyplanner_api(url='/api_test', auth_required=True)
-def api_test(user):
-    return '[GET] hello, user: {0}\n'.format(user.to_map()), 200
-
-@skyplanner_api(url='/api_test2', methods=['POST'])
-def api_test2():
-    return '[POST] hello\n', 200
 
