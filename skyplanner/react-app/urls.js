@@ -6,6 +6,7 @@ class URLs {
     static get logout() { return URLs.__build_url('/logout', 'logout') }
     static get register() { return URLs.__build_url('/register', 'register') }
     static get gear() { return URLs.__build_url('/gear', 'gear') }
+    static get observations() { return URLs.__build_url('/observations', 'observations') }
 
     static buildPath(path, parameters) {
         if(Array.isArray(path))

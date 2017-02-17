@@ -16,6 +16,8 @@ export const Statuses = {
 };
 
 class SkyPlannerAPI {
+
+    // Users
     login(username, password, onSuccess, onFailure) {
         Ajax.send_json('/api/users/login', {username: username, password: password}, 'POST')
             .then(Ajax.decode_json({
@@ -47,6 +49,7 @@ class SkyPlannerAPI {
 
     }
 
+    // Telescopes
     listTelescopes(onSuccess) {
         Ajax.fetch(URLs.buildAuthPath('/api/telescopes'))
             .then(Ajax.decode_json({
@@ -84,6 +87,48 @@ class SkyPlannerAPI {
             })
         )
     }
+
+    // Observations
+
+    listObservations(onSuccess) {
+        Ajax.fetch(URLs.buildAuthPath('/api/observations'))
+            .then(Ajax.decode_json({
+                is_success: (r) => r.status == Statuses.success,
+                success: onSuccess 
+        }));
+    }
+
+    createObservation(data, onSuccess, onFailure) {
+        Ajax.send_json(URLs.buildAuthPath('/api/observations'), data, 'PUT')
+            .then(Ajax.decode_json({
+                is_success: (r) => r.status == Statuses.created,
+                success: onSuccess,
+                failure: (r) => this.onAPIFailure(r, {[Statuses.bad_request]: onFailure})
+            })
+        )
+    }
+
+    updateObservation(observation, data, onSuccess, onFailure) {
+        Ajax.send_json(URLs.buildAuthPath('/api/observations/' + observation.id), data, 'POST')
+            .then(Ajax.decode_json({
+                is_success: (r) => r.status == Statuses.success,
+                success: onSuccess,
+                failure: (r) => this.onAPIFailure(r, {[Statuses.bad_request]: onFailure})
+            })
+        )
+    }
+
+    removeObservation(observation, onSuccess, onFailure) {
+        Ajax.fetch(URLs.buildAuthPath('/api/observations/' + observation.id), {method: 'DELETE'})
+            .then(Ajax.decode_json({
+                is_success: (r) => r.status == Statuses.success,
+                success: onSuccess,
+                failure: (r) => this.onAPIFailure(r, {[Statuses.not_found]: onFailure})
+            })
+        )
+    }
+
+
 
     onAPIFailure(response, callbacks) {
         let cb = {
