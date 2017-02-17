@@ -61,7 +61,7 @@ def edit_observation(user, id):
     return json.jsonify(observations_controller().update(user, id, request.get_json()))
 
 @skyplanner_api(url='/api/observations<id>', auth_required = True, methods = ['DELETE'])
-def edit_observation(user, id):
+def delete_observation(user, id):
     return json.jsonify(observations_controller().remove(user, id))
 
 
