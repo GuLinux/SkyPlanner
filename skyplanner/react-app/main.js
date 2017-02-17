@@ -24,7 +24,7 @@ var requireAuth = function(nextState, replace) {
     }
 }
 
-var requireAnonymout = function(nextState, replace) {
+var requireAnonymous = function(nextState, replace) {
     if(!!AuthManager.user()) {
         replace(URLs.root.path);
     }
@@ -37,8 +37,8 @@ var renderRoot = function() {
             <Router history={history}>
                 <Route path={URLs.root.route} component={SkyPlannerApp}>
                     <IndexRoute component={SkyPlannerHomePage} />} />
-                    <Route path={URLs.login.route} component={SkyPlannerLoginPage} onEnter={requireAnonymout}/>
-                    <Route path={URLs.register.route} component={SkyPlannerRegistrationPage} onEnter={requireAnonymout}/>
+                    <Route path={URLs.login.route} component={SkyPlannerLoginPage} onEnter={requireAnonymous}/>
+                    <Route path={URLs.register.route} component={SkyPlannerRegistrationPage} onEnter={requireAnonymous}/>
                     <Route path={URLs.gear.route} component={SkyPlannerGearPage} onEnter={requireAuth} />
                     <Route path={URLs.logout.route} component='div' onEnter={() => AuthManager.logout() } />
                 </Route>
