@@ -4,9 +4,26 @@ import URLs from './urls'
 import { NotificationManager } from 'react-notifications';
 import { api, Status } from './skyplanner-api'
 
+class AddNewObservation extends React.Component {
+    render() {
+        return <p>new observations form</p>;
+    }
+}
+
+class ObservationsTable extends React.Component {
+    render() {
+        return <p>Observations table</p>;
+    }
+}
+
 class SkyPlannerObservationsPage extends React.Component {
     render() {
-        return <p>Hello, Observations Page</p>;
+        return (
+            <div className='container'>
+                <AddNewObservation />
+                <ObservationsTable />
+            </div>
+        );
     }
 }
 
